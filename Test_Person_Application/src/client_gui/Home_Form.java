@@ -102,7 +102,7 @@ public class Home_Form extends javax.swing.JFrame {
 
     private void createPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonActionPerformed
         // TODO add your handling code here:
-        CreatePerson_Form form = new CreatePerson_Form(test);
+        CreatePerson_Form form = new CreatePerson_Form();
     }//GEN-LAST:event_createPersonActionPerformed
 
     /**

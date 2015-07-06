@@ -19,6 +19,7 @@ public class ServerImpl {
     private HashMap<String,PropertySubType> propertySubTypes = new HashMap<String,PropertySubType>();
     private HashMap<String,PropertyType> propertyTypes = new HashMap<String,PropertyType>();
     private HashMap<String,PropertyTypeValue> propertyTypeValues = new HashMap<String,PropertyTypeValue>();
+    private int personRef;
 
     /**
      * @param args the command line arguments
@@ -29,13 +30,14 @@ public class ServerImpl {
     
     
     //add a Chatter to the list
-    public void register(String title, String forename, String surename, ) {
-        chatters.put(c.getName(),c);
+    public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) {
+        Person p = new Person(personRef, title, forename, surname, year, month, day, gender);
+        personRef++;
+        people.put(Integer.toString(p.getPersonRef()), p);
     }
 
     //remove a chatter
-    public void unregister(Chatter c) {
-        chatters.remove(c.getName());
+    public void deletePerson(Person p) {
+        people.remove(Integer.toString(p.getPersonRef()));
     }
-    
 }
