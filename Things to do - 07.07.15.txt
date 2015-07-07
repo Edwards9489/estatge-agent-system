@@ -1,0 +1,67 @@
+ - Email tutor about word count limit and moving project objectives to the appendices as a project objectives document. - DONE
+	- If I am able to do this, create project objectives document and move to appendecies
+
+ - Check to see if I can get feedback for my BSc project - DONE
+	- emailed p morris (UH), just awaiting response
+
+ - check if "HELLO".equals("hello")
+	- if true then dont need to worry about CAPS of strings when comparing for searcing facility
+	- of not true then, check to see if alternative to string.equals() that dont check CAPS
+		- if not then need to consider a method at the entrance of all String (at GUI) and use string.toUpperCase() to amend everything to upper case
+
+ - Amend Project Objectives, and break them down into more detail such as:
+	- ANALYSIS TASKS
+		- consult with MSc Properties, carrying out analysis of the business by x date
+		- map system functional and non fuctional requirements by x date
+		- map use case diagrams by x date
+		- carry out literature review by x date
+		- ensure all hardware resources are available by x date
+		- install required software resources by by x date
+		- set up repository for concurrent version system by x date
+		- carry out risk assessment
+	- DESIGN TASKS
+		- draw class diagrams by x date
+		- draw methods diagrams by x date
+		- complete storyboards by x date
+		- draw data flow diagrams by x date
+		- normalize data by x date
+		- draw entity relationship models by x date
+		- create test scripts by x date
+		- create dummy data to imitate business data by x date
+	- IMPLEMENTATION TASKS
+		- carry out coding for interfaces by x date
+		- carry out server side coding for general business logic (without remote invocation, persistance, and observable pattern) by x date
+		- carry out client side coding (without GUI, remote invocation and observable pattern) by x date
+		- carry out coding to implement remote invocation
+		- create the database to be used in the distributed system by x date
+		- import test data into the database by x date
+		- carry out server side coding to implement persistance to connect to the database by x date
+		- carry out coding to implement observable pattern by x date
+		- complete client side GUI code by x date
+		- carry out changes off the back of unit testing to get failure rate to an acceptable level by x date
+		- carry out changes off the back of system testing to get failure rate to an acceptable level by x date
+		- create a user manual by x date
+	- TESTING TASKS
+		- carry out unit testing by x date
+		- analyse the unit testing results by x date
+		- carry out system testing by x date
+		- analyse system testing by x date
+		- test the user manual
+	- EVAUATION TASKS
+		- carry out evaluation of project by x date
+
+ - Update the Gantt Chart to include the update project objectives above and to include project reports etc.
+	- move Gantt chart to appendices
+
+ - Look into using the observable pattern for the home screen showing the top 5 tenancies and leases due to expire
+
+ - Research how to connect a java application to word, adobe, etc. for document management and DTI letters
+
+ - Start looking at articles from forums for literature and stuff to use for referencing
+
+
+TENANCY  		----creates------>    Rent Account (for tenants balances, can make payments etc)
+LEASE    		----creates------>    Lease Account (for leases balances, can make payments to etc)
+EMPLOYEE TIMESHEET	----creates------>    Employee Account (for employee salaries, overtime, sick, etc, can make payments to etc)
+
+ - Consider creating like an MI-Portal sort of thing that manages the users sick, salary, annual leave etc.
