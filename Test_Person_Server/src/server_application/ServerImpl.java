@@ -13,13 +13,50 @@ import java.util.*;
  */
 public class ServerImpl {
     
+    // List of business data
+    
     private HashMap<String,Person> people = new HashMap<String,Person>();
-    private HashMap<String,Address> addresses = new HashMap<String,Address>();
+    private HashMap<String, Involved_Party> involved_parties = new HashMap<String, Involved_Party>();
     private HashMap<String,Property> properties = new HashMap<String,Property>();
+    private HashMap<String, Application> applications = new HashMap<String, Application>();
+    
+    // List of People details
+    
+    private ArrayList<String> titles = new ArrayList();
+    private ArrayList<String> genders = new ArrayList();
+    private ArrayList<String> marital_statuses = new ArrayList();
+    private ArrayList<String> ethnic_origins = new ArrayList();
+    private ArrayList<String> languages = new ArrayList();
+    private ArrayList<String> nationalities = new ArrayList();
+    private ArrayList<String> sexualities = new ArrayList();
+    private ArrayList<String> religions = new ArrayList();
+    
+    // List of Involved Party details
+    
+    private ArrayList<String> end_reasons = new ArrayList();
+    private ArrayList<String> relationships = new ArrayList();
+    
+    
+    // Lists of Property details
+    
     private HashMap<String,PropertySubType> propertySubTypes = new HashMap<String,PropertySubType>();
     private HashMap<String,PropertyType> propertyTypes = new HashMap<String,PropertyType>();
     private HashMap<String,PropertyTypeValue> propertyTypeValues = new HashMap<String,PropertyTypeValue>();
-    private int personRef;
+    private HashMap<String,Address> addresses = new HashMap<String,Address>();
+    
+    
+    
+    // List of reference counters
+    
+    private int personRef = 1;
+    private int addressRef = 1;
+    private int propRef = 1;
+    private int propsubTypeRef = 1;
+    private int propTypeRef = 1;
+    private int propTypeValueRef = 1;
+    private int applicationRef = 1;
+    
+    
 
     /**
      * @param args the command line arguments

@@ -159,9 +159,54 @@ public class Address
         this.postcode = postcode;
     }
     
+    public boolean isBuildingNumberNull()
+    {
+        return buildingNumber == null;
+    }
+    
+    public boolean isBuildingNameNull()
+    {
+        return buildingName == null;
+    }
+    
+    public boolean isSubStreetNumberNull()
+    {
+        return subStreetNumber == null;
+    }
+    
+    public boolean isSubStreetNull()
+    {
+        return subStreet == null;
+    }
+    
+    public boolean isStreetNumberNull()
+    {
+        return streetNumber == null;
+    }
+    
+    public boolean isStreetNull()
+    {
+        return street == null;
+    }
+    
     public boolean isAreaNull()
     {
         return area == null;
+    }
+    
+    public boolean isTownNull()
+    {
+        return town == null;
+    }
+    
+    public boolean isCountryNull()
+    {
+        return country == null;
+    }
+    
+    public boolean isPostcodeNull()
+    {
+        return postcode == null;
     }
     
     /**
@@ -174,23 +219,23 @@ public class Address
     {
         // put your code here
         String temp = "";
-        if(buildingNumber != null)
+        if(!isBuildingNumberNull())
         {
             temp = temp + buildingNumber;
         }
-        if(buildingName != null)
+        if(!isBuildingNameNull())
         {
             temp = temp + " " + buildingName + ",";
         }
-        if(subStreetNumber != null)
+        if(!isSubStreetNumberNull())
         {
             temp = temp + " " + subStreetNumber;
         }
-        if(subStreet != null)
+        if(!isSubStreetNull())
         {
             temp = temp + " " + subStreet + ",";
         }
-        if(streetNumber != null)
+        if(!isStreetNumberNull())
         {
             if(temp != null)
             {
@@ -202,14 +247,14 @@ public class Address
         
         temp = temp + " " + street + ", ";
         
-        if(area != null)
+        if(!isAreaNull())
         {
             temp = temp + area + ", ";
         }
         
         temp = temp + town + ", ";
         
-        if(country != null)
+        if(!isCountryNull())
         {
             temp = temp + country + ", " + postcode;
         }
