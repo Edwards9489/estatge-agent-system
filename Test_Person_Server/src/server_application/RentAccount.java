@@ -4,34 +4,26 @@
  * and open the template in the editor.
  */
 package server_application;
+import java.util.*;
 
 /**
  *
  * @author Dwayne
  */
-public class RentAccount
-{
+public class RentAccount {
     // instance variables - replace the example below with your own
-    private int x;
+    private final int rent_acc_ref;
+    private String account_name;
+    private Date rent_acc_start;
+    private Date rent_acc_end;
+    private double net_rent;
+    private double balance;
+    private Tenancy tenancy;
+    private boolean arrears_ind;
+    
+    
 
-    /**
-     * Constructor for objects of class RentAccount
-     */
-    public RentAccount()
-    {
-        // initialise instance variables
-        x = 0;
-    }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public RentAccount(int rent_ref) {
+        rent_acc_ref = rent_ref;
     }
 }

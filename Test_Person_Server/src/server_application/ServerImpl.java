@@ -22,9 +22,9 @@ public class ServerImpl {
     
     // List of People details
     
-    private ArrayList<String> titles = new ArrayList();
-    private ArrayList<String> genders = new ArrayList();
-    private ArrayList<String> marital_statuses = new ArrayList();
+    private ArrayList<String> titles = new ArrayList();            // AMEND ALL OF THE LISTS FOR DETAILS OF THINGS
+    private ArrayList<String> genders = new ArrayList();           // TO ACTUAL OBJECTS WITH
+    private ArrayList<String> marital_statuses = new ArrayList();  // (ref, code and description)
     private ArrayList<String> ethnic_origins = new ArrayList();
     private ArrayList<String> languages = new ArrayList();
     private ArrayList<String> nationalities = new ArrayList();
@@ -39,11 +39,9 @@ public class ServerImpl {
     
     // Lists of Property details
     
-    private HashMap<String,PropertySubType> propertySubTypes = new HashMap<String,PropertySubType>();
-    private HashMap<String,PropertyType> propertyTypes = new HashMap<String,PropertyType>();
-    private HashMap<String,PropertyTypeValue> propertyTypeValues = new HashMap<String,PropertyTypeValue>();
     private HashMap<String,Address> addresses = new HashMap<String,Address>();
-    
+    private ArrayList<String> property_types = new ArrayList(); // House, Flat, Bungalow
+    private ArrayList<String> property_sub_types = new ArrayList(); // Terraced, Semi-detached
     
     
     // List of reference counters

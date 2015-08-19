@@ -4,34 +4,22 @@
  * and open the template in the editor.
  */
 package server_application;
+import java.util.*;
 
 /**
  *
  * @author Dwayne
  */
-public class Tenancy
-{
+public class Tenancy {
     // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Tenancy
-     */
-    public Tenancy()
-    {
-        // initialise instance variables
-        x = 0;
-    }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    private final int tenancy_ref;
+    private Date ten_start_date;
+    private Date ten_exp_end_date;
+    private Date actual_end_date;
+    private Property property;
+    private String ten_type;
+    
+    public Tenancy(int tenRef) {
+        tenancy_ref = tenRef;
     }
 }
