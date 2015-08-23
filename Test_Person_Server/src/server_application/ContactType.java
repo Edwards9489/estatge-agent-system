@@ -9,11 +9,8 @@ package server_application;
  *
  * @author Dwayne
  */
-public class Employee {
-    private final int employeeRef;
-    private Contract contract;
-    
-    public Employee(int employeeRef) {
-        this.employeeRef = employeeRef;
-    }
+public class ContactType {
+    private String contactTypeCode;
+    private String contactTypeDescription;
+    private boolean current;
 }

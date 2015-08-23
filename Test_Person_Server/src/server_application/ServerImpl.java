@@ -17,8 +17,21 @@ public class ServerImpl {
     
     private HashMap<String,Person> people = new HashMap<String,Person>();
     private HashMap<String, Involved_Party> involved_parties = new HashMap<String, Involved_Party>();
-    private HashMap<String,Property> properties = new HashMap<String,Property>();
+    private HashMap<String, Employee> employees = new HashMap<String, Employee>();
+    private HashMap<String, Landlord> landlord = new HashMap<String, Landlord>();
+    
     private HashMap<String, Application> applications = new HashMap<String, Application>();
+    
+    private HashMap<String,Property> properties = new HashMap<String,Property>();
+    
+    private HashMap<String, Tenancy> tenancies = new HashMap<String, Tenancy>();
+    private HashMap<String, Lease> leases = new HashMap<String, Lease>();
+    
+    private HashMap<String, RentAccount> rentAccounts = new HashMap<String, RentAccount>();
+    private HashMap<String, LeaseAccount> leaseAccounts = new HashMap<String, LeaseAccount>();
+    
+    
+    
     
     // List of People details
     
@@ -35,13 +48,17 @@ public class ServerImpl {
     
     private ArrayList<String> end_reasons = new ArrayList();
     private ArrayList<String> relationships = new ArrayList();
-    
-    
+        
     // Lists of Property details
     
     private HashMap<String,Address> addresses = new HashMap<String,Address>();
     private ArrayList<String> property_types = new ArrayList(); // House, Flat, Bungalow
     private ArrayList<String> property_sub_types = new ArrayList(); // Terraced, Semi-detached
+    
+    // List of employee details
+    
+    private ArrayList<String> employeeBenefits = new ArrayList();
+    
     
     
     // List of reference counters

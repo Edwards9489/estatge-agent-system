@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 package server_application;
+import java.util.*;
 
 /**
  *
  * @author Dwayne
  */
-public class Employee {
-    private final int employeeRef;
-    private Contract contract;
-    
-    public Employee(int employeeRef) {
-        this.employeeRef = employeeRef;
-    }
+public class Contact {
+    private ContactType contactType;
+    private String contactValue;
+    private Date startDate;
+    private Date endDate;
+    private boolean current;
 }

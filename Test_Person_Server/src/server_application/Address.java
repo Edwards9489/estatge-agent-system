@@ -13,11 +13,11 @@ public class Address
 {
     // instance variables - replace the example below with your own
     private final int addressRef;
-    private Integer buildingNumber;
+    private int buildingNumber = -1;
     private String buildingName;
-    private Integer subStreetNumber;
+    private int subStreetNumber = -1;
     private String subStreet;
-    private Integer streetNumber;
+    private int streetNumber = -1;
     private String street;
     private String area;
     private String town;
@@ -161,7 +161,7 @@ public class Address
     
     public boolean isBuildingNumberNull()
     {
-        return buildingNumber == null;
+        return buildingNumber == -1;
     }
     
     public boolean isBuildingNameNull()
@@ -171,7 +171,7 @@ public class Address
     
     public boolean isSubStreetNumberNull()
     {
-        return subStreetNumber == null;
+        return subStreetNumber == -1;
     }
     
     public boolean isSubStreetNull()
@@ -181,7 +181,7 @@ public class Address
     
     public boolean isStreetNumberNull()
     {
-        return streetNumber == null;
+        return streetNumber == -1;
     }
     
     public boolean isStreetNull()
