@@ -12,12 +12,12 @@ import client_application.*;
  */
 public class Home_Form extends javax.swing.JFrame {
     
-    private static Main test;
+    private static ClientImpl test;
 
     /**
      * Creates new form Home_Form
      */
-    public Home_Form(Main main) {
+    public Home_Form(ClientImpl main) {
         initComponents();
         test = main;
     }

@@ -5,13 +5,43 @@
  */
 package server_application;
 
+import interfaces.Server;
+import interfaces.RegistryLoader;
+import interfaces.RMISecurityPolicyLoader;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.Naming;
 import java.util.*;
 
 /**
  *
  * @author Dwayne
  */
-public class ServerImpl {
+public class ServerImpl extends UnicastRemoteObject implements Server {
+    
+    public ServerImpl() throws RemoteException {
+        super();
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException {
+        // TODO code application logic here
+        // start a registry on this machine
+        RegistryLoader.Load();
+        String myName = "Server";
+        String myIP = java.net.InetAddress.getLocalHost().getHostAddress();
+        String myURL = "rmi://" + myIP + "/" + myName;
+        // register RMI object
+        ServerImpl serv = new ServerImpl();
+        Server serverStub = (Server) serv;
+        //NB rebind will replace any stub with the given name 'ChatterServer'
+        Naming.rebind(myName, serverStub);
+        System.out.println("Server started");
+    }
     
     // List of business data
     
@@ -72,24 +102,15 @@ public class ServerImpl {
     private int applicationRef = 1;
     
     
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
-    
-    
     //add a Chatter to the list
-    public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) {
+    public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) throws RemoteException {
         Person p = new Person(personRef, title, forename, surname, year, month, day, gender);
         personRef++;
         people.put(Integer.toString(p.getPersonRef()), p);
     }
 
     //remove a chatter
-    public void deletePerson(Person p) {
+    public void deletePerson(Person p) throws RemoteException{
         people.remove(Integer.toString(p.getPersonRef()));
     }
 }
