@@ -12,7 +12,7 @@ package server_application;
 public class Address
 {
     // instance variables - replace the example below with your own
-    private final int addressRef;
+    private final int addressRef; // unique refrence for address
     private int buildingNumber = -1;
     private String buildingName;
     private int subStreetNumber = -1;
