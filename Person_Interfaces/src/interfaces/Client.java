@@ -5,11 +5,13 @@
  */
 package interfaces;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  *
  * @author Dwayne
  */
 public interface Client extends Remote {
-    
+    String getName() throws RemoteException;
+    boolean isAlive() throws RemoteException;
 }

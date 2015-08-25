@@ -18,7 +18,7 @@ public class Property
     private Landlord landlord;
     private boolean fullManagement; // indicates if MSc Properties will manage all of the managerial affairs such as damage to prop, or just renting
     private Date acquired_date;
-    private Date contract_end_date;
+    private Date lease_end_date;
     private String prop_type;
     private String prop_sub_type;
     private String prop_status; // Occupied, Void, New, End etc

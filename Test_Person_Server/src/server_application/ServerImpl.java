@@ -7,7 +7,7 @@ package server_application;
 
 import interfaces.Server;
 import interfaces.RegistryLoader;
-import interfaces.RMISecurityPolicyLoader;
+import interfaces.Client;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -89,6 +89,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     private ArrayList<String> employeeBenefits = new ArrayList();
     
+    // List of logged on users
+    
+    private HashMap<String,Client> users = new HashMap<String,Client>();
+    
     
     
     // List of reference counters
@@ -112,5 +116,19 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //remove a chatter
     public void deletePerson(Person p) throws RemoteException{
         people.remove(Integer.toString(p.getPersonRef()));
+    }
+    
+    //add a Chatter to the list
+    public void register(Client c) throws RemoteException {
+        users.put(c.getName(),c);
+    }
+
+    //remove a chatter
+    public void unregister(Client c) throws RemoteException {
+        users.remove(c.getName());
+    }
+    
+    public boolean isAlive() throws RemoteException {
+        return true;
     }
 }

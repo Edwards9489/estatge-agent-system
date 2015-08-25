@@ -68,9 +68,9 @@ public class ClientImpl implements Client{
         //get the registry
         Registry registry = LocateRegistry.getRegistry(host);
         //get the server stub from the registry
-        server = (Server) registry.lookup("ChatterServer");
+        server = (Server) registry.lookup("Server");
         //register the chatter with the server
-//        server.register(getStub());
+        server.register(getStub());
         System.out.println("Server found!");
     }
     
@@ -81,5 +81,14 @@ public class ClientImpl implements Client{
             stub = (Client) UnicastRemoteObject.exportObject(this, 0);
         }
         return stub;
+    }
+    
+    public String getName() throws RemoteException {
+        return name;
+    }
+    
+    //if i have died i won't reply!
+    public boolean isAlive() throws RemoteException {
+        return true;
     }
 }
