@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package client_application;
-import client_gui.*;
 import interfaces.Client;
 import interfaces.Server;
 import interfaces.RMISecurityPolicyLoader;
@@ -22,12 +21,10 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class ClientImpl implements Client{
     
-    private static ClientImpl test;
     String name;
     Server server = null;
     
     public ClientImpl() {
-        test = this;
     }
 
     /**
@@ -35,14 +32,12 @@ public class ClientImpl implements Client{
      */
     public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException, NotBoundException {
         
-        Home_Form form = new Home_Form(test);
-        form.setVisible(true);
-        ClientImpl c1 = (ClientImpl) CreateClient(new String[]{"arnold"});//server
-        ClientImpl c2 = (ClientImpl) CreateClient(new String[]{"donald", "127.0.0.1"});
+        ClientImpl c1 = (ClientImpl) createClient(new String[]{"arnold"});//server
+        ClientImpl c2 = (ClientImpl) createClient(new String[]{"donald", "127.0.0.1"});
         
     }
     
-    public static Client CreateClient(String[] args) throws RemoteException, NotBoundException, UnknownHostException, MalformedURLException {
+    public static Client createClient(String[] args) throws RemoteException, NotBoundException, UnknownHostException, MalformedURLException {
         RMISecurityPolicyLoader.LoadPolicy("RMISecurity.policy");
 
         ClientImpl c = new ClientImpl();

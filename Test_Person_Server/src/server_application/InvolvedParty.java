@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author Dwayne
  */
-public class Involved_Party {
+public class InvolvedParty {
     
     private final int involved_party_ref;
     private Person person;
@@ -22,7 +22,7 @@ public class Involved_Party {
     private String end_reason; // Indicates the reason the involved party was ended against the application
     private String relationship; // Indicates the relationship of this involved party to the main applicant
     
-    private Involved_Party(int inv_party_ref, Person person, boolean joint, boolean main, Date start, String relationship) {
+    private InvolvedParty(int inv_party_ref, Person person, boolean joint, boolean main, Date start, String relationship) {
         involved_party_ref = inv_party_ref;
         this.person = person;
         joint_applicant_ind = joint;
@@ -31,11 +31,35 @@ public class Involved_Party {
         this.relationship = relationship;
     }
     
+    public boolean getJointInd() {
+        return joint_applicant_ind;
+    }
+    
+    public boolean getMainInd() {
+        return main_applicant_ind;
+    }
+    
+    public Date getStartDate() {
+        return start_date;
+    }
+    
+    public Date getEndDate() {
+        return end_date;
+    }
+    
+    public String getEndReason() {
+        return end_reason;
+    }
+    
+    public String getRelationship() {
+        return relationship;
+    }
+    
     public void updateJointInd(boolean joint) {
         joint_applicant_ind = joint;
     }
     
-    public void setMainInd(boolean main) {
+    public void updateMainInd(boolean main) {
         main_applicant_ind = main;
     }
     
@@ -51,12 +75,12 @@ public class Involved_Party {
         this.end_reason = end_reason;
     }
     
+    public void updateRelationship(String relationship) {
+        this.relationship = relationship;
+    }
+    
     public void endInvolvedParty(Date end, String end_reason) {
         updateEndDate(end);
         updateEndReason(end_reason);
-    }
-    
-    public void updateRelationship(String relationship) {
-        this.relationship = relationship;
     }
 }

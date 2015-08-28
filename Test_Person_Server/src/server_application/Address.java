@@ -40,6 +40,10 @@ public class Address
         this.postcode = postcode;
     }
     
+    public int getAddressRef() {
+        return addressRef;
+    }
+    
     /**
      * An example of a method - replace this comment with your own
      * 

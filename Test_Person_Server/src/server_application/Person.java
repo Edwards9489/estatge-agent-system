@@ -25,6 +25,7 @@ public class Person {
     private String nationality;
     private String sexuality;
     private String religion;
+    private ArrayList<Contact> contacts = new ArrayList();
 
     /**
      * Constructor for objects of class Person
@@ -52,6 +53,34 @@ public class Person {
         return surname;
     }
     
+    public String getNI() {
+        return nationalInsurance;
+    }
+    
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+    
+    public String getEthnicOrigin() {
+        return ethnicOrigin;
+    }
+    
+    public String getLanguage() {
+        return language;
+    }
+    
+    public String getNationality() {
+        return nationality;
+    }
+    
+    public String getSexuality() {
+        return sexuality;
+    }
+    
+    public String getReligion() {
+        return religion;
+    }
+    
     public void updateForename(String name) {
         forename = name;
     }
@@ -62,5 +91,38 @@ public class Person {
     
     public void updateGender(String gender) {
         this.gender = gender;
-    }    
+    }
+    
+    public void updateNI(String nationalInsurance) {
+        this.nationalInsurance = nationalInsurance;
+    }
+    
+    public void updateMaritalStatus(String martitalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+    
+    public void updateEthnicOrigin(String ethnicOrigin) {
+        this.ethnicOrigin = ethnicOrigin;
+    }
+    
+    public void updateLanguage(String language) {
+        this.language = language;
+    }
+    
+    public void updateNationality(String nationality) {
+        this.nationality = nationality;
+    }
+    
+    public void updateSexuality(String sexuality) {
+        this.sexuality = sexuality;
+    }
+    
+    public void updateReligion(String religion) {
+        this.religion = religion;
+    }
+    
+    public void createContact(ContactType type, String value, Date date) {
+        Contact c = new Contact(type, value, date);
+        contacts.add(c);
+    }
 }

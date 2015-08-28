@@ -16,4 +16,14 @@ public class Contact {
     private Date startDate;
     private Date endDate;
     private boolean current;
+    
+    public Contact(ContactType type, String value, Date date) {
+        contactType = type;
+        contactValue = value;
+        startDate = date;
+    }
+    
+    public void updateEndDate(Date date) {
+        endDate = date;
+    }
 }

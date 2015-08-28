@@ -38,7 +38,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // register RMI object
         ServerImpl serv = new ServerImpl();
         Server serverStub = (Server) serv;
-        //NB rebind will replace any stub with the given name 'ChatterServer'
+        //NB rebind will replace any stub with the given name 'Server'
         Naming.rebind(myName, serverStub);
         System.out.println("Server started");
     }
@@ -46,7 +46,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     // List of business data
     
     private HashMap<String,Person> people = new HashMap<String,Person>();
-    private HashMap<String, Involved_Party> involved_parties = new HashMap<String, Involved_Party>();
+    private HashMap<String, InvolvedParty> involved_parties = new HashMap<String, InvolvedParty>();
     private HashMap<String, Employee> employees = new HashMap<String, Employee>();
     private HashMap<String, Landlord> landlord = new HashMap<String, Landlord>();
     
@@ -97,37 +97,62 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     // List of reference counters
     
-    private int personRef = 1;
-    private int addressRef = 1;
-    private int propRef = 1;
-    private int propsubTypeRef = 1;
-    private int propTypeRef = 1;
-    private int propTypeValueRef = 1;
-    private int applicationRef = 1;
+    private int personRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int addressRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int propRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int propsubTypeRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int propTypeRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int propTypeValueRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int applicationRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     
     
-    //add a Chatter to the list
+    public void createAddress(String street, String town, String postcode) {
+        Address a = new Address(addressRef, street, town, postcode);
+        addressRef++;
+        addresses.put(Integer.toString(a.getAddressRef()), a);
+        // return a; - amend to accessor once Interfaces are set up
+    }
+    
     public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) throws RemoteException {
         Person p = new Person(personRef, title, forename, surname, year, month, day, gender);
         personRef++;
         people.put(Integer.toString(p.getPersonRef()), p);
-    }
-
-    //remove a chatter
-    public void deletePerson(Person p) throws RemoteException{
-        people.remove(Integer.toString(p.getPersonRef()));
+        // return p; - amend to accessor once Interfaces are set up
     }
     
-    //add a Chatter to the list
+    public void createApplication(ArrayList<InvolvedParty> household, Address address, String corrName) {
+        Application a = new Application(applicationRef, household, address, corrName);
+        applicationRef++;
+        applications.put(Integer.toString(a.getApplicationRef()), a);
+        // return a; - amend to accessor once Interfaces are set up
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //add a client to the users list
     public void register(Client c) throws RemoteException {
         users.put(c.getName(),c);
     }
 
-    //remove a chatter
+    //remove a client from the users list
     public void unregister(Client c) throws RemoteException {
         users.remove(c.getName());
     }
     
+    // returns true if the server is still running
     public boolean isAlive() throws RemoteException {
         return true;
     }

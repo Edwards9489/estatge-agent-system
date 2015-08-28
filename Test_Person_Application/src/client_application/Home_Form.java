@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui;
-import client_application.*;
+package client_application;
 
 /**
  *
@@ -12,14 +11,13 @@ import client_application.*;
  */
 public class Home_Form extends javax.swing.JFrame {
     
-    private static ClientImpl test;
+    ClientImpl client = null;
 
     /**
      * Creates new form Home_Form
      */
-    public Home_Form(ClientImpl main) {
+    public Home_Form() {
         initComponents();
-        test = main;
     }
 
     /**
@@ -138,7 +136,7 @@ public class Home_Form extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home_Form(test).setVisible(true);
+                new Home_Form().setVisible(true);
             }
         });
     }
@@ -150,4 +148,9 @@ public class Home_Form extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JButton viewPerson;
     // End of variables declaration//GEN-END:variables
+    
+    
+    void setClient(ClientImpl c) {
+        client = c;
+    }
 }

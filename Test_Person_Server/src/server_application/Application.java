@@ -12,64 +12,79 @@ import java.util.*;
  */
 public class Application {
     // instance variables - replace the example below with your own
-    private final int app_refno;
-    private boolean app_interested_flag; // indicates if app has an interest in any properties
-    private Date app_created_date;
-    private String app_corr_name;
-    private String app_status_code; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
-    private Date status_date; // indicates the date the status was changed
-    private ArrayList<String> status_history = new ArrayList<>();
-    private ArrayList<Date> status_date_history = new ArrayList<>();
-    private ArrayList<Involved_Party> household = new ArrayList<>();
-    private ArrayList<Involved_Party> historicHousehold = new ArrayList<>();
-    private int app_tcy_refno; // indicates the tenancy ref, if one exists
+    private final int appRef;
+    private boolean appInterestedFlag; // indicates if app has an interest in any properties
+    private Date appCreatedDate;
+    private String appCorrName;
+    private String appStatusCode; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
+    private Date statusDate; // indicates the date the status was changed
+    private ArrayList<String> statusHistory = new ArrayList<>();
+    private ArrayList<Date> statusDateHistory = new ArrayList<>();
+    private ArrayList<InvolvedParty> household = new ArrayList<>();
+    private ArrayList<InvolvedParty> historicHousehold = new ArrayList<>();
+    private ArrayList<Property> propertiesIntrestedIn = new ArrayList();
+    private Tenancy tenancy;
     
     
     
     /**
      * Constructor for objects of class Person
      */
-    public Application(int appRef, ArrayList<Person> household, Address address) {
-        app_refno = appRef;
-        app_created_date = new Date();
-        app_status_code = "NEW";
-        status_date = new Date();
+    public Application(int appRef, ArrayList<InvolvedParty> household, Address address, String corrName) {
+        this.appRef = appRef;
+        appCreatedDate = new Date();
+        appCorrName = corrName;
+        appStatusCode = "NEW";
+        statusDate = new Date();
+        this.household = household;
+    }
+    
+    public int getApplicationRef() {
+        return appRef;
     }
     
     public void setInterestedFlag(boolean interested) {
-        app_interested_flag = interested;
+        appInterestedFlag = interested;
     }
     
     public void updateCorrespondenceName(String name) {
-        app_corr_name = name;
+        appCorrName = name;
     }
     
     public void updateStatus(String status) {
         addHistoricStatus();
-        app_status_code = status;
+        appStatusCode = status;
         updateStatusDate(new Date());
     }
     
     public void updateStatusDate(Date date) {
-        status_date = date;
+        statusDate = date;
     }
     
     public void addHistoricStatus() {
-        status_history.add(status_history.size(), app_status_code);
-        status_date_history.add(status_date_history.size(), status_date);
+        statusHistory.add(statusHistory.size(), appStatusCode);
+        statusDateHistory.add(statusDateHistory.size(), statusDate);
     }
     
-    public void addInvolvedParty(Involved_Party party) {
+    public void addInvolvedParty(InvolvedParty party) {
         household.add(household.size(), party);
     }
     
-    public void endInvolvedParty(Involved_Party party, Date end, String endReason) {
+    public void endInvolvedParty(InvolvedParty party, Date end, String endReason) {
         party.endInvolvedParty(end, endReason);
         household.remove(party);
         historicHousehold.add(historicHousehold.size(), party);
     }
     
-    public void setTenancyRef(int tcyRef) {
-        app_tcy_refno = tcyRef;
+    public void setTenancy(Tenancy tenancy) {
+        this.tenancy = tenancy;
+    }
+    
+    public void addInterestedProperty(Property property) {
+        propertiesIntrestedIn.add(household.size(), property);
+    }
+    
+    public void endInterestInProperty(Property property) {
+        propertiesIntrestedIn.remove(property);
     }
 }
