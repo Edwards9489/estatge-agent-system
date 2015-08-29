@@ -11,9 +11,9 @@ Creating a Collapsable Panel
  - add JXCollapsiblePane to the JFrame
  - within the frame constructor (where the initComponents() method is invoked), set the layout of the jXCollapsiblePane and add the panel that is intended to collapase (so the panel with the (-) button) to the jXCollapsiblePanel and then add the actionListener to the (-) buttons and (+) buttons to collapse and expand the collapsible panel using the below code
 
-jXCollapsiblePanel.setLayout(new BorderLayout());
-jXCollapsiblePanel.add(jPanel2, BorderLayout.CENTER);
-btnToggle.addActionListener(jXCollapasiblePanel.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
+jXCollapsiblePane1.setLayout(new BorderLayout());
+jXCollapsiblePane1.add(jPanel2, BorderLayout.CENTER);
+btnToggle.addActionListener(jXCollapasiblePane1.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
 
  - amend the collapsed property for the jXCollapsiblePane so that the checkbox is checked, meaning that the pane will be collapsed upon start up
  - create a componentResized event for the JFrame (select formComponentResized) which generates a method in the Java file. The method should check to see if the jXCollapsiblePane is collapsed, if it is then the collapsable fram will have its preffered size 
