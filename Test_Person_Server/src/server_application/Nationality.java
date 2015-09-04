@@ -9,10 +9,9 @@ package server_application;
  *
  * @author Dwayne
  */
-public class PropertyType extends Element {
-
-    public PropertyType(String code, String description)
-    {
+public class Nationality extends Element {
+    
+    public Nationality(String code, String description) {
         super(code, description);
     }
 }

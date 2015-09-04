@@ -92,6 +92,7 @@ public class Home_Form extends javax.swing.JFrame {
 
     private void viewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPersonActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_viewPersonActionPerformed
 
     private void editPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPersonActionPerformed
@@ -100,7 +101,14 @@ public class Home_Form extends javax.swing.JFrame {
 
     private void createPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPersonActionPerformed
         // TODO add your handling code here:
-        CreatePersonForm form = new CreatePersonForm();
+        if (client != null) {
+            CreatePersonForm form = new CreatePersonForm();
+            form.setClient(client);
+//            //chat.addObserver(this);
+            form.setTitle("Create Person");
+            form.setVisible(true);
+        }
+        
     }//GEN-LAST:event_createPersonActionPerformed
 
     /**

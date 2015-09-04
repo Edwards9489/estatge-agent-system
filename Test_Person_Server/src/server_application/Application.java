@@ -70,7 +70,7 @@ public class Application {
         household.add(household.size(), party);
     }
     
-    public void endInvolvedParty(InvolvedParty party, Date end, String endReason) {
+    public void endInvolvedParty(InvolvedParty party, Date end, EndReason endReason) {
         party.endInvolvedParty(end, endReason);
         household.remove(party);
         historicHousehold.add(historicHousehold.size(), party);

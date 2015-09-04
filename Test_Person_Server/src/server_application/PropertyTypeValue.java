@@ -20,12 +20,12 @@ public class PropertyTypeValue
     /**
      * Constructor for objects of class PropertyTypeValue
      */
-    public PropertyTypeValue(PropertyType type, PropertySubType subType)
+    public PropertyTypeValue(Element type, Element subType)
     {
         // initialise instance variables
-        propertyTypeValueCode = type.getPropertyTypeCode() + subType.getPropertySubTypeCode();
-        propertyType = type;
-        propertySubType = subType;
+        propertyTypeValueCode = type.getCode() + subType.getCode();
+        propertyType = (PropertyType) type;
+        propertySubType = (PropertySubType) subType;
         isCurrent = true;
     }
     

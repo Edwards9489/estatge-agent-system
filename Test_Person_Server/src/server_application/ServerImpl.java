@@ -45,49 +45,49 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     // List of business data
     
-    private HashMap<String,Person> people = new HashMap<String,Person>();
-    private HashMap<String, InvolvedParty> involved_parties = new HashMap<String, InvolvedParty>();
-    private HashMap<String, Employee> employees = new HashMap<String, Employee>();
-    private HashMap<String, Landlord> landlord = new HashMap<String, Landlord>();
+    private HashMap<String,Person> people = new HashMap<>();
+    private HashMap<String, InvolvedParty> involved_parties = new HashMap<>();
+    private HashMap<String, Employee> employees = new HashMap<>();
+    private HashMap<String, Landlord> landlord = new HashMap<>();
     
-    private HashMap<String, Application> applications = new HashMap<String, Application>();
+    private HashMap<String, Application> applications = new HashMap<>();
     
-    private HashMap<String,Property> properties = new HashMap<String,Property>();
+    private HashMap<String,Property> properties = new HashMap<>();
     
-    private HashMap<String, Tenancy> tenancies = new HashMap<String, Tenancy>();
-    private HashMap<String, Lease> leases = new HashMap<String, Lease>();
+    private HashMap<String, Tenancy> tenancies = new HashMap<>();
+    private HashMap<String, Lease> leases = new HashMap<>();
     
-    private HashMap<String, RentAccount> rentAccounts = new HashMap<String, RentAccount>();
-    private HashMap<String, LeaseAccount> leaseAccounts = new HashMap<String, LeaseAccount>();
+    private HashMap<String, RentAccount> rentAccounts = new HashMap<>();
+    private HashMap<String, LeaseAccount> leaseAccounts = new HashMap<>();
     
     
     
     
     // List of People details
     
-    private ArrayList<String> titles = new ArrayList();            // AMEND ALL OF THE LISTS FOR DETAILS OF THINGS
-    private ArrayList<String> genders = new ArrayList();           // TO ACTUAL OBJECTS WITH
-    private ArrayList<String> marital_statuses = new ArrayList();  // (ref, code and description)
-    private ArrayList<String> ethnic_origins = new ArrayList();
-    private ArrayList<String> languages = new ArrayList();
-    private ArrayList<String> nationalities = new ArrayList();
-    private ArrayList<String> sexualities = new ArrayList();
-    private ArrayList<String> religions = new ArrayList();
+    private HashMap<String, Title> titles = new HashMap<>();
+    private HashMap<String, Gender> genders = new HashMap<>();
+    private HashMap<String, MaritalStatus> marital_statuses = new HashMap<>();
+    private HashMap<String, EthnicOrigin> ethnic_origins = new HashMap<>();
+    private HashMap<String, Language> languages = new HashMap<>();
+    private HashMap<String, Nationality> nationalities = new HashMap<>();
+    private HashMap<String, Sexuality> sexualities = new HashMap<>();
+    private HashMap<String, Religion> religions = new HashMap<>();
     
     // List of Involved Party details
     
-    private ArrayList<String> end_reasons = new ArrayList();
-    private ArrayList<String> relationships = new ArrayList();
+    private HashMap<String, EndReason> end_reasons = new HashMap<>();
+    private HashMap<String, Relationship> relationships = new HashMap<>();
         
     // Lists of Property details
     
     private HashMap<String,Address> addresses = new HashMap<String,Address>();
-    private ArrayList<String> property_types = new ArrayList(); // House, Flat, Bungalow
-    private ArrayList<String> property_sub_types = new ArrayList(); // Terraced, Semi-detached
+    private HashMap<String, PropertyType> property_types = new HashMap<>(); // House, Flat, Bungalow
+    private HashMap<String, PropertySubType> property_sub_types = new HashMap<>(); // Terraced, Semi-detached
     
     // List of employee details
     
-    private ArrayList<String> employeeBenefits = new ArrayList();
+    private HashMap<String, String> employeeBenefits = new HashMap<>();
     
     // List of logged on users
     
@@ -100,11 +100,81 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int personRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     private int addressRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     private int propRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-    private int propsubTypeRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-    private int propTypeRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-    private int propTypeValueRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     private int applicationRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int involvedPartyRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     
+    
+    public void createTitle(String code, String description) {
+        Element title = null;
+        if(!titleExists(code)) {
+            title = new Title(code, description);
+            titles.put(title.getCode(), (Title) title);
+        }
+        //return type;
+    }
+    
+    public void createGender(String code, String description) {
+        Element gen = null;
+        if(!genderExists(code)) {
+            gen = new Gender(code, description);
+            genders.put(gen.getCode(), (Gender) gen);
+        }
+        //return type;
+    }
+    
+    public void createMaritalStatus(String code, String description) {
+        Element status = null;
+        if(!maritalStatusExists(code)) {
+            status = new MaritalStatus(code, description);
+            marital_statuses.put(status.getCode(), (MaritalStatus) status);
+        }
+        //return type;
+    }
+    
+    public void createEthnicOrigin(String code, String description) {
+        Element origin = null;
+        if(!ethnicOriginExists(code)) {
+            origin = new EthnicOrigin(code, description);
+            ethnic_origins.put(origin.getCode(), (EthnicOrigin) origin);
+        }
+        //return type;
+    }
+    
+    public void createLanguage(String code, String description) {
+        Element language = null;
+        if(!languageExists(code)) {
+            language = new Language(code, description);
+            languages.put(language.getCode(), (Language) language);
+        }
+        //return type;
+    }
+    
+    public void createNationality(String code, String description) {
+        Element nationality = null;
+        if(!nationalityExists(code)) {
+            nationality = new Gender(code, description);
+            nationalities.put(nationality.getCode(), (Nationality) nationality);
+        }
+        //return type;
+    }
+    
+    public void createSexuality(String code, String description) {
+        Element sexuality = null;
+        if(!sexualityExists(code)) {
+            sexuality = new Sexuality(code, description);
+            sexualities.put(sexuality.getCode(), (Sexuality) sexuality);
+        }
+        //return type;
+    }
+    
+    public void createReligion(String code, String description) {
+        Element religion = null;
+        if(!religionExists(code)) {
+            religion = new Religion(code, description);
+            religions.put(religion.getCode(), (Religion) religion);
+        }
+        //return type;
+    }
     
     public void createAddress(String street, String town, String postcode) {
         Address a = new Address(addressRef, street, town, postcode);
@@ -113,10 +183,35 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // return a; - amend to accessor once Interfaces are set up
     }
     
+    public void createPropertyType(String code, String description) {
+        Element type = null;
+        if(!propTypeExists(code)) {
+            type = new PropertyType(code, description);
+            property_types.put(type.getCode(), (PropertyType) type);
+        }
+        //return type;
+    }
+    
+    public void createPropertySubType(String code, String description) {
+        Element type = null;
+        if(!propSubTypeExists(code)) {
+            type = new PropertySubType(code, description);
+            property_sub_types.put(type.getCode(), (PropertySubType) type);
+        }
+        //return type;
+    }
+    
     public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) throws RemoteException {
         Person p = new Person(personRef, title, forename, surname, year, month, day, gender);
         personRef++;
         people.put(Integer.toString(p.getPersonRef()), p);
+        // return p; - amend to accessor once Interfaces are set up
+    }
+    
+    public void createInvolvedParty(Person p, boolean joint, boolean main, Date start, Relationship relationship) throws RemoteException {
+        InvolvedParty i = new InvolvedParty(involvedPartyRef, p, joint, main, start, relationship);
+        involvedPartyRef++;
+        involved_parties.put(Integer.toString(i.getInvolvedPartyRef()), i);
         // return p; - amend to accessor once Interfaces are set up
     }
     
@@ -127,6 +222,45 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // return a; - amend to accessor once Interfaces are set up
     }
     
+    public boolean titleExists(String code) {
+        return titles.containsKey(code);
+    }
+    
+    public boolean genderExists(String code) {
+        return genders.containsKey(code);
+    }
+    
+    public boolean maritalStatusExists(String code) {
+        return marital_statuses.containsKey(code);
+    }
+    
+    public boolean ethnicOriginExists(String code) {
+        return ethnic_origins.containsKey(code);
+    }
+    
+    public boolean languageExists(String code) {
+        return languages.containsKey(code);
+    }
+    
+    public boolean nationalityExists(String code) {
+        return nationalities.containsKey(code);
+    }
+    
+    public boolean sexualityExists(String code) {
+        return sexualities.containsKey(code);
+    }
+    
+    public boolean religionExists(String code) {
+        return religions.containsKey(code);
+    }
+    
+    public boolean propTypeExists(String code) {
+        return property_types.containsKey(code);
+    }
+    
+    public boolean propSubTypeExists(String code) {
+        return property_sub_types.containsKey(code);
+    }
     
     
     

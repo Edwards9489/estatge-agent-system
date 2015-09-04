@@ -9,10 +9,9 @@ package server_application;
  *
  * @author Dwayne
  */
-public class PropertyType extends Element {
-
-    public PropertyType(String code, String description)
-    {
+public class EndReason extends Element {
+    
+    public EndReason(String code, String description) {
         super(code, description);
-    }
+    }    
 }

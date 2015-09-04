@@ -23,8 +23,6 @@ public class Property
     private String prop_sub_type;
     private String prop_status; // Occupied, Void, New, End etc
     
-    
-
     /**
      * Constructor for objects of class Property
      */

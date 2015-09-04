@@ -10,6 +10,8 @@ package client_application;
  * @author Dwayne
  */
 public class CreatePersonForm extends javax.swing.JFrame {
+    
+    ClientImpl client = null;
 
     /**
      * Creates new form CreatePerson_Form
@@ -475,6 +477,10 @@ public class CreatePersonForm extends javax.swing.JFrame {
                 new CreatePersonForm().setVisible(true);
             }
         });
+    }
+    
+    void setClient(ClientImpl c) {
+        client = c;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

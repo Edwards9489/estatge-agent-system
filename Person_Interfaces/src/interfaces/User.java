@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package interfaces;
 
 /**
  *
  * @author Dwayne
  */
-public class PropertyType extends Element {
-
-    public PropertyType(String code, String description)
-    {
-        super(code, description);
-    }
+public interface User {
+    boolean isUser(String username, String password);
 }
