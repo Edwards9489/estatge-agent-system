@@ -11,7 +11,7 @@ package server_application;
  */
 public class Religion extends Element {
     
-    public Religion(String code, String description) {
-        super(code, description);
+    public Religion(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }    
 }

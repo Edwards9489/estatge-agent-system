@@ -11,7 +11,7 @@ package server_application;
  */
 public class Gender extends Element {
     
-    public Gender(String code, String description) {
-        super(code, description);
+    public Gender(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

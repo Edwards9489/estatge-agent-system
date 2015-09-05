@@ -11,8 +11,8 @@ package server_application;
  */
 public class PropertyType extends Element {
 
-    public PropertyType(String code, String description)
+    public PropertyType(String code, String description, String createdBy)
     {
-        super(code, description);
+        super(code, description, createdBy);
     }
 }

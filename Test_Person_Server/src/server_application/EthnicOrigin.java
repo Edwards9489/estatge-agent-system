@@ -11,7 +11,7 @@ package server_application;
  */
 public class EthnicOrigin extends Element {
     
-    public EthnicOrigin(String code, String description) {
-        super(code, description);
+    public EthnicOrigin(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

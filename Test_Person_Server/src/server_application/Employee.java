@@ -5,6 +5,8 @@
  */
 package server_application;
 
+import java.util.Date;
+
 /**
  *
  * @author Dwayne
@@ -12,8 +14,12 @@ package server_application;
 public class Employee {
     private final int employeeRef;
     private Contract contract;
+    private final String createdBy;
+    private final Date createdDate;
     
-    public Employee(int employeeRef) {
+    public Employee(int employeeRef, String createdBy) {
         this.employeeRef = employeeRef;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 }

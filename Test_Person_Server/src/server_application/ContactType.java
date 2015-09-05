@@ -9,8 +9,9 @@ package server_application;
  *
  * @author Dwayne
  */
-public class ContactType {
-    private String contactTypeCode;
-    private String contactTypeDescription;
-    private boolean current;
+public class ContactType extends Element {
+    
+    public ContactType(String code, String description, String createdBy) {
+        super(code, description, createdBy);
+    }
 }

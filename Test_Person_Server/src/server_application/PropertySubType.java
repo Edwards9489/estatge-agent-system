@@ -14,8 +14,8 @@ public class PropertySubType extends Element {
     /**
      * Constructor for objects of class PropertySubType
      */
-    public PropertySubType(String code, String description)
+    public PropertySubType(String code, String description, String createdBy)
     {
-        super(code, description);
+        super(code, description, createdBy);
     }
 }

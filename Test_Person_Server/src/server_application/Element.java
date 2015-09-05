@@ -5,6 +5,8 @@
  */
 package server_application;
 
+import java.util.Date;
+
 /**
  *
  * @author Dwayne
@@ -13,10 +15,14 @@ public class Element {
     private final String code;
     private String description;
     private boolean current;
+    private final String createdBy;
+    private final Date createdDate;
     
-    public Element(String code, String description) {
+    public Element(String code, String description, String createdBy) {
         this.code = code;
         this.description = description;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
         current = true;
     }
     

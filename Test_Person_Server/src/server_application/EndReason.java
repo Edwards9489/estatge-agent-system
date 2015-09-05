@@ -11,7 +11,7 @@ package server_application;
  */
 public class EndReason extends Element {
     
-    public EndReason(String code, String description) {
-        super(code, description);
+    public EndReason(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }    
 }

@@ -11,7 +11,7 @@ package server_application;
  */
 public class Language extends Element {
     
-    public Language(String code, String description) {
-        super(code, description);
+    public Language(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

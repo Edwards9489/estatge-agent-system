@@ -16,11 +16,17 @@ public class Contact {
     private Date startDate;
     private Date endDate;
     private boolean current;
+    private final String createdBy;
+    private final Date createdDate;
+    private ArrayList<String> modifedBy;
+    private ArrayList<Date> modifedDate;
     
-    public Contact(ContactType type, String value, Date date) {
+    public Contact(ContactType type, String value, Date date, String createdBy) {
         contactType = type;
         contactValue = value;
         startDate = date;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     
     public void updateEndDate(Date date) {

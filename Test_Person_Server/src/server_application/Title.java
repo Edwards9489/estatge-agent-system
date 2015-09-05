@@ -11,7 +11,7 @@ package server_application;
  */
 public class Title extends Element {
     
-    public Title(String code, String description) {
-        super(code, description);
+    public Title(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

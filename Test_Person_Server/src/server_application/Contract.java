@@ -16,8 +16,12 @@ public class Contract {
     private JobRole jobRole;
     private Date startDate;
     private int length;
+    private final String createdBy;
+    private final Date createdDate;
     
-    public Contract(int contractRef) {
+    public Contract(int contractRef, String createdBy) {
         this.contractRef = contractRef;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 }

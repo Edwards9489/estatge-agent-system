@@ -11,7 +11,7 @@ package server_application;
  */
 public class Relationship extends Element {
     
-    public Relationship(String code, String description) {
-        super(code, description);
+    public Relationship(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

@@ -14,7 +14,6 @@ public class Application {
     // instance variables - replace the example below with your own
     private final int appRef;
     private boolean appInterestedFlag; // indicates if app has an interest in any properties
-    private Date appCreatedDate;
     private String appCorrName;
     private String appStatusCode; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
     private Date statusDate; // indicates the date the status was changed
@@ -24,19 +23,22 @@ public class Application {
     private ArrayList<InvolvedParty> historicHousehold = new ArrayList<>();
     private ArrayList<Property> propertiesIntrestedIn = new ArrayList();
     private Tenancy tenancy;
+    private final String createdBy;
+    private final Date createdDate;
     
     
     
     /**
      * Constructor for objects of class Person
      */
-    public Application(int appRef, ArrayList<InvolvedParty> household, Address address, String corrName) {
+    public Application(int appRef, ArrayList<InvolvedParty> household, Address address, String corrName, String createdBy) {
         this.appRef = appRef;
-        appCreatedDate = new Date();
         appCorrName = corrName;
         appStatusCode = "NEW";
         statusDate = new Date();
         this.household = household;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     
     public int getApplicationRef() {
@@ -47,33 +49,33 @@ public class Application {
         appInterestedFlag = interested;
     }
     
-    public void updateCorrespondenceName(String name) {
+    public void setCorrespondenceName(String name) {
         appCorrName = name;
     }
     
-    public void updateStatus(String status) {
+    public void setStatus(String status) {
         addHistoricStatus();
         appStatusCode = status;
-        updateStatusDate(new Date());
+        setStatusDate(new Date());
     }
     
-    public void updateStatusDate(Date date) {
+    public void setStatusDate(Date date) {
         statusDate = date;
     }
     
     public void addHistoricStatus() {
-        statusHistory.add(statusHistory.size(), appStatusCode);
-        statusDateHistory.add(statusDateHistory.size(), statusDate);
+        getStatusHistory().add(getStatusHistory().size(), getAppStatusCode());
+        getStatusDateHistory().add(getStatusDateHistory().size(), getStatusDate());
     }
     
     public void addInvolvedParty(InvolvedParty party) {
-        household.add(household.size(), party);
+        getHousehold().add(getHousehold().size(), party);
     }
     
     public void endInvolvedParty(InvolvedParty party, Date end, EndReason endReason) {
         party.endInvolvedParty(end, endReason);
-        household.remove(party);
-        historicHousehold.add(historicHousehold.size(), party);
+        getHousehold().remove(party);
+        getHistoricHousehold().add(getHistoricHousehold().size(), party);
     }
     
     public void setTenancy(Tenancy tenancy) {
@@ -81,10 +83,94 @@ public class Application {
     }
     
     public void addInterestedProperty(Property property) {
-        propertiesIntrestedIn.add(household.size(), property);
+        getPropertiesIntrestedIn().add(getHousehold().size(), property);
     }
     
     public void endInterestInProperty(Property property) {
-        propertiesIntrestedIn.remove(property);
+        getPropertiesIntrestedIn().remove(property);
+    }
+
+    /**
+     * @return the appInterestedFlag
+     */
+    public boolean isAppInterestedFlag() {
+        return appInterestedFlag;
+    }
+
+    /**
+     * @return the appCorrName
+     */
+    public String getAppCorrName() {
+        return appCorrName;
+    }
+
+    /**
+     * @return the appStatusCode
+     */
+    public String getAppStatusCode() {
+        return appStatusCode;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    /**
+     * @return the statusHistory
+     */
+    public ArrayList<String> getStatusHistory() {
+        return statusHistory;
+    }
+
+    /**
+     * @return the statusDateHistory
+     */
+    public ArrayList<Date> getStatusDateHistory() {
+        return statusDateHistory;
+    }
+
+    /**
+     * @return the household
+     */
+    public ArrayList<InvolvedParty> getHousehold() {
+        return household;
+    }
+
+    /**
+     * @return the historicHousehold
+     */
+    public ArrayList<InvolvedParty> getHistoricHousehold() {
+        return historicHousehold;
+    }
+
+    /**
+     * @return the propertiesIntrestedIn
+     */
+    public ArrayList<Property> getPropertiesIntrestedIn() {
+        return propertiesIntrestedIn;
+    }
+
+    /**
+     * @return the tenancy
+     */
+    public Tenancy getTenancy() {
+        return tenancy;
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @return the createdDate
+     */
+    public Date getCreatedDate() {
+        return createdDate;
     }
 }

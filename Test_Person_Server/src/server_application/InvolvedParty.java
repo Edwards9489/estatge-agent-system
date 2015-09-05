@@ -16,19 +16,21 @@ public class InvolvedParty {
     private Person person;
     private boolean joint_applicant_ind;
     private boolean main_applicant_ind;
-    private Date created_date; // indicates when the involved party was created against 
     private Date start_date; // start date of the involved party against the application
     private Date end_date; // end date of the involved party against the application
     private EndReason end_reason; // Indicates the reason the involved party was ended against the application
     private Relationship relationship; // Indicates the relationship of this involved party to the main applicant
+    private final String createdBy;
+    private final Date createdDate;
     
-    public InvolvedParty(int inv_party_ref, Person person, boolean joint, boolean main, Date start, Relationship relationship) {
-        involvedPartyRef = inv_party_ref;
+    public InvolvedParty(int inv_party_ref, Person person, boolean joint, boolean main, Date start, Relationship relationship, String createdBy) {
+        this.involvedPartyRef = inv_party_ref;
         this.person = person;
-        joint_applicant_ind = joint;
-        created_date = new Date();
-        start_date = start;
+        this.joint_applicant_ind = joint;
+        this.start_date = start;
         this.relationship = relationship;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     
     public int getInvolvedPartyRef() {

@@ -121,8 +121,8 @@ public class Person {
         this.religion = religion;
     }
     
-    public void createContact(ContactType type, String value, Date date) {
-        Contact c = new Contact(type, value, date);
+    public void createContact(ContactType type, String value, Date date, String createdBy) {
+        Contact c = new Contact(type, value, date, createdBy);
         contacts.add(c);
     }
 }

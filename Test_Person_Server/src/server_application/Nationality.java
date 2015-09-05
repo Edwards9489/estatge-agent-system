@@ -11,7 +11,7 @@ package server_application;
  */
 public class Nationality extends Element {
     
-    public Nationality(String code, String description) {
-        super(code, description);
+    public Nationality(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

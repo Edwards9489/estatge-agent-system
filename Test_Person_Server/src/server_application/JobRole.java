@@ -18,9 +18,13 @@ public class JobRole {
     private boolean fullTime;
     private double salary;
     private ArrayList<String> benefits;
+    private final String createdBy;
+    private final Date createdDate;
     
     
-    public JobRole(int jobRef) {
+    public JobRole(int jobRef, String createdBy) {
         job_role_ref = jobRef;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 }

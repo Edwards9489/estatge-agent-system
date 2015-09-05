@@ -11,7 +11,7 @@ package server_application;
  */
 public class MaritalStatus extends Element {
     
-    public MaritalStatus(String code, String description) {
-        super(code, description);
+    public MaritalStatus(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }
 }

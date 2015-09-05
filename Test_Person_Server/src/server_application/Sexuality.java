@@ -11,7 +11,7 @@ package server_application;
  */
 public class Sexuality extends Element {
     
-    public Sexuality(String code, String description) {
-        super(code, description);
+    public Sexuality(String code, String description, String createdBy) {
+        super(code, description, createdBy);
     }    
 }

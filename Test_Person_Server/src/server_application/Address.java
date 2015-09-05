@@ -5,6 +5,9 @@
  */
 package server_application;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  *
  * @author Dwayne
@@ -23,6 +26,11 @@ public class Address
     private String town;
     private String country;
     private String postcode;
+    private final String createdBy;
+    private final Date createdDate;
+    private ArrayList<String> modifiedBy;
+    private ArrayList<Date> modifiedDate;
+    
     
 
     /**
@@ -31,17 +39,14 @@ public class Address
      * @param town
      * @param postcode
      */
-    public Address(int addressRef, String street, String town, String postcode)
-    {
+    public Address(int addressRef, String street, String town, String postcode, String createdBy) {
         // initialise instance variables
         this.addressRef = addressRef;
         this.street = street;
         this.town = town;
         this.postcode = postcode;
-    }
-    
-    public int getAddressRef() {
-        return addressRef;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     
     /**
@@ -49,7 +54,7 @@ public class Address
      * 
      * @param number
      */
-    public void updateBuildingNumber(int number)
+    public void setBuildingNumber(int number)
     {
         // put your code here
         buildingNumber = number;
@@ -61,7 +66,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateBuildingName(String name)
+    public void setBuildingName(String name)
     {
         // put your code here
         buildingName = name;
@@ -73,7 +78,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateSubStreetNumber(int number)
+    public void setSubStreetNumber(int number)
     {
         // put your code here
         subStreetNumber = number;
@@ -85,7 +90,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateSubStreet(String street)
+    public void setSubStreet(String street)
     {
         // put your code here
         subStreet = street;
@@ -97,7 +102,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateStreetNumber(int number)
+    public void setStreetNumber(int number)
     {
         // put your code here
         streetNumber = number;
@@ -109,7 +114,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateStreet(String street)
+    public void setStreet(String street)
     {
         // put your code here
         this.street = street;
@@ -121,7 +126,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateArea(String area)
+    public void setArea(String area)
     {
         // put your code here
         this.area = area;
@@ -133,7 +138,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateTown(String town)
+    public void setTown(String town)
     {
         // put your code here
         this.town = town;
@@ -145,7 +150,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updateCountry(String country)
+    public void setCountry(String country)
     {
         // put your code here
         this.country = country;
@@ -157,7 +162,7 @@ public class Address
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public void updatePostcode(String postcode)
+    public void setPostcode(String postcode)
     {
         // put your code here
         this.postcode = postcode;
@@ -165,52 +170,52 @@ public class Address
     
     public boolean isBuildingNumberNull()
     {
-        return buildingNumber == -1;
+        return getBuildingNumber() == -1;
     }
     
     public boolean isBuildingNameNull()
     {
-        return buildingName == null;
+        return getBuildingName() == null;
     }
     
     public boolean isSubStreetNumberNull()
     {
-        return subStreetNumber == -1;
+        return getSubStreetNumber() == -1;
     }
     
     public boolean isSubStreetNull()
     {
-        return subStreet == null;
+        return getSubStreet() == null;
     }
     
     public boolean isStreetNumberNull()
     {
-        return streetNumber == -1;
+        return getStreetNumber() == -1;
     }
     
     public boolean isStreetNull()
     {
-        return street == null;
+        return getStreet() == null;
     }
     
     public boolean isAreaNull()
     {
-        return area == null;
+        return getArea() == null;
     }
     
     public boolean isTownNull()
     {
-        return town == null;
+        return getTown() == null;
     }
     
     public boolean isCountryNull()
     {
-        return country == null;
+        return getCountry() == null;
     }
     
     public boolean isPostcodeNull()
     {
-        return postcode == null;
+        return getPostcode() == null;
     }
     
     /**
@@ -225,19 +230,19 @@ public class Address
         String temp = "";
         if(!isBuildingNumberNull())
         {
-            temp = temp + buildingNumber;
+            temp = temp + getBuildingNumber();
         }
         if(!isBuildingNameNull())
         {
-            temp = temp + " " + buildingName + ",";
+            temp = temp + " " + getBuildingName() + ",";
         }
         if(!isSubStreetNumberNull())
         {
-            temp = temp + " " + subStreetNumber;
+            temp = temp + " " + getSubStreetNumber();
         }
         if(!isSubStreetNull())
         {
-            temp = temp + " " + subStreet + ",";
+            temp = temp + " " + getSubStreet() + ",";
         }
         if(!isStreetNumberNull())
         {
@@ -246,27 +251,119 @@ public class Address
                 temp = temp + " ";
             }
             
-            temp = temp + streetNumber;
+            temp = temp + getStreetNumber();
         }
         
-        temp = temp + " " + street + ", ";
+        temp = temp + " " + getStreet() + ", ";
         
         if(!isAreaNull())
         {
-            temp = temp + area + ", ";
+            temp = temp + getArea() + ", ";
         }
         
-        temp = temp + town + ", ";
+        temp = temp + getTown() + ", ";
         
         if(!isCountryNull())
         {
-            temp = temp + country + ", " + postcode;
+            temp = temp + getCountry() + ", " + getPostcode();
         }
         else
         {
-            temp = temp + postcode;
+            temp = temp + getPostcode();
         }
         
         System.out.println(temp);
+    }
+    
+    
+    /**
+     * @return the addressRef
+     */
+    public int getAddressRef() {
+        return addressRef;
+    }
+
+    /**
+     * @return the buildingNumber
+     */
+    public int getBuildingNumber() {
+        return buildingNumber;
+    }
+
+    /**
+     * @return the buildingName
+     */
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    /**
+     * @return the subStreetNumber
+     */
+    public int getSubStreetNumber() {
+        return subStreetNumber;
+    }
+
+    /**
+     * @return the subStreet
+     */
+    public String getSubStreet() {
+        return subStreet;
+    }
+
+    /**
+     * @return the streetNumber
+     */
+    public int getStreetNumber() {
+        return streetNumber;
+    }
+
+    /**
+     * @return the street
+     */
+    public String getStreet() {
+        return street;
+    }
+
+    /**
+     * @return the area
+     */
+    public String getArea() {
+        return area;
+    }
+
+    /**
+     * @return the town
+     */
+    public String getTown() {
+        return town;
+    }
+
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @return the postcode
+     */
+    public String getPostcode() {
+        return postcode;
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @return the createdDate
+     */
+    public Date getCreatedDate() {
+        return createdDate;
     }
 }

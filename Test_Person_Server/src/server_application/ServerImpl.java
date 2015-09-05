@@ -81,9 +81,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         
     // Lists of Property details
     
-    private HashMap<String,Address> addresses = new HashMap<String,Address>();
+    private HashMap<String, Address> addresses = new HashMap<String,Address>();
     private HashMap<String, PropertyType> property_types = new HashMap<>(); // House, Flat, Bungalow
     private HashMap<String, PropertySubType> property_sub_types = new HashMap<>(); // Terraced, Semi-detached
+    private HashMap<String, Element> propertyElements = new HashMap<>();
     
     // List of employee details
     
@@ -104,101 +105,109 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int involvedPartyRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     
     
-    public void createTitle(String code, String description) {
+    public void createTitle(String code, String description, String createdBy) {
         Element title = null;
         if(!titleExists(code)) {
-            title = new Title(code, description);
+            title = new Title(code, description, createdBy);
             titles.put(title.getCode(), (Title) title);
         }
         //return type;
     }
     
-    public void createGender(String code, String description) {
+    public void createGender(String code, String description, String createdBy) {
         Element gen = null;
         if(!genderExists(code)) {
-            gen = new Gender(code, description);
+            gen = new Gender(code, description, createdBy);
             genders.put(gen.getCode(), (Gender) gen);
         }
         //return type;
     }
     
-    public void createMaritalStatus(String code, String description) {
+    public void createMaritalStatus(String code, String description, String createdBy) {
         Element status = null;
         if(!maritalStatusExists(code)) {
-            status = new MaritalStatus(code, description);
+            status = new MaritalStatus(code, description, createdBy);
             marital_statuses.put(status.getCode(), (MaritalStatus) status);
         }
         //return type;
     }
     
-    public void createEthnicOrigin(String code, String description) {
+    public void createEthnicOrigin(String code, String description, String createdBy) {
         Element origin = null;
         if(!ethnicOriginExists(code)) {
-            origin = new EthnicOrigin(code, description);
+            origin = new EthnicOrigin(code, description, createdBy);
             ethnic_origins.put(origin.getCode(), (EthnicOrigin) origin);
         }
         //return type;
     }
     
-    public void createLanguage(String code, String description) {
+    public void createLanguage(String code, String description, String createdBy) {
         Element language = null;
         if(!languageExists(code)) {
-            language = new Language(code, description);
+            language = new Language(code, description, createdBy);
             languages.put(language.getCode(), (Language) language);
         }
         //return type;
     }
     
-    public void createNationality(String code, String description) {
+    public void createNationality(String code, String description, String createdBy) {
         Element nationality = null;
         if(!nationalityExists(code)) {
-            nationality = new Gender(code, description);
+            nationality = new Gender(code, description, createdBy);
             nationalities.put(nationality.getCode(), (Nationality) nationality);
         }
         //return type;
     }
     
-    public void createSexuality(String code, String description) {
+    public void createSexuality(String code, String description, String createdBy) {
         Element sexuality = null;
         if(!sexualityExists(code)) {
-            sexuality = new Sexuality(code, description);
+            sexuality = new Sexuality(code, description, createdBy);
             sexualities.put(sexuality.getCode(), (Sexuality) sexuality);
         }
         //return type;
     }
     
-    public void createReligion(String code, String description) {
+    public void createReligion(String code, String description, String createdBy) {
         Element religion = null;
         if(!religionExists(code)) {
-            religion = new Religion(code, description);
+            religion = new Religion(code, description, createdBy);
             religions.put(religion.getCode(), (Religion) religion);
         }
         //return type;
     }
     
-    public void createAddress(String street, String town, String postcode) {
-        Address a = new Address(addressRef, street, town, postcode);
+    public void createAddress(String street, String town, String postcode, String createdBy) {
+        Address a = new Address(addressRef, street, town, postcode, createdBy);
         addressRef++;
         addresses.put(Integer.toString(a.getAddressRef()), a);
         // return a; - amend to accessor once Interfaces are set up
     }
     
-    public void createPropertyType(String code, String description) {
+    public void createPropertyType(String code, String description, String createdBy) {
         Element type = null;
         if(!propTypeExists(code)) {
-            type = new PropertyType(code, description);
+            type = new PropertyType(code, description, createdBy);
             property_types.put(type.getCode(), (PropertyType) type);
         }
         //return type;
     }
     
-    public void createPropertySubType(String code, String description) {
+    public void createPropertySubType(String code, String description, String createdBy) {
         Element type = null;
         if(!propSubTypeExists(code)) {
-            type = new PropertySubType(code, description);
+            type = new PropertySubType(code, description, createdBy);
             property_sub_types.put(type.getCode(), (PropertySubType) type);
         }
         //return type;
+    }
+    
+    public void createPropElement(String code, String description, String createdBy) {
+        Element element = null;
+        if(!propElementExists(code)) {
+            element = new Element(code, description, createdBy);
+            propertyElements.put(element.getCode(), element);
+        }
     }
     
     public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) throws RemoteException {
@@ -208,19 +217,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // return p; - amend to accessor once Interfaces are set up
     }
     
-    public void createInvolvedParty(Person p, boolean joint, boolean main, Date start, Relationship relationship) throws RemoteException {
-        InvolvedParty i = new InvolvedParty(involvedPartyRef, p, joint, main, start, relationship);
+    public void createInvolvedParty(Person p, boolean joint, boolean main, Date start, Relationship relationship, String createdBy) throws RemoteException {
+        InvolvedParty i = new InvolvedParty(involvedPartyRef, p, joint, main, start, relationship, createdBy);
         involvedPartyRef++;
         involved_parties.put(Integer.toString(i.getInvolvedPartyRef()), i);
         // return p; - amend to accessor once Interfaces are set up
     }
     
-    public void createApplication(ArrayList<InvolvedParty> household, Address address, String corrName) {
-        Application a = new Application(applicationRef, household, address, corrName);
+    public void createApplication(ArrayList<InvolvedParty> household, Address address, String corrName, String createdBy) {
+        Application a = new Application(applicationRef, household, address, corrName, createdBy);
         applicationRef++;
         applications.put(Integer.toString(a.getApplicationRef()), a);
         // return a; - amend to accessor once Interfaces are set up
     }
+    
     
     public boolean titleExists(String code) {
         return titles.containsKey(code);
@@ -260,6 +270,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public boolean propSubTypeExists(String code) {
         return property_sub_types.containsKey(code);
+    }
+    
+    public boolean propElementExists(String code) {
+        return propertyElements.containsKey(code);
     }
     
     
