@@ -16,6 +16,8 @@ public class Employee {
     private Contract contract;
     private final String createdBy;
     private final Date createdDate;
+    private String officeCode; // Create a class for office, which stores the office information
+    
     
     public Employee(int employeeRef, String createdBy) {
         this.employeeRef = employeeRef;
