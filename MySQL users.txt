@@ -1,0 +1,5 @@
+user: "root"
+password: "Toxic9489!999"
+
+user: "admin"
+password: "admin"

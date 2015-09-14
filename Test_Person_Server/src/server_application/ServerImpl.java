@@ -177,10 +177,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         //return type;
     }
     
-    public void createAddress(String street, String town, String postcode, String createdBy) {
-        Address a = new Address(addressRef, street, town, postcode, createdBy);
+    public void createAddress(int addressRef, String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String town, String postcode, String createdBy) {
+        
+        //Address a = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, town, postcode,createdBy);
         addressRef++;
-        addresses.put(Integer.toString(a.getAddressRef()), a);
+        //addresses.put(Integer.toString(a.getAddressRef()), a);
         // return a; - amend to accessor once Interfaces are set up
     }
     

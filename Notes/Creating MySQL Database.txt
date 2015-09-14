@@ -1,0 +1,6 @@
+Creating MySQL Database
+
+1. Create connection
+2. Create model
+3. Create tables for model
+4. Import model to connection - Database --> Forward Engineer...
