@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class Title extends Element {
+public class Title extends ElementImpl {
     
     public Title(String code, String description, String createdBy) {
         super(code, description, createdBy);

@@ -5,20 +5,21 @@
  */
 package server_application;
 
+import interfaces.Element;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class Element {
+public class ElementImpl implements Element {
     private final String code;
     private String description;
     private boolean current;
     private final String createdBy;
     private final Date createdDate;
     
-    public Element(String code, String description, String createdBy) {
+    public ElementImpl(String code, String description, String createdBy) {
         this.code = code;
         this.description = description;
         this.createdBy = createdBy;
@@ -38,11 +39,11 @@ public class Element {
         return current;
     }
     
-    public void updateDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
     
-    public void updateCurrent() {
-        current = !current;
+    public void setCurrent(boolean current) {
+        this.current = current;
     }
 }

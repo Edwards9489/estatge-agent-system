@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class Relationship extends Element {
+public class Relationship extends ElementImpl {
     
     public Relationship(String code, String description, String createdBy) {
         super(code, description, createdBy);

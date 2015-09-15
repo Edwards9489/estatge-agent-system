@@ -12,14 +12,14 @@ import java.util.*;
  */
 public class RentAccount {
     // instance variables - replace the example below with your own
-    private final int rent_acc_ref;
-    private String account_name;
-    private Date rent_acc_start;
-    private Date rent_acc_end;
-    private double net_rent;
+    private final int rentAccRef;
+    private String accountName;
+    private Date rentAccStart;
+    private Date rentAccEnd;
+    private double rent;
     private double balance;
     private Tenancy tenancy;
-    private boolean arrears_ind;
+    private boolean arrearsInd;
     private String createdBy;
     private Date createdDate;
     private HashMap<String, Transaction> transactions;
@@ -27,74 +27,74 @@ public class RentAccount {
     
 
     public RentAccount(int rent_ref, String name, Date rentAccStart, Tenancy tenancy, String createdBy) {
-        rent_acc_ref = rent_ref;
-        arrears_ind = false;
+        rentAccRef = rent_ref;
+        arrearsInd = false;
         this.createdBy = createdBy;
         this.createdDate = new Date();
         //create processTransactions which calculates the transactions due from start date
     }
 
     /**
-     * @return the rent_acc_ref
+     * @return the rentAccRef
      */
-    public int getRent_acc_ref() {
-        return rent_acc_ref;
+    public int getRentAccRef() {
+        return rentAccRef;
     }
 
     /**
-     * @return the account_name
+     * @return the accountName
      */
-    public String getAccount_name() {
-        return account_name;
+    public String getAccountName() {
+        return accountName;
     }
 
     /**
-     * @param account_name the account_name to set
+     * @param accountName the accountName to set
      */
-    public void setAccount_name(String account_name) {
-        this.account_name = account_name;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     /**
-     * @return the rent_acc_start
+     * @return the rentAccStart
      */
     public Date getRent_acc_start() {
-        return rent_acc_start;
+        return rentAccStart;
     }
 
     /**
-     * @param rent_acc_start the rent_acc_start to set
+     * @param rent_acc_start the rentAccStart to set
      */
     public void setRent_acc_start(Date rent_acc_start) {
-        this.rent_acc_start = rent_acc_start;
+        this.rentAccStart = rent_acc_start;
     }
 
     /**
-     * @return the rent_acc_end
+     * @return the rentAccEnd
      */
-    public Date getRent_acc_end() {
-        return rent_acc_end;
+    public Date getRentAccEnd() {
+        return rentAccEnd;
     }
 
     /**
-     * @param rent_acc_end the rent_acc_end to set
+     * @param rentAccEnd the rentAccEnd to set
      */
-    public void setRent_acc_end(Date rent_acc_end) {
-        this.rent_acc_end = rent_acc_end;
+    public void setRentAccEnd(Date rentAccEnd) {
+        this.rentAccEnd = rentAccEnd;
     }
 
     /**
-     * @return the net_rent
+     * @return the rent
      */
-    public double getNet_rent() {
-        return net_rent;
+    public double getRent() {
+        return rent;
     }
 
     /**
-     * @param net_rent the net_rent to set
+     * @param rent the rent to set
      */
-    public void setNet_rent(double net_rent) {
-        this.net_rent = net_rent;
+    public void setRent(double rent) {
+        this.rent = rent;
     }
 
     /**
@@ -126,17 +126,17 @@ public class RentAccount {
     }
 
     /**
-     * @return the arrears_ind
+     * @return the arrearsInd
      */
-    public boolean isArrears_ind() {
-        return arrears_ind;
+    public boolean isArrearsInd() {
+        return arrearsInd;
     }
 
     /**
-     * @param arrears_ind the arrears_ind to set
+     * @param arrearsInd the arrearsInd to set
      */
-    public void setArrears_ind(boolean arrears_ind) {
-        this.arrears_ind = arrears_ind;
+    public void setArrearsInd(boolean arrearsInd) {
+        this.arrearsInd = arrearsInd;
     }
 
     /**

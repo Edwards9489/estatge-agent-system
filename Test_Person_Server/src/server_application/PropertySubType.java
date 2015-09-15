@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class PropertySubType extends Element {
+public class PropertySubType extends ElementImpl {
 
     /**
      * Constructor for objects of class PropertySubType

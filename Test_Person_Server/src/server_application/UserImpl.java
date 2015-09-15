@@ -12,14 +12,14 @@ import interfaces.User;
  */
 public class UserImpl implements User {
     
+    private final int personRef;
     private String username;
     private String password;
     
-    public UserImpl(String username, String password) {
-        {
-            this.username = username;
-            this.password = password;
-        }
+    public UserImpl(int personRef, String username, String password) {
+        this.personRef = personRef;
+        this.username = username;
+        this.password = password;
     }
     
     public boolean isUser(String username, String password) {

@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class EthnicOrigin extends Element {
+public class EthnicOrigin extends ElementImpl {
     
     public EthnicOrigin(String code, String description, String createdBy) {
         super(code, description, createdBy);

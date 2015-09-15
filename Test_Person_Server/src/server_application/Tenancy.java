@@ -12,76 +12,76 @@ import java.util.*;
  */
 public class Tenancy {
     // instance variables - replace the example below with your own
-    private int tenancy_ref;
-    private Date ten_start_date;
-    private Date ten_exp_end_date;
-    private Date actual_end_date;
+    private int tenancyRef;
+    private Date tenStartDate;
+    private Date tenExpEndDate;
+    private Date actualEndDate;
     private Property property;
-    private String ten_type;
+    private TenancyType tenType;
     private HashMap<String, PropertyElement> charges;
     
-    public Tenancy(int tenRef, Date startDate, Date expEndDate, Property property, String tenType) {
-        this.tenancy_ref = tenRef;
-        this.ten_start_date = startDate;
-        this.ten_exp_end_date = expEndDate;
+    public Tenancy(int tenRef, Date startDate, Date expEndDate, Property property, TenancyType tenType) {
+        this.tenancyRef = tenRef;
+        this.tenStartDate = startDate;
+        this.tenExpEndDate = expEndDate;
         this.property = property;
-        this.ten_type = tenType;
+        this.tenType = tenType;
     }
 
     /**
-     * @return the tenancy_ref
+     * @return the tenancyRef
      */
-    public int getTenancy_ref() {
-        return tenancy_ref;
+    public int getTenancyRef() {
+        return tenancyRef;
     }
 
     /**
-     * @param tenancy_ref the tenancy_ref to set
+     * @param tenancyRef the tenancyRef to set
      */
-    public void setTenancy_ref(int tenancy_ref) {
-        this.tenancy_ref = tenancy_ref;
+    public void setTenancyRef(int tenancyRef) {
+        this.tenancyRef = tenancyRef;
     }
 
     /**
-     * @return the ten_start_date
+     * @return the tenStartDate
      */
-    public Date getTen_start_date() {
-        return ten_start_date;
+    public Date getTenStartDate() {
+        return tenStartDate;
     }
 
     /**
-     * @param ten_start_date the ten_start_date to set
+     * @param tenStartDate the tenStartDate to set
      */
-    public void setTen_start_date(Date ten_start_date) {
-        this.ten_start_date = ten_start_date;
+    public void setTenStartDate(Date tenStartDate) {
+        this.tenStartDate = tenStartDate;
     }
 
     /**
-     * @return the ten_exp_end_date
+     * @return the tenExpEndDate
      */
-    public Date getTen_exp_end_date() {
-        return ten_exp_end_date;
+    public Date getTenExpEndDate() {
+        return tenExpEndDate;
     }
 
     /**
-     * @param ten_exp_end_date the ten_exp_end_date to set
+     * @param tenExpEndDate the tenExpEndDate to set
      */
-    public void setTen_exp_end_date(Date ten_exp_end_date) {
-        this.ten_exp_end_date = ten_exp_end_date;
+    public void setTenExpEndDate(Date tenExpEndDate) {
+        this.tenExpEndDate = tenExpEndDate;
     }
 
     /**
-     * @return the actual_end_date
+     * @return the actualEndDate
      */
     public Date getActual_end_date() {
-        return actual_end_date;
+        return actualEndDate;
     }
 
     /**
-     * @param actual_end_date the actual_end_date to set
+     * @param actual_end_date the actualEndDate to set
      */
     public void setActual_end_date(Date actual_end_date) {
-        this.actual_end_date = actual_end_date;
+        this.actualEndDate = actual_end_date;
     }
 
     /**
@@ -99,17 +99,17 @@ public class Tenancy {
     }
 
     /**
-     * @return the ten_type
+     * @return the tenType
      */
-    public String getTen_type() {
-        return ten_type;
+    public TenancyType getTenType() {
+        return tenType;
     }
 
     /**
-     * @param ten_type the ten_type to set
+     * @param tenType the tenType to set
      */
-    public void setTen_type(String ten_type) {
-        this.ten_type = ten_type;
+    public void setTenType(TenancyType tenType) {
+        this.tenType = tenType;
     }
 
     /**

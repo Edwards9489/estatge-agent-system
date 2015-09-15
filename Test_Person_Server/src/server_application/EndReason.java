@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class EndReason extends Element {
+public class EndReason extends ElementImpl {
     
     public EndReason(String code, String description, String createdBy) {
         super(code, description, createdBy);

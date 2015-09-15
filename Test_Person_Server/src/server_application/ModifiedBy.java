@@ -14,9 +14,8 @@ public class ModifiedBy {
     private String modifiedBy;
     private Date modifiedDate;
     private String description;
-    private int ref;
     
-    public ModifiedBy(String modifiedBy, String description, int ref) {
+    public ModifiedBy(String modifiedBy, String description) {
         this.modifiedBy = modifiedBy;
         this.modifiedDate = new Date();
         this.description = description;

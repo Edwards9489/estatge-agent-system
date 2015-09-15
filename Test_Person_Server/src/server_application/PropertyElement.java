@@ -13,14 +13,20 @@ import java.util.Date;
  */
 public class PropertyElement{
 
-    private final Element element;
+    private final int propElementRef;
+    private final ElementImpl element;
     private String value;
     private Date startDate;
     private Date endDate;
-    private boolean isCurrent;
+    private boolean current;
+    private final String createdBy;
+    private final Date createdDate;
 
-    public PropertyElement(Element element) {
+    public PropertyElement(int propElementRef, ElementImpl element, String createdBy) {
         this. element = element;
+        this.propElementRef = propElementRef;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     // MIGHT NOT NEED THIS CLASS AS CAN JUST HAVE A HASHMAP OF PROPERTY ELEMENTS IN SERVERIMPL FOR MASTER LISTS OF ALL PROPERTY ELEMENTS
     // AND THEN A HASHMAP OF (PROPERTY) ELEMENTS WITHIN EACH PROPERTY FOR THEIR OWN PERSONAL PROPERTY ELEMENTS

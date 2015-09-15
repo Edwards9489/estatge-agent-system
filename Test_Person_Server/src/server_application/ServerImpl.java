@@ -8,6 +8,7 @@ package server_application;
 import interfaces.Server;
 import interfaces.RegistryLoader;
 import interfaces.Client;
+import interfaces.Element;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -84,7 +85,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private HashMap<String, Address> addresses = new HashMap<String,Address>();
     private HashMap<String, PropertyType> property_types = new HashMap<>(); // House, Flat, Bungalow
     private HashMap<String, PropertySubType> property_sub_types = new HashMap<>(); // Terraced, Semi-detached
-    private HashMap<String, Element> propertyElements = new HashMap<>();
+    private HashMap<String, ElementImpl> propertyElements = new HashMap<>();
     
     // List of employee details
     
@@ -106,7 +107,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     
     public void createTitle(String code, String description, String createdBy) {
-        Element title = null;
+        ElementImpl title = null;
         if(!titleExists(code)) {
             title = new Title(code, description, createdBy);
             titles.put(title.getCode(), (Title) title);
@@ -115,7 +116,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createGender(String code, String description, String createdBy) {
-        Element gen = null;
+        ElementImpl gen = null;
         if(!genderExists(code)) {
             gen = new Gender(code, description, createdBy);
             genders.put(gen.getCode(), (Gender) gen);
@@ -124,7 +125,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createMaritalStatus(String code, String description, String createdBy) {
-        Element status = null;
+        ElementImpl status = null;
         if(!maritalStatusExists(code)) {
             status = new MaritalStatus(code, description, createdBy);
             marital_statuses.put(status.getCode(), (MaritalStatus) status);
@@ -133,7 +134,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createEthnicOrigin(String code, String description, String createdBy) {
-        Element origin = null;
+        ElementImpl origin = null;
         if(!ethnicOriginExists(code)) {
             origin = new EthnicOrigin(code, description, createdBy);
             ethnic_origins.put(origin.getCode(), (EthnicOrigin) origin);
@@ -142,7 +143,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createLanguage(String code, String description, String createdBy) {
-        Element language = null;
+        ElementImpl language = null;
         if(!languageExists(code)) {
             language = new Language(code, description, createdBy);
             languages.put(language.getCode(), (Language) language);
@@ -151,7 +152,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createNationality(String code, String description, String createdBy) {
-        Element nationality = null;
+        ElementImpl nationality = null;
         if(!nationalityExists(code)) {
             nationality = new Gender(code, description, createdBy);
             nationalities.put(nationality.getCode(), (Nationality) nationality);
@@ -160,7 +161,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createSexuality(String code, String description, String createdBy) {
-        Element sexuality = null;
+        ElementImpl sexuality = null;
         if(!sexualityExists(code)) {
             sexuality = new Sexuality(code, description, createdBy);
             sexualities.put(sexuality.getCode(), (Sexuality) sexuality);
@@ -169,7 +170,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createReligion(String code, String description, String createdBy) {
-        Element religion = null;
+        ElementImpl religion = null;
         if(!religionExists(code)) {
             religion = new Religion(code, description, createdBy);
             religions.put(religion.getCode(), (Religion) religion);
@@ -187,7 +188,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createPropertyType(String code, String description, String createdBy) {
-        Element type = null;
+        ElementImpl type = null;
         if(!propTypeExists(code)) {
             type = new PropertyType(code, description, createdBy);
             property_types.put(type.getCode(), (PropertyType) type);
@@ -196,7 +197,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createPropertySubType(String code, String description, String createdBy) {
-        Element type = null;
+        ElementImpl type = null;
         if(!propSubTypeExists(code)) {
             type = new PropertySubType(code, description, createdBy);
             property_sub_types.put(type.getCode(), (PropertySubType) type);
@@ -205,15 +206,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public void createPropElement(String code, String description, String createdBy) {
-        Element element = null;
+        ElementImpl element = null;
         if(!propElementExists(code)) {
-            element = new Element(code, description, createdBy);
+            element = new ElementImpl(code, description, createdBy);
             propertyElements.put(element.getCode(), element);
         }
     }
     
-    public void createPerson(String title, String forename, String surname, int year, int month, int day, String gender) throws RemoteException {
-        Person p = new Person(personRef, title, forename, surname, year, month, day, gender);
+    public void createPerson(Element title, String forename, String surname, Date dateOfBirth, Element gender) throws RemoteException {
+        Person p = new Person(personRef, (Title) title, forename, surname, dateOfBirth, (Gender) gender);
         personRef++;
         people.put(Integer.toString(p.getPersonRef()), p);
         // return p; - amend to accessor once Interfaces are set up

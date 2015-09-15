@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class PropertyType extends Element {
+public class PropertyType extends ElementImpl {
 
     public PropertyType(String code, String description, String createdBy)
     {

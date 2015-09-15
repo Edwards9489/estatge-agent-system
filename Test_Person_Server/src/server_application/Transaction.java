@@ -13,59 +13,56 @@ import java.util.Date;
  */
 public class Transaction {
     
-    private String accountRef;
-    private String fromRef;
-    private String toRef;
+    private final int accountRef;
+    private int fromRef;
+    private int toRef;
     private double amount;
     private Date transactionDate;
+    private final String createdBy;
+    private final Date createdDate;
     
-    public Transaction(String accountRef, String fromRef, String toRef, double amount) {
+    public Transaction(int accountRef, int fromRef, int toRef, double amount, Date transactionDate, String createdBy) {
         this.accountRef = accountRef;
         this.fromRef = fromRef;
         this.toRef = toRef;
         this.amount = amount;
-        this.transactionDate = new Date();
+        this.transactionDate = transactionDate;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 
     /**
      * @return the accountRef
      */
-    public String getAccountRef() {
+    public int getAccountRef() {
         return accountRef;
-    }
-
-    /**
-     * @param accountRef the accountRef to set
-     */
-    public void setAccountRef(String accountRef) {
-        this.accountRef = accountRef;
     }
 
     /**
      * @return the fromRef
      */
-    public String getFromRef() {
+    public int getFromRef() {
         return fromRef;
     }
 
     /**
      * @param fromRef the fromRef to set
      */
-    public void setFromRef(String fromRef) {
+    public void setFromRef(int fromRef) {
         this.fromRef = fromRef;
     }
 
     /**
      * @return the toRef
      */
-    public String getToRef() {
+    public int getToRef() {
         return toRef;
     }
 
     /**
      * @param toRef the toRef to set
      */
-    public void setToRef(String toRef) {
+    public void setToRef(int toRef) {
         this.toRef = toRef;
     }
 
@@ -95,5 +92,19 @@ public class Transaction {
      */
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @return the createdDate
+     */
+    public Date getCreatedDate() {
+        return createdDate;
     }
 }

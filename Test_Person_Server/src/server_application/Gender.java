@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class Gender extends Element {
+public class Gender extends ElementImpl {
     
     public Gender(String code, String description, String createdBy) {
         super(code, description, createdBy);

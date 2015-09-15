@@ -327,7 +327,7 @@ public class Address implements AddressInterface {
     }
     
     public void modifiedBy(String modifiedBy, String description) {
-        ModifiedBy temp = new ModifiedBy(modifiedBy, description, addressRef);
+        ModifiedBy temp = new ModifiedBy(modifiedBy, description);
         
         this.modifiedBy.add(temp);
     }

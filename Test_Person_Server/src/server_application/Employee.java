@@ -13,6 +13,7 @@ import java.util.Date;
  */
 public class Employee {
     private final int employeeRef;
+    private Person person;
     private Contract contract;
     private final String createdBy;
     private final Date createdDate;

@@ -9,9 +9,8 @@ package server_application;
  *
  * @author Dwayne
  */
-public class ContactType extends ElementImpl {
-    
-    public ContactType(String code, String description, String createdBy) {
+public class Requirement extends ElementImpl{
+    public Requirement(String code, String description, String createdBy) {
         super(code, description, createdBy);
     }
 }

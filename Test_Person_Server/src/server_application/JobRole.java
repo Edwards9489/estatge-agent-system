@@ -11,19 +11,19 @@ import java.util.*;
  * @author Dwayne
  */
 public class JobRole {
-    private final int job_role_ref;
+    private final int jobRoleRef;
     private String jobTitle;
     private String jobDescription;
-    private String jobRequirements;
+    private ArrayList<Requirement> jobRequirements;
     private boolean fullTime;
     private double salary;
-    private ArrayList<String> benefits;
+    private ArrayList<Benefit> benefits;
     private final String createdBy;
     private final Date createdDate;
     
     
     public JobRole(int jobRef, String createdBy) {
-        job_role_ref = jobRef;
+        jobRoleRef = jobRef;
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }

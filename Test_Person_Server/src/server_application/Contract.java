@@ -15,6 +15,8 @@ public class Contract {
     private final int contractRef;
     private JobRole jobRole;
     private Date startDate;
+    private Date expectedEndDate;
+    private Date actualEndDate;
     private int length;
     private final String createdBy;
     private final Date createdDate;

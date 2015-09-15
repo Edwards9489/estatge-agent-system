@@ -9,7 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
-public class Language extends Element {
+public class Language extends ElementImpl {
     
     public Language(String code, String description, String createdBy) {
         super(code, description, createdBy);
