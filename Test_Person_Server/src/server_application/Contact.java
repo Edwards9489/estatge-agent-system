@@ -15,7 +15,6 @@ public class Contact {
     private String contactValue;
     private Date startDate;
     private Date endDate;
-    private boolean current;
     private final String createdBy;
     private final Date createdDate;
     private ArrayList<ModifiedBy> modifiedBy;
@@ -86,24 +85,18 @@ public class Contact {
      */
     public void setEndDate(Date endDate, String modifiedBy) {
         this.endDate = endDate;
-        if(endDate.before(new Date())) { // Need a system date
-            setCurrent(false);
-        }
-        modifiedBy(modifiedBy, "amended end date");
     }
 
     /**
      * @return the current
      */
     public boolean isCurrent() {
-        return current;
-    }
-
-    /**
-     * @param current the current to set
-     */
-    public void setCurrent(boolean current) {
-        this.current = current;
+        if(endDate == null) {
+            return true;
+        }
+        else {
+            return endDate.before(new Date());
+        }
     }
 
     /**

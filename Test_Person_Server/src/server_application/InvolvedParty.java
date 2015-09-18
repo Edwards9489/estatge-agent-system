@@ -14,20 +14,20 @@ public class InvolvedParty {
     
     private final int involvedPartyRef;
     private Person person;
-    private boolean joint_applicant_ind;
-    private boolean main_applicant_ind;
-    private Date start_date; // start date of the involved party against the application
-    private Date end_date; // end date of the involved party against the application
-    private EndReason end_reason; // Indicates the reason the involved party was ended against the application
+    private boolean jointApplicantInd;
+    private boolean mainApplicantInd;
+    private Date startDate; // start date of the involved party against the application
+    private Date endDate; // end date of the involved party against the application
+    private EndReason endReason; // Indicates the reason the involved party was ended against the application
     private Relationship relationship; // Indicates the relationship of this involved party to the main applicant
     private final String createdBy;
     private final Date createdDate;
     
-    public InvolvedParty(int inv_party_ref, Person person, boolean joint, boolean main, Date start, Relationship relationship, String createdBy) {
-        this.involvedPartyRef = inv_party_ref;
+    public InvolvedParty(int invPartyRef, Person person, boolean joint, boolean main, Date start, Relationship relationship, String createdBy) {
+        this.involvedPartyRef = invPartyRef;
         this.person = person;
-        this.joint_applicant_ind = joint;
-        this.start_date = start;
+        this.jointApplicantInd = joint;
+        this.startDate = start;
         this.relationship = relationship;
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -38,23 +38,23 @@ public class InvolvedParty {
     }
     
     public boolean getJointInd() {
-        return joint_applicant_ind;
+        return jointApplicantInd;
     }
     
     public boolean getMainInd() {
-        return main_applicant_ind;
+        return mainApplicantInd;
     }
     
     public Date getStartDate() {
-        return start_date;
+        return startDate;
     }
     
     public Date getEndDate() {
-        return end_date;
+        return endDate;
     }
     
     public EndReason getEndReason() {
-        return end_reason;
+        return endReason;
     }
     
     public Relationship getRelationship() {
@@ -62,23 +62,23 @@ public class InvolvedParty {
     }
     
     public void updateJointInd(boolean joint) {
-        joint_applicant_ind = joint;
+        jointApplicantInd = joint;
     }
     
     public void updateMainInd(boolean main) {
-        main_applicant_ind = main;
+        mainApplicantInd = main;
     }
     
     public void updateStartDate(Date start) {
-        start_date = start;
+        startDate = start;
     }
     
     public void updateEndDate(Date end) {
-        end_date = end;
+        endDate = end;
     }
     
     public void updateEndReason(EndReason end_reason) {
-        this.end_reason = end_reason;
+        this.endReason = end_reason;
     }
     
     public void updateRelationship(Relationship relationship) {
@@ -88,5 +88,14 @@ public class InvolvedParty {
     public void endInvolvedParty(Date end, EndReason end_reason) {
         updateEndDate(end);
         updateEndReason(end_reason);
+    }
+    
+    public boolean isCurrent() {
+        if(endDate == null) {
+            return true;
+        }
+        else {
+            return endDate.before(new Date());
+        }
     }
 }

@@ -25,13 +25,14 @@ public class Application {
     private Tenancy tenancy;
     private final String createdBy;
     private final Date createdDate;
+    private AddressUsage appAddress;
     
     
     
     /**
      * Constructor for objects of class Person
      */
-    public Application(int appRef, ArrayList<InvolvedParty> household, Address address, String corrName, String createdBy) {
+    public Application(int appRef, ArrayList<InvolvedParty> household, AddressUsage address, String corrName, String createdBy) {
         this.appRef = appRef;
         appCorrName = corrName;
         appStatusCode = "NEW";
@@ -39,6 +40,7 @@ public class Application {
         this.household = household;
         this.createdBy = createdBy;
         this.createdDate = new Date();
+        appAddress = address;
     }
     
     public int getApplicationRef() {

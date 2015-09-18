@@ -227,7 +227,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // return p; - amend to accessor once Interfaces are set up
     }
     
-    public void createApplication(ArrayList<InvolvedParty> household, Address address, String corrName, String createdBy) {
+    public void createApplication(ArrayList<InvolvedParty> household, AddressUsage address, String corrName, String createdBy) {
         Application a = new Application(applicationRef, household, address, corrName, createdBy);
         applicationRef++;
         applications.put(Integer.toString(a.getApplicationRef()), a);

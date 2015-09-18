@@ -4,7 +4,11 @@
  * and open the template in the editor.
  */
 package server_application;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -15,30 +19,27 @@ public class Property
     // instance variables - replace the example below with your own
     private final int propRef;
     private Address address;
-    private Landlord landlord;
-    private boolean fullManagement; // indicates if MSc Properties will manage all of the managerial affairs such as damage to prop, or just renting
+    private ArrayList<Landlord> landlords;
     private Date acquiredDate;
     private Date leaseEndDate;
-    private boolean current;
     private PropertyType propType;
     private PropertySubType propSubType;
     private String propStatus; // Occupied, Void, New, End etc
-    private HashMap<String, PropertyElement> propertyElements = new HashMap<>();
+    private ArrayList<PropertyElement> propertyElements;
     
     /**
      * Constructor for objects of class Property
      */
-    public Property(int propRef, Address address, Landlord landlord, boolean management, Date acquiredDate, PropertyType propType, PropertySubType propSubType) {
+    public Property(int propRef, Address address, ArrayList<Landlord> landlords, boolean management, Date acquiredDate, PropertyType propType, PropertySubType propSubType) {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
-        this.landlord = landlord;
-        this.fullManagement = management;
+        this.landlords = landlords;
         this.acquiredDate = acquiredDate;
         this.propType = propType;
         this.propSubType = propSubType;
         this.propStatus = "NEW";
-        current = true;
+        propertyElements = new ArrayList();
     }
 
     /**
@@ -65,29 +66,15 @@ public class Property
     /**
      * @return the landlord
      */
-    public Landlord getLandlord() {
-        return landlord;
+    public List getLandlords() {
+        return Collections.unmodifiableList(landlords);
     }
 
     /**
-     * @param landlord the landlord to set
+     * @param landlords the landlords to set
      */
-    public void setLandlord(Landlord landlord) {
-        this.landlord = landlord;
-    }
-
-    /**
-     * @return the fullManagement
-     */
-    public boolean isFullManagement() {
-        return fullManagement;
-    }
-
-    /**
-     * @param fullManagement the fullManagement to set
-     */
-    public void setFullManagement(boolean fullManagement) {
-        this.fullManagement = fullManagement;
+    public void setLandlords(ArrayList<Landlord> landlords) {
+        this.landlords = landlords;
     }
 
     /**
@@ -163,7 +150,40 @@ public class Property
     /**
      * @return the propertyElements
      */
-    public HashMap<String, PropertyElement> getPropertyElements() {
-        return propertyElements;
+    public List getPropertyElements() {
+        return Collections.unmodifiableList(propertyElements);
+    }
+    
+    public boolean isCurrent() {
+        if(leaseEndDate == null) {
+            return true;
+        }
+        else {
+            return leaseEndDate.after(new Date());
+        }
+    }
+    
+    public double getRent() {
+        double rent = -1;
+        if (!propertyElements.isEmpty()) {
+            for (PropertyElement temp : propertyElements) {
+                if (temp.isCurrent() && temp.isElementCode("RENT")) {
+                    rent = temp.getDoubleValue();
+                }
+            }
+        }
+        return rent;
+    }
+    
+    public double getCharges() {
+        double charges = -1;
+        if(!propertyElements.isEmpty()) {
+            for (PropertyElement temp : propertyElements) {
+                if(temp.isCurrent() && temp.isCharge()) {
+                    charges = temp.getDoubleValue();
+                }
+            }
+        }
+        return charges;
     }
 }

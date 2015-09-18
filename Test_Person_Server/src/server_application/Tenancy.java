@@ -4,84 +4,28 @@
  * and open the template in the editor.
  */
 package server_application;
-import java.util.*;
+import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class Tenancy {
-    // instance variables - replace the example below with your own
-    private int tenancyRef;
-    private Date tenStartDate;
-    private Date tenExpEndDate;
-    private Date actualEndDate;
-    private Property property;
+public class Tenancy extends Agreement {
+    private final Application application;
+    private final Property property;
     private TenancyType tenType;
-    private HashMap<String, PropertyElement> charges;
+    private double rent; // amount tenant pays for rent per calendar month
+    private double charges; // amount tenant pays for additional charges per calendar month
+    private double expectedRevenue;
     
-    public Tenancy(int tenRef, Date startDate, Date expEndDate, Property property, TenancyType tenType) {
-        this.tenancyRef = tenRef;
-        this.tenStartDate = startDate;
-        this.tenExpEndDate = expEndDate;
+    public Tenancy(int tenRef, Date startDate, int length, String createdBy, Property property, Application application, TenancyType tenType) {
+        super(tenRef, startDate, length, createdBy);
         this.property = property;
+        this.application = application;
         this.tenType = tenType;
-    }
-
-    /**
-     * @return the tenancyRef
-     */
-    public int getTenancyRef() {
-        return tenancyRef;
-    }
-
-    /**
-     * @param tenancyRef the tenancyRef to set
-     */
-    public void setTenancyRef(int tenancyRef) {
-        this.tenancyRef = tenancyRef;
-    }
-
-    /**
-     * @return the tenStartDate
-     */
-    public Date getTenStartDate() {
-        return tenStartDate;
-    }
-
-    /**
-     * @param tenStartDate the tenStartDate to set
-     */
-    public void setTenStartDate(Date tenStartDate) {
-        this.tenStartDate = tenStartDate;
-    }
-
-    /**
-     * @return the tenExpEndDate
-     */
-    public Date getTenExpEndDate() {
-        return tenExpEndDate;
-    }
-
-    /**
-     * @param tenExpEndDate the tenExpEndDate to set
-     */
-    public void setTenExpEndDate(Date tenExpEndDate) {
-        this.tenExpEndDate = tenExpEndDate;
-    }
-
-    /**
-     * @return the actualEndDate
-     */
-    public Date getActual_end_date() {
-        return actualEndDate;
-    }
-
-    /**
-     * @param actual_end_date the actualEndDate to set
-     */
-    public void setActual_end_date(Date actual_end_date) {
-        this.actualEndDate = actual_end_date;
+        this.rent = property.getRent();
+        this.charges = property.getCharges();
+        setRevenue();
     }
 
     /**
@@ -90,12 +34,12 @@ public class Tenancy {
     public Property getProperty() {
         return property;
     }
-
+    
     /**
-     * @param property the property to set
+     * @return the application
      */
-    public void setProperty(Property property) {
-        this.property = property;
+    public Application getApplication() {
+        return application;
     }
 
     /**
@@ -113,9 +57,36 @@ public class Tenancy {
     }
 
     /**
+     * @return the rent
+     */
+    public double getRent() {
+        return rent;
+    }
+
+    /**
+     * @param rent the rent to set
+     */
+    public void setRent(double rent) {
+        this.rent = rent;
+        setRevenue();
+    }
+
+    /**
      * @return the charges
      */
-    public HashMap<String, PropertyElement> getCharges() {
+    public double getCharges() {
         return charges;
+    }
+
+    /**
+     * @param charges the charges to set
+     */
+    public void setCharges(double charges) {
+        this.charges = charges;
+        setRevenue();
+    }
+    
+    private void setRevenue() {
+        expectedRevenue = rent + charges;
     }
 }

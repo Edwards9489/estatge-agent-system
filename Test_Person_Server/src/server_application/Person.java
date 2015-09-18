@@ -27,6 +27,7 @@ public class Person {
     private Sexuality sexuality;
     private Religion religion;
     private ArrayList<Contact> contacts = new ArrayList();
+    private ArrayList<AddressUsage> addresses;
 
     /**
      * Constructor for objects of class Person
@@ -130,4 +131,6 @@ public class Person {
         Contact c = new Contact(type, value, date, createdBy);
         contacts.add(c);
     }
+    
+    
 }

@@ -17,15 +17,17 @@ public class Transaction {
     private int fromRef;
     private int toRef;
     private double amount;
+    private final boolean debit;
     private Date transactionDate;
     private final String createdBy;
     private final Date createdDate;
     
-    public Transaction(int accountRef, int fromRef, int toRef, double amount, Date transactionDate, String createdBy) {
+    public Transaction(int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
         this.accountRef = accountRef;
         this.fromRef = fromRef;
         this.toRef = toRef;
         this.amount = amount;
+        this.debit = debit;
         this.transactionDate = transactionDate;
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -106,5 +108,12 @@ public class Transaction {
      */
     public Date getCreatedDate() {
         return createdDate;
+    }
+
+    /**
+     * @return the debit
+     */
+    public boolean isDebit() {
+        return debit;
     }
 }
