@@ -1,10 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package server_application;
 
+import interfaces.ModifiedByInterface;
+import interfaces.TransactionInterface;
 import java.util.Collections;
 import java.util.Date;
 import java.util.ArrayList;
@@ -22,8 +20,9 @@ public class Account {
     private double balance;
     private final String createdBy;
     private final Date createdDate;
-    private ArrayList<Transaction> debitTransactions;
-    private ArrayList<Transaction> creditTransactions;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final ArrayList<TransactionInterface> debitTransactions;
+    private final ArrayList<TransactionInterface> creditTransactions;
     
     
 
@@ -31,14 +30,58 @@ public class Account {
         this.accRef = accRef;
         this.accName = accName;
         this.startDate = startDate;
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
         debitTransactions = new ArrayList<>();
         creditTransactions = new ArrayList<>();
-        //create processTransactions which calculates the debitTransactions due from start date
+    }
+    
+    
+    ///   MUTATOR METHODS   ///
+
+     /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     /**
+     * @param balance the balance to set
+     */
+    private void setBalance(double balance) {
+        this.balance = balance;
+    }
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @param accName
+     */
+    public void setAccountName(String accName) {
+        this.accName = accName;
+    }
+    
+    public void createTransaction(TransactionInterface transaction) {
+        if(transaction.isDebit()) {
+            debitTransactions.add(transaction);
+            setBalance(balance + transaction.getAmount());
+        }
+        else {
+            creditTransactions.add(transaction);
+            setBalance(balance - transaction.getAmount());
+        }
+    }
+    
+    
+    ///   ACCESSOR METHODS   ///
+     
+     /**
      * @return the accRef
      */
     public int getAccRef() {
@@ -53,24 +96,10 @@ public class Account {
     }
 
     /**
-     * @param accountName the accountName to set
-     */
-    public void setAccountName(String accName) {
-        this.accName = accName;
-    }
-
-    /**
      * @return the startDate
      */
     public Date getStartDate() {
         return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
     /**
@@ -81,24 +110,10 @@ public class Account {
     }
 
     /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
      * @return the balance
      */
     public double getBalance() {
         return balance;
-    }
-
-    /**
-     * @param balance the balance to set
-     */
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 
     /**
@@ -120,15 +135,6 @@ public class Account {
      */
     public Date getCreatedDate() {
         return createdDate;
-    }
-    
-    public void createTransaction(Transaction transaction) {
-        if(transaction.isDebit()) {
-            debitTransactions.add(transaction);
-        }
-        else {
-            creditTransactions.add(transaction);
-        }
     }
 
     /**

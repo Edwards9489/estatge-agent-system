@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 package server_application;
+import interfaces.LandlordInterface;
+import interfaces.PersonInterface;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,17 +16,18 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class Landlord {
+public class Landlord implements LandlordInterface {
     private final int landlordRef;
-    private Person person;
-    private EndReason endReason;
-    private ArrayList<AddressUsage> addressUsages;
+    private final PersonInterface person;
+    private final ArrayList<Lease> leases;
+    private final ArrayList<AddressUsage> addressUsages;
     private final String createdBy;
     private final Date createdDate;
     
-    public Landlord(int landlordRef, Person person, String createdBy) {
+    public Landlord(int landlordRef, PersonInterface person, String createdBy) {
         this.landlordRef = landlordRef;
         this.person = person;
+        this.leases = new ArrayList();
         this.addressUsages = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -40,29 +43,21 @@ public class Landlord {
     /**
      * @return the person
      */
-    public Person getPerson() {
+    public PersonInterface getPerson() {
         return person;
     }
-
+    
     /**
-     * @param person the person to set
+     * @return the addressUsages
      */
-    public void setPerson(Person person) {
-        this.person = person;
+    public List getLeases() {
+        return Collections.unmodifiableList(leases);
     }
-
-    /**
-     * @return the endReason
-     */
-    public EndReason getEndReason() {
-        return endReason;
-    }
-
-    /**
-     * @param endReason the endReason to set
-     */
-    public void setEndReason(EndReason endReason) {
-        this.endReason = endReason;
+    
+    public void createLease(Lease lease) {
+        if (!leases.contains(lease)) {
+            leases.add(lease);
+        }
     }
 
     /**

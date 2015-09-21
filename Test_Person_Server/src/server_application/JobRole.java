@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.Element;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,10 +16,10 @@ import java.util.List;
  * @author Dwayne
  */
 public class JobRole {
-    private final int jobRoleRef;
+    private final String jobRoleCode;
     private String jobTitle;
     private String jobDescription;
-    private HashMap<String, Requirement> jobRequirements;
+    private HashMap<String, Element> jobRequirements;
     private boolean fullTime;
     private double salary;
     private double totalSalaryBenefits;
@@ -27,8 +28,8 @@ public class JobRole {
     private final Date createdDate;
     
     
-    public JobRole(int jobRef, String createdBy) {
-        jobRoleRef = jobRef;
+    public JobRole(String code, String createdBy) {
+        jobRoleCode = code;
         this.createdBy = createdBy;
         this.createdDate = new Date();
         jobRequirements = new HashMap<>();
@@ -38,8 +39,8 @@ public class JobRole {
     /**
      * @return the jobRoleRef
      */
-    public int getJobRoleRef() {
-        return jobRoleRef;
+    public String getJobRoleRef() {
+        return jobRoleCode;
     }
 
     /**
@@ -77,7 +78,7 @@ public class JobRole {
         return Collections.unmodifiableList((List) jobRequirements.values());
     }
     
-    public void createJobRequirement(Requirement requirement) {
+    public void createJobRequirement(Element requirement) {
         if(jobRequirements.containsKey(requirement.getCode())) {
             jobRequirements.put(requirement.getCode(), requirement);
         }

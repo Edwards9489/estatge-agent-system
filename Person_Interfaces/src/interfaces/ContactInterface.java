@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package interfaces;
 
 /**
  *
  * @author Dwayne
  */
-public class MaritalStatus extends ElementImpl {
+public interface ContactInterface {
     
-    public MaritalStatus(String code, String description, String createdBy) {
-        super(code, description, createdBy);
-    }
 }

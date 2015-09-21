@@ -4,16 +4,17 @@
  * and open the template in the editor.
  */
 package server_application;
+import interfaces.ModifiedByInterface;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class ModifiedBy {
-    private String modifiedBy;
-    private Date modifiedDate;
-    private String description;
+public class ModifiedBy implements ModifiedByInterface {
+    private final String modifiedBy;
+    private final Date modifiedDate;
+    private final String description;
     
     public ModifiedBy(String modifiedBy, String description) {
         this.modifiedBy = modifiedBy;
@@ -45,6 +46,4 @@ public class ModifiedBy {
     public String toString() {
         return modifiedBy + " " + description + " on " + modifiedDate;
     }
-    
-    
 }

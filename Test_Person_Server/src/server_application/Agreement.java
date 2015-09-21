@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.AgreementInterface;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  *
  * @author Dwayne
  */
-public class Agreement {
+public class Agreement implements AgreementInterface {
     private final int agreementRef;
     private Date startDate;
     private Date expectedEndDate;
@@ -45,24 +46,10 @@ public class Agreement {
     }
 
     /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
      * @return the expectedEndDate
      */
     public Date getExpectedEndDate() {
         return expectedEndDate;
-    }
-
-    /**
-     * @param expectedEndDate the expectedEndDate to set
-     */
-    private void setExpectedEndDate(Date expectedEndDate) {
-        this.expectedEndDate = expectedEndDate;
     }
 
     /**
@@ -73,25 +60,10 @@ public class Agreement {
     }
 
     /**
-     * @param actualEndDate the actualEndDate to set
-     */
-    public void setActualEndDate(Date actualEndDate) {
-        this.actualEndDate = actualEndDate;
-    }
-
-    /**
      * @return the length
      */
     public int getLength() {
         return length;
-    }
-
-    /**
-     * @param length the length to set
-     */
-    public void setLength(int length) {
-        this.length = length;
-        setExpectedEndDate(calculateExpectedEndDate(startDate, length));
     }
 
     /**
@@ -115,6 +87,35 @@ public class Agreement {
         else {
             return actualEndDate.before(new Date());
         }
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @param expectedEndDate the expectedEndDate to set
+     */
+    private void setExpectedEndDate(Date expectedEndDate) {
+        this.expectedEndDate = expectedEndDate;
+    }
+
+    /**
+     * @param actualEndDate the actualEndDate to set
+     */
+    public void setActualEndDate(Date actualEndDate) {
+        this.actualEndDate = actualEndDate;
+    }
+
+    /**
+     * @param length the length to set
+     */
+    public void setLength(int length) {
+        this.length = length;
+        setExpectedEndDate(calculateExpectedEndDate(startDate, length));
     }
     
     private Date calculateExpectedEndDate(Date startDate, int length) {

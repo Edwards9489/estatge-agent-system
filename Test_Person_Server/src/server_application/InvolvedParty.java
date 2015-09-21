@@ -4,28 +4,32 @@
  * and open the template in the editor.
  */
 package server_application;
-import java.util.*;
+import interfaces.Element;
+import interfaces.InvolvedPartyInterface;
+import interfaces.PersonInterface;
+import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class InvolvedParty {
+public class InvolvedParty implements InvolvedPartyInterface {
     
     private final int involvedPartyRef;
-    private Person person;
+    private final PersonInterface person;
     private boolean jointApplicantInd;
     private boolean mainApplicantInd;
     private Date startDate; // start date of the involved party against the application
     private Date endDate; // end date of the involved party against the application
-    private EndReason endReason; // Indicates the reason the involved party was ended against the application
-    private Relationship relationship; // Indicates the relationship of this involved party to the main applicant
+    private Element endReason; // Indicates the reason the involved party was ended against the application
+    private Element relationship; // Indicates the relationship of this involved party to the main applicant
     private final String createdBy;
     private final Date createdDate;
     
-    public InvolvedParty(int invPartyRef, Person person, boolean joint, boolean main, Date start, Relationship relationship, String createdBy) {
+    public InvolvedParty(int invPartyRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy) {
         this.involvedPartyRef = invPartyRef;
         this.person = person;
+        this.mainApplicantInd = main;
         this.jointApplicantInd = joint;
         this.startDate = start;
         this.relationship = relationship;
@@ -35,6 +39,10 @@ public class InvolvedParty {
     
     public int getInvolvedPartyRef() {
         return involvedPartyRef;
+    }
+    
+    public PersonInterface getPerson() {
+        return person;
     }
     
     public boolean getJointInd() {
@@ -53,41 +61,49 @@ public class InvolvedParty {
         return endDate;
     }
     
-    public EndReason getEndReason() {
+    public Element getEndReason() {
         return endReason;
     }
     
-    public Relationship getRelationship() {
+    public Element getRelationship() {
         return relationship;
     }
     
-    public void updateJointInd(boolean joint) {
+    public String createdBy() {
+        return createdBy;
+    }
+    
+    public Date createdDate() {
+        return createdDate;
+    }
+    
+    public void setJointInd(boolean joint) {
         jointApplicantInd = joint;
     }
     
-    public void updateMainInd(boolean main) {
+    public void setMainInd(boolean main) {
         mainApplicantInd = main;
     }
     
-    public void updateStartDate(Date start) {
+    public void setStartDate(Date start) {
         startDate = start;
     }
     
-    public void updateEndDate(Date end) {
+    public void setEndDate(Date end) {
         endDate = end;
     }
     
-    public void updateEndReason(EndReason end_reason) {
-        this.endReason = end_reason;
+    public void setEndReason(Element endReason) {
+        this.endReason = endReason;
     }
     
-    public void updateRelationship(Relationship relationship) {
+    public void setRelationship(Element relationship) {
         this.relationship = relationship;
     }
     
-    public void endInvolvedParty(Date end, EndReason end_reason) {
-        updateEndDate(end);
-        updateEndReason(end_reason);
+    public void endInvolvedParty(Date end, Element end_reason) {
+        setEndDate(end);
+        setEndReason(end_reason);
     }
     
     public boolean isCurrent() {
@@ -96,6 +112,15 @@ public class InvolvedParty {
         }
         else {
             return endDate.before(new Date());
+        }
+    }
+    
+    public void setInvolvedParty(boolean joint, Date startDate, Date endDate, Element endReason, Element relationship) {
+        this.jointApplicantInd = joint;
+        this.startDate = startDate;
+        this.relationship = relationship;
+        if(endDate != null) {
+            endInvolvedParty(endDate, endReason);
         }
     }
 }

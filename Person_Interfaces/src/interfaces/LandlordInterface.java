@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package interfaces;
 
 /**
  *
  * @author Dwayne
  */
-public class TenancyType extends ElementImpl {
-    public TenancyType(String code, String description, String createdBy) {
-        super(code, description, createdBy);
-    }
+public interface LandlordInterface {
+    int getLandlordRef();
+    
 }

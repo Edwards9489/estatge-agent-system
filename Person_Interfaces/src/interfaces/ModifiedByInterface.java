@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package interfaces;
+
+import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class Title extends ElementImpl {
-    
-    public Title(String code, String description, String createdBy) {
-        super(code, description, createdBy);
-    }
+public interface ModifiedByInterface {
+    String getModifiedBy();
+    Date getModifiedDate();
+    String getDescription();
+    String toString();
 }

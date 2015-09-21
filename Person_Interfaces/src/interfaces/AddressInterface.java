@@ -28,5 +28,8 @@ public interface AddressInterface {
     String getPostcode();
     String getCreatedBy();
     Date getCreatedDate();
-    List getmodifiedBy();
+    List getModifiedByList();
+    @Override
+    String toString();
+    ModifiedByInterface getModifiedBy();
 }

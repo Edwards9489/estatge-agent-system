@@ -4,21 +4,25 @@
  * and open the template in the editor.
  */
 package server_application;
+import interfaces.ApplicationInterface;
+import interfaces.Element;
+import interfaces.PropertyInterface;
+import interfaces.TenancyInterface;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class Tenancy extends Agreement {
-    private final Application application;
-    private final Property property;
-    private TenancyType tenType;
+public class Tenancy extends Agreement implements TenancyInterface {
+    private final ApplicationInterface application;
+    private final PropertyInterface property;
+    private Element tenType;
     private double rent; // amount tenant pays for rent per calendar month
     private double charges; // amount tenant pays for additional charges per calendar month
     private double expectedRevenue;
     
-    public Tenancy(int tenRef, Date startDate, int length, String createdBy, Property property, Application application, TenancyType tenType) {
+    public Tenancy(int tenRef, Date startDate, int length, String createdBy, PropertyInterface property, ApplicationInterface application, Element tenType) {
         super(tenRef, startDate, length, createdBy);
         this.property = property;
         this.application = application;
@@ -31,29 +35,22 @@ public class Tenancy extends Agreement {
     /**
      * @return the property
      */
-    public Property getProperty() {
+    public PropertyInterface getProperty() {
         return property;
     }
     
     /**
      * @return the application
      */
-    public Application getApplication() {
+    public ApplicationInterface getApplication() {
         return application;
     }
 
     /**
      * @return the tenType
      */
-    public TenancyType getTenType() {
+    public Element getTenType() {
         return tenType;
-    }
-
-    /**
-     * @param tenType the tenType to set
-     */
-    public void setTenType(TenancyType tenType) {
-        this.tenType = tenType;
     }
 
     /**
@@ -64,18 +61,25 @@ public class Tenancy extends Agreement {
     }
 
     /**
+     * @return the charges
+     */
+    public double getCharges() {
+        return charges;
+    }
+
+    /**
+     * @param tenType the tenType to set
+     */
+    public void setTenType(Element tenType) {
+        this.tenType = tenType;
+    }
+
+    /**
      * @param rent the rent to set
      */
     public void setRent(double rent) {
         this.rent = rent;
         setRevenue();
-    }
-
-    /**
-     * @return the charges
-     */
-    public double getCharges() {
-        return charges;
     }
 
     /**

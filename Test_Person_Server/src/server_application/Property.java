@@ -5,6 +5,10 @@
  */
 package server_application;
 
+import interfaces.AddressInterface;
+import interfaces.Element;
+import interfaces.LandlordInterface;
+import interfaces.PropertyInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -14,23 +18,22 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class Property
-{
-    // instance variables - replace the example below with your own
+public class Property implements PropertyInterface {
+    
     private final int propRef;
-    private Address address;
-    private ArrayList<Landlord> landlords;
+    private AddressInterface address;
+    private ArrayList<LandlordInterface> landlords;
     private Date acquiredDate;
     private Date leaseEndDate;
-    private PropertyType propType;
-    private PropertySubType propSubType;
+    private Element propType;
+    private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
     private ArrayList<PropertyElement> propertyElements;
     
     /**
      * Constructor for objects of class Property
      */
-    public Property(int propRef, Address address, ArrayList<Landlord> landlords, boolean management, Date acquiredDate, PropertyType propType, PropertySubType propSubType) {
+    public Property(int propRef, AddressInterface address, ArrayList<LandlordInterface> landlords, boolean management, Date acquiredDate, Element propType, Element propSubType) {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
@@ -52,7 +55,7 @@ public class Property
     /**
      * @return the address
      */
-    public Address getAddress() {
+    public AddressInterface getAddress() {
         return address;
     }
 
@@ -73,7 +76,7 @@ public class Property
     /**
      * @param landlords the landlords to set
      */
-    public void setLandlords(ArrayList<Landlord> landlords) {
+    public void setLandlords(ArrayList<LandlordInterface> landlords) {
         this.landlords = landlords;
     }
 
@@ -108,28 +111,28 @@ public class Property
     /**
      * @return the propType
      */
-    public PropertyType getPropType() {
+    public Element getPropType() {
         return propType;
     }
 
     /**
      * @param propType the propType to set
      */
-    public void setPropType(PropertyType propType) {
+    public void setPropType(Element propType) {
         this.propType = propType;
     }
 
     /**
      * @return the propSubType
      */
-    public PropertySubType getPropSubType() {
+    public Element getPropSubType() {
         return propSubType;
     }
 
     /**
      * @param propSubType the propSubType to set
      */
-    public void setPropSubType(PropertySubType propSubType) {
+    public void setPropSubType(Element propSubType) {
         this.propSubType = propSubType;
     }
 

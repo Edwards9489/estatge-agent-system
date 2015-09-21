@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package server_application;
 
 import interfaces.AddressInterface;
+import interfaces.ModifiedByInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -16,7 +13,7 @@ import java.util.List;
  * @author Dwayne
  */
 public class Address implements AddressInterface {
-    private final int addressRef; // unique refrence for address
+    private final int addressRef;
     private String buildingNumber;
     private String buildingName;
     private String subStreetNumber;
@@ -29,22 +26,31 @@ public class Address implements AddressInterface {
     private String postcode;
     private final String createdBy;
     private final Date createdDate;
-    private ArrayList<ModifiedBy> modifiedBy;
+    private final ArrayList<ModifiedBy> modifiedBy;
     
     
 
     /**
      * Constructor for objects of class Address
+     * @param addressRef
+     * @param buildingNumber
      * @param street
+     * @param buildingName
+     * @param subStreet
+     * @param streetNumber
+     * @param subStreetNumber
      * @param town
+     * @param area
+     * @param country
      * @param postcode
+     * @param createdBy
      */
     public Address(int addressRef, String buildingNumber, String buildingName, String subStreetNumber,
-            String subStreet, String streetNumber, String street, String area, String town, String postcode, String createdBy) {
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy) {
         
-        initializeValues(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, postcode);
         this.addressRef = addressRef;
-        this.postcode = postcode;
+        setAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode);
         this.createdBy = createdBy;
         this.createdDate = new Date();
         this.modifiedBy = new ArrayList();
@@ -58,109 +64,114 @@ public class Address implements AddressInterface {
         this.modifiedBy = new ArrayList();
     }
     
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param number
-     */
-    public void setBuildingNumber(String number) {
+    private void setBuildingNumber(String number) {
         buildingNumber = number;
     }
     
-    public void setBuildingName(String name) {
+    private void setBuildingName(String name) {
         buildingName = name;
     }
     
-    public void setSubStreetNumber(String number) {
+    private void setSubStreetNumber(String number) {
         subStreetNumber = number;
     }
     
-    public void setSubStreet(String street) {
+    private void setSubStreet(String street) {
         subStreet = street;
     }
     
-    public void setStreetNumber(String number) {
+    private void setStreetNumber(String number) {
         streetNumber = number;
     }
     
-    public void setStreet(String street) {
+    private void setStreet(String street) {
         this.street = street;
     }
     
-    public void setArea(String area) {
+    private void setArea(String area) {
         this.area = area;
     }
     
-    public void setTown(String town) {
+    private void setTown(String town) {
         this.town = town;
     }
     
-    public void setCountry(String country) {
+    private void setCountry(String country) {
         this.country = country;
     }
     
-    public void setPostcode(String postcode) {
+    private void setPostcode(String postcode) {
         this.postcode = postcode;
     }
     
-    public void setAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String postcode, String modifiedBy) {
+    @Override
+    public void setAddress(String buildingNumber, String buildingName,
+            String subStreetNumber, String subStreet, String streetNumber,
+            String street, String area, String town, String country, String postcode) {
         
-        initializeValues(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, postcode);
-        modifiedBy(modifiedBy, "amended address");
+        setBuildingNumber(buildingNumber);
+        setBuildingName(buildingName);
+        setSubStreetNumber(subStreetNumber);
+        setSubStreet(subStreet);
+        setStreetNumber(streetNumber);
+        setStreet(street);
+        setArea(area);
+        setTown(town);
+        setCountry(country);
+        setPostcode(postcode);
     }
     
-    public boolean isBuildingNumberNull()
+    
+    public void modifiedBy(ModifiedBy modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
+    private boolean isBuildingNumberNull()
     {
-        return getBuildingNumber() == null;
+        return buildingNumber.isEmpty();
     }
     
-    public boolean isBuildingNameNull()
+    private boolean isBuildingNameNull()
     {
-        return getBuildingName() == null;
+        return buildingName.isEmpty();
     }
     
-    public boolean isSubStreetNumberNull()
+    private boolean isSubStreetNumberNull()
     {
-        return getSubStreetNumber() == null;
+        return subStreetNumber.isEmpty();
     }
     
-    public boolean isSubStreetNull()
+    private boolean isSubStreetNull()
     {
-        return getSubStreet() == null;
+        return subStreet.isEmpty();
     }
     
-    public boolean isStreetNumberNull()
+    private boolean isStreetNumberNull()
     {
-        return getStreetNumber() == null;
+        return streetNumber.isEmpty();
     }
     
-    public boolean isStreetNull()
+    private boolean isStreetNull()
     {
-        return getStreet() == null;
+        return street.isEmpty();
     }
     
-    public boolean isAreaNull()
+    private boolean isAreaNull()
     {
-        return getArea() == null;
+        return area.isEmpty();
     }
     
-    public boolean isTownNull()
+    private boolean isTownNull()
     {
-        return getTown() == null;
+        return town.isEmpty();
     }
     
-    public boolean isCountryNull()
+    private boolean isCountryNull()
     {
-        return getCountry() == null;
+        return country.isEmpty();
     }
     
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
+    @Override
     public String toString()
     {
         String temp = "";
@@ -238,6 +249,7 @@ public class Address implements AddressInterface {
     /**
      * @return the addressRef
      */
+    @Override
     public int getAddressRef() {
         return addressRef;
     }
@@ -245,6 +257,7 @@ public class Address implements AddressInterface {
     /**
      * @return the buildingNumber
      */
+    @Override
     public String getBuildingNumber() {
         return buildingNumber;
     }
@@ -252,6 +265,7 @@ public class Address implements AddressInterface {
     /**
      * @return the buildingName
      */
+    @Override
     public String getBuildingName() {
         return buildingName;
     }
@@ -259,6 +273,7 @@ public class Address implements AddressInterface {
     /**
      * @return the subStreetNumber
      */
+    @Override
     public String getSubStreetNumber() {
         return subStreetNumber;
     }
@@ -266,6 +281,7 @@ public class Address implements AddressInterface {
     /**
      * @return the subStreet
      */
+    @Override
     public String getSubStreet() {
         return subStreet;
     }
@@ -273,6 +289,7 @@ public class Address implements AddressInterface {
     /**
      * @return the streetNumber
      */
+    @Override
     public String getStreetNumber() {
         return streetNumber;
     }
@@ -280,6 +297,7 @@ public class Address implements AddressInterface {
     /**
      * @return the street
      */
+    @Override
     public String getStreet() {
         return street;
     }
@@ -287,6 +305,7 @@ public class Address implements AddressInterface {
     /**
      * @return the area
      */
+    @Override
     public String getArea() {
         return area;
     }
@@ -294,6 +313,7 @@ public class Address implements AddressInterface {
     /**
      * @return the town
      */
+    @Override
     public String getTown() {
         return town;
     }
@@ -301,6 +321,7 @@ public class Address implements AddressInterface {
     /**
      * @return the country
      */
+    @Override
     public String getCountry() {
         return country;
     }
@@ -308,6 +329,7 @@ public class Address implements AddressInterface {
     /**
      * @return the postcode
      */
+    @Override
     public String getPostcode() {
         return postcode;
     }
@@ -315,6 +337,7 @@ public class Address implements AddressInterface {
     /**
      * @return the createdBy
      */
+    @Override
     public String getCreatedBy() {
         return createdBy;
     }
@@ -322,48 +345,18 @@ public class Address implements AddressInterface {
     /**
      * @return the createdDate
      */
+    @Override
     public Date getCreatedDate() {
         return createdDate;
     }
     
-    public void modifiedBy(String modifiedBy, String description) {
-        ModifiedBy temp = new ModifiedBy(modifiedBy, description);
-        
-        this.modifiedBy.add(temp);
-    }
-    
-    public List getmodifiedBy() {
+    @Override
+    public List getModifiedByList() {
         return Collections.unmodifiableList(modifiedBy);
     }
     
-    private void initializeValues(String buildingNumber, String buildingName, String subStreetNumber,
-            String subStreet, String streetNumber, String street, String area, String town, String postcode) {
-        if(buildingNumber != null) {
-            setBuildingNumber(buildingNumber);
-        }
-        if(buildingName != null) {
-            setBuildingName(buildingName);
-        }
-        if(subStreetNumber != null) {
-            setSubStreetNumber(subStreetNumber);
-        }
-        if(subStreet != null) {
-            setSubStreet(subStreet);
-        }
-        if(streetNumber != null) {
-            setStreetNumber(streetNumber);
-        }
-        if(street != null) {
-            setStreet(street);
-        }
-        if(area != null) {
-            setArea(area);
-        }
-        if(town != null) {
-            setTown(town);
-        }
-        if(postcode != null) {
-            setPostcode(postcode);
-        }
+    @Override
+    public ModifiedByInterface getModifiedBy() {
+        return modifiedBy.get(modifiedBy.size()-1);
     }
 }

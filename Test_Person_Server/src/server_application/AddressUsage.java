@@ -5,20 +5,26 @@
  */
 package server_application;
 
+import interfaces.AddressInterface;
+import interfaces.AddressUsageInterface;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class AddressUsage {
-    private Address address;
+public class AddressUsage implements AddressUsageInterface {
+    private AddressInterface address;
     private Date startDate;
     private Date endDate;
+    private final String createdBy;
+    private final Date createdDate;
     
-    public AddressUsage(Address address, Date startDate) {
+    public AddressUsage(AddressInterface address, Date startDate, String createdBy) {
         this.address = address;
         this.startDate = startDate;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 
     /**
@@ -31,7 +37,7 @@ public class AddressUsage {
     /**
      * @return the address
      */
-    public Address getAddress() {
+    public AddressInterface getAddress() {
         return address;
     }
 
@@ -80,5 +86,19 @@ public class AddressUsage {
         else {
             return endDate.before(new Date());
         }
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @return the createdDate
+     */
+    public Date getCreatedDate() {
+        return createdDate;
     }
 }

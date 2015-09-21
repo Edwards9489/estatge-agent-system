@@ -12,16 +12,25 @@ import java.util.Date;
  */
 public class Contract extends Agreement {
     private final Employee employee;
+    private final JobRole jobRole;
     
-    public Contract(int contractRef, Date startDate, int length, String createdBy, Employee employee, Office office) {
+    public Contract(int contractRef, Date startDate, int length, String createdBy, Employee employee, JobRole jobRole) {
         super(contractRef, startDate, length, createdBy);
         this.employee = employee;
+        this.jobRole = jobRole;
     }
 
     /**
-     * @return the jobRole
+     * @return the employee
      */
     public Employee getEmployee() {
         return employee;
+    }
+    
+    /**
+     * @return the jobRole
+     */
+    public JobRole getJobRole() {
+        return jobRole;
     }
 }

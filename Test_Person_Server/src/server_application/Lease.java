@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.LandlordInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Dwayne
  */
 public class Lease extends Agreement {
-    private ArrayList<Landlord> landlords;
+    private ArrayList<LandlordInterface> landlords;
     private final Property property;
     private final boolean fullManagement; // indicates if MSc Properties will manage all of the managerial affairs such as damage to prop, or just renting
     private final double expenditure; // expenditure to landlord(s)
@@ -34,7 +35,7 @@ public class Lease extends Agreement {
         return Collections.unmodifiableList(landlords);
     }
     
-    public void addLandlord(Landlord landlord) {
+    public void addLandlord(LandlordInterface landlord) {
         if(!isAlreadyLandlord(landlord)) {
             landlords.add(landlord);
             property.setLandlords(landlords);
@@ -55,10 +56,10 @@ public class Lease extends Agreement {
         return fullManagement;
     }
     
-    public boolean isAlreadyLandlord(Landlord landlord) {
+    public boolean isAlreadyLandlord(LandlordInterface landlord) {
         boolean answer = false;
         if (!landlords.isEmpty()) {
-            for (Landlord temp : landlords) {
+            for (LandlordInterface temp : landlords) {
                 if (temp.getLandlordRef() == landlord.getLandlordRef()) {
                     answer = true;
                 }

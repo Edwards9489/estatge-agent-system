@@ -4,99 +4,46 @@
  * and open the template in the editor.
  */
 package server_application;
+import interfaces.AddressUsageInterface;
+import interfaces.ApplicationInterface;
+import interfaces.Element;
+import interfaces.InvolvedPartyInterface;
+import interfaces.TenancyInterface;
 import java.util.*;
 
 /**
  *
  * @author Dwayne
  */
-public class Application {
-    // instance variables - replace the example below with your own
+public class Application implements ApplicationInterface {
     private final int appRef;
-    private boolean appInterestedFlag; // indicates if app has an interest in any properties
     private String appCorrName;
     private String appStatusCode; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
-    private Date statusDate; // indicates the date the status was changed
-    private ArrayList<String> statusHistory = new ArrayList<>();
-    private ArrayList<Date> statusDateHistory = new ArrayList<>();
-    private ArrayList<InvolvedParty> household = new ArrayList<>();
-    private ArrayList<InvolvedParty> historicHousehold = new ArrayList<>();
-    private ArrayList<Property> propertiesIntrestedIn = new ArrayList();
-    private Tenancy tenancy;
+    private ArrayList<InvolvedPartyInterface> household = new ArrayList<>();
+    private AddressUsageInterface appAddress;
+    private ArrayList<Property> propertiesInterestedIn;
+    private TenancyInterface tenancy;
     private final String createdBy;
     private final Date createdDate;
-    private AddressUsage appAddress;
     
     
     
     /**
      * Constructor for objects of class Person
      */
-    public Application(int appRef, ArrayList<InvolvedParty> household, AddressUsage address, String corrName, String createdBy) {
+    public Application(int appRef, ArrayList<InvolvedPartyInterface> household, AddressUsageInterface address, String corrName, String createdBy) {
         this.appRef = appRef;
         appCorrName = corrName;
         appStatusCode = "NEW";
-        statusDate = new Date();
         this.household = household;
+        appAddress = address;
+        propertiesInterestedIn = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        appAddress = address;
     }
     
     public int getApplicationRef() {
         return appRef;
-    }
-    
-    public void setInterestedFlag(boolean interested) {
-        appInterestedFlag = interested;
-    }
-    
-    public void setCorrespondenceName(String name) {
-        appCorrName = name;
-    }
-    
-    public void setStatus(String status) {
-        addHistoricStatus();
-        appStatusCode = status;
-        setStatusDate(new Date());
-    }
-    
-    public void setStatusDate(Date date) {
-        statusDate = date;
-    }
-    
-    public void addHistoricStatus() {
-        getStatusHistory().add(getStatusHistory().size(), getAppStatusCode());
-        getStatusDateHistory().add(getStatusDateHistory().size(), getStatusDate());
-    }
-    
-    public void addInvolvedParty(InvolvedParty party) {
-        getHousehold().add(getHousehold().size(), party);
-    }
-    
-    public void endInvolvedParty(InvolvedParty party, Date end, EndReason endReason) {
-        party.endInvolvedParty(end, endReason);
-        getHousehold().remove(party);
-        getHistoricHousehold().add(getHistoricHousehold().size(), party);
-    }
-    
-    public void setTenancy(Tenancy tenancy) {
-        this.tenancy = tenancy;
-    }
-    
-    public void addInterestedProperty(Property property) {
-        getPropertiesIntrestedIn().add(getHousehold().size(), property);
-    }
-    
-    public void endInterestInProperty(Property property) {
-        getPropertiesIntrestedIn().remove(property);
-    }
-
-    /**
-     * @return the appInterestedFlag
-     */
-    public boolean isAppInterestedFlag() {
-        return appInterestedFlag;
     }
 
     /**
@@ -112,53 +59,54 @@ public class Application {
     public String getAppStatusCode() {
         return appStatusCode;
     }
-
+    
     /**
-     * @return the statusDate
+     * @return the appInterestedFlag
      */
-    public Date getStatusDate() {
-        return statusDate;
+    public boolean isAppInterestedFlag() {
+        return !propertiesInterestedIn.isEmpty();
     }
-
-    /**
-     * @return the statusHistory
-     */
-    public ArrayList<String> getStatusHistory() {
-        return statusHistory;
+    
+    private boolean isHouseholdMember(InvolvedPartyInterface party) {
+        if(!household.isEmpty()) {
+            for(InvolvedPartyInterface invParty : household) {
+                if(invParty.equals(party)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-
-    /**
-     * @return the statusDateHistory
-     */
-    public ArrayList<Date> getStatusDateHistory() {
-        return statusDateHistory;
+    
+    private boolean isInterestedProperty(Property property) {
+        if(!propertiesInterestedIn.isEmpty()) {
+            for(Property prop : propertiesInterestedIn) {
+                if(prop.equals(property)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * @return the household
      */
-    public ArrayList<InvolvedParty> getHousehold() {
-        return household;
-    }
-
-    /**
-     * @return the historicHousehold
-     */
-    public ArrayList<InvolvedParty> getHistoricHousehold() {
-        return historicHousehold;
+    public List getHousehold() {
+        return Collections.unmodifiableList(household);
     }
 
     /**
      * @return the propertiesIntrestedIn
      */
-    public ArrayList<Property> getPropertiesIntrestedIn() {
-        return propertiesIntrestedIn;
+    public List getPropertiesInterestedIn() {
+        return Collections.unmodifiableList(propertiesInterestedIn);
     }
 
     /**
      * @return the tenancy
      */
-    public Tenancy getTenancy() {
+    public TenancyInterface getTenancy() {
         return tenancy;
     }
 
@@ -174,5 +122,45 @@ public class Application {
      */
     public Date getCreatedDate() {
         return createdDate;
+    }
+    
+    public void setCorrespondenceName(String name) {
+        appCorrName = name;
+    }
+    
+    public void addInvolvedParty(InvolvedParty party) {
+        if(!isHouseholdMember(party)) {
+            getHousehold().add(getHousehold().size(), party);
+        }
+    }
+    
+    public void endInvolvedParty(InvolvedParty party, Date end, Element endReason) {
+        if(isHouseholdMember(party)) {
+            if(!party.isCurrent()) {
+                party.endInvolvedParty(end, endReason);
+            }
+        }
+    }
+    
+    public void setTenancy(TenancyInterface tenancy) {
+        this.tenancy = tenancy;
+    }
+    
+    public void addInterestedProperty(Property property) {
+        if(!isInterestedProperty(property)) {
+            getPropertiesInterestedIn().add(getHousehold().size(), property);
+        }
+    }
+    
+    public void endInterestInProperty(Property property) {
+        if(isInterestedProperty(property)) {
+            getPropertiesInterestedIn().remove(property);
+        }
+    }
+    
+    public void clearInterestedProperties() {
+        if(!propertiesInterestedIn.isEmpty()) {
+            propertiesInterestedIn.clear();
+        }
     }
 }
