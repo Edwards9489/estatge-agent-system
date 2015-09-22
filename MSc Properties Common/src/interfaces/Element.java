@@ -1,0 +1,17 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package interfaces;
+
+/**
+ *
+ * @author Dwayne
+ */
+public interface Element {
+    void updateElement(String description, boolean current);
+    String getCode();
+    String getDescription();
+    boolean isCurrent();
+}

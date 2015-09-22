@@ -5,8 +5,8 @@
  */
 package client_application;
 import interfaces.Client;
-import interfaces.Server;
 import interfaces.RMISecurityPolicyLoader;
+import interfaces.Server;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
