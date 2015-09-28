@@ -1,0 +1,10 @@
+Creating the Region Area (Collapsable)
+ - create a JPanel class with a JPanel as a field and a constructor that takes a JPanel type.
+ - apply BorderLayout (NORTH, SOUTH, EAST, WEST, CENTER) to the JPanel class.
+ - Add a JPanel to the NORTH with a toggle button and have an icon on toggle button
+ - Add the JPanel from constructor to the SOUTH that is the actual region content
+ - If Toggle is OFF, then (+) picture is placed on icon and SOUTH region is not Visible
+ - If Toggle is ON, then (-) picture is place on icon and SOUTH region is Visible
+
+ 
+Use the Show Person Form CheckBox example from Swing App to work out how to make JPanel Visible and not Visible, but change the Checkbox to a Toggle Button

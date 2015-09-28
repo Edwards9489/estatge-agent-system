@@ -1,0 +1,31 @@
+what makes  good MSc computer science project
+
+Bodo Scholz
+
+deliver some new/incremental knowledge.
+Combine background research and work that delivers a tangible result
+
+
+Bruce Christianson
+
+technical computents
+engagement with real problem
+dissertation that tells a story
+
+what is the question, methodology, alternatives (models to choose between alternatives), how good did you build the system, criteria to assess against
+
+
+James Malcolm
+
+Not one that just develops a piece of software, or reads a lot of books
+Answer some kind of question by means of developing a piece of software or
+by doing some kind of experimental work or practical work to answer a question that looks like it will be interesting
+
+
+Paul Wernick
+
+select something that is not too small, and cant be expanded upon
+ensure it has a core that can be acheived but has some meat in it
+summarise results and be sure you have enough to do
+work that could possibly be developed into pHD level work
+ensure that it is something that you can own and enjoy amd make a success of
