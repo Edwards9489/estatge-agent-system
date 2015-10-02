@@ -18,12 +18,15 @@ public interface AccountInterface {
     Date getStartDate();
     Date getEndDate();
     double getBalance();
-    boolean isPositiveInd();
+    boolean isNegativeInd();
     boolean isCurrent();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     List getDebitTransactions();
     List getCreditTransactions();
-    void setEndDate(Date endDate);
-    void updateAccount(Date startDate, String accName);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy);
 }

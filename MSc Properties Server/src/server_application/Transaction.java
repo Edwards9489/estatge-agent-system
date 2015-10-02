@@ -109,4 +109,12 @@ public class Transaction implements TransactionInterface {
     public boolean isDebit() {
         return debit;
     }
+    
+    @Override
+    public String toString() {
+        String temp = "\nAccount Ref: " + this.getAccountRef() + "\nFrom Ref: " + this.getFromRef() +
+                "\nTo Ref: " + this.getToRef() + "\nAmount: " + this.getAmount() + "\nTransaction Date: " +
+                this.getTransactionDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate;
+        return temp;
+    }
 }

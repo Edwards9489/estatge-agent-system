@@ -37,8 +37,8 @@ public class Account implements AccountInterface {
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        debitTransactions = new ArrayList<>();
-        creditTransactions = new ArrayList<>();
+        this.debitTransactions = new ArrayList<>();
+        this.creditTransactions = new ArrayList<>();
     }
     
     
@@ -65,33 +65,36 @@ public class Account implements AccountInterface {
         this.accName = accName;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     /**
      * @param endDate the endDate to set
+     * @param modifiedBy
      */
     @Override
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         this.endDate = endDate;
+        this.modifiedBy(modifiedBy);
     }
     
     @Override
-    public void updateAccount(Date startDate, String accName) {
-        setStartDate(startDate);
-        setAccountName(accName);
+    public void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy) {
+        this.setStartDate(startDate);
+        this.setAccountName(accName);
+        this.modifiedBy(modifiedBy);
     }
     
     public void createTransaction(TransactionInterface transaction) {
         if(transaction.isDebit()) {
-            debitTransactions.add(transaction);
-            setBalance(balance + transaction.getAmount());
+            this.debitTransactions.add(transaction);
+            this.setBalance(this.balance + transaction.getAmount());
         }
         else {
-            creditTransactions.add(transaction);
-            setBalance(balance - transaction.getAmount());
+            this.creditTransactions.add(transaction);
+            this.setBalance(this.balance - transaction.getAmount());
         }
-    }
-    
-    public void modifiedBy(ModifiedBy modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
     }
     
     
@@ -103,7 +106,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public int getAccRef() {
-        return accRef;
+        return this.accRef;
     }
 
     /**
@@ -111,7 +114,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public String getAccName() {
-        return accName;
+        return this.accName;
     }
 
     /**
@@ -119,7 +122,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
 
     /**
@@ -127,7 +130,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public Date getEndDate() {
-        return endDate;
+        return this.endDate;
     }
 
     /**
@@ -135,25 +138,43 @@ public class Account implements AccountInterface {
      */
     @Override
     public double getBalance() {
-        return balance;
+        return this.balance;
     }
-
-    /**
-     * @return the positiveInd
-     */
+    
     @Override
-    public boolean isPositiveInd() {
-        return balance > 0;
+    public boolean isNegativeInd() {
+        return this.balance < 0;
     }
     
     @Override
     public boolean isCurrent() {
-        if(endDate == null) {
+        if(this.endDate == null) {
             return true;
         }
         else {
-            return endDate.before(new Date());
+            return this.endDate.before(new Date());
         }
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**
@@ -161,7 +182,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
@@ -169,7 +190,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
     }
 
     /**
@@ -177,7 +198,7 @@ public class Account implements AccountInterface {
      */
     @Override
     public List getDebitTransactions() {
-        return Collections.unmodifiableList(debitTransactions);
+        return Collections.unmodifiableList(this.debitTransactions);
     }
     
     /**
@@ -185,6 +206,17 @@ public class Account implements AccountInterface {
      */
     @Override
     public List getCreditTransactions() {
-        return Collections.unmodifiableList(creditTransactions);
+        return Collections.unmodifiableList(this.creditTransactions);
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "Account Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
+                "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
+                "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
+                this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +
+                isNegativeInd() + "\n\nModifed By\n" + this.getModifiedBy() + "\n\nCredit Transactions\n" +
+                this.getCreditTransactions() + "\n\nDebit Transactions\n" + this.getDebitTransactions();
+        return temp;
     }
 }

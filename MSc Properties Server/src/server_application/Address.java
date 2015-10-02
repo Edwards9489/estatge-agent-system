@@ -53,15 +53,16 @@ public class Address implements AddressInterface {
             String country, String postcode, String createdBy) {
         
         this.addressRef = addressRef;
-        setAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode);
-        this.createdBy = createdBy;
-        this.createdDate = new Date();
-        this.modifiedBy = new ArrayList();
-    }
-    
-    public Address(int addressRef, String postcode, String createdBy) {
-        this.addressRef = addressRef;
-        this.postcode = postcode;
+        this.setBuildingNumber(buildingNumber);
+        this.setBuildingName(buildingName);
+        this.setSubStreetNumber(subStreetNumber);
+        this.setSubStreet(subStreet);
+        this.setStreetNumber(streetNumber);
+        this.setStreet(street);
+        this.setArea(area);
+        this.setTown(town);
+        this.setCountry(country);
+        this.setPostcode(postcode);
         this.createdBy = createdBy;
         this.createdDate = new Date();
         this.modifiedBy = new ArrayList();
@@ -111,76 +112,76 @@ public class Address implements AddressInterface {
         this.postcode = postcode;
     }
     
-    @Override
-    public void setAddress(String buildingNumber, String buildingName,
-            String subStreetNumber, String subStreet, String streetNumber,
-            String street, String area, String town, String country, String postcode) {
-        
-        setBuildingNumber(buildingNumber);
-        setBuildingName(buildingName);
-        setSubStreetNumber(subStreetNumber);
-        setSubStreet(subStreet);
-        setStreetNumber(streetNumber);
-        setStreet(street);
-        setArea(area);
-        setTown(town);
-        setCountry(country);
-        setPostcode(postcode);
-    }    
-    
-    public void modifiedBy(ModifiedByInterface modifiedBy) {
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
         this.modifiedBy.add(modifiedBy);
+    }
+    
+    @Override
+    public void setAddress(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area,
+            String town, String country, String postcode, ModifiedByInterface modifiedBy) {
+        
+        this.setBuildingNumber(buildingNumber);
+        this.setBuildingName(buildingName);
+        this.setSubStreetNumber(subStreetNumber);
+        this.setSubStreet(subStreet);
+        this.setStreetNumber(streetNumber);
+        if(!street.isEmpty()) {
+            this.setStreet(street);
+        }
+        this.setArea(area);
+        if(!town.isEmpty()) {
+            this.setTown(town);
+        }
+        if(!country.isEmpty()) {
+            this.setCountry(country);
+        }
+        if(!postcode.isEmpty()) {
+            this.setPostcode(postcode);
+        }
+        this.modifiedBy(modifiedBy);
     }
     
     
     
     ///   ACCESSOR METHODS   ///
     
-    private boolean isBuildingNumberNull()
-    {
+    private boolean isBuildingNumberNull() {
         return buildingNumber.isEmpty();
     }
-    
-    private boolean isBuildingNameNull()
-    {
+
+    private boolean isBuildingNameNull() {
         return buildingName.isEmpty();
     }
-    
-    private boolean isSubStreetNumberNull()
-    {
+
+    private boolean isSubStreetNumberNull() {
         return subStreetNumber.isEmpty();
     }
-    
-    private boolean isSubStreetNull()
-    {
+
+    private boolean isSubStreetNull() {
         return subStreet.isEmpty();
     }
-    
-    private boolean isStreetNumberNull()
-    {
+
+    private boolean isStreetNumberNull() {
         return streetNumber.isEmpty();
     }
-    
-    private boolean isStreetNull()
-    {
+
+    private boolean isStreetNull() {
         return street.isEmpty();
     }
-    
-    private boolean isAreaNull()
-    {
+
+    private boolean isAreaNull() {
         return area.isEmpty();
     }
-    
-    private boolean isTownNull()
-    {
+
+    private boolean isTownNull() {
         return town.isEmpty();
     }
-    
-    private boolean isCountryNull()
-    {
+
+    private boolean isCountryNull() {
         return country.isEmpty();
     }
-    
+
     /**
      * @return the addressRef
      */
@@ -268,6 +269,27 @@ public class Address implements AddressInterface {
     public String getPostcode() {
         return postcode;
     }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
+    }
 
     /**
      * @return the createdBy
@@ -286,82 +308,36 @@ public class Address implements AddressInterface {
     }
     
     @Override
-    public List getModifiedByList() {
-        return Collections.unmodifiableList(modifiedBy);
-    }
-    
-    @Override
-    public ModifiedByInterface getModifiedBy() {
-        return modifiedBy.get(modifiedBy.size()-1);
-    }
-    
-    @Override
     public String toString()
     {
         String temp = "";
 
-        if (!isBuildingNumberNull()) {
-            temp = temp + getBuildingNumber();
+        if (!isBuildingNumberNull() && !isBuildingNameNull()) {
+            temp = getBuildingNumber() + " " + getBuildingName() + ", ";
         }
-
-        if (!isBuildingNameNull()) {
-            if (temp.length() != 0) {
-                temp = temp + " ";
-            }
-            temp = temp + getBuildingName();
-        }
-
+        
         if (!isSubStreetNumberNull()) {
-            if (temp.length() != 0) {
-                temp = temp + ", ";
-            }
-            temp = temp + getSubStreetNumber();
-        }
-
-        if (!isSubStreetNull()) {
-            if (temp.length() != 0) {
-                temp = temp + " ";
-            }
-            temp = temp + getSubStreet();
+            temp = temp + getSubStreetNumber() + " " + getSubStreet() + ", ";
+        } else if (isSubStreetNumberNull() && !isSubStreetNull()) {
+            temp = temp + getSubStreet() + ", ";
         }
 
         if (!isStreetNumberNull()) {
-            if (temp.length() != 0) {
-                temp = temp + ", ";
-            }
-            temp = temp + getStreetNumber();
-        }
-
-        if (!isStreetNull()) {
-            if (temp.length() != 0) {
-                temp = temp + " ";
-            }
-            temp = temp + getStreet();
+            temp = temp + getStreetNumber() + " " + getStreet() + ", ";
+        } else if (isStreetNumberNull() && !isStreetNull()) {
+            temp = temp + getStreet() + ", ";
         }
 
         if (!isAreaNull()) {
-            if (temp.length() != 0) {
-                temp = temp + ", ";
-            }
-            temp = temp + getArea();
+            temp = temp + getArea() + ", ";
         }
 
         if (!isTownNull()) {
-            if (temp.length() != 0) {
-                temp = temp + ", ";
-            }
-            temp = temp + getTown();
+            temp = temp + getTown() + ", ";
         }
 
         if (!isCountryNull()) {
-            if (temp.length() != 0) {
-                temp = temp + ", ";
-            }
-            temp = temp + getCountry();
-        }
-
-        if (temp.length() != 0) {
-            temp = temp + ", ";
+            temp = temp + getCountry() + ", ";
         }
         
         temp = temp + getPostcode();

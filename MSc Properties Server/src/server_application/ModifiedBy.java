@@ -50,7 +50,7 @@ public class ModifiedBy implements ModifiedByInterface {
     public Date getModifiedDate() {
         return modifiedDate;
     }
-
+    
     /**
      * @return the description
      */

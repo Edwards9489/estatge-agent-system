@@ -24,11 +24,12 @@ public interface AddressInterface {
     String getTown();
     String getCountry();
     String getPostcode();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    List getModifiedByList();
-    ModifiedByInterface getModifiedBy();
-    void setAddress(String buildingNumber, String buildingName,
-            String subStreetNumber, String subStreet, String streetNumber,
-            String street, String area, String town, String country, String postcode);
+    void setAddress(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area,
+            String town, String country, String postcode, ModifiedByInterface modifiedBy);
 }
