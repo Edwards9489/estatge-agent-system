@@ -6,6 +6,7 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -17,8 +18,11 @@ public interface AddressUsageInterface {
     Date getStartDate();
     Date getEndDate();
     boolean isCurrent();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void setEndDate(Date endDate);
-    void updateAddress(AddressInterface address, Date startDate);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    void updateAddress(AddressInterface address, Date startDate, ModifiedByInterface modifiedBy);
 }

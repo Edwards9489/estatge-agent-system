@@ -29,7 +29,7 @@ public interface PersonInterface {
     String getCreatedBy();
     Date getCreatedDate();
     void createContact(ContactInterface contact);
-    void createAddress(AddressUsageInterface address);
+    void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy);
     void setPerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
             Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion);
 }

@@ -8,6 +8,7 @@ import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.TenancyInterface;
 import java.util.*;
 
@@ -48,7 +49,7 @@ public class Application implements ApplicationInterface {
         this.appStartDate = appStartDate;
         appStatusCode = "NEW";
         this.household = household;
-        setAppAddress(address);
+        appAddresses.add(address);
         propertiesInterestedIn = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -76,11 +77,11 @@ public class Application implements ApplicationInterface {
         this.appStatusCode = code;
     }
     
-    public void setAppAddress(AddressUsageInterface address) {
+    public void setAppAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
         if(!appAddresses.isEmpty()) {
             for(AddressUsageInterface temp : appAddresses) {
                 if(temp.isCurrent()) {
-                    temp.setEndDate(address.getStartDate());
+                    temp.setEndDate(address.getStartDate(), modifiedBy);
                 }
             }
         }

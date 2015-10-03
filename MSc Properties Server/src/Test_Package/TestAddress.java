@@ -5,7 +5,9 @@
  */
 package Test_Package;
 
+import interfaces.ModifiedByInterface;
 import server_application.Address;
+import server_application.ModifiedBy;
 
 /**
  *
@@ -13,11 +15,12 @@ import server_application.Address;
  */
 public class TestAddress {
     public static void main(String[] args) {
-        System.out.println("********************Running Address Test********************");
-        String temp;
-        System.out.println("****** Creating Test Address");
+        System.out.println("********************Running Address Test********************\n");
+        String temp = "";
+        System.out.println("****** Creating Test Address ******\n");
         Address test1 = new Address(1, "1", "Kestrel House", "1", "Grilse Close", "1", "Cavendish Road", "Edmonton", "London", "England", "N9 0DJ", "DEDWARDS");
-        //Address test1 = new Address(1, "", "", "", "", "1", "Cavendish Road", "Edmonton", "London", "England", "N9 0DJ", "DEDWARDS");
+        
+        System.out.println("****** Testing Accessor Methods ******\n");
         
         System.out.println(test1.getAddressRef());
         System.out.println(test1.getBuildingNumber());
@@ -30,15 +33,61 @@ public class TestAddress {
         System.out.println(test1.getTown());
         System.out.println(test1.getCountry());
         System.out.println(test1.getPostcode());
+        System.out.println(test1.printAddress());
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         System.out.println(test1.getCreatedBy());
         System.out.println(test1.getCreatedDate());
         System.out.println(test1.getModifiedBy());
         
+        System.out.println("\n****** Amending Address ******\n");
+        
+        System.out.println("\n****** Testing Mutator Methods ******\n");
+        
+        ModifiedByInterface modTest1 = new ModifiedBy("JBLOGGS", "Updated Address");
+        
+        test1.setAddress(temp, "Little Cottage", temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest1);
+        
+        System.out.println(test1.printAddress());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest2 = new ModifiedBy("DEDWARDS", "Updated Address");
+        
+        test1.setAddress("1", temp, temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest2);
+        
+        System.out.println(test1.printAddress());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest3 = new ModifiedBy("JBLOGGS", "Updated Address");
+        
+        test1.setAddress("79", "Kestrel House", temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest3);
+        
+        System.out.println(test1.printAddress());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest4 = new ModifiedBy("DEDWARDS", "Updated Address");
+        
+        test1.setAddress(temp, temp, temp, temp, "5", "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest4);
+        
+        System.out.println(test1.printAddress());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest5 = new ModifiedBy("JBLOGGS", "Updated Address");
+        
+        test1.setAddress(temp, temp, "7A", "Bourne Hill", temp, "The Ride", "Enfield", "London", "England", "EN3 4EN", modTest5);
+        
+        System.out.println(test1.printAddress());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest6 = new ModifiedBy("DEDWARDS", "Updated Address");
+        
+        test1.setAddress("12", "Kestrel House", temp, "Brook Crescent", temp, "Hertford Road", "Enfield", "London", "England", "EN3 4EN", modTest6);
+        
         System.out.println(test1);
-        
-        
-        
     }
 }

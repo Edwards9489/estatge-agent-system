@@ -199,7 +199,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
         Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, String createdBy) throws RemoteException {
         Person p = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender,
-                maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, createdBy);
+                maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, null, createdBy);
         personRef++;
         this.database.createPerson(p);
         return p.getPersonRef();

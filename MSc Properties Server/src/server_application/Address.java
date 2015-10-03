@@ -120,7 +120,6 @@ public class Address implements AddressInterface {
     public void setAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
             String town, String country, String postcode, ModifiedByInterface modifiedBy) {
-        
         this.setBuildingNumber(buildingNumber);
         this.setBuildingName(buildingName);
         this.setSubStreetNumber(subStreetNumber);
@@ -308,12 +307,14 @@ public class Address implements AddressInterface {
     }
     
     @Override
-    public String toString()
+    public String printAddress()
     {
         String temp = "";
-
-        if (!isBuildingNumberNull() && !isBuildingNameNull()) {
-            temp = getBuildingNumber() + " " + getBuildingName() + ", ";
+        
+        if (!isBuildingNumberNull()) {
+            temp = temp + getBuildingNumber() + " " + getBuildingName() + ", ";
+        } else if (isBuildingNumberNull() && !isBuildingNameNull()) {
+            temp = temp + getBuildingName() + ", ";
         }
         
         if (!isSubStreetNumberNull()) {
@@ -342,6 +343,14 @@ public class Address implements AddressInterface {
         
         temp = temp + getPostcode();
 
+        return temp;
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +
+                "\nCreated Date: " + this.getCreatedDate() + "Last ModifiedBy: " + this.getLastModifiedBy() +
+                "Last Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
         return temp;
     }
 }

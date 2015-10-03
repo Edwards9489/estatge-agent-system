@@ -9,6 +9,7 @@ import interfaces.AddressUsageInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,10 +66,10 @@ public class Employee implements EmployeeInterface {
         setOfficeCode(contract.getOfficeCode());
     }
     
-    public void createAddress(AddressUsageInterface addressUsage) {
+    public void createAddress(AddressUsageInterface addressUsage, ModifiedByInterface modifiedBy) {
         if(!addresses.isEmpty()) {
             AddressUsageInterface temp = addresses.get(addresses.size()-1);
-            temp.setEndDate(addressUsage.getStartDate());
+            temp.setEndDate(addressUsage.getStartDate(), modifiedBy);
         }
         addresses.add(addressUsage);
     }

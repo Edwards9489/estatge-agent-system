@@ -49,7 +49,7 @@ public class TestTenancy {
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
         Element element = new ElementImpl("TEST", "test", "DEDWARDS");
         PersonInterface person = new Person(1, element, "Dwayne", "Leroy", "Edwards", new Date(), "JL 81 61 90 C", element, 
-                                            element, element, element, element, element, element, "DEDWARDS");
+                                            element, element, element, element, element, element, null, null, "DEDWARDS");
         LandlordInterface landlord = new Landlord(1, person, "DEDWARDS");
         InvolvedPartyInterface invParty = new InvolvedParty(1, person, true, true, new Date(), element, "DEDWARDS");
         ArrayList<LandlordInterface> landlords = new ArrayList();

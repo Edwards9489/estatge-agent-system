@@ -8,6 +8,7 @@ package server_application;
 import interfaces.AddressUsageInterface;
 import interfaces.ContactInterface;
 import interfaces.Element;
+import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
 import java.util.*;
 /**
@@ -57,12 +58,24 @@ public class Person implements PersonInterface {
      * @param createdBy
      */
     public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, String createdBy) {
+            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ArrayList<ContactInterface> contacts, AddressUsageInterface address, String createdBy) {
         this.personRef = personRef;
-        this.setPerson(title, forename, middleNames, surname, dateOfBirth, nationalInsurance,
-                gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion);
-        this.contacts = new ArrayList();
+        this.setTitle(title);
+        this.setForename(forename);
+        this.setMiddleNames(middleNames);
+        this.setSurname(surname);
+        this.setDateOfBirth(dateOfBirth);
+        this.setNationalInsurance(nationalInsurance);
+        this.setGender(gender);
+        this.setMaritalStatus(maritalStatus);
+        this.setEthnicOrigin(ethnicOrigin);
+        this.setLanguage(language);
+        this.setNationality(nationality);
+        this.setSexuality(sexuality);
+        this.setReligion(religion);
+        this.contacts = contacts;
         this.addresses = new ArrayList();
+        this.addresses.add(address);
         this.createdBy = createdBy;
         this.createdDate = new Date();
         this.modifiedBy = new ArrayList();
@@ -100,10 +113,6 @@ public class Person implements PersonInterface {
         this.gender = gender;
     }
     
-    private void setNI(String nationalInsurance) {
-        this.nationalInsurance = nationalInsurance;
-    }
-    
     private void setMaritalStatus(Element maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
@@ -134,11 +143,11 @@ public class Person implements PersonInterface {
     }
     
     @Override
-    public void createAddress(AddressUsageInterface address) {
+    public void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
         if(!addresses.isEmpty()) {
             for(AddressUsageInterface temp : addresses) {
                 if(temp.isCurrent()) {
-                    temp.setEndDate(address.getStartDate());
+                    temp.setEndDate(address.getStartDate(), modifiedBy);
                 }
             }
         }
@@ -148,19 +157,19 @@ public class Person implements PersonInterface {
     @Override
     public void setPerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
             Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion) {
-        setTitle(title);
-        setForename(forename);
-        setMiddleNames(middleNames);
-        setSurname(surname);
-        setDateOfBirth(dateOfBirth);
-        setNationalInsurance(nationalInsurance);
-        setGender(gender);
-        setMaritalStatus(maritalStatus);
-        setEthnicOrigin(ethnicOrigin);
-        setLanguage(language);
-        setNationality(nationality);
-        setSexuality(sexuality);
-        setReligion(religion);
+        this.setTitle(title);
+        this.setForename(forename);
+        this.setMiddleNames(middleNames);
+        this.setSurname(surname);
+        this.setDateOfBirth(dateOfBirth);
+        this.setNationalInsurance(nationalInsurance);
+        this.setGender(gender);
+        this.setMaritalStatus(maritalStatus);
+        this.setEthnicOrigin(ethnicOrigin);
+        this.setLanguage(language);
+        this.setNationality(nationality);
+        this.setSexuality(sexuality);
+        this.setReligion(religion);
     }
     
     
@@ -169,82 +178,82 @@ public class Person implements PersonInterface {
     
     @Override
     public int getPersonRef() {
-        return personRef;
+        return this.personRef;
     }
     
     @Override
     public String getForename() {
-        return forename;
+        return this.forename;
     }
     
     @Override
     public String getMiddleNames() {
-        return middleNames;
+        return this.middleNames;
     }
     
     @Override
     public String getSurname() {
-        return surname;
+        return this.surname;
     }
     
     @Override
     public String getName() {
-        String temp = title.getDescription();
-        if(!forename.isEmpty()) {
-            temp = temp + " " + forename;
+        String temp = this.title.getDescription();
+        if(!this.forename.isEmpty()) {
+            temp = temp + " " + this.forename;
         }
-        if(!middleNames.isEmpty()) {
-            temp = temp + " " + middleNames;
+        if(!this.middleNames.isEmpty()) {
+            temp = temp + " " + this.middleNames;
         }
-        if(!surname.isEmpty()) {
-            temp = temp + " " + surname;
+        if(!this.surname.isEmpty()) {
+            temp = temp + " " + this.surname;
         }
         return temp;
     }
     
     @Override
     public Date getDateOfBirth() {
-        return dateOfBirth;
+        return this.dateOfBirth;
     }
     
     @Override
     public String getNI() {
-        return nationalInsurance;
+        return this.nationalInsurance;
     }
     
     @Override
     public Element getGender() {
-        return gender;
+        return this.gender;
     }
     
     @Override
     public Element getMaritalStatus() {
-        return maritalStatus;
+        return this.maritalStatus;
     }
     
     @Override
     public Element getEthnicOrigin() {
-        return ethnicOrigin;
+        return this.ethnicOrigin;
     }
     
     @Override
     public Element getLanguage() {
-        return language;
+        return this.language;
     }
     
     @Override
     public Element getNationality() {
-        return nationality;
+        return this.nationality;
     }
     
     @Override
     public Element getSexuality() {
-        return sexuality;
+        return this.sexuality;
     }
     
     @Override
     public Element getReligion() {
-        return religion;
+        return this.religion;
     }
     
     /**
@@ -252,7 +261,7 @@ public class Person implements PersonInterface {
      */
     @Override
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
@@ -260,15 +269,15 @@ public class Person implements PersonInterface {
      */
     @Override
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
     }
     
     @Override
     public String toString() {
-        String temp = "#" + personRef + " : " + title.getDescription() + " " + forename + " " + middleNames + " " + surname + "\nDOB: " + dateOfBirth
-                + "\nNI no: " + nationalInsurance + "\nGender: " + gender.getDescription() + "\nMaritalStatus: " + maritalStatus.getDescription()
-                + "\nEthnic Origin: " + ethnicOrigin.getDescription() + "\nLanguage: " + language.getDescription() + "\nNationality: " + nationality.getDescription()
-                + "\nSexuality: " + sexuality.getDescription() + "\nReligion: " + religion.getDescription();
+        String temp = "#" + this.personRef + " : " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
+                + "\nNI no: " + this.nationalInsurance + "\nGender: " + this.gender.getDescription() + "\nMaritalStatus: " + this.maritalStatus.getDescription()
+                + "\nEthnic Origin: " + this.ethnicOrigin.getDescription() + "\nLanguage: " + this.language.getDescription() + "\nNationality: " + this.nationality.getDescription()
+                + "\nSexuality: " + this.sexuality.getDescription() + "\nReligion: " + this.religion.getDescription();
         return temp;
     }
 }

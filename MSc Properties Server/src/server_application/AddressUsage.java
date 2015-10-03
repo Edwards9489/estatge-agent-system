@@ -9,7 +9,9 @@ import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
 import interfaces.ModifiedByInterface;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -33,7 +35,7 @@ public class AddressUsage implements AddressUsageInterface {
         this.startDate = startDate;
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        modifiedBy = new ArrayList();
+        this.modifiedBy = new ArrayList();
     }
     
     
@@ -55,22 +57,27 @@ public class AddressUsage implements AddressUsageInterface {
         this.startDate = startDate;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     /**
      * @param endDate the endDate to set
+     * @param modifiedBy
      */
     @Override
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         this.endDate = endDate;
+        this.modifiedBy(modifiedBy);
     }
     
     @Override
-    public void updateAddress(AddressInterface address, Date startDate) {
-        setAddress(address);
-        setStartDate(startDate);
-    }
-    
-    public void modifiedBy(ModifiedByInterface modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void updateAddress(AddressInterface address, Date startDate, ModifiedByInterface modifiedBy) {
+        if(this.isCurrent()) {
+            this.setAddress(address);
+            this.setStartDate(startDate);
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     
@@ -82,7 +89,7 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public String getAddressString() {
-        return address.toString();
+        return this.address.printAddress();
     }
     
     /**
@@ -90,7 +97,7 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public AddressInterface getAddress() {
-        return address;
+        return this.address;
     }
 
     /**
@@ -98,7 +105,7 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
 
     /**
@@ -106,7 +113,7 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public Date getEndDate() {
-        return endDate;
+        return this.endDate;
     }
 
     /**
@@ -114,12 +121,33 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public boolean isCurrent() {
-        if(endDate == null) {
+        if(this.endDate == null) {
             return true;
         }
         else {
-            return endDate.before(new Date());
+            return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**
@@ -127,7 +155,7 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
@@ -135,6 +163,15 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
+                "\nEnd Date: " + this.getEndDate() + "\nCreatedBy: " + this.getCreatedBy() + "\nCreated Date: " +
+                this.getCreatedDate() + "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " +
+                this.getLastModifiedDate() + "\nIs Current: " + isCurrent() +  "\nModified By\n" + this.getModifiedBy();
+        return temp;
     }
 }

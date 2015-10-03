@@ -81,19 +81,23 @@ public class Account implements AccountInterface {
     
     @Override
     public void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy) {
-        this.setStartDate(startDate);
-        this.setAccountName(accName);
-        this.modifiedBy(modifiedBy);
-    }
-    
-    public void createTransaction(TransactionInterface transaction) {
-        if(transaction.isDebit()) {
-            this.debitTransactions.add(transaction);
-            this.setBalance(this.balance + transaction.getAmount());
+        if (this.isCurrent()) {
+            this.setStartDate(startDate);
+            this.setAccountName(accName);
+            this.modifiedBy(modifiedBy);
         }
-        else {
-            this.creditTransactions.add(transaction);
-            this.setBalance(this.balance - transaction.getAmount());
+
+    }
+
+    public void createTransaction(TransactionInterface transaction) {
+        if (this.isCurrent()) {
+            if (transaction.isDebit()) {
+                this.debitTransactions.add(transaction);
+                this.setBalance(this.balance + transaction.getAmount());
+            } else {
+                this.creditTransactions.add(transaction);
+                this.setBalance(this.balance - transaction.getAmount());
+            }
         }
     }
     
@@ -152,7 +156,7 @@ public class Account implements AccountInterface {
             return true;
         }
         else {
-            return this.endDate.before(new Date());
+            return this.endDate.after(new Date());
         }
     }
     
@@ -211,7 +215,7 @@ public class Account implements AccountInterface {
     
     @Override
     public String toString() {
-        String temp = "Account Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
+        String temp = "\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
                 "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
                 "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
                 this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +

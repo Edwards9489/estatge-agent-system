@@ -29,6 +29,7 @@ public interface AddressInterface {
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
+    String printAddress();
     void setAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
             String town, String country, String postcode, ModifiedByInterface modifiedBy);

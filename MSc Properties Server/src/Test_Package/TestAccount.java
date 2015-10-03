@@ -67,6 +67,7 @@ public class TestAccount {
         TransactionInterface tran6 = new Transaction(test1.getAccRef(), 3, 2, 323.97, false, new Date(), "JBLOOGS");
         TransactionInterface tran7 = new Transaction(test1.getAccRef(), 2, 3, 237.21, true, new Date(), "DEDWARDS");
         TransactionInterface tran8 = new Transaction(test1.getAccRef(), 3, 2, 1000.00, false, new Date(), "JBLOOGS");
+        TransactionInterface tran9 = new Transaction(test1.getAccRef(), 3, 2, 500.00, true, new Date(), "DEDWARDS");
         
         test1.createTransaction(tran1);
         
@@ -112,8 +113,22 @@ public class TestAccount {
         System.out.println(test1.getEndDate());
         System.out.println(test1.isCurrent());
         
+        test1.createTransaction(tran9);
+        
+        System.out.println("\n" + test1.getBalance());
+        System.out.println(test1.isNegativeInd());
+        
+        ModifiedByInterface modTest3 = new ModifiedBy("DEDWARDS", "Updating Account");
+        Date date2 = date;
+        date2.setMonth(3);
+        test1.updateAccount(date2, "TEST2", modTest3);
+           
+        
         
         System.out.println("\n\n" + test1);
+        
+        
+        
         
         
         // setEndDate(Date endDate, ModifiedByInterface modifiedBy)
