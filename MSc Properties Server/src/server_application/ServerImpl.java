@@ -212,7 +212,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return i.getInvolvedPartyRef();
     }
     
-    public int createApplication(String corrName, Date startDate, ArrayList<InvolvedPartyInterface> household, AddressUsageInterface address, String createdBy) {
+    public int createApplication(String corrName, Date startDate, ArrayList<InvolvedParty> household, AddressUsageInterface address, String createdBy) {
         Application a = new Application(appRef, corrName, startDate, household, address, createdBy);
         appRef++;
         this.database.createApplication(a);

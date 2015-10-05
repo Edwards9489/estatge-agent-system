@@ -20,6 +20,7 @@ public interface PersonInterface {
     Date getDateOfBirth();
     String getNI();
     Element getGender();
+    boolean isOver18();
     Element getMaritalStatus();
     Element getEthnicOrigin();
     Element getLanguage();

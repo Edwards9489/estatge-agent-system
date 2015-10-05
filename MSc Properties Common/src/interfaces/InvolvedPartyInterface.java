@@ -6,6 +6,7 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,11 +20,15 @@ public interface InvolvedPartyInterface {
     Date getEndDate();
     Element getEndReason();
     Element getRelationship();
-    boolean getJointInd();
-    boolean getMainInd();
+    boolean isJointInd();
+    boolean isMainInd();
     boolean isCurrent();
+    boolean isOver18();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String createdBy();
     Date createdDate();
-    void endInvolvedParty(Date end, Element endReason);
-    void updateInvolvedParty(boolean joint, Date start, Element relationhip);
+    void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy);
+    void updateInvolvedParty(boolean joint, Date start, Element relationhip, ModifiedByInterface modifiedBy);
 }

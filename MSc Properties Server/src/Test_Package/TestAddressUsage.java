@@ -19,9 +19,10 @@ import server_application.ModifiedBy;
 public class TestAddressUsage {
     public static void main(String[] args) {
         System.out.println("********************Running Address Usage Test********************\n");
+        System.out.println("\n****** Creating Test Address Usage ******\n");
+        
         System.out.println("****** Testing Accessor Methods ******\n");
         
-        System.out.println("****** Creating Test Address Usage ******\n");
         Date date = new Date();
         date.setMonth(0);
         date.setDate(1);

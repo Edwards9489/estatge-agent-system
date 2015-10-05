@@ -16,13 +16,20 @@ public interface ApplicationInterface {
     int getApplicationRef();
     String getAppCorrName();
     Date getAppStartDate();
+    Date getAppEndDate();
     String getAppStatusCode();
+    String getCurrentApplicationAddressString();
     List getApplicationAddressess();
     boolean isAppInterestedFlag();
     List getHousehold();
     List getPropertiesInterestedIn();
     TenancyInterface getTenancy();
+    boolean isCurrent();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void updateApplication(String name, Date startDate);
+    void updateApplication(String name, Date startDate, ModifiedByInterface modifiedBy);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
 }

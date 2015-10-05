@@ -51,11 +51,11 @@ public class TestTenancy {
         PersonInterface person = new Person(1, element, "Dwayne", "Leroy", "Edwards", new Date(), "JL 81 61 90 C", element, 
                                             element, element, element, element, element, element, null, null, "DEDWARDS");
         LandlordInterface landlord = new Landlord(1, person, "DEDWARDS");
-        InvolvedPartyInterface invParty = new InvolvedParty(1, person, true, true, new Date(), element, "DEDWARDS");
+        InvolvedParty invParty = new InvolvedParty(1, person, true, true, new Date(), element, "DEDWARDS");
         ArrayList<LandlordInterface> landlords = new ArrayList();
         landlords.add(landlord);
         
-        ArrayList<InvolvedPartyInterface> invParties = new ArrayList();
+        ArrayList<InvolvedParty> invParties = new ArrayList();
         invParties.add(invParty);
         
         AddressUsageInterface addressUsage = new AddressUsage(address, new Date(), "DEDWARDS");

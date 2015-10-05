@@ -227,6 +227,18 @@ public class Person implements PersonInterface {
     }
     
     @Override
+    public boolean isOver18() {
+        Calendar dob = DateConversion.dateToCalendar(dateOfBirth);
+        Calendar now = Calendar.getInstance();
+        int years = -1;
+        while (!dob.after(now)) {
+            dob.add(Calendar.YEAR, 1);
+            years++;
+        }
+        return years >= 18;
+    }
+    
+    @Override
     public Element getMaritalStatus() {
         return this.maritalStatus;
     }
@@ -274,7 +286,7 @@ public class Person implements PersonInterface {
     
     @Override
     public String toString() {
-        String temp = "#" + this.personRef + " : " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
+        String temp = "\n\nPerson Ref: " + this.personRef + "\nName: " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
                 + "\nNI no: " + this.nationalInsurance + "\nGender: " + this.gender.getDescription() + "\nMaritalStatus: " + this.maritalStatus.getDescription()
                 + "\nEthnic Origin: " + this.ethnicOrigin.getDescription() + "\nLanguage: " + this.language.getDescription() + "\nNationality: " + this.nationality.getDescription()
                 + "\nSexuality: " + this.sexuality.getDescription() + "\nReligion: " + this.religion.getDescription();

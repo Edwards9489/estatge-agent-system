@@ -348,7 +348,7 @@ public class Address implements AddressInterface {
     
     @Override
     public String toString() {
-        String temp = "\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +
+        String temp = "\n\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +
                 "\nCreated Date: " + this.getCreatedDate() + "Last ModifiedBy: " + this.getLastModifiedBy() +
                 "Last Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
         return temp;

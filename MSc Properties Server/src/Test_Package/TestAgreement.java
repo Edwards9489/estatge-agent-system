@@ -5,8 +5,10 @@
  */
 package Test_Package;
 
+import interfaces.ModifiedByInterface;
 import java.util.Date;
 import server_application.Agreement;
+import server_application.ModifiedBy;
 
 /**
  *
@@ -16,19 +18,99 @@ public class TestAgreement {
     public static void main(String[] args) {
         System.out.println("********************Running Agreement Test********************");
         
-        System.out.println("\nCreating agreement\n\n\n\n");
+        System.out.println("\n****** Creating agreement ******\n");
         
-        Agreement test1 = new Agreement(1, "NEWOFFICE", new Date(), 12, "DEDWARDS1", "NEWOFFICE");
-        System.out.println("test 1 - 12 months");
+        System.out.println("****** Testing Accessor Methods ******\n");
         
-        Agreement test2 = new Agreement(1, "NEWOFFICE", new Date(), -15, "DEDWARDS2", "NEWOFFICE");
-        System.out.println("test 2 - subtract 15 months");
         
-        Agreement test3 = new Agreement(1, "NEWOFFICE", new Date(), 6, "DEDWARDS3", "NEWOFFICE");
-        System.out.println("test 3 - 6 months");
+        Date date = new Date();
+        date.setMonth(0);
+        date.setDate(1);
         
-        Agreement test4 = new Agreement(1, "NEWOFFICE", new Date(), 26, "DEDWARDS4", "NEWOFFICE");
+        Agreement test1 = new Agreement(1, "Mr Dwayne Leroy Edwards", date, 6, "DEDWARDS1", "NEWOFFICE");
         
-        System.out.println("test 4 - 26 months");
+        System.out.println(test1.getAgreementRef());
+        System.out.println(test1.getAgreementName());
+        System.out.println(test1.getOfficeCode());
+        System.out.println(test1.getLength());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getExpectedEndDate());
+        System.out.println(test1.getActualEndDate());
+        System.out.println(test1.isCurrent());
+        System.out.println(test1.getCreatedBy());
+        System.out.println(test1.getCreatedDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        System.out.println(test1.getModifiedBy());
+        
+        
+        System.out.println("\n\n ****** Testing Mutator Methods ******");
+        System.out.println("\n****** Updating Agreement ******");
+        
+        ModifiedByInterface modTest = new ModifiedBy("JBLOGGS", "Updated Agreement");
+        Date date1 = new Date();
+        date1.setMonth(0);
+        date1.setDate(2);
+        test1.updateAgreement(date1, test1.getLength(), modTest);
+        
+        System.out.println("\n" + test1.getLength());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getExpectedEndDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest1 = new ModifiedBy("DEDWARDS", "Updated Agreement");
+        test1.updateAgreement(test1.getStartDate(), -12, modTest1);
+        
+        System.out.println("\n" + test1.getLength());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getExpectedEndDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest2 = new ModifiedBy("JBLOGGS", "Updated Agreement");
+        test1.updateAgreement(test1.getStartDate(), 9, modTest2);
+        
+        System.out.println("\n" + test1.getLength());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getExpectedEndDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        
+        System.out.println("\n\n****** Ending Agreement ******");
+        
+        ModifiedByInterface modTest3 = new ModifiedBy("DEDWARDS", "Ended Agreement");
+        Date date2 = new Date();
+        date2.setMonth(0);
+        date2.setDate(5);
+        System.out.println(test1.isCurrent());
+        System.out.println(test1.getActualEndDate());
+        test1.setActualEndDate(date2, modTest3);
+        System.out.println(test1.getActualEndDate());
+        System.out.println(test1.isCurrent());
+        
+        ModifiedByInterface modTest4 = new ModifiedBy("JBLOGGS", "Updated Agreement");
+        test1.updateAgreement(test1.getStartDate(), 12, modTest4);
+        
+        System.out.println("\n" + test1.getLength());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getExpectedEndDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        ModifiedByInterface modTest5 = new ModifiedBy("DEDWARDS", "Ended Agreement");
+        Date date3 = new Date();
+        date3.setMonth(11);
+        date3.setDate(30);
+        System.out.println(test1.isCurrent());
+        System.out.println(test1.getActualEndDate());
+        test1.setActualEndDate(date3, modTest5);
+        System.out.println(test1.getActualEndDate());
+        System.out.println(test1.isCurrent());
+        
+        test1.updateAgreement(test1.getStartDate(), 12, modTest4);
+        
+        System.out.println(test1);
     }
 }

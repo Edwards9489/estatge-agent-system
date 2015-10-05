@@ -55,11 +55,11 @@ public class Employee implements EmployeeInterface {
         this.officeCode = officeCode;
     }
     
-    public void createContract(ContractInterface contract) {
+    public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) {
         if(!contracts.isEmpty()) {
             AgreementInterface temp = contracts.get(contracts.size()-1);
             if(temp.isCurrent()) {
-                temp.setActualEndDate(contract.getStartDate());
+                temp.setActualEndDate(contract.getStartDate(), modifiedBy);
             }
         }
         contracts.add(contract);

@@ -6,8 +6,12 @@
 package server_application;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -25,6 +29,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     private Date endDate; // end date of the involved party against the application
     private Element endReason; // Indicates the reason the involved party was ended against the application
     private Element relationship; // Indicates the relationship of this involved party to the main applicant
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -37,6 +42,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
         this.jointApplicantInd = joint;
         this.startDate = start;
         this.relationship = relationship;
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -46,7 +52,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     ///   MUTATOR METHODS   ///
     
     private void setStartDate(Date start) {
-        startDate = start;
+        this.startDate = start;
     }
     
     private void setRelationship(Element relationship) {
@@ -54,32 +60,38 @@ public class InvolvedParty implements InvolvedPartyInterface {
     }
     
     private void setEndDate(Date end) {
-        endDate = end;
+        this.endDate = end;
     }
     
     private void setEndReason(Element endReason) {
         this.endReason = endReason;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     public void setJointInd(boolean joint) {
-        jointApplicantInd = joint;
+        this.jointApplicantInd = joint;
     }
     
-    public void setMainInd(boolean main) {
-        mainApplicantInd = main;
-    }
-    
-    @Override
-    public void endInvolvedParty(Date end, Element endReason) {
-        setEndDate(end);
-        setEndReason(endReason);
+    public void setMainInd() {
+        this.mainApplicantInd = !this.mainApplicantInd;
     }
     
     @Override
-    public void updateInvolvedParty(boolean joint, Date start, Element relationhip) {
-        setJointInd(joint);
-        setStartDate(start);
-        setRelationship(relationship);
+    public void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy) {
+        this.setEndDate(end);
+        this.setEndReason(endReason);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    @Override
+    public void updateInvolvedParty(boolean joint, Date start, Element relationhip, ModifiedByInterface modifiedBy) {
+        this.setJointInd(joint);
+        this.setStartDate(start);
+        this.setRelationship(relationship);
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -88,66 +100,101 @@ public class InvolvedParty implements InvolvedPartyInterface {
     
     @Override
     public int getInvolvedPartyRef() {
-        return involvedPartyRef;
+        return this.involvedPartyRef;
     }
     
     @Override
     public int getPersonRef() {
-        return getPerson().getPersonRef();
+        return this.getPerson().getPersonRef();
     }
     
     @Override
     public PersonInterface getPerson() {
-        return person;
+        return this.person;
     }
     
     @Override
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
     
     @Override
     public Date getEndDate() {
-        return endDate;
+        return this.endDate;
     }
     
     @Override
     public Element getEndReason() {
-        return endReason;
+        return this.endReason;
     }
     
     @Override
     public Element getRelationship() {
-        return relationship;
+        return this.relationship;
     }
     
     @Override
-    public boolean getJointInd() {
-        return jointApplicantInd;
+    public boolean isJointInd() {
+        return this.jointApplicantInd;
     }
     
     @Override
-    public boolean getMainInd() {
-        return mainApplicantInd;
+    public boolean isMainInd() {
+        return this.mainApplicantInd;
     }
     
     @Override
     public boolean isCurrent() {
-        if(endDate == null) {
+        if(this.endDate == null) {
             return true;
         }
         else {
-            return endDate.before(new Date());
+            return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean isOver18() {
+        return this.person.isOver18();
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
     
     @Override
     public String createdBy() {
-        return createdBy;
+        return this.createdBy;
     }
     
     @Override
     public Date createdDate() {
-        return createdDate;
+        return this.createdDate;
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "\n\nInvolved Party Ref: " + this.getInvolvedPartyRef() + "\nPerson" + this.getPerson() +
+                "\nMain Applicant: " + this.isMainInd() + "\nJoint Applicant: " + this.isJointInd() +
+                "\nRelationship: " + this.getRelationship().getDescription() + "\nStart Date: " + this.getStartDate() +
+                "\nEnd Date: " + this.getEndDate() + "\nEnd Reason: " + this.getEndReason();
+        return temp;
     }
 }

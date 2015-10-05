@@ -6,6 +6,7 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,9 +20,12 @@ public interface AgreementInterface {
     Date getActualEndDate();
     int getLength();
     String getOfficeCode();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isCurrent();
-    void setActualEndDate(Date endDate);
-    void updateAgreement(Date startDate, int length);
+    void setActualEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    void updateAgreement(Date startDate, int length, ModifiedByInterface modifiedBy);
 }

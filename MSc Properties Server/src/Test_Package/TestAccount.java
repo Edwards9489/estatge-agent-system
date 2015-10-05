@@ -21,7 +21,10 @@ public class TestAccount {
         System.out.println("********************Running Account Test********************");
         
         System.out.println("\n****** Creating Test Account ******\n");
-        Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", new Date(), "DEDWARDS");
+        Date date = new Date();
+        date.setMonth(0);
+        date.setDate(1);
+        Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", date, "DEDWARDS");
         
         System.out.println("****** Testing Accessor Methods ******");
         
@@ -46,10 +49,10 @@ public class TestAccount {
         System.out.println("\n****** Updating Account ******");
         
         ModifiedByInterface modTest1 = new ModifiedBy("JBLOGGS", "Updated Account");
-        Date date = test1.getStartDate();
-        date.setMonth(4);
+        Date date1 = test1.getStartDate();
+        date1.setDate(2);
         
-        test1.updateAccount(date, "TEST", modTest1);
+        test1.updateAccount(date1, "TEST", modTest1);
         
         System.out.println("\n" + test1.getAccRef());
         System.out.println(test1.getAccName());
@@ -106,9 +109,10 @@ public class TestAccount {
         System.out.println("\n" + test1.getEndDate());
         System.out.println(test1.isCurrent());
         
-        Date date1 = new Date();
-        date1.setMonth(7);
-        test1.setEndDate(date1, modTest2);
+        Date date2 = new Date();
+        date2.setMonth(0);
+        date2.setDate(5);
+        test1.setEndDate(date2, modTest2);
         
         System.out.println(test1.getEndDate());
         System.out.println(test1.isCurrent());
@@ -119,11 +123,25 @@ public class TestAccount {
         System.out.println(test1.isNegativeInd());
         
         ModifiedByInterface modTest3 = new ModifiedBy("DEDWARDS", "Updating Account");
-        Date date2 = date;
-        date2.setMonth(3);
-        test1.updateAccount(date2, "TEST2", modTest3);
-           
+        Date date3 = new Date();
+        date3.setMonth(0);
+        date3.setDate(3);
+        test1.updateAccount(date3, "TEST2", modTest3);
         
+        System.out.println(test1.getAccName());
+        System.out.println(test1.getStartDate());
+        System.out.println(test1.getLastModifiedBy());
+        System.out.println(test1.getLastModifiedDate());
+        
+        Date date4 = new Date();
+        date4.setMonth(11);
+        date4.setDate(30);
+        test1.setEndDate(date4, modTest2);
+        
+        System.out.println(test1.getEndDate());
+        System.out.println(test1.isCurrent());        
+        
+        test1.updateAccount(date3, "TEST2", modTest3);
         
         System.out.println("\n\n" + test1);
         

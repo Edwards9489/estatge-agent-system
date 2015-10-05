@@ -168,7 +168,7 @@ public class AddressUsage implements AddressUsageInterface {
     
     @Override
     public String toString() {
-        String temp = "\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
+        String temp = "\n\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
                 "\nEnd Date: " + this.getEndDate() + "\nCreatedBy: " + this.getCreatedBy() + "\nCreated Date: " +
                 this.getCreatedDate() + "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " +
                 this.getLastModifiedDate() + "\nIs Current: " + isCurrent() +  "\nModified By\n" + this.getModifiedBy();

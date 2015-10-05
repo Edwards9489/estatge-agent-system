@@ -215,7 +215,7 @@ public class Account implements AccountInterface {
     
     @Override
     public String toString() {
-        String temp = "\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
+        String temp = "\n\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
                 "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
                 "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
                 this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +

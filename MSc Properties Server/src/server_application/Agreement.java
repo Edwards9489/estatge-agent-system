@@ -9,7 +9,9 @@ import interfaces.AgreementInterface;
 import interfaces.ModifiedByInterface;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -37,10 +39,10 @@ public class Agreement implements AgreementInterface {
         this.agreementName = agreementName;
         this.startDate = startDate;
         this.length = length;
-        expectedEndDate = calculateExpectedEndDate(startDate, length);
+        this.setExpectedEndDate(this.calculateExpectedEndDate());
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        modifiedBy = new ArrayList();
+        this.modifiedBy = new ArrayList();
         this.officeCode = officeCode;
     }
     
@@ -66,36 +68,47 @@ public class Agreement implements AgreementInterface {
      * @param length the length to set
      */
     private void setLength(int length) {
-        this.length = length;
-        setExpectedEndDate(calculateExpectedEndDate(startDate, length));
+        if(length > 0) {
+            this.length = length;
+            this.setExpectedEndDate(calculateExpectedEndDate());
+        }
+    }
+    
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
     }
     
     /**
      * @param actualEndDate the actualEndDate to set
+     * @param modifiedBy
      */
     @Override
-    public void setActualEndDate(Date actualEndDate) {
+    public void setActualEndDate(Date actualEndDate, ModifiedByInterface modifiedBy) {
         this.actualEndDate = actualEndDate;
+        this.modifiedBy(modifiedBy);
     }
     
     @Override
-    public void updateAgreement(Date startDate, int length) {
-        setStartDate(startDate);
-        setLength(length);
-    }
-    
-    public void modifiedBy(ModifiedByInterface modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void updateAgreement(Date startDate, int length, ModifiedByInterface modifiedBy) {
+        if(isCurrent()) {
+            this.setStartDate(startDate);
+            this.setLength(length);
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     
     
     ///   ACCESSOR METHODS   ///
     
-    private Date calculateExpectedEndDate(Date startDate, int length) {
+    private Date calculateExpectedEndDate() {
         Calendar cal = DateConversion.dateToCalendar(this.startDate);
-        cal.add(Calendar.MONTH, length);
-        return expectedEndDate = cal.getTime();
+        cal.add(Calendar.MONTH, this.length);
+        return cal.getTime();
+    }
+    
+    private boolean isEndDateNull() {
+        return this.actualEndDate == null;
     }
 
     /**
@@ -156,12 +169,33 @@ public class Agreement implements AgreementInterface {
     
     @Override
     public boolean isCurrent() {
-        if(actualEndDate == null) {
+        if(this.isEndDateNull()) {
             return true;
         }
         else {
-            return actualEndDate.before(new Date());
+            return actualEndDate.after(new Date());
         }
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**
@@ -178,5 +212,16 @@ public class Agreement implements AgreementInterface {
     @Override
     public Date getCreatedDate() {
         return createdDate;
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +
+                "\nOffice Code: " + this.getOfficeCode() + "\nAgreement Length: " + this.getLength() + "\nStart Date: " +
+                this.getStartDate() + "\nExpected End Date: " + this.getExpectedEndDate() + "\nActual End Date: " +
+                this.getActualEndDate() + "\nIs Current: " + this.isCurrent() + "\nCreated By: " + this.getCreatedBy() +
+                "\nCreated Date: " + this.getCreatedDate() + "\nLast Modified By:" + this.getLastModifiedBy() +
+                "\nLast Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
+        return temp;
     }
 }
