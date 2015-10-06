@@ -5,7 +5,6 @@
  */
 package server_application;
 
-import interfaces.AddressUsageInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
@@ -27,8 +26,8 @@ public class Employee implements EmployeeInterface {
     private final int employeeRef;
     private final PersonInterface person;
     private final ArrayList<ContractInterface> contracts;
-    private final ArrayList<AddressUsageInterface> addresses;
     private String officeCode; // Create a class for office, which stores the office information
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -39,7 +38,7 @@ public class Employee implements EmployeeInterface {
         this.employeeRef = employeeRef;
         this.person = person;
         this.contracts = new ArrayList();
-        this.addresses = new ArrayList();
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -55,6 +54,10 @@ public class Employee implements EmployeeInterface {
         this.officeCode = officeCode;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) {
         if(!contracts.isEmpty()) {
             AgreementInterface temp = contracts.get(contracts.size()-1);
@@ -63,15 +66,8 @@ public class Employee implements EmployeeInterface {
             }
         }
         contracts.add(contract);
+        this.modifiedBy(modifiedBy);
         setOfficeCode(contract.getOfficeCode());
-    }
-    
-    public void createAddress(AddressUsageInterface addressUsage, ModifiedByInterface modifiedBy) {
-        if(!addresses.isEmpty()) {
-            AddressUsageInterface temp = addresses.get(addresses.size()-1);
-            temp.setEndDate(addressUsage.getStartDate(), modifiedBy);
-        }
-        addresses.add(addressUsage);
     }
     
     
@@ -100,6 +96,27 @@ public class Employee implements EmployeeInterface {
     @Override
     public String getOfficeCode() {
         return officeCode;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**
@@ -132,21 +149,5 @@ public class Employee implements EmployeeInterface {
     @Override
     public List getContracts() {
         return Collections.unmodifiableList(contracts);
-    }
-    
-    /**
-     * @return the current addresses
-     */
-    @Override
-    public AddressUsageInterface getAddressUsage() {
-        return addresses.get(addresses.size()-1);
-    }
-    
-    /**
-     * @return the addresses
-     */
-    @Override
-    public List getAddresses() {
-        return Collections.unmodifiableList(addresses);
     }
 }

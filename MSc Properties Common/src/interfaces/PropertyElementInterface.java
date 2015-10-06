@@ -6,14 +6,15 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author Dwayne
  */
 public interface PropertyElementInterface {
-    void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge);
-    void setEndDate(Date endDate);
+    void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge, ModifiedByInterface modifiedBy);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
     Element getElement();
     String getElementCode();
     String getStringValue();
@@ -23,6 +24,9 @@ public interface PropertyElementInterface {
     boolean isCurrent();
     boolean isCharge();
     boolean isElementCode(String code);
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

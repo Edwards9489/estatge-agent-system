@@ -9,6 +9,7 @@ import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.OfficeInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ public class Office implements OfficeInterface {
     private ArrayList<ContactInterface> contacts;
     private final HashMap<Integer, AgreementInterface> agreements;
     private final HashMap<Integer, AccountInterface> accounts;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -42,6 +44,7 @@ public class Office implements OfficeInterface {
         this.startDate = startDate;
         this.agreements = new HashMap<>();
         this.accounts = new HashMap<>();
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -49,16 +52,22 @@ public class Office implements OfficeInterface {
     
     
     ///   MUTATOR METHODS   ///
-    
-    @Override
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+        
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
     }
     
     @Override
-    public void setEndDate(Date endDate) {
+    public void setStartDate(Date startDate, ModifiedByInterface modifiedBy) {
+        this.startDate = startDate;
+        this.modifiedBy(modifiedBy);
+    }
+    
+    @Override
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(this.canCloseOffice()) {
             this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -66,9 +75,10 @@ public class Office implements OfficeInterface {
      * @param agreement the agreement to add to agreements
      */
     @Override
-    public void addAgreement(AgreementInterface agreement) {
+    public void addAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) {
         if(!agreements.containsKey(agreement.getAgreementRef())) {
             agreements.put(agreement.getAgreementRef(), agreement);
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -76,9 +86,10 @@ public class Office implements OfficeInterface {
      * @param account the agreement to add to account
      */
     @Override
-    public void addAccount(AccountInterface account) {
+    public void addAccount(AccountInterface account, ModifiedByInterface modifiedBy) {
         if(accounts.containsKey(account.getAccRef())) {
             accounts.remove(account.getAccRef());
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -137,7 +148,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public boolean getCurrent() {
+    public boolean isCurrent() {
         if(endDate != null) {
             return endDate.before(new Date());
         }
@@ -168,6 +179,27 @@ public class Office implements OfficeInterface {
             }
         }
         return true;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
     
     @Override

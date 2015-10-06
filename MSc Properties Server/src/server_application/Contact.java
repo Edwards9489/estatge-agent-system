@@ -6,6 +6,7 @@
 package server_application;
 import interfaces.ContactInterface;
 import interfaces.Element;
+import interfaces.ModifiedByInterface;
 import java.util.*;
 
 /**
@@ -22,7 +23,7 @@ public class Contact implements ContactInterface {
     private Date endDate;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedBy> modifiedBy;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     
     ///   CONSTRUCTORS ///
     
@@ -60,23 +61,25 @@ public class Contact implements ContactInterface {
         this.startDate = startDate;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     /**
      * @param endDate the endDate to set
      */
     @Override
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         this.endDate = endDate;
+        this.modifiedBy(modifiedBy);
     }
     
     @Override
-    public void updateContact(Element contactType, String contactValue, Date startDate) {
-        setContactType(contactType);
-        setContactValue(contactValue);
-        setStartDate(startDate);
-    }
-    
-    public void modifiedBy(ModifiedBy modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
+        this.setContactType(contactType);
+        this.setContactValue(contactValue);
+        this.setStartDate(startDate);
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -132,6 +135,27 @@ public class Contact implements ContactInterface {
             return endDate.before(new Date());
         }
     }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
+    }
 
     /**
      * @return the createdBy
@@ -147,10 +171,5 @@ public class Contact implements ContactInterface {
     @Override
     public Date getCreatedDate() {
         return createdDate;
-    }
-    
-    @Override
-    public List getmodifiedBy() {
-        return Collections.unmodifiableList(modifiedBy);
     }
 }

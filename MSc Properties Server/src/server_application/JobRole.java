@@ -8,6 +8,8 @@ package server_application;
 import interfaces.Element;
 import interfaces.JobRoleBenefitInterface;
 import interfaces.JobRoleInterface;
+import interfaces.ModifiedByInterface;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,20 +30,23 @@ public class JobRole implements JobRoleInterface {
     private final boolean fullTime;
     private double salary;
     private final HashMap<String, JobRoleBenefitInterface> benefits; // Create Job Role Benefit class
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
     ///   CONSTRUCTORS ///
     
-    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, String createdBy) {
+    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, String createdBy) {
         this.jobRoleCode = code;
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
         this.fullTime = fullTime;
+        this.salary = salary;
+        this.jobRequirements = new HashMap<>();
+        this.benefits = new HashMap<>();
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        jobRequirements = new HashMap<>();
-        benefits = new HashMap<>();
     }
     
     
@@ -61,45 +66,55 @@ public class JobRole implements JobRoleInterface {
     private void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
     }
-    
-    @Override
-    public void updateJobRole(String title, String description) {
-        setJobTitle(title);
-        setJobDescription(description);
-    }
-    
-    @Override
-    public void createJobRequirement(Element requirement) {
-        if(jobRequirements.containsKey(requirement.getCode())) {
-            jobRequirements.put(requirement.getCode(), requirement);
-        }
-    }
-    
-    @Override
-    public void removeJobRequirement(Element requirement) {
-        if(jobRequirements.containsKey(requirement.getCode())) {
-            benefits.remove(requirement.getCode());
-        }
-    }
 
     /**
      * @param salary the salary to set
      */
-    public void setSalary(double salary) {
+    private void setSalary(double salary) {
         this.salary = salary;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     @Override
-    public void createBenefit(JobRoleBenefitInterface benefit) {
-        if(benefits.containsKey(benefit.getElementCode())) {
-            benefits.put(benefit.getElementCode(), benefit);
+    public void updateJobRole(String title, String description, double salary, ModifiedByInterface modifiedBy) {
+        this.setJobTitle(title);
+        this.setJobDescription(description);
+        this.setSalary(salary);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    @Override
+    public void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
+        if(this.jobRequirements.containsKey(requirement.getCode())) {
+            this.jobRequirements.put(requirement.getCode(), requirement);
+            this.modifiedBy(modifiedBy);
         }
     }
     
     @Override
-    public void removeBenefit(JobRoleBenefitInterface benefit) {
-        if(benefits.containsKey(benefit.getElementCode())) {
-            benefits.remove(benefit.getElementCode());
+    public void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
+        if(this.jobRequirements.containsKey(requirement.getCode())) {
+            this.benefits.remove(requirement.getCode());
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    @Override
+    public void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
+        if(this.benefits.containsKey(benefit.getElementCode())) {
+            this.benefits.put(benefit.getElementCode(), benefit);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    @Override
+    public void removeBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
+        if(this.benefits.containsKey(benefit.getElementCode())) {
+            this.benefits.remove(benefit.getElementCode());
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -112,7 +127,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public String getJobRoleCode() {
-        return jobRoleCode;
+        return this.jobRoleCode;
     }
 
     /**
@@ -120,7 +135,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public String getJobTitle() {
-        return jobTitle;
+        return this.jobTitle;
     }
     
     /**
@@ -128,7 +143,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public String getJobDescription() {
-        return jobDescription;
+        return this.jobDescription;
     }
 
     /**
@@ -136,7 +151,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public List getJobRequirements() {
-        return Collections.unmodifiableList((List) jobRequirements.values());
+        return Collections.unmodifiableList((List) this.jobRequirements.values());
     }
 
     /**
@@ -144,7 +159,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public boolean isFullTime() {
-        return fullTime;
+        return this.fullTime;
     }
 
     /**
@@ -152,7 +167,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public double getSalary() {
-        return salary;
+        return this.salary;
     }
 
     /**
@@ -160,7 +175,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public List getBenefits() {
-        return Collections.unmodifiableList((List) benefits.values());
+        return Collections.unmodifiableList((List) this.benefits.values());
     }
 
     /**
@@ -168,7 +183,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
@@ -176,6 +191,6 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
     }
 }

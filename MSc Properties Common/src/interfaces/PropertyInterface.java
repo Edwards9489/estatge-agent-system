@@ -14,10 +14,10 @@ import java.util.List;
  * @author Dwayne
  */
 public interface PropertyInterface {
-    void setLandlords(ArrayList<LandlordInterface> landlord);
-    void setLeaseEndDate(Date leaseEndDate);
-    void setPropStatus(String propStatus);
-    void updateProperty(Date acquiredDate, Element propType, Element propSubType);
+    void setLandlords(ArrayList<LandlordInterface> landlord, ModifiedByInterface modifiedBy);
+    void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy);
+    void setPropStatus(String propStatus, ModifiedByInterface modifiedBy);
+    void updateProperty(Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy);
     int getPropRef();
     AddressInterface getAddress();
     List getLandlords();
@@ -30,4 +30,9 @@ public interface PropertyInterface {
     boolean isCurrent();
     double getRent();
     double getCharges();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
+    String getCreatedBy();
+    Date getCreatedDate();
 }

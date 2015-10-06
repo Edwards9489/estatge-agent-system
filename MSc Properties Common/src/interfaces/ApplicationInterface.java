@@ -23,7 +23,7 @@ public interface ApplicationInterface {
     boolean isAppInterestedFlag();
     List getHousehold();
     List getPropertiesInterestedIn();
-    TenancyInterface getTenancy();
+    int getTenancyRef();
     boolean isCurrent();
     String getLastModifiedBy();
     Date getLastModifiedDate();

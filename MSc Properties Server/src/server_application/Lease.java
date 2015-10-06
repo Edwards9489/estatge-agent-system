@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,10 +42,10 @@ public class Lease extends Agreement implements LeaseInterface {
     ///   MUTATOR METHODS   ///
 
     @Override
-    public void addLandlord(LandlordInterface landlord) {
+    public void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy) {
         if(!isAlreadyLandlord(landlord)) {
             landlords.add(landlord);
-            property.setLandlords(landlords);
+            property.setLandlords(landlords, modifiedBy);
         }
     }
     

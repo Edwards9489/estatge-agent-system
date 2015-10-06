@@ -6,7 +6,11 @@
 package server_application;
 
 import interfaces.Element;
+import interfaces.ModifiedByInterface;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,6 +23,7 @@ public class ElementImpl implements Element {
     private final String code;
     private String description;
     private boolean current;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -27,6 +32,7 @@ public class ElementImpl implements Element {
     public ElementImpl(String code, String description, String createdBy) {
         this.code = code;
         this.description = description;
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
         current = true;
@@ -44,10 +50,15 @@ public class ElementImpl implements Element {
         this.current = current;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     @Override
-    public void updateElement(String description, boolean current) {
+    public void updateElement(String description, boolean current, ModifiedByInterface modifiedBy) {
         setDescription(description);
         setCurrent(current);
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -56,16 +67,47 @@ public class ElementImpl implements Element {
     
     @Override
     public String getCode() {
-        return code;
+        return this.code;
     }
     
     @Override
     public String getDescription() {
-        return description;
+        return this.description;
     }
     
     @Override
     public boolean isCurrent() {
-        return current;
+        return this.current;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public String getCreatedBy() {
+        return this.createdBy;
+    }
+    
+    @Override
+    public Date getCreatedDate() {
+        return this.createdDate;
     }
 }

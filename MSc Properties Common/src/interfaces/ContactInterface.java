@@ -13,15 +13,17 @@ import java.util.List;
  * @author Dwayne
  */
 public interface ContactInterface {
-    void setEndDate(Date endDate);
-    void updateContact(Element contactType, String contactValue, Date startDate);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy);
     Element getContactType();
     String getContactTypeDescription();
     String getContactValue();
     Date getStartDate();
     Date getEndDate();
     boolean isCurrent();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    List getmodifiedBy();
 }

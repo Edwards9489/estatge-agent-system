@@ -6,17 +6,21 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author Dwayne
  */
 public interface JobRoleBenefitInterface {
-    void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit);
+    void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, ModifiedByInterface modifiedBy);
     Element getElement();
     String getElementCode();
     String getStringValue();
     double getDoubleValue();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isSalaryBenefit();

@@ -5,13 +5,21 @@
  */
 package interfaces;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  *
  * @author Dwayne
  */
 public interface Element {
-    void updateElement(String description, boolean current);
+    void updateElement(String description, boolean current, ModifiedByInterface modifiedBy);
     String getCode();
     String getDescription();
     boolean isCurrent();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
+    String getCreatedBy();
+    Date getCreatedDate();
 }

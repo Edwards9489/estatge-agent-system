@@ -6,6 +6,7 @@
 package server_application;
 
 import interfaces.Element;
+import interfaces.PersonInterface;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -373,14 +374,90 @@ public class Database {
     }
     
     public boolean propTypeExists(String code) {
-        return propertyTypes.containsKey(code);
+        return this.propertyTypes.containsKey(code);
     }
     
     public boolean propSubTypeExists(String code) {
-        return propertySubTypes.containsKey(code);
+        return this.propertySubTypes.containsKey(code);
     }
     
     public boolean propElementExists(String code) {
-        return propertyElements.containsKey(code);
+        return this.propertyElements.containsKey(code);
+    }
+    
+    public boolean officeExists(String code) {
+        return offices.containsKey(code);
+    }
+    
+    public boolean personExists(int personRef) {
+        return this.people.containsKey(personRef);
+    }
+    
+    public boolean invPartyExists(int invPartyRef) {
+        return this.involvedParties.containsKey(invPartyRef);
+    }
+    
+    public boolean applicationExists(int appRef) {
+        return this.applications.containsKey(appRef);
+    }
+    
+    public boolean addressExists(int addressRef) {
+        return this.addresses.containsKey(addressRef);
+    }
+    
+    public boolean propertyExists(int propRef) {
+        return this.properties.containsKey(propRef);
+    }
+    
+    public boolean tenancyExists(int tenancyRef) {
+        return this.tenancies.containsKey(tenancyRef);
+    }
+    
+    public Person getPerson(int personRef) {
+        Person temp = null;
+        if (this.people.containsKey(personRef)) {
+            temp = this.people.get(personRef);
+        }
+        return temp;
+    }
+    
+    public InvolvedParty getInvolvedParty(int invPartyRef) {
+        InvolvedParty temp = null;
+        if (this.involvedParties.containsKey(invPartyRef)) {
+            temp = this.involvedParties.get(invPartyRef);
+        }
+        return temp;
+    }
+    
+    public Application getApplication(int appRef) {
+        Application temp = null;
+        if (applications.containsKey(appRef)) {
+            temp = applications.get(appRef);
+        }
+        return temp;
+    }
+    
+    public Address getAddress(int addressRef) {
+        Address temp = null;
+        if (addresses.containsKey(addressRef)) {
+            temp = addresses.get(addressRef);
+        }
+        return temp;
+    }
+    
+    public Property getProperty(int propRef) {
+        Property temp = null;
+        if (properties.containsKey(propRef)) {
+            temp = properties.get(propRef);
+        }
+        return temp;
+    }
+    
+    public Tenancy getTenancy(int tenancyRef) {
+        Tenancy temp = null;
+        if (tenancies.containsKey(tenancyRef)) {
+            temp = tenancies.get(tenancyRef);
+        }
+        return temp;
     }
 }

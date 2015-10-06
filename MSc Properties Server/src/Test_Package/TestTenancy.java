@@ -14,6 +14,7 @@ import interfaces.PropertyInterface;
 import interfaces.LandlordInterface;
 import interfaces.TenancyInterface;
 import interfaces.ApplicationInterface;
+import interfaces.ModifiedByInterface;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import server_application.Application;
 import server_application.ElementImpl;
 import server_application.InvolvedParty;
 import server_application.Landlord;
+import server_application.ModifiedBy;
 import server_application.Person;
 import server_application.Property;
 import server_application.Tenancy;
@@ -55,14 +57,12 @@ public class TestTenancy {
         ArrayList<LandlordInterface> landlords = new ArrayList();
         landlords.add(landlord);
         
-        ArrayList<InvolvedParty> invParties = new ArrayList();
-        invParties.add(invParty);
-        
         AddressUsageInterface addressUsage = new AddressUsage(address, new Date(), "DEDWARDS");
         
-        ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParties, addressUsage, "DEDWARDS");
-        PropertyInterface prop = new Property(1, address, true, new Date(), element, element);
-        prop.setLandlords(landlords);
+        ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS");
+        PropertyInterface prop = new Property(1, address, true, new Date(), element, element, "DEDWARDS");
+        ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", "DEDWARDS");
+        prop.setLandlords(landlords, modTest);
         TenancyInterface test1 = new Tenancy(1, new Date(), 12, "DEDWARDS", prop, application, element, "NEWOFFICE");
         
         System.out.println(test1.toString());

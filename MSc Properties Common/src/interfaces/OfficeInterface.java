@@ -13,10 +13,10 @@ import java.util.List;
  * @author Dwayne
  */
 public interface OfficeInterface {
-    void setStartDate(Date startDate);
-    void setEndDate(Date endDate);
-    void addAgreement(AgreementInterface agreement);
-    void addAccount(AccountInterface account);
+    void setStartDate(Date startDate, ModifiedByInterface modifiedBy);
+    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    void addAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy);
+    void addAccount(AccountInterface account, ModifiedByInterface modifiedBy);
     String getOfficeCode();
     AddressInterface getAddress();
     Date getStartDate();
@@ -24,8 +24,11 @@ public interface OfficeInterface {
     List getContacts();
     List getAgreements();
     List getAccounts();
-    boolean getCurrent();
+    boolean isCurrent();
     boolean canCloseOffice();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

@@ -11,6 +11,8 @@ import interfaces.RegistryLoader;
 import interfaces.Client;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
+import interfaces.ModifiedByInterface;
+import interfaces.PersonInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -27,10 +29,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     ///   VARIABLES   ///
         
     // List of logged on users
-    private HashMap<String,Client> users;
+    private final HashMap<String,Client> users;
     
     // The database for the server
-    private Database database;
+    private final Database database;
     
     // List of reference counters
     private int personRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
@@ -161,14 +163,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createAddress(int addressRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) {
-        
-        Address address = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country,  postcode, createdBy);
-        addressRef++;
-        return address.getAddressRef();
-    }
-    
     public int createPropertyType(String code, String description, String createdBy) {
         if(!this.database.propTypeExists(code)) {
             Element type = new ElementImpl(code, description, createdBy);
@@ -205,6 +199,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return p.getPersonRef();
     }
     
+    
+    
     public int createInvolvedParty(Person p, boolean joint, boolean main, Date start, Element relationship, String createdBy) throws RemoteException {
         InvolvedParty i = new InvolvedParty(invPartyRef, p, joint, main, start, relationship, createdBy);
         invPartyRef++;
@@ -212,15 +208,145 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return i.getInvolvedPartyRef();
     }
     
-    public int createApplication(String corrName, Date startDate, ArrayList<InvolvedParty> household, AddressUsageInterface address, String createdBy) {
-        Application a = new Application(appRef, corrName, startDate, household, address, createdBy);
+    public int createApplication(String corrName, Date startDate, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, AddressUsageInterface address, String createdBy) throws RemoteException {
+        InvolvedParty mainApp = database.getInvolvedParty(this.createInvolvedParty((Person) person, joint, main, start, relationship, createdBy));
+        Application a = new Application(appRef, corrName, startDate, mainApp, (AddressUsage) address, createdBy);
         appRef++;
         this.database.createApplication(a);
         return a.getApplicationRef();
     }
     
     
-
+    public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
+            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) {
+        
+        Address address = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country,  postcode, createdBy);
+        addressRef++;
+        return address.getAddressRef();
+    }
+    
+    public int updateAddress(int addressRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
+            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) {
+        if(database.addressExists(addressRef)) {
+            database.getAddress(addressRef).updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, new ModifiedBy("Updated Address", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    private AddressUsageInterface createAddressUsage(int addressRef, Date startDate, String createdBy) {
+        if(database.addressExists(addressRef)) {
+            AddressUsageInterface addressUsage = new AddressUsage(database.getAddress(addressRef), startDate, createdBy);
+            return addressUsage;
+        }
+        return null;
+    }
+    
+    public int updateAddressUsage(AddressUsageInterface addressUsage, int addressRef, Date startDate, String createdBy) {
+        if(addressUsage.isCurrent() && database.addressExists(addressRef)) {
+            ModifiedByInterface modifiedBy = new ModifiedBy("Updated Address", createdBy);
+            addressUsage.updateAddress(database.getAddress(addressRef), startDate, modifiedBy);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createApplicationAddressUsage(int applicationRef, int addressRef, Date startDate, String createdBy) {
+        if(database.applicationExists(appRef) && database.addressExists(addressRef)) {
+            AddressUsageInterface addressUsage = this.createAddressUsage(addressRef, startDate, createdBy);
+            database.getApplication(applicationRef).setAppAddress((AddressUsage) addressUsage, new ModifiedBy("Created Address", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int addInvolvedParty(int appRef, int personRef, boolean joint, Date start, Element relationship, String createdBy) {
+        if(database.applicationExists(appRef) && database.personExists(personRef)) {
+            InvolvedParty invParty = new InvolvedParty(invPartyRef, database.getPerson(personRef), false, joint, start, relationship, createdBy);
+            database.getApplication(appRef).addInvolvedParty(invParty, new ModifiedBy("Added Involved Party", createdBy));
+            return 1;
+        }
+        return 0;
+        
+    }
+    
+    public int changeMainApp(int appRef, int invPartyRef, Date end, Element endReason, String createdBy) {
+        if(database.applicationExists(appRef)) {
+            Application application = database.getApplication(appRef);
+            if(application.isHouseholdMember(invPartyRef)) {
+                InvolvedParty party = application.getInvolvedParty(invPartyRef);
+                if(!party.isMainInd()) {
+                    application.changeMainApp(party.getInvolvedPartyRef(), end, endReason, new ModifiedBy("Changed Main Applicant", createdBy));
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int endInvolvedParty(int appRef, int invPartyRef, Date end, Element endReason, String createdBy) {
+        if(database.applicationExists(appRef)) {
+            Application application = database.getApplication(appRef);
+            if(application.isHouseholdMember(invPartyRef)) {
+                InvolvedParty party = application.getInvolvedParty(invPartyRef);
+                if(!party.isCurrent()) {
+                    application.endInvolvedParty(party.getInvolvedPartyRef(), end, endReason, new ModifiedBy("Changed Main Applicant", createdBy));
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    public int setApplicationTenancy (int appRef, int tenancyRef, String createdBy) {
+        if(database.applicationExists(appRef) && database.tenancyExists(tenancyRef)) {
+            database.getApplication(appRef).setTenancy(tenancyRef, new ModifiedBy("Set Application Tenancy", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int addInterestedProperty(int appRef, int propRef, String createdBy) {
+        if(database.propertyExists(propRef) && database.applicationExists(appRef)) {
+            database.getApplication(appRef).addInterestedProperty(database.getProperty(propRef), new ModifiedBy("Added Interested Property", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int endInterestInProperty(int appRef, int propRef, String createdBy) {
+        if(database.propertyExists(propRef) && database.applicationExists(appRef)) {
+            database.getApplication(appRef).endInterestInProperty(database.getProperty(propRef), new ModifiedBy("Ended Interest in Property", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateApplication(int appRef, String name, Date startDate, String createdBy) {
+        if(database.applicationExists(appRef)) {
+            database.getApplication(appRef).updateApplication(name, startDate, new ModifiedBy("Updated Application", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createPersonAddressUsage(int personRef, int addressRef, Date startDate, String createdBy) {
+        if(database.personExists(personRef)) {
+            AddressUsageInterface addressUsage = this.createAddressUsage(addressRef, startDate, createdBy);
+            database.getPerson(personRef).createAddress(addressUsage, new ModifiedBy("Created Address", createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+//    public int createAgreement(String agreementName, Date startDate, int length, String createdBy, String officeCode) {
+//        if(database.officeExists(officeCode)) {
+//            Agreement agreement
+//            return 1;
+//        }
+//        return 0;
+//    }
+    
     //add a client to the users list
     @Override
     public void register(Client c) throws RemoteException {

@@ -6,8 +6,12 @@
 package server_application;
 
 import interfaces.Element;
+import interfaces.ModifiedByInterface;
 import interfaces.PropertyElementInterface;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -22,15 +26,25 @@ public class PropertyElement implements PropertyElementInterface {
     private double doubleValue;
     private Date startDate;
     private Date endDate;
+    private boolean charge;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
-    private boolean charge;
+    
     
     ///   CONSTRUCTORS ///
     
     public PropertyElement(Element element, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy) {
         this. element = element;
-        updatePropertyElement(startDate, stringValue, doubleValue, charge);
+        this.startDate = startDate;
+        this.charge = charge;
+        if(charge) {
+            setDoubleValue(doubleValue);
+        }
+        else if(!charge) {
+            setStringValue(stringValue);
+        }
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -64,8 +78,12 @@ public class PropertyElement implements PropertyElementInterface {
         this.startDate = startDate;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     @Override
-    public void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge) {
+    public void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge, ModifiedByInterface modifiedBy) {
         if(charge) {
             setDoubleValue(doubleValue);
         }
@@ -74,14 +92,17 @@ public class PropertyElement implements PropertyElementInterface {
         }
         setCharge(charge);
         setStartDate(startDate);
+        this.modifiedBy(modifiedBy);
     }
 
     /**
      * @param endDate the endDate to set
+     * @param modifiedBy
      */
     @Override
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         this.endDate = endDate;
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -157,6 +178,27 @@ public class PropertyElement implements PropertyElementInterface {
     @Override
     public boolean isElementCode(String code) {
         return code.equals(element.getCode());
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**

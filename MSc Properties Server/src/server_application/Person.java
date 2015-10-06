@@ -37,7 +37,7 @@ public class Person implements PersonInterface {
     private final ArrayList<AddressUsageInterface> addresses;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedBy> modifiedBy;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
 
     /**
      * Constructor for objects of class Person
@@ -55,6 +55,8 @@ public class Person implements PersonInterface {
      * @param nationality
      * @param sexuality
      * @param religion
+     * @param contacts
+     * @param address
      * @param createdBy
      */
     public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
@@ -76,9 +78,9 @@ public class Person implements PersonInterface {
         this.contacts = contacts;
         this.addresses = new ArrayList();
         this.addresses.add(address);
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
-        this.modifiedBy = new ArrayList();
     }
     
     
@@ -137,26 +139,44 @@ public class Person implements PersonInterface {
         this.religion = religion;
     }
     
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
     @Override
-    public void createContact(ContactInterface contact) {
-        contacts.add(contact);
+    public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
+        this.contacts.add(contact);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void updateContact(ContactInterface contact, Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
+        if(this.contacts.isEmpty()) {
+            if(this.contacts.contains(contact)) {
+                ContactInterface temp = this.contacts.get(this.contacts.indexOf(contact));
+                if(temp.isCurrent()) {
+                    temp.updateContact(contactType, contactValue, startDate, modifiedBy);
+                    this.modifiedBy(modifiedBy);
+                }
+            }
+        }
     }
     
     @Override
     public void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
-        if(!addresses.isEmpty()) {
-            for(AddressUsageInterface temp : addresses) {
+        if(!this.addresses.isEmpty()) {
+            for(AddressUsageInterface temp : this.addresses) {
                 if(temp.isCurrent()) {
                     temp.setEndDate(address.getStartDate(), modifiedBy);
+                    this.modifiedBy(modifiedBy);
                 }
             }
         }
-        addresses.add(address);
+        this.addresses.add(address);
     }
     
     @Override
-    public void setPerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion) {
+    public void updatePerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
+            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ModifiedByInterface modifiedBy) {
         this.setTitle(title);
         this.setForename(forename);
         this.setMiddleNames(middleNames);
@@ -170,6 +190,7 @@ public class Person implements PersonInterface {
         this.setNationality(nationality);
         this.setSexuality(sexuality);
         this.setReligion(religion);
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -228,7 +249,7 @@ public class Person implements PersonInterface {
     
     @Override
     public boolean isOver18() {
-        Calendar dob = DateConversion.dateToCalendar(dateOfBirth);
+        Calendar dob = DateConversion.dateToCalendar(this.dateOfBirth);
         Calendar now = Calendar.getInstance();
         int years = -1;
         while (!dob.after(now)) {
@@ -266,6 +287,27 @@ public class Person implements PersonInterface {
     @Override
     public Element getReligion() {
         return this.religion;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**

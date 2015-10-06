@@ -7,7 +7,11 @@ package server_application;
 
 import interfaces.Element;
 import interfaces.JobRoleBenefitInterface;
+import interfaces.ModifiedByInterface;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -20,6 +24,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     private final Element element;
     private String stringValue;
     private double doubleValue;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     private boolean salaryBenefit;
@@ -29,6 +34,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     public JobRoleBenefit(Element element, boolean salaryBenefit, String createdBy) {
         this. element = element;
         this.salaryBenefit = salaryBenefit;
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -58,7 +64,12 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         this.salaryBenefit = salaryBenefit;
     }
     
-    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit) {
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
+    @Override
+    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, ModifiedByInterface modifiedBy) {
         setSalaryBenefit(salaryBenefit);
         if(salaryBenefit) {
             setDoubleValue(doubleValue);
@@ -66,6 +77,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
+        this.modifiedBy(modifiedBy);
     }
     
     
@@ -75,10 +87,12 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     /**
      * @return the element
      */
+    @Override
     public Element getElement() {
         return element;
     }
     
+    @Override
     public String getElementCode() {
         return getElement().getCode();
     }
@@ -86,6 +100,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     /**
      * @return the stringValue
      */
+    @Override
     public String getStringValue() {
         return stringValue;
     }
@@ -93,13 +108,36 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     /**
      * @return the doubleValue
      */
+    @Override
     public double getDoubleValue() {
         return doubleValue;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**
      * @return the createdBy
      */
+    @Override
     public String getCreatedBy() {
         return createdBy;
     }
@@ -107,6 +145,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     /**
      * @return the createdDate
      */
+    @Override
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -114,6 +153,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     /**
      * @return the salaryBenefit
      */
+    @Override
     public boolean isSalaryBenefit() {
         return salaryBenefit;
     }

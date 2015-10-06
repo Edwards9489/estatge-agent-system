@@ -8,6 +8,7 @@ package server_application;
 import interfaces.AddressInterface;
 import interfaces.Element;
 import interfaces.LandlordInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,10 +32,13 @@ public class Property implements PropertyInterface {
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
     private final ArrayList<PropertyElement> propertyElements;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final String createdBy;
+    private final Date createdDate;
     
     ///   CONSTRUCTORS ///
     
-    public Property(int propRef, AddressInterface address, boolean management, Date acquiredDate, Element propType, Element propSubType) {
+    public Property(int propRef, AddressInterface address, boolean management, Date acquiredDate, Element propType, Element propSubType, String createdBy) {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
@@ -44,6 +48,9 @@ public class Property implements PropertyInterface {
         this.propSubType = propSubType;
         this.propStatus = "NEW";
         propertyElements = new ArrayList();
+        this.modifiedBy = new ArrayList();
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
     
     
@@ -70,36 +77,44 @@ public class Property implements PropertyInterface {
     private void setPropSubType(Element propSubType) {
         this.propSubType = propSubType;
     }
+    
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
 
     /**
      * @param landlords the landlords to set
      */
     @Override
-    public void setLandlords(ArrayList<LandlordInterface> landlords) {
+    public void setLandlords(ArrayList<LandlordInterface> landlords, ModifiedByInterface modifiedBy) {
         this.landlords = landlords;
+        this.modifiedBy(modifiedBy);
     }
 
     /**
      * @param leaseEndDate the leaseEndDate to set
      */
     @Override
-    public void setLeaseEndDate(Date leaseEndDate) {
+    public void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy) {
         this.leaseEndDate = leaseEndDate;
+        this.modifiedBy(modifiedBy);
     }
 
     /**
      * @param propStatus the propStatus to set
      */
     @Override
-    public void setPropStatus(String propStatus) {
+    public void setPropStatus(String propStatus, ModifiedByInterface modifiedBy) {
         this.propStatus = propStatus;
+        this.modifiedBy(modifiedBy);
     }
     
     @Override
-    public void updateProperty(Date acquiredDate, Element propType, Element propSubType) {
+    public void updateProperty(Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy) {
         setAcquiredDate(acquiredDate);
         setPropType(propType);
         setPropSubType(propSubType);
+        this.modifiedBy(modifiedBy);
     }
 
     
@@ -212,5 +227,42 @@ public class Property implements PropertyInterface {
             }
         }
         return charges;
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    /**
+     * @return the createdBy
+     */
+    @Override
+    public String getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * @return the createdDate
+     */
+    @Override
+    public Date getCreatedDate() {
+        return this.createdDate;
     }
 }

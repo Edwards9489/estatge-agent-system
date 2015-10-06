@@ -117,7 +117,7 @@ public class Address implements AddressInterface {
     }
     
     @Override
-    public void setAddress(String buildingNumber, String buildingName, String subStreetNumber,
+    public void updateAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
             String town, String country, String postcode, ModifiedByInterface modifiedBy) {
         this.setBuildingNumber(buildingNumber);

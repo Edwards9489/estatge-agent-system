@@ -36,6 +36,7 @@ public class RentAccount extends Account implements RentAccountInterface {
     /**
      * @param rent the rent to set
      */
+    @Override
     public void setRent(double rent) {
         this.rent = rent;
     }
@@ -47,6 +48,7 @@ public class RentAccount extends Account implements RentAccountInterface {
     /**
      * @return the rent
      */
+    @Override
     public double getRent() {
         return rent;
     }
@@ -54,10 +56,12 @@ public class RentAccount extends Account implements RentAccountInterface {
     /**
      * @return the tenancy
      */
+    @Override
     public TenancyInterface getTenancy() {
         return tenancy;
     }
     
+    @Override
     public int getTenancyRef() {
         return tenancy.getAgreementRef();
     }

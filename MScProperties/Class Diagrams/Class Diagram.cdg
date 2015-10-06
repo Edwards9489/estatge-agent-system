@@ -2,7 +2,7 @@
 
 <ClassDiagram name="Class Diagram">
   <ClassDiagramComponents>
-    <Class name="Address" package="" visibility="public" xPosition="6.0" yPosition="9.0">
+    <Class name="Address" package="" visibility="public" xPosition="22.0" yPosition="1844.0">
       <Fields>
         <Field name="addressRef" type="int" visibility="private"/>
         <Field name="buildingNumber" type="int" visibility="private"/>
@@ -15,34 +15,39 @@
         <Field name="town" type="String" visibility="private"/>
         <Field name="country" type="String" visibility="private"/>
         <Field name="postcode" type="String" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="Date" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedByInterface&gt;" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Application" package="" visibility="public" xPosition="187.0" yPosition="9.0">
+    <Class name="Application" package="" visibility="public" xPosition="22.0" yPosition="1335.0">
       <Fields>
         <Field name="appRef" type="int" visibility="private"/>
-        <Field name="appInterestedInd" type="boolean" visibility="private"/>
-        <Field name="appCreatedDate" type="Date" visibility="private"/>
         <Field name="appCorrName" type="String" visibility="private"/>
+        <Field name="appStartDate" type="Date" visibility="private"/>
         <Field name="appStatusCode" type="String" visibility="private"/>
-        <Field name="statusDate" type="Date" visibility="private"/>
-        <Field name="statusHistory" type="ArrayList&lt;String&gt;" visibility="private"/>
-        <Field name="statusDateHistory" type="ArrayList&lt;Date&gt;" visibility="private"/>
         <Field name="household" type="ArrayList&lt;InvolvedParty&gt;" visibility="private"/>
-        <Field name="historicHousehold" type="ArrayList&lt;InvolvedParty&gt;" visibility="private"/>
-        <Field name="appTcyRef" type="int" visibility="private"/>
+        <Field name="appAddresses" type="ArrayList&lt;AddressUsage&gt;" visibility="private"/>
+        <Field name="propertiesInterestedIn" type="ArrayList&lt;PropertyInterface&gt;" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedByInterface&gt;" visibility="private"/>
+        <Field name="tenancyRef" type="int" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="Date" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Contact" package="" visibility="public" xPosition="6.0" yPosition="326.0">
+    <Class name="Contact" package="" visibility="public" xPosition="666.0" yPosition="1553.0">
       <Fields>
         <Field name="contactType" type="ContactType" visibility="private"/>
         <Field name="contactValue" type="String" visibility="private"/>
         <Field name="startDate" type="Date" visibility="private"/>
         <Field name="endDate" type="Date" visibility="private"/>
-        <Field name="current" type="boolean" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="Date" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedByInterface&gt;" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
@@ -196,6 +201,50 @@
     </Class>
     <Class name="EstateAgent" package="" visibility="public" xPosition="1115.0" yPosition="510.0">
       <Fields/>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Account" package="" visibility="public" xPosition="718.0" yPosition="1180.0">
+      <Fields>
+        <Field name="accRef" type="int" visibility="private"/>
+        <Field name="accName" type="String" visibility="private"/>
+        <Field name="startDate" type="Date" visibility="private"/>
+        <Field name="endDate" type="Date" visibility="private"/>
+        <Field name="balance" type="double" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="Date" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedByInterface&gt;" visibility="private"/>
+        <Field name="debitTransactions" type="ArrayList&lt;TransactionInterface&gt;" visibility="private"/>
+        <Field name="creditTransactions" type="ArrayList&lt;TransactionInterface&gt;" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="AddressUsage" package="" visibility="public" xPosition="22.0" yPosition="1074.0">
+      <Fields>
+        <Field name="address" type="AddressInterface" visibility="private"/>
+        <Field name="startDate" type="Date" visibility="private"/>
+        <Field name="endDate" type="Date" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="String" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedBy&gt;" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Agreement" package="" visibility="public" xPosition="1344.0" yPosition="1335.0">
+      <Fields>
+        <Field name="agreementRef" type="int" visibility="private"/>
+        <Field name="agreementName" type="String" visibility="private"/>
+        <Field name="startDate" type="Date" visibility="private"/>
+        <Field name="expectedEndDate" type="Date" visibility="private"/>
+        <Field name="actualEndDate" type="Date" visibility="private"/>
+        <Field name="length" type="int" visibility="private"/>
+        <Field name="createdBy" type="String" visibility="private"/>
+        <Field name="createdDate" type="Date" visibility="private"/>
+        <Field name="modifiedBy" type="ArrayList&lt;ModifiedByInterface&gt;" visibility="private"/>
+        <Field name="officeCode" type="String" visibility="private"/>
+      </Fields>
       <Constructors/>
       <Methods/>
     </Class>

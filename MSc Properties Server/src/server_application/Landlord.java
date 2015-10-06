@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 package server_application;
-import interfaces.AddressUsageInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
+import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
 
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class Landlord implements LandlordInterface {
     private final int landlordRef;
     private final PersonInterface person;
     private final ArrayList<LeaseInterface> leases;
+    private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -34,6 +35,7 @@ public class Landlord implements LandlordInterface {
         this.landlordRef = landlordRef;
         this.person = person;
         this.leases = new ArrayList();
+        this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -41,10 +43,15 @@ public class Landlord implements LandlordInterface {
     
     
     ///   MUTATOR METHODS   ///
-
-    public void createLease(LeaseInterface lease) {
+    
+    private void modifiedBy(ModifiedByInterface modifiedBy) {
+        this.modifiedBy.add(modifiedBy);
+    }
+    
+    public void createLease(LeaseInterface lease, ModifiedByInterface modifiedBy) {
         if (!leases.contains(lease)) {
             leases.add(lease);
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -79,6 +86,27 @@ public class Landlord implements LandlordInterface {
     @Override
     public List getLeases() {
         return Collections.unmodifiableList(leases);
+    }
+    
+    @Override
+    public String getLastModifiedBy() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+        }
+        return null;
+    }
+    
+    @Override
+    public Date getLastModifiedDate() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+        }
+        return null;
+    }
+    
+    @Override
+    public List getModifiedBy() {
+        return Collections.unmodifiableList(this.modifiedBy);
     }
 
     /**

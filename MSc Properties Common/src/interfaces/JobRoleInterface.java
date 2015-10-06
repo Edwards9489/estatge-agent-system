@@ -22,9 +22,9 @@ public interface JobRoleInterface {
     List getBenefits();
     String getCreatedBy();
     Date getCreatedDate();
-    void updateJobRole(String title, String description);
-    void createJobRequirement(Element requirement);
-    void removeJobRequirement(Element requirement);
-    void createBenefit(JobRoleBenefitInterface benefit);
-    void removeBenefit(JobRoleBenefitInterface benefit);
+    void updateJobRole(String title, String description, double salary, ModifiedByInterface modifiedBy);
+    void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
+    void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
+    void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
+    void removeBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
 }

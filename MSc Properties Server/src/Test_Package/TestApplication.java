@@ -8,7 +8,6 @@ package Test_Package;
 import interfaces.AddressInterface;
 import interfaces.ContactInterface;
 import interfaces.Element;
-import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
 import interfaces.PropertyInterface;
@@ -89,16 +88,12 @@ public class TestApplication {
         InvolvedParty invParty3 = new InvolvedParty(3, person3, false, false, start, relationship3, "DEDWARDS");
         InvolvedParty invParty4 = new InvolvedParty(4, person4, false, false, dob4, relationship4, "DEDWARDS");
         
-        household.add(invParty1);
-        household.add(invParty2);
-        household.add(invParty3);
-        
         AddressInterface address1 = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
         AddressUsage addressUsage1 = new AddressUsage(address1, date, "DEDWARDS");
         
-        Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, household, addressUsage1, "DEDWARDS");
+        Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS");
         
-        PropertyInterface property = new Property(1, address1, false, date, test, test);
+        PropertyInterface property = new Property(1, address1, false, date, test, test, "DEDWARDS");
         TenancyInterface tenancy = new Tenancy(1, start, 12, "Mr Edwards & Ms Brindle", property, test1, test, "DEDWARDS");
         
         
@@ -115,7 +110,7 @@ public class TestApplication {
         System.out.println(test1.isAppInterestedFlag());
         System.out.println(test1.getHousehold());
         System.out.println(test1.getPropertiesInterestedIn());
-        System.out.println(test1.getTenancy());
+        System.out.println(test1.getTenancyRef());
         System.out.println(test1.getCreatedBy());
         System.out.println(test1.getCreatedDate());
         System.out.println(test1.getLastModifiedBy());
@@ -134,21 +129,23 @@ public class TestApplication {
         
         ModifiedByInterface modTest1 = new ModifiedBy("Added Involved Party", "JBLOGGS");
         System.out.println(test1.getHousehold());
-        test1.addInvolvedParty(invParty3, modTest1);
+        test1.addInvolvedParty(invParty2, modTest1);
         System.out.println(test1.getHousehold());
+        test1.addInvolvedParty(invParty3, modTest1);
+        
         
         test1.addInvolvedParty(invParty4, modTest1);
         System.out.println(test1.getHousehold());
         
         
-        test1.endInvolvedParty(invParty4, dob4, test, modTest1);
+        test1.endInvolvedParty(invParty4.getInvolvedPartyRef(), dob4, test, modTest1);
         
         
         
         ModifiedByInterface modTest2 = new ModifiedBy("Set Tenancy", "DEDWARDS");
-        System.out.println(test1.getTenancy());
-        test1.setTenancy(tenancy, modTest2);
-        System.out.println(test1.getTenancy());
+        System.out.println(test1.getTenancyRef());
+        test1.setTenancy(tenancy.getAgreementRef(), modTest2);
+        System.out.println(test1.getTenancyRef());
         
         
         System.out.println(test1);

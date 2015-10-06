@@ -6,6 +6,7 @@
 package interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -27,10 +28,13 @@ public interface PersonInterface {
     Element getNationality();
     Element getSexuality();
     Element getReligion();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void createContact(ContactInterface contact);
+    void createContact(ContactInterface contact, ModifiedByInterface modifiedBy);
     void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy);
-    void setPerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion);
+    void updatePerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
+            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ModifiedByInterface modifiedBy);
 }

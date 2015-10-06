@@ -38,6 +38,10 @@ public class InvolvedParty implements InvolvedPartyInterface {
     public InvolvedParty(int invPartyRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy) {
         this.involvedPartyRef = invPartyRef;
         this.person = person;
+        if(!person.isOver18()) {
+            main = false;
+            joint = false;
+        }
         this.mainApplicantInd = main;
         this.jointApplicantInd = joint;
         this.startDate = start;

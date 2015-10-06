@@ -16,10 +16,11 @@ public interface EmployeeInterface {
     int getEmployeeRef();
     PersonInterface getPerson();
     String getOfficeCode();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     ContractInterface getContract();
     List getContracts();
-    AddressUsageInterface getAddressUsage();
-    List getAddresses();
 }
