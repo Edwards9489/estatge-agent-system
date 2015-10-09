@@ -26,6 +26,7 @@ public interface PropertyElementInterface {
     boolean isElementCode(String code);
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

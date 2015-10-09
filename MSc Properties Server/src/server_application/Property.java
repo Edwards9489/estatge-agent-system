@@ -84,6 +84,7 @@ public class Property implements PropertyInterface {
 
     /**
      * @param landlords the landlords to set
+     * @param modifiedBy
      */
     @Override
     public void setLandlords(ArrayList<LandlordInterface> landlords, ModifiedByInterface modifiedBy) {
@@ -93,6 +94,7 @@ public class Property implements PropertyInterface {
 
     /**
      * @param leaseEndDate the leaseEndDate to set
+     * @param modifiedBy
      */
     @Override
     public void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy) {
@@ -102,6 +104,7 @@ public class Property implements PropertyInterface {
 
     /**
      * @param propStatus the propStatus to set
+     * @param modifiedBy
      */
     @Override
     public void setPropStatus(String propStatus, ModifiedByInterface modifiedBy) {
@@ -232,7 +235,7 @@ public class Property implements PropertyInterface {
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+            return this.getLastModification().getModifiedBy();
         }
         return null;
     }
@@ -240,7 +243,7 @@ public class Property implements PropertyInterface {
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.getLastModification().getModifiedDate();
         }
         return null;
     }
@@ -248,6 +251,14 @@ public class Property implements PropertyInterface {
     @Override
     public List getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
+        }
+        return null;
     }
     
     /**

@@ -18,6 +18,7 @@ public interface EmployeeInterface {
     String getOfficeCode();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

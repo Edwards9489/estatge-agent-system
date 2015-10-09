@@ -10,7 +10,6 @@ import interfaces.Server;
 import interfaces.RegistryLoader;
 import interfaces.Client;
 import interfaces.Element;
-import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
 import java.net.MalformedURLException;
@@ -18,7 +17,10 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.Naming;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -94,7 +96,22 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createTitle(String code, String description, String createdBy) throws RemoteException {
         if(!this.database.titleExists(code)) {
             Element title = new ElementImpl(code, description, createdBy);
-            this.database.createTitle(title);
+            try {
+                this.database.createTitle(title);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateTitle(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+        if(!this.database.titleExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Title", modifiedBy);
+            Element title = this.database.getTitle(code);
+            title.updateElement(description, current, modified);
+            this.database.updateTitle(title);
             return 1;
         }
         return 0;
@@ -103,7 +120,22 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createGender(String code, String description, String createdBy)  throws RemoteException {
         if(!this.database.genderExists(code)) {
             Element gender = new ElementImpl(code, description, createdBy);
-            this.database.createGender(gender);
+            try {
+                this.database.createGender(gender);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateGender(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+        if(!this.database.genderExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Gender", modifiedBy);
+            Element gender = this.database.getGender(code);
+            gender.updateElement(description, current, modified);
+            this.database.updateGender(gender);
             return 1;
         }
         return 0;
@@ -112,7 +144,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createMaritalStatus(String code, String description, String createdBy)  throws RemoteException {
         if(!this.database.maritalStatusExists(code)) {
             Element status = new ElementImpl(code, description, createdBy);
-            this.database.createMaritalStatus(status);
+            try {
+                this.database.createMaritalStatus(status);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -121,7 +157,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createEthnicOrigin(String code, String description, String createdBy)  throws RemoteException {
         if(!this.database.ethnicOriginExists(code)) {
             Element origin = new ElementImpl(code, description, createdBy);
-            this.database.createEthnicOrigin(origin);
+            try {
+                this.database.createEthnicOrigin(origin);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -130,7 +170,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createLanguage(String code, String description, String createdBy) {
         if(!this.database.languageExists(code)) {
             Element language = new ElementImpl(code, description, createdBy);
-            this.database.createLanguage(language);
+            try {
+                this.database.createLanguage(language);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -139,7 +183,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createNationality(String code, String description, String createdBy) {
         if(!this.database.nationalityExists(code)) {
             Element nationality = new ElementImpl(code, description, createdBy);
-            this.database.createNationality(nationality);
+            try {
+                this.database.createNationality(nationality);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -148,7 +196,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createSexuality(String code, String description, String createdBy) {
         if(!this.database.sexualityExists(code)) {
             Element sexuality = new ElementImpl(code, description, createdBy);
-            this.database.createSexuality(sexuality);
+            try {
+                this.database.createSexuality(sexuality);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -157,7 +209,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createReligion(String code, String description, String createdBy) {
         if(!this.database.religionExists(code)) {
             Element religion = new ElementImpl(code, description, createdBy);
-            this.database.createReligion(religion);
+            try {
+                this.database.createReligion(religion);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -166,7 +222,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPropertyType(String code, String description, String createdBy) {
         if(!this.database.propTypeExists(code)) {
             Element type = new ElementImpl(code, description, createdBy);
-            this.database.createPropertyType(type);
+            try {
+                this.database.createPropertyType(type);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -175,7 +235,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPropertySubType(String code, String description, String createdBy) {
         if(!this.database.propSubTypeExists(code)) {
             Element type = new ElementImpl(code, description, createdBy);
-            this.database.createPropertySubType(type);
+            try {
+                this.database.createPropertySubType(type);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -184,7 +248,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPropElement(String code, String description, String createdBy) {
         if(!this.database.propElementExists(code)) {
             Element element = new ElementImpl(code, description, createdBy);
-            this.database.createPropElement(element);
+            try {
+                this.database.createPropElement(element);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return 1;
         }
         return 0;
@@ -195,24 +263,35 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         Person p = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender,
                 maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, null, createdBy);
         personRef++;
-        this.database.createPerson(p);
+        try {
+            this.database.createPerson(p);
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return p.getPersonRef();
     }
     
     
     
-    public int createInvolvedParty(Person p, boolean joint, boolean main, Date start, Element relationship, String createdBy) throws RemoteException {
-        InvolvedParty i = new InvolvedParty(invPartyRef, p, joint, main, start, relationship, createdBy);
+    public int createInvolvedParty(Person p, int appRef, boolean joint, boolean main, Date start, Element relationship, String createdBy) throws RemoteException {
+        InvolvedParty i = new InvolvedParty(invPartyRef, appRef, p, joint, main, start, relationship, createdBy);
         invPartyRef++;
-        this.database.createInvolvedParty(i);
+        try {
+            this.database.createInvolvedParty(i);
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return i.getInvolvedPartyRef();
     }
     
     public int createApplication(String corrName, Date startDate, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, AddressUsageInterface address, String createdBy) throws RemoteException {
-        InvolvedParty mainApp = database.getInvolvedParty(this.createInvolvedParty((Person) person, joint, main, start, relationship, createdBy));
-        Application a = new Application(appRef, corrName, startDate, mainApp, (AddressUsage) address, createdBy);
-        appRef++;
-        this.database.createApplication(a);
+        InvolvedParty mainApp = database.getInvolvedParty(this.createInvolvedParty((Person) person, this.appRef, joint, main, start, relationship, createdBy));
+        Application a = new Application(this.appRef++, corrName, startDate, mainApp, (AddressUsage) address, createdBy);
+        try {
+            this.database.createApplication(a);
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return a.getApplicationRef();
     }
     
@@ -262,12 +341,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int addInvolvedParty(int appRef, int personRef, boolean joint, Date start, Element relationship, String createdBy) {
         if(database.applicationExists(appRef) && database.personExists(personRef)) {
-            InvolvedParty invParty = new InvolvedParty(invPartyRef, database.getPerson(personRef), false, joint, start, relationship, createdBy);
+            InvolvedParty invParty = new InvolvedParty(invPartyRef, appRef, database.getPerson(personRef), false, joint, start, relationship, createdBy);
             database.getApplication(appRef).addInvolvedParty(invParty, new ModifiedBy("Added Involved Party", createdBy));
             return 1;
         }
         return 0;
-        
     }
     
     public int changeMainApp(int appRef, int invPartyRef, Date end, Element endReason, String createdBy) {

@@ -22,6 +22,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     ///   VARIABLES   ///
         
     private final int involvedPartyRef;
+    private final int appRef;
     private final PersonInterface person;
     private boolean jointApplicantInd;
     private boolean mainApplicantInd;
@@ -35,8 +36,9 @@ public class InvolvedParty implements InvolvedPartyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public InvolvedParty(int invPartyRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy) {
+    public InvolvedParty(int invPartyRef, int appRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy) {
         this.involvedPartyRef = invPartyRef;
+        this.appRef = appRef;
         this.person = person;
         if(!person.isOver18()) {
             main = false;
@@ -108,6 +110,11 @@ public class InvolvedParty implements InvolvedPartyInterface {
     }
     
     @Override
+    public int getApplicationRef() {
+        return this.appRef;
+    }
+    
+    @Override
     public int getPersonRef() {
         return this.getPerson().getPersonRef();
     }
@@ -165,7 +172,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+            return this.getLastModification().getModifiedBy();
         }
         return null;
     }
@@ -173,7 +180,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.getLastModification().getModifiedDate();
         }
         return null;
     }
@@ -181,6 +188,14 @@ public class InvolvedParty implements InvolvedPartyInterface {
     @Override
     public List getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
+        }
+        return null;
     }
     
     @Override

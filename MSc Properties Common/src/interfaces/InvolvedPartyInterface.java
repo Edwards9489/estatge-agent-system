@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface InvolvedPartyInterface {
     int getInvolvedPartyRef();
+    int getApplicationRef();
     int getPersonRef();
     PersonInterface getPerson();
     Date getStartDate();
@@ -26,6 +27,7 @@ public interface InvolvedPartyInterface {
     boolean isOver18();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String createdBy();
     Date createdDate();

@@ -26,6 +26,7 @@ public interface AddressInterface {
     String getPostcode();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

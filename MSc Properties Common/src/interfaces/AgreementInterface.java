@@ -22,6 +22,7 @@ public interface AgreementInterface {
     String getOfficeCode();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

@@ -73,6 +73,7 @@ public class Office implements OfficeInterface {
     
     /**
      * @param agreement the agreement to add to agreements
+     * @param modifiedBy
      */
     @Override
     public void addAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) {
@@ -84,6 +85,7 @@ public class Office implements OfficeInterface {
     
     /**
      * @param account the agreement to add to account
+     * @param modifiedBy
      */
     @Override
     public void addAccount(AccountInterface account, ModifiedByInterface modifiedBy) {
@@ -184,7 +186,7 @@ public class Office implements OfficeInterface {
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+            return this.getLastModification().getModifiedBy();
         }
         return null;
     }
@@ -192,7 +194,7 @@ public class Office implements OfficeInterface {
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.getLastModification().getModifiedDate();
         }
         return null;
     }
@@ -200,6 +202,14 @@ public class Office implements OfficeInterface {
     @Override
     public List getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
+        }
+        return null;
     }
     
     @Override

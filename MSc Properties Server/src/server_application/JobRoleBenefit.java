@@ -116,7 +116,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+            return this.getLastModification().getModifiedBy();
         }
         return null;
     }
@@ -124,7 +124,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.getLastModification().getModifiedDate();
         }
         return null;
     }
@@ -132,6 +132,14 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     @Override
     public List getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
+        }
+        return null;
     }
 
     /**

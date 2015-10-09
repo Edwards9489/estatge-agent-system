@@ -82,19 +82,23 @@ public class ElementImpl implements Element {
     
     @Override
     public String getLastModifiedBy() {
-        if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
-        }
-        return null;
+        return this.getLastModification().getModifiedBy();
     }
     
     @Override
     public Date getLastModifiedDate() {
+        return this.getLastModification().getModifiedDate();
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
     }
+    
+    
     
     @Override
     public List getModifiedBy() {

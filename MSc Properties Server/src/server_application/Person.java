@@ -203,6 +203,11 @@ public class Person implements PersonInterface {
     }
     
     @Override
+    public Element getTitle() {
+        return this.title;
+    }
+    
+    @Override
     public String getForename() {
         return this.forename;
     }
@@ -292,7 +297,7 @@ public class Person implements PersonInterface {
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedBy();
+            return this.getLastModification().getModifiedBy();
         }
         return null;
     }
@@ -300,7 +305,7 @@ public class Person implements PersonInterface {
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
-            return this.modifiedBy.get(this.modifiedBy.size()-1).getModifiedDate();
+            return this.getLastModification().getModifiedDate();
         }
         return null;
     }
@@ -308,6 +313,14 @@ public class Person implements PersonInterface {
     @Override
     public List getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public ModifiedByInterface getLastModification() {
+        if(!this.modifiedBy.isEmpty()) {
+            return this.modifiedBy.get(this.modifiedBy.size()-1);
+        }
+        return null;
     }
     
     /**

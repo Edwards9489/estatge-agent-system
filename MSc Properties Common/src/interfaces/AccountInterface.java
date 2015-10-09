@@ -22,6 +22,7 @@ public interface AccountInterface {
     boolean isCurrent();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

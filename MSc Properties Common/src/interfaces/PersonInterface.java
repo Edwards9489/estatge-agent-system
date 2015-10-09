@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface PersonInterface {
     int getPersonRef();
+    Element getTitle();
     String getForename();
     String getMiddleNames();
     String getSurname();
@@ -30,6 +31,7 @@ public interface PersonInterface {
     Element getReligion();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

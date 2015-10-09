@@ -19,6 +19,7 @@ public interface LandlordInterface {
     List getLeases();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

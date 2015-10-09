@@ -28,6 +28,7 @@ public interface OfficeInterface {
     boolean canCloseOffice();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

@@ -20,6 +20,7 @@ public interface JobRoleBenefitInterface {
     double getDoubleValue();
     String getLastModifiedBy();
     Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();

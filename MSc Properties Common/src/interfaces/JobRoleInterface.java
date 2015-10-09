@@ -20,6 +20,10 @@ public interface JobRoleInterface {
     boolean isFullTime();
     double getSalary();
     List getBenefits();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    ModifiedByInterface getLastModification();
+    List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     void updateJobRole(String title, String description, double salary, ModifiedByInterface modifiedBy);

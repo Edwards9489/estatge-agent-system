@@ -16,8 +16,10 @@ import java.util.Date;
 public class DateConversion {
 
     public static Calendar dateToCalendar(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        Calendar cal = null;
+        if(date != null) {
+            cal.setTime(date);
+        }
         return cal;
     }
     
@@ -29,5 +31,19 @@ public class DateConversion {
     
     public static void addMonths(Date date, int numMonths){
     date.setMonth((date.getMonth() - 1 + numMonths) % 12 + 1);
+    }
+    
+    public static java.sql.Date utilDateToSQLDate(Date utilDate) {
+        java.sql.Date sqlDate = null;
+        if(utilDate != null) {
+            Calendar cal = DateConversion.dateToCalendar(utilDate);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);    
+        
+            sqlDate = new java.sql.Date(cal.getTime().getTime());
+        }
+        return sqlDate;
     }
 }
