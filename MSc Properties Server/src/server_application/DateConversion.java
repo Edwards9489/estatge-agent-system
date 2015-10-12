@@ -16,11 +16,12 @@ import java.util.Date;
 public class DateConversion {
 
     public static Calendar dateToCalendar(Date date) {
-        Calendar cal = null;
+        Calendar cal = Calendar.getInstance();
         if(date != null) {
             cal.setTime(date);
+            return cal;
         }
-        return cal;
+        return null;
     }
     
     public static String dateToString(Date date) {

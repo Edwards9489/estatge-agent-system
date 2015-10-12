@@ -67,7 +67,7 @@ public class TestApplication {
         ArrayList<ContactInterface> contacts = new ArrayList();
         
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage = new AddressUsage(address, date, "DEDWARDS");
+        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS");
         
         PersonInterface person1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob1, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
         PersonInterface person2 = new Person(2, test, "Penny", "Kay", "Brindle", dob2, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
@@ -83,13 +83,13 @@ public class TestApplication {
         Element relationship3 = new ElementImpl("SON", "Son", "DEDWARDS");
         Element relationship4 = new ElementImpl("DAU", "Daughter", "DEDWARDS");
         
-        InvolvedParty invParty1 = new InvolvedParty(1, person1, true, true, start, relationship1, "DEDWARDS");
-        InvolvedParty invParty2 = new InvolvedParty(2, person2, true, false, start, relationship2, "DEDWARDS");
-        InvolvedParty invParty3 = new InvolvedParty(3, person3, false, false, start, relationship3, "DEDWARDS");
-        InvolvedParty invParty4 = new InvolvedParty(4, person4, false, false, dob4, relationship4, "DEDWARDS");
+        InvolvedParty invParty1 = new InvolvedParty(1, 1, person1, true, true, start, relationship1, "DEDWARDS");
+        InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, start, relationship2, "DEDWARDS");
+        InvolvedParty invParty3 = new InvolvedParty(3, 1, person3, false, false, start, relationship3, "DEDWARDS");
+        InvolvedParty invParty4 = new InvolvedParty(4, 1, person4, false, false, dob4, relationship4, "DEDWARDS");
         
         AddressInterface address1 = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage1 = new AddressUsage(address1, date, "DEDWARDS");
+        AddressUsage addressUsage1 = new AddressUsage(2, address1, date, "DEDWARDS");
         
         Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS");
         

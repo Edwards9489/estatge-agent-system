@@ -61,7 +61,9 @@ public class Agreement implements AgreementInterface {
      * @param expectedEndDate the expectedEndDate to set
      */
     private void setExpectedEndDate(Date expectedEndDate) {
-        this.expectedEndDate = expectedEndDate;
+        if(expectedEndDate.after(this.startDate)) {
+            this.expectedEndDate = expectedEndDate;
+        }
     }
 
     /**
@@ -84,8 +86,10 @@ public class Agreement implements AgreementInterface {
      */
     @Override
     public void setActualEndDate(Date actualEndDate, ModifiedByInterface modifiedBy) {
-        this.actualEndDate = actualEndDate;
-        this.modifiedBy(modifiedBy);
+        if(actualEndDate.after(this.startDate)) {
+            this.actualEndDate = actualEndDate;
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     @Override

@@ -27,7 +27,7 @@ public class TestAddressUsage {
         date.setMonth(0);
         date.setDate(1);
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage test1 = new AddressUsage(address, date, "DEDWARDS");
+        AddressUsage test1 = new AddressUsage(1, address, date, "DEDWARDS");
         
         System.out.println(test1.getAddressString());
         System.out.println(test1.getAddress());

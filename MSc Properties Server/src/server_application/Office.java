@@ -66,8 +66,10 @@ public class Office implements OfficeInterface {
     @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(this.canCloseOffice()) {
-            this.endDate = endDate;
-            this.modifiedBy(modifiedBy);
+            if(endDate.after(this.startDate)) {
+                this.endDate = endDate;
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
     

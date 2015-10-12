@@ -6,7 +6,6 @@
 package Test_Package;
 
 import interfaces.AddressInterface;
-import interfaces.AddressUsageInterface;
 import interfaces.ContactInterface;
 import interfaces.Element;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class TestPerson {
         date.setDate(1);
         
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage = new AddressUsage(address, date, "DEDWARDS");
+        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS");
         
         Person test1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
         

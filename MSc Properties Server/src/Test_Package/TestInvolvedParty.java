@@ -42,7 +42,7 @@ public class TestInvolvedParty {
         date.setDate(1);
         
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage = new AddressUsage(address, date, "DEDWARDS");
+        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS");
         
         PersonInterface person = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
         
@@ -51,7 +51,7 @@ public class TestInvolvedParty {
         start.setDate(1);
         
         Element relationship = new ElementImpl("APPL", "Applicant", "DEDWARDS");
-        InvolvedParty test1 = new InvolvedParty(1,  person, true, true, start, relationship, "DEDWARDS");
+        InvolvedParty test1 = new InvolvedParty(1, 1, person, true, true, start, relationship, "DEDWARDS");
         
         System.out.println("\n****** Testing Accessor Methods ******");
         

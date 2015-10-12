@@ -42,11 +42,11 @@ public class ClientImpl implements Client{
 
         ClientImpl c = new ClientImpl();
         //if the command line has at least one argument, the first one is the name
-//        if (args.length > 0) {
-//            c.setName(args[0]);
-//        } else {
-//            c.setName("bob");
-//        }
+        if (args.length > 0) {
+            c.setName(args[0]);
+        } else {
+            c.setName("bob");
+        }
         if (args.length > 1) {//we have the address of the server!
             c.registerWithServer(args[1]);
         } else {//we are on the same machine as the server
@@ -78,11 +78,17 @@ public class ClientImpl implements Client{
         return stub;
     }
     
+    @Override
     public String getName() throws RemoteException {
         return name;
     }
     
+    private void setName(String string) {
+        name = string;
+    }
+    
     //if i have died i won't reply!
+    @Override
     public boolean isAlive() throws RemoteException {
         return true;
     }

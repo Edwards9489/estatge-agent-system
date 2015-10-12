@@ -66,7 +66,9 @@ public class InvolvedParty implements InvolvedPartyInterface {
     }
     
     private void setEndDate(Date end) {
-        this.endDate = end;
+        if(end.after(this.startDate)) {
+            this.endDate = end;
+        }
     }
     
     private void setEndReason(Element endReason) {
@@ -87,9 +89,11 @@ public class InvolvedParty implements InvolvedPartyInterface {
     
     @Override
     public void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy) {
-        this.setEndDate(end);
-        this.setEndReason(endReason);
-        this.modifiedBy(modifiedBy);
+        if(end.after(this.startDate)) {
+            this.setEndDate(end);
+            this.setEndReason(endReason);
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     @Override

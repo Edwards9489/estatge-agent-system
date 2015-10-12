@@ -50,26 +50,30 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int leaseAccRef;
     private int employeeAccRef;
     private int addressRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+    private int addressUsageRef;
+    private int contactRef;
     
     ///   CONSTRUCTORS ///
     
     public ServerImpl() throws RemoteException {
         super();
-        users = new HashMap<>();
+        this.users = new HashMap<>();
         this.database = new Database();
-        personRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-        invPartyRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-        landlordRef = 1;
-        employeeRef = 1;
-        appRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-        propRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
-        tenRef = 1;
-        leaseRef = 1;
-        contractRef = 1;
-        rentAccRef = 1;
-        leaseAccRef = 1;
-        employeeAccRef = 1;
-        addressRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.personRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.invPartyRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.landlordRef = 1;
+        this.employeeRef = 1;
+        this.appRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.propRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.tenRef = 1;
+        this.leaseRef = 1;
+        this.contractRef = 1;
+        this.rentAccRef = 1;
+        this.leaseAccRef = 1;
+        this.employeeAccRef = 1;
+        this.addressRef = 1; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
+        this.addressUsageRef = 1;
+        this.contactRef = 1;
     }
     
     /**
@@ -299,8 +303,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
             String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) {
         
-        Address address = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country,  postcode, createdBy);
-        addressRef++;
+        Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country,  postcode, createdBy);
         return address.getAddressRef();
     }
     
@@ -315,7 +318,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     private AddressUsageInterface createAddressUsage(int addressRef, Date startDate, String createdBy) {
         if(database.addressExists(addressRef)) {
-            AddressUsageInterface addressUsage = new AddressUsage(database.getAddress(addressRef), startDate, createdBy);
+            AddressUsageInterface addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addressRef), startDate, createdBy);
             return addressUsage;
         }
         return null;

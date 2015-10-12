@@ -20,7 +20,7 @@ import java.util.List;
 public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   VARIABLES   ///
-    
+    private final int jobRoleBenefitRef;
     private final Element element;
     private String stringValue;
     private double doubleValue;
@@ -31,7 +31,8 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   CONSTRUCTORS   ///
     
-    public JobRoleBenefit(Element element, boolean salaryBenefit, String createdBy) {
+    public JobRoleBenefit(int ref, Element element, boolean salaryBenefit, String createdBy) {
+        this.jobRoleBenefitRef = ref;
         this. element = element;
         this.salaryBenefit = salaryBenefit;
         this.modifiedBy = new ArrayList();
@@ -84,17 +85,20 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    public int getJobRoleBenefitRef() {
+        return this.jobRoleBenefitRef;
+    }
     /**
      * @return the element
      */
     @Override
     public Element getElement() {
-        return element;
+        return this.element;
     }
     
     @Override
     public String getElementCode() {
-        return getElement().getCode();
+        return this.getElement().getCode();
     }
 
     /**
@@ -102,7 +106,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      */
     @Override
     public String getStringValue() {
-        return stringValue;
+        return this.stringValue;
     }
 
     /**
@@ -110,7 +114,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      */
     @Override
     public double getDoubleValue() {
-        return doubleValue;
+        return this.doubleValue;
     }
     
     @Override
@@ -147,7 +151,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      */
     @Override
     public String getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     /**
@@ -155,7 +159,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      */
     @Override
     public Date getCreatedDate() {
-        return createdDate;
+        return this.createdDate;
     }
 
     /**
@@ -163,6 +167,6 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      */
     @Override
     public boolean isSalaryBenefit() {
-        return salaryBenefit;
+        return this.salaryBenefit;
     }
 }

@@ -38,9 +38,9 @@ public class Application implements ApplicationInterface {
     /**
      * Constructor for objects of class Person
      * @param appRef
-     * @param household
      * @param appStartDate
      * @param address
+     * @param mainApp
      * @param corrName
      * @param createdBy
      */
@@ -92,8 +92,10 @@ public class Application implements ApplicationInterface {
     
     @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        this.appEndDate = endDate;
-        this.modifiedBy(modifiedBy);
+        if(endDate.after(this.appStartDate)) {
+            this.appEndDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     public void setAppStatusCode(String code) {

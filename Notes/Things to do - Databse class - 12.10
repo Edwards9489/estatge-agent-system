@@ -1,0 +1,21 @@
+Database Left to do
+
+NB: Look over all update methods and ensure you update all other tables with an update
+
+offices - DONE
+landlords
+employees
+properties
+tenancies
+leases
+contracts
+rentAccounts
+leaseAccounts
+employeeAccounts
+jobRoles
+
+
+InvolvedPartyEndReasons - Element - DONE
+relationships - Element - DONE
+employeeBenefits - Element - DONE
+

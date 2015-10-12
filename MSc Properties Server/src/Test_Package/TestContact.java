@@ -21,9 +21,9 @@ public class TestContact {
         Element type2 = new ElementImpl("EMAIL", "E-Mail", "DEDWARDS");
         Element type3 = new ElementImpl("FAX", "Fax", "DEDWARDS");
         
-        Contact contact1 = new Contact(type1, "07872395479", new Date(), "DEDWARDS");
-        Contact contact2 = new Contact(type2, "dwayne.edwards@enfield.gov.uk", new Date(), "DEDWARDS");
-        Contact contact3 = new Contact(type3, "02083794532", new Date(), "DEDWARDS");
+        Contact contact1 = new Contact(1, type1, "07872395479", new Date(), "DEDWARDS");
+        Contact contact2 = new Contact(2, type2, "dwayne.edwards@enfield.gov.uk", new Date(), "DEDWARDS");
+        Contact contact3 = new Contact(3, type3, "02083794532", new Date(), "DEDWARDS");
         
         System.out.println();
         System.out.println(contact1.getContactType());

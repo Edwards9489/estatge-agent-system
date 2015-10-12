@@ -17,6 +17,7 @@ public class Contact implements ContactInterface {
     
     ///   VARIABLES   ///
     
+    private final int contactRef;
     private Element contactType;
     private String contactValue;
     private Date startDate;
@@ -27,7 +28,8 @@ public class Contact implements ContactInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Contact(Element type, String value, Date date, String createdBy) {
+    public Contact(int ref, Element type, String value, Date date, String createdBy) {
+        this.contactRef = ref;
         contactType = type;
         contactValue = value;
         startDate = date;
@@ -67,11 +69,14 @@ public class Contact implements ContactInterface {
     
     /**
      * @param endDate the endDate to set
+     * @param modifiedBy
      */
     @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        this.endDate = endDate;
-        this.modifiedBy(modifiedBy);
+        if(endDate.after(this.startDate)) {
+            this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     @Override
@@ -86,6 +91,10 @@ public class Contact implements ContactInterface {
     
     ///   ACCESSOR METHODS   ///
 
+    public int getContactRef() {
+        return this.contactRef;
+    }
+    
     /**
      * @return the contactType
      */

@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -21,6 +22,7 @@ public class AddressUsage implements AddressUsageInterface {
     
     ///   VARIABLES   ///
     
+    private final int addressUsageRef;
     private AddressInterface address;
     private Date startDate;
     private Date endDate;
@@ -30,7 +32,8 @@ public class AddressUsage implements AddressUsageInterface {
     
     ///   CONSTRUCTORS ///
     
-    public AddressUsage(AddressInterface address, Date startDate, String createdBy) {
+    public AddressUsage(int ref, AddressInterface address, Date startDate, String createdBy) {
+        this.addressUsageRef = ref;
         this.address = address;
         this.startDate = startDate;
         this.createdBy = createdBy;
@@ -67,8 +70,10 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        this.endDate = endDate;
-        this.modifiedBy(modifiedBy);
+        if(endDate.after(this.startDate)) {
+            this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     @Override
@@ -84,6 +89,10 @@ public class AddressUsage implements AddressUsageInterface {
     
     ///   ACCESSOR METHODS   ///
 
+    public int getAddressUsageRef() {
+        return this.addressUsageRef;
+    }
+    
     /**
      * @return a string representation of the address
      */

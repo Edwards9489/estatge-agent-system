@@ -75,8 +75,11 @@ public class Account implements AccountInterface {
      */
     @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        this.endDate = endDate;
-        this.modifiedBy(modifiedBy);
+        if(endDate.after(this.startDate)) {
+            this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
+        
     }
     
     @Override

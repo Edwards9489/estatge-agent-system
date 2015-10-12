@@ -3,3 +3,8 @@ password: "Toxic9489!999"
 
 user: "admin"
 password: "admin"
+
+
+person_collection users
+user: "ADMIN"
+password: password
