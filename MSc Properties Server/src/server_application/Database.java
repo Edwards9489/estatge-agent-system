@@ -1095,4 +1095,10 @@ public class Database {
     public boolean employeeBenefitExists(String code) {
         return employeeBenefits.containsKey(code);
     }
+    
+    
+    
+    
+    ///////    FOR ADVANCED SEARCH, USE METHODS LIKE GET APPLICATIONS(person details), GET APPLICATIONS (property details), GET APPLICATIONS(application details)
+    //////     GET TENANCIES(person details), GET TENANCIES(property details), GET TENANCIES (landlord details) and so on for each thing I want to return
 }
