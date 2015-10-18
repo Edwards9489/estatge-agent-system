@@ -89,6 +89,14 @@ public class Employee implements EmployeeInterface {
     public PersonInterface getPerson() {
         return person;
     }
+    
+    /**
+     * @return the person
+     */
+    @Override
+    public int getPersonRef() {
+        return person.getPersonRef();
+    }
 
     /**
      * @return the officeCode

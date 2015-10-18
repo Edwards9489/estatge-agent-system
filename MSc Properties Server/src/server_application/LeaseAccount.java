@@ -17,19 +17,24 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
     ///   VARIABLES   ///
     
     private final LeaseInterface lease;
+    private double expenditure;
     
     ///   CONSTRUCTORS ///
     
     public LeaseAccount(int leaseAccRef, LeaseInterface lease, String createdBy) {
-        super(leaseAccRef, lease.getAgreementName(), lease.getStartDate(), createdBy);
+        super(leaseAccRef, lease.getAgreementName(), lease.getOfficeCode(), lease.getStartDate(), createdBy);
         this.lease = lease;
-    }    
+        this.expenditure = lease.getExpenditure();
+    }
     
     
     
     ///   MUTATOR METHODS   ///
     
-        
+    @Override
+    public void setExpenditure(double expenditure) {
+        this.expenditure = expenditure;
+    }
     
     
     ///   ACCESSOR METHODS   ///
@@ -45,5 +50,10 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
     @Override
     public int getLeaseRef() {
         return lease.getAgreementRef();
+    }
+    
+    @Override
+    public double getExpenditure() {
+        return this.expenditure;
     }
 }

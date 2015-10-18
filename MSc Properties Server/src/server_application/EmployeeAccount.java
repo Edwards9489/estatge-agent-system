@@ -17,19 +17,24 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     ///   VARIABLES   ///
     
     private final ContractInterface contract;
+    private double salary;
     
     ///   CONSTRUCTORS ///
     
     public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy) {
-        super(employeeAccRef, contract.getAgreementName(), contract.getStartDate(), createdBy);
+        super(employeeAccRef, contract.getAgreementName(), contract.getOfficeCode(), contract.getStartDate(), createdBy);
         this.contract = contract;
+        salary = contract.getJobRole().getSalary();
     }
     
     
     
     ///   MUTATOR METHODS   ///
     
-    
+    @Override
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
     
     ///   ACCESSOR METHODS   ///
 
@@ -44,5 +49,10 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     @Override
     public int getContractRef() {
         return contract.getAgreementRef();
+    }
+    
+    @Override
+    public double getSalary() {
+        return this.salary;
     }
 }

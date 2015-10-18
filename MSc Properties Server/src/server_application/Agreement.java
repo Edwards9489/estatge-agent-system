@@ -22,7 +22,7 @@ public class Agreement implements AgreementInterface {
     ///   VARIABLES   ///
     
     private final int agreementRef;
-    private final String agreementName;
+    private String agreementName;
     private Date startDate;
     private Date expectedEndDate;
     private Date actualEndDate;
@@ -49,6 +49,13 @@ public class Agreement implements AgreementInterface {
     
     
     ///   MUTATOR METHODS   ///
+    
+    /**
+     * @param startDate the startDate to set
+     */
+    private void setAgreementName(String name) {
+        this.agreementName = name;
+    }
     
     /**
      * @param startDate the startDate to set
@@ -93,8 +100,9 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public void updateAgreement(Date startDate, int length, ModifiedByInterface modifiedBy) {
+    public void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy) {
         if(isCurrent()) {
+            this.setAgreementName(name);
             this.setStartDate(startDate);
             this.setLength(length);
             this.modifiedBy(modifiedBy);

@@ -20,24 +20,24 @@ import java.util.List;
 public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   VARIABLES   ///
-    private final int jobRoleBenefitRef;
-    private final Element element;
+    private final Element benefit;
     private String stringValue;
     private double doubleValue;
     private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     private boolean salaryBenefit;
+    private boolean current;
     
     ///   CONSTRUCTORS   ///
     
-    public JobRoleBenefit(int ref, Element element, boolean salaryBenefit, String createdBy) {
-        this.jobRoleBenefitRef = ref;
-        this. element = element;
+    public JobRoleBenefit(Element benefit, boolean salaryBenefit, String createdBy) {
+        this.benefit = benefit;
         this.salaryBenefit = salaryBenefit;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
+        this.current = true;
     }
     
     
@@ -69,8 +69,12 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         this.modifiedBy.add(modifiedBy);
     }
     
+    private void setCurrent(boolean current) {
+        this.current = current;
+    }
+    
     @Override
-    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, ModifiedByInterface modifiedBy) {
+    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, boolean current, ModifiedByInterface modifiedBy) {
         setSalaryBenefit(salaryBenefit);
         if(salaryBenefit) {
             setDoubleValue(doubleValue);
@@ -78,6 +82,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
+        this.setCurrent(current);
         this.modifiedBy(modifiedBy);
     }
     
@@ -85,20 +90,17 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   ACCESSOR METHODS   ///
     
-    public int getJobRoleBenefitRef() {
-        return this.jobRoleBenefitRef;
-    }
     /**
-     * @return the element
+     * @return the benefit
      */
     @Override
-    public Element getElement() {
-        return this.element;
+    public Element getBenefit() {
+        return this.benefit;
     }
     
     @Override
-    public String getElementCode() {
-        return this.getElement().getCode();
+    public String getBenefitCode() {
+        return this.getBenefit().getCode();
     }
 
     /**
@@ -115,6 +117,10 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     @Override
     public double getDoubleValue() {
         return this.doubleValue;
+    }
+    
+    public boolean isCurrent() {
+        return this.current;
     }
     
     @Override

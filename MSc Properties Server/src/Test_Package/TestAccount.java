@@ -24,7 +24,7 @@ public class TestAccount {
         Date date = new Date();
         date.setMonth(0);
         date.setDate(1);
-        Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", date, "DEDWARDS");
+        Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date, "DEDWARDS");
         
         System.out.println("****** Testing Accessor Methods ******");
         

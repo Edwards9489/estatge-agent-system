@@ -6,7 +6,6 @@
 package server_application;
 import interfaces.RentAccountInterface;
 import interfaces.TenancyInterface;
-import java.util.*;
 
 /**
  *
@@ -21,11 +20,10 @@ public class RentAccount extends Account implements RentAccountInterface {
     
     ///   CONSTRUCTORS ///
     
-    public RentAccount(int rentAccRef, String name, Date rentAccStart, double rent, TenancyInterface tenancy, String createdBy) {
-        super(rentAccRef, name, rentAccStart, createdBy);
+    public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy) {
+        super(rentAccRef, tenancy.getAgreementName(), tenancy.getOfficeCode(), tenancy.getStartDate(), createdBy);
         this.tenancy = tenancy;
-        this.rent = rent;
-        
+        this.rent = tenancy.getRent() + tenancy.getCharges();
         //create processTransactions which calculates the transactions due from start date
     }
     

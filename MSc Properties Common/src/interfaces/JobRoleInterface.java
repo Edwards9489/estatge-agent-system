@@ -19,6 +19,7 @@ public interface JobRoleInterface {
     List getJobRequirements();
     boolean isFullTime();
     double getSalary();
+    boolean isCurrent();
     List getBenefits();
     String getLastModifiedBy();
     Date getLastModifiedDate();
@@ -26,7 +27,7 @@ public interface JobRoleInterface {
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void updateJobRole(String title, String description, double salary, ModifiedByInterface modifiedBy);
+    void updateJobRole(String title, String description, double salary, boolean current, ModifiedByInterface modifiedBy);
     void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
     void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
     void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);

@@ -22,6 +22,7 @@ public class Account implements AccountInterface {
     private Date startDate;
     private Date endDate;
     private double balance;
+    private final String officeCode;
     private final String createdBy;
     private final Date createdDate;
     private final ArrayList<ModifiedByInterface> modifiedBy;
@@ -30,10 +31,11 @@ public class Account implements AccountInterface {
     
     ///   CONSTRUCTORS ///
 
-    public Account(int accRef, String accName, Date startDate, String createdBy) {
+    public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy) {
         this.accRef = accRef;
         this.accName = accName;
         this.startDate = startDate;
+        this.officeCode = officeCode;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -146,6 +148,14 @@ public class Account implements AccountInterface {
     @Override
     public double getBalance() {
         return this.balance;
+    }
+    
+    /**
+     * @return the officeCode
+     */
+    @Override
+    public String getOfficeCode() {
+        return this.officeCode;
     }
     
     @Override

@@ -22,16 +22,17 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   VARIABLES   ///
     
-    private ArrayList<LandlordInterface> landlords;
+    private final ArrayList<LandlordInterface> landlords;
     private final PropertyInterface property;
     private final boolean fullManagement; // indicates if MSc Properties will manage all of the managerial affairs such as damage to prop, or just renting
-    private final double expenditure; // expenditure to landlord(s)
+    private final double expenditure; // money to landlord(s)
     
     ///   CONSTRUCTORS ///
     
     public Lease(int leaseRef, Date startDate, int length, String createdBy, Property property,
             boolean management, double expenditure, String officeCode) {
         super(leaseRef, property.getAddress().toString(), startDate, length, createdBy, officeCode);
+        this.landlords = new ArrayList();
         this.property = property;
         this.fullManagement = management;
         this.expenditure = expenditure;

@@ -28,5 +28,5 @@ public interface AgreementInterface {
     Date getCreatedDate();
     boolean isCurrent();
     void setActualEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void updateAgreement(Date startDate, int length, ModifiedByInterface modifiedBy);
+    void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy);
 }

@@ -2,20 +2,29 @@ Database Left to do
 
 NB: Look over all update methods and ensure you update all other tables with an update
 
-offices - DONE
-landlords
-employees
-properties
-tenancies
-leases
-contracts
-rentAccounts
-leaseAccounts
-employeeAccounts
-jobRoles
-
-
 InvolvedPartyEndReasons - Element - DONE
 relationships - Element - DONE
 employeeBenefits - Element - DONE
+offices - DONE
+landlords - DONE
+employees - DONE
+properties - DONE
+tenancies - DONE
+leases - DONE
+contracts - DONE
+
+
+rentAccounts - DONE
+leaseAccounts - DONE
+employeeAccounts - DONE
+jobRoles - DONE
+jobRoleBenefit - DONE
+jobRequirements - DONE
+peopleAddressUsage - DONE
+applicationAddressUsages - DONE
+propertiesInterestedIn - app
+leaseLandlords - lease
+
+
+
 

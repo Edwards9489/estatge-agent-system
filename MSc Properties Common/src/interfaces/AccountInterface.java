@@ -18,6 +18,7 @@ public interface AccountInterface {
     Date getStartDate();
     Date getEndDate();
     double getBalance();
+    String getOfficeCode();
     boolean isNegativeInd();
     boolean isCurrent();
     String getLastModifiedBy();

@@ -15,6 +15,7 @@ import java.util.List;
 public interface EmployeeInterface {
     int getEmployeeRef();
     PersonInterface getPerson();
+    int getPersonRef();
     String getOfficeCode();
     String getLastModifiedBy();
     Date getLastModifiedDate();

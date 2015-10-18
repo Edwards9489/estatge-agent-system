@@ -26,9 +26,10 @@ public class JobRole implements JobRoleInterface {
     private final String jobRoleCode;
     private String jobTitle;
     private String jobDescription;
-    private final HashMap<String, Element> jobRequirements;
+    private final HashMap<String, Element> requirements;
     private final boolean fullTime;
     private double salary;
+    private boolean current;
     private final HashMap<String, JobRoleBenefitInterface> benefits; // Create Job Role Benefit class
     private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
@@ -42,7 +43,8 @@ public class JobRole implements JobRoleInterface {
         this.jobDescription = jobDescription;
         this.fullTime = fullTime;
         this.salary = salary;
-        this.jobRequirements = new HashMap<>();
+        this.current = true;
+        this.requirements = new HashMap<>();
         this.benefits = new HashMap<>();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
@@ -74,29 +76,37 @@ public class JobRole implements JobRoleInterface {
         this.salary = salary;
     }
     
+    /**
+     * @param salary the salary to set
+     */
+    private void setCurrent(boolean current) {
+        this.current = current;
+    }
+    
     private void modifiedBy(ModifiedByInterface modifiedBy) {
         this.modifiedBy.add(modifiedBy);
     }
     
     @Override
-    public void updateJobRole(String title, String description, double salary, ModifiedByInterface modifiedBy) {
+    public void updateJobRole(String title, String description, double salary, boolean current, ModifiedByInterface modifiedBy) {
         this.setJobTitle(title);
         this.setJobDescription(description);
         this.setSalary(salary);
+        this.setCurrent(current);
         this.modifiedBy(modifiedBy);
     }
     
     @Override
     public void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
-        if(this.jobRequirements.containsKey(requirement.getCode())) {
-            this.jobRequirements.put(requirement.getCode(), requirement);
+        if(!this.hasRequirement(requirement.getCode())) {
+            this.requirements.put(requirement.getCode(), requirement);
             this.modifiedBy(modifiedBy);
         }
     }
     
     @Override
     public void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
-        if(this.jobRequirements.containsKey(requirement.getCode())) {
+        if(this.hasRequirement(requirement.getCode())) {
             this.benefits.remove(requirement.getCode());
             this.modifiedBy(modifiedBy);
         }
@@ -104,16 +114,16 @@ public class JobRole implements JobRoleInterface {
     
     @Override
     public void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
-        if(this.benefits.containsKey(benefit.getElementCode())) {
-            this.benefits.put(benefit.getElementCode(), benefit);
+        if(!this.hasBenefit(benefit.getBenefitCode())) {
+            this.benefits.put(benefit.getBenefitCode(), benefit);
             this.modifiedBy(modifiedBy);
         }
     }
     
     @Override
     public void removeBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
-        if(this.benefits.containsKey(benefit.getElementCode())) {
-            this.benefits.remove(benefit.getElementCode());
+        if(this.hasBenefit(benefit.getBenefitCode())) {
+            this.benefits.remove(benefit.getBenefitCode());
             this.modifiedBy(modifiedBy);
         }
     }
@@ -151,7 +161,7 @@ public class JobRole implements JobRoleInterface {
      */
     @Override
     public List getJobRequirements() {
-        return Collections.unmodifiableList((List) this.jobRequirements.values());
+        return Collections.unmodifiableList((List) this.requirements.values());
     }
 
     /**
@@ -168,6 +178,22 @@ public class JobRole implements JobRoleInterface {
     @Override
     public double getSalary() {
         return this.salary;
+    }
+    
+    /**
+     * @return the salary
+     */
+    @Override
+    public boolean isCurrent() {
+        return this.current;
+    }
+    
+    public boolean hasRequirement(String code) {
+        return this.requirements.containsKey(code);
+    }
+    
+    public boolean hasBenefit(String code) {
+        return this.benefits.containsKey(code);
     }
 
     /**
