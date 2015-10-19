@@ -21,9 +21,9 @@ public class ModifiedBy implements ModifiedByInterface {
     
     ///   CONSTRUCTORS ///
     
-    public ModifiedBy(String modifiedBy, String description) {
+    public ModifiedBy(String modifiedBy, Date modifedDate, String description) {
         this.modifiedBy = modifiedBy;
-        this.modifiedDate = new Date();
+        this.modifiedDate = modifedDate;
         this.description = description;
     }
     

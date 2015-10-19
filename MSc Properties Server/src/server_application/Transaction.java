@@ -15,7 +15,8 @@ import java.util.Date;
 public class Transaction implements TransactionInterface {
     
     ///   VARIABLES   ///
-        
+    
+    private final int transactionRef;
     private final int accountRef;
     private final int fromRef;
     private final int toRef;
@@ -27,7 +28,8 @@ public class Transaction implements TransactionInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Transaction(int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+    public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy, Date createdDate) {
+        this.transactionRef = transactionRef;
         this.accountRef = accountRef;
         this.fromRef = fromRef;
         this.toRef = toRef;
@@ -35,7 +37,7 @@ public class Transaction implements TransactionInterface {
         this.debit = debit;
         this.transactionDate = transactionDate;
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     
@@ -45,13 +47,21 @@ public class Transaction implements TransactionInterface {
     
     
     ///   ACCESSOR METHODS   ///
-
+    
+    /**
+     * @return the transactionRef
+     */
+    @Override
+    public int getTransactionRef() {
+        return this.transactionRef;
+    }
+    
     /**
      * @return the accountRef
      */
     @Override
     public int getAccountRef() {
-        return accountRef;
+        return this.accountRef;
     }
 
     /**

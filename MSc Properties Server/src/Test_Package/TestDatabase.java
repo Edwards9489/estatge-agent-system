@@ -24,20 +24,23 @@ public class TestDatabase {
         
         Database db = new Database();
         
-        try {
-            db.connect();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        Element title = new ElementImpl("MR", "Mr", "DEDWARDS");
+//        try {
+//            db.connect();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//        Element title = new ElementImpl("MR", "Mr", "DEDWARDS");
+//        
+//        try {
+//            db.createTitle(title);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(TestDatabase.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        ModifiedByInterface modTest = new ModifiedBy("Updated Title", "JBLOGGS");
+//        title.updateElement("TEST", true, modTest);
         
-        try {
-            db.createTitle(title);
-        } catch (SQLException ex) {
-            Logger.getLogger(TestDatabase.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        ModifiedByInterface modTest = new ModifiedBy("Updated Title", "JBLOGGS");
-        title.updateElement("TEST", true, modTest);
+        Element title = db.getTitle("MR");
+        System.out.println(title.toString());
         
         db.disconnect();
     }

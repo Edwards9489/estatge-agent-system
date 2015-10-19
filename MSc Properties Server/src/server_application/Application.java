@@ -44,7 +44,7 @@ public class Application implements ApplicationInterface {
      * @param corrName
      * @param createdBy
      */
-    public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy) {
+    public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy, Date createdDate) {
         this.appRef = appRef;
         this.appCorrName = corrName;
         this.appStartDate = appStartDate;
@@ -55,7 +55,7 @@ public class Application implements ApplicationInterface {
         this.propertiesInterestedIn = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     

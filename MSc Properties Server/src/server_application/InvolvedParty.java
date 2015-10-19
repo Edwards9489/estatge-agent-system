@@ -36,7 +36,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public InvolvedParty(int invPartyRef, int appRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy) {
+    public InvolvedParty(int invPartyRef, int appRef, PersonInterface person, boolean joint, boolean main, Date start, Element relationship, String createdBy, Date createdDate) {
         this.involvedPartyRef = invPartyRef;
         this.appRef = appRef;
         this.person = person;
@@ -50,7 +50,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
         this.relationship = relationship;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     

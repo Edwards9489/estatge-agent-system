@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
+import java.util.Date;
 
 /**
  *
@@ -21,8 +22,8 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
     
     ///   CONSTRUCTORS ///
     
-    public LeaseAccount(int leaseAccRef, LeaseInterface lease, String createdBy) {
-        super(leaseAccRef, lease.getAgreementName(), lease.getOfficeCode(), lease.getStartDate(), createdBy);
+    public LeaseAccount(int leaseAccRef, LeaseInterface lease, String createdBy, Date createdDate) {
+        super(leaseAccRef, lease.getAgreementName(), lease.getOfficeCode(), lease.getStartDate(), createdBy, createdDate);
         this.lease = lease;
         this.expenditure = lease.getExpenditure();
     }

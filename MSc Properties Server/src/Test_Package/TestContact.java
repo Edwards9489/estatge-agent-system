@@ -17,13 +17,13 @@ public class TestContact {
     public void main(String[] args) {
         System.out.println("****************Running Contact Test****************");
         
-        Element type1 = new ElementImpl("TEL", "Telephone", "DEDWARDS");
-        Element type2 = new ElementImpl("EMAIL", "E-Mail", "DEDWARDS");
-        Element type3 = new ElementImpl("FAX", "Fax", "DEDWARDS");
+        Element type1 = new ElementImpl("TEL", "Telephone", "DEDWARDS", new Date());
+        Element type2 = new ElementImpl("EMAIL", "E-Mail", "DEDWARDS", new Date());
+        Element type3 = new ElementImpl("FAX", "Fax", "DEDWARDS", new Date());
         
-        Contact contact1 = new Contact(1, type1, "07872395479", new Date(), "DEDWARDS");
-        Contact contact2 = new Contact(2, type2, "dwayne.edwards@enfield.gov.uk", new Date(), "DEDWARDS");
-        Contact contact3 = new Contact(3, type3, "02083794532", new Date(), "DEDWARDS");
+        Contact contact1 = new Contact(1, type1, "07872395479", new Date(), "DEDWARDS", new Date());
+        Contact contact2 = new Contact(2, type2, "dwayne.edwards@enfield.gov.uk", new Date(), "DEDWARDS", new Date());
+        Contact contact3 = new Contact(3, type3, "02083794532", new Date(), "DEDWARDS", new Date());
         
         System.out.println();
         System.out.println(contact1.getContactType());

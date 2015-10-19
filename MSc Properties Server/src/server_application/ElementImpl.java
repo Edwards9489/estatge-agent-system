@@ -29,12 +29,12 @@ public class ElementImpl implements Element {
     
     ///   CONSTRUCTORS ///
     
-    public ElementImpl(String code, String description, String createdBy) {
+    public ElementImpl(String code, String description, String createdBy, Date createdDate) {
         this.code = code;
         this.description = description;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         current = true;
     }
     
@@ -46,7 +46,7 @@ public class ElementImpl implements Element {
         this.description = description;
     }
     
-    private void setCurrent(boolean current) {
+    public void setCurrent(boolean current) {
         this.current = current;
     }
     
@@ -113,5 +113,12 @@ public class ElementImpl implements Element {
     @Override
     public Date getCreatedDate() {
         return this.createdDate;
+    }
+    
+    @Override
+    public String toString() {
+        String temp = "Code: " + this.code + "\nDescription: " + this.description + "\nCurrent: " + this.isCurrent()
+                + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate + "\nModifiedBy\n" + this.getModifiedBy();
+        return temp;
     }
 }

@@ -37,7 +37,7 @@ public class JobRole implements JobRoleInterface {
     
     ///   CONSTRUCTORS ///
     
-    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, String createdBy) {
+    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, String createdBy, Date createdDate) {
         this.jobRoleCode = code;
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
@@ -48,7 +48,7 @@ public class JobRole implements JobRoleInterface {
         this.benefits = new HashMap<>();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     
@@ -80,7 +80,12 @@ public class JobRole implements JobRoleInterface {
      * @param salary the salary to set
      */
     private void setCurrent(boolean current) {
-        this.current = current;
+        if (current) {
+            this.current = current;
+        } else if (!current) {
+            // ENSURE NO CURRENT EMPLOYEE HAS JOBROLE
+            this.current = current;
+        }
     }
     
     private void modifiedBy(ModifiedByInterface modifiedBy) {

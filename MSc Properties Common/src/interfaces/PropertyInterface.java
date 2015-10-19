@@ -17,7 +17,7 @@ public interface PropertyInterface {
     void setLandlords(ArrayList<LandlordInterface> landlord, ModifiedByInterface modifiedBy);
     void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy);
     void setPropStatus(String propStatus, ModifiedByInterface modifiedBy);
-    void updateProperty(Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy);
+    void updateProperty(AddressInterface address, Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy);
     int getPropRef();
     AddressInterface getAddress();
     List getLandlords();

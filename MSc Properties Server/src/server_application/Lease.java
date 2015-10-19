@@ -29,9 +29,8 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Lease(int leaseRef, Date startDate, int length, String createdBy, Property property,
-            boolean management, double expenditure, String officeCode) {
-        super(leaseRef, property.getAddress().toString(), startDate, length, createdBy, officeCode);
+    public Lease(int leaseRef, Date startDate, int length, int accountRef, String createdBy, Property property, boolean management, double expenditure, String officeCode, Date createdDate) {
+        super(leaseRef, property.getAddress().toString(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.landlords = new ArrayList();
         this.property = property;
         this.fullManagement = management;

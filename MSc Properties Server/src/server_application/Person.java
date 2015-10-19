@@ -58,9 +58,10 @@ public class Person implements PersonInterface {
      * @param contacts
      * @param address
      * @param createdBy
+     * @param createdDate
      */
-    public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ArrayList<ContactInterface> contacts, AddressUsageInterface address, String createdBy) {
+    public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,Element maritalStatus, Element ethnicOrigin,
+            Element language, Element nationality, Element sexuality, Element religion, ArrayList<ContactInterface> contacts, AddressUsageInterface address, String createdBy, Date createdDate) {
         this.personRef = personRef;
         this.setTitle(title);
         this.setForename(forename);
@@ -80,7 +81,7 @@ public class Person implements PersonInterface {
         this.addresses.add(address);
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     

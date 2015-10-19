@@ -34,13 +34,13 @@ public class Employee implements EmployeeInterface {
     ///   CONSTRUCTORS ///
     
     
-    public Employee(int employeeRef, PersonInterface person, String createdBy) {
+    public Employee(int employeeRef, PersonInterface person, String createdBy, Date createdDate) {
         this.employeeRef = employeeRef;
         this.person = person;
         this.contracts = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     

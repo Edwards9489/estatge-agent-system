@@ -31,13 +31,13 @@ public class Landlord implements LandlordInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Landlord(int landlordRef, PersonInterface person, String createdBy) {
+    public Landlord(int landlordRef, PersonInterface person, String createdBy, Date createdDate) {
         this.landlordRef = landlordRef;
         this.person = person;
         this.leases = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     

@@ -27,6 +27,7 @@ public class Agreement implements AgreementInterface {
     private Date expectedEndDate;
     private Date actualEndDate;
     private int length;
+    private final int accountRef;
     private final String createdBy;
     private final Date createdDate;
     private final ArrayList<ModifiedByInterface> modifiedBy;
@@ -34,14 +35,15 @@ public class Agreement implements AgreementInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Agreement(int agreementRef, String agreementName, Date startDate, int length, String createdBy, String officeCode) {
+    public Agreement(int agreementRef, String agreementName, Date startDate, int length, int accountRef, String createdBy, Date createdDate, String officeCode) {
         this.agreementRef = agreementRef;
         this.agreementName = agreementName;
         this.startDate = startDate;
         this.length = length;
         this.setExpectedEndDate(this.calculateExpectedEndDate());
+        this.accountRef = accountRef;
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
         this.officeCode = officeCode;
     }
@@ -169,6 +171,14 @@ public class Agreement implements AgreementInterface {
     @Override
     public int getLength() {
         return length;
+    }
+    
+    /**
+     * @return the length
+     */
+    @Override
+    public int getAccountRef() {
+        return this.accountRef;
     }
     
     /**

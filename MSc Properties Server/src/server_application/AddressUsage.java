@@ -32,12 +32,12 @@ public class AddressUsage implements AddressUsageInterface {
     
     ///   CONSTRUCTORS ///
     
-    public AddressUsage(int ref, AddressInterface address, Date startDate, String createdBy) {
+    public AddressUsage(int ref, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
         this.addressUsageRef = ref;
         this.address = address;
         this.startDate = startDate;
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
     }
     

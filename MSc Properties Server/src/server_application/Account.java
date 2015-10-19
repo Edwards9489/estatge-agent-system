@@ -31,14 +31,14 @@ public class Account implements AccountInterface {
     
     ///   CONSTRUCTORS ///
 
-    public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy) {
+    public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy, Date createdDate) {
         this.accRef = accRef;
         this.accName = accName;
         this.startDate = startDate;
         this.officeCode = officeCode;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         this.debitTransactions = new ArrayList<>();
         this.creditTransactions = new ArrayList<>();
     }

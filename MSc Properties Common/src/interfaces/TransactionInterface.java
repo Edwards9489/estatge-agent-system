@@ -12,6 +12,7 @@ import java.util.Date;
  * @author Dwayne
  */
 public interface TransactionInterface {
+    int getTransactionRef();
     int getAccountRef();
     int getFromRef();
     int getToRef();

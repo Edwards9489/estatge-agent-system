@@ -5,16 +5,13 @@
  */
 package server_application;
 
-import interfaces.AccountInterface;
 import interfaces.AddressInterface;
-import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.OfficeInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,23 +27,19 @@ public class Office implements OfficeInterface {
     private Date startDate;
     private Date endDate;
     private ArrayList<ContactInterface> contacts;
-    private final HashMap<Integer, AgreementInterface> agreements;
-    private final HashMap<Integer, AccountInterface> accounts;
     private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
     ///   CONSTRUCTORS ///
     
-    public Office(String officeCode, AddressInterface address, Date startDate, String createdBy) {
+    public Office(String officeCode, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
         this.officeCode = officeCode;
         this.address = address;
         this.startDate = startDate;
-        this.agreements = new HashMap<>();
-        this.accounts = new HashMap<>();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     
@@ -70,30 +63,6 @@ public class Office implements OfficeInterface {
                 this.endDate = endDate;
                 this.modifiedBy(modifiedBy);
             }
-        }
-    }
-    
-    /**
-     * @param agreement the agreement to add to agreements
-     * @param modifiedBy
-     */
-    @Override
-    public void addAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) {
-        if(!agreements.containsKey(agreement.getAgreementRef())) {
-            agreements.put(agreement.getAgreementRef(), agreement);
-            this.modifiedBy(modifiedBy);
-        }
-    }
-    
-    /**
-     * @param account the agreement to add to account
-     * @param modifiedBy
-     */
-    @Override
-    public void addAccount(AccountInterface account, ModifiedByInterface modifiedBy) {
-        if(accounts.containsKey(account.getAccRef())) {
-            accounts.remove(account.getAccRef());
-            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -134,22 +103,6 @@ public class Office implements OfficeInterface {
     public List getContacts() {
         return Collections.unmodifiableList(contacts);
     }
-
-    /**
-     * @return the agreements
-     */
-    @Override
-    public List getAgreements() {
-        return Collections.unmodifiableList((List) agreements.values());
-    }
-
-    /**
-     * @return the accounts
-     */
-    @Override
-    public List getAccounts() {
-        return Collections.unmodifiableList((List) accounts.values());
-    }
     
     @Override
     public boolean isCurrent() {
@@ -161,27 +114,27 @@ public class Office implements OfficeInterface {
     
     @Override
     public boolean canCloseOffice() {
-        if(agreements.isEmpty()) {
-            return true;
-        }
-        else if(!agreements.isEmpty()) {
-            for(AgreementInterface temp : agreements.values()) {
-                if(temp.isCurrent()) {
-                    return false;
-                }
-            }
-        }
-        
-        if(accounts.isEmpty()) {
-            return false;
-        }
-        else if(!accounts.isEmpty()) {
-            for(AccountInterface temp : accounts.values()) {
-                if(temp.isCurrent()) {
-                    return false;
-                }
-            }
-        }
+//        if(agreements.isEmpty()) {
+//            return true;
+//        }
+//        else if(!agreements.isEmpty()) {
+//            for(AgreementInterface temp : agreements.values()) {
+//                if(temp.isCurrent()) {
+//                    return false;
+//                }
+//            }
+//        }
+//        
+//        if(accounts.isEmpty()) {
+//            return false;
+//        }
+//        else if(!accounts.isEmpty()) {
+//            for(AccountInterface temp : accounts.values()) {
+//                if(temp.isCurrent()) {
+//                    return false;
+//                }
+//            }
+//        }
         return true;
     }
     

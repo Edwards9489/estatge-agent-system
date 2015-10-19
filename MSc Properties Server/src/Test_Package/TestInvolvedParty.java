@@ -34,24 +34,24 @@ public class TestInvolvedParty {
         dob.setDate(9);
         dob.setMonth(dob.getMonth() - 312);
         
-        Element test = new ElementImpl("TEST", "TEST", "DEDWARDS");
+        Element test = new ElementImpl("TEST", "TEST", "DEDWARDS", new Date());
         ArrayList<ContactInterface> contacts = new ArrayList();
         
         Date date = new Date();
         date.setMonth(0);
         date.setDate(1);
         
-        AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS");
+        AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
+        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS", new Date());
         
-        PersonInterface person = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
+        PersonInterface person = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
         
         Date start = new Date();
         start.setMonth(3);
         start.setDate(1);
         
-        Element relationship = new ElementImpl("APPL", "Applicant", "DEDWARDS");
-        InvolvedParty test1 = new InvolvedParty(1, 1, person, true, true, start, relationship, "DEDWARDS");
+        Element relationship = new ElementImpl("APPL", "Applicant", "DEDWARDS", new Date());
+        InvolvedParty test1 = new InvolvedParty(1, 1, person, true, true, start, relationship, "DEDWARDS", new Date());
         
         System.out.println("\n****** Testing Accessor Methods ******");
         

@@ -6,6 +6,7 @@
 package Test_Package;
 
 import interfaces.ModifiedByInterface;
+import java.util.Date;
 import server_application.Address;
 import server_application.ModifiedBy;
 
@@ -18,7 +19,7 @@ public class TestAddress {
         System.out.println("********************Running Address Test********************\n");
         String temp = "";
         System.out.println("****** Creating Test Address ******\n");
-        Address test1 = new Address(1, "1", "Kestrel House", "1", "Grilse Close", "1", "Cavendish Road", "Edmonton", "London", "England", "N9 0DJ", "DEDWARDS");
+        Address test1 = new Address(1, "1", "Kestrel House", "1", "Grilse Close", "1", "Cavendish Road", "Edmonton", "London", "England", "N9 0DJ", "DEDWARDS", new Date());
         
         System.out.println("****** Testing Accessor Methods ******\n");
         
@@ -44,7 +45,7 @@ public class TestAddress {
         
         System.out.println("\n****** Testing Mutator Methods ******\n");
         
-        ModifiedByInterface modTest1 = new ModifiedBy("JBLOGGS", "Updated Address");
+        ModifiedByInterface modTest1 = new ModifiedBy("JBLOGGS", new Date(), "Updated Address");
         
         test1.updateAddress(temp, "Little Cottage", temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest1);
         
@@ -52,7 +53,7 @@ public class TestAddress {
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         
-        ModifiedByInterface modTest2 = new ModifiedBy("DEDWARDS", "Updated Address");
+        ModifiedByInterface modTest2 = new ModifiedBy("DEDWARDS", new Date(), "Updated Address");
         
         test1.updateAddress("1", temp, temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest2);
         
@@ -60,7 +61,7 @@ public class TestAddress {
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         
-        ModifiedByInterface modTest3 = new ModifiedBy("JBLOGGS", "Updated Address");
+        ModifiedByInterface modTest3 = new ModifiedBy("JBLOGGS", new Date(), "Updated Address");
         
         test1.updateAddress("79", "Kestrel House", temp, temp, temp, "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest3);
         
@@ -68,7 +69,7 @@ public class TestAddress {
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         
-        ModifiedByInterface modTest4 = new ModifiedBy("DEDWARDS", "Updated Address");
+        ModifiedByInterface modTest4 = new ModifiedBy("DEDWARDS", new Date(), "Updated Address");
         
         test1.updateAddress(temp, temp, temp, temp, "5", "Brook Crescent", "Enfield", "London", "England", "EN3 4EN", modTest4);
         
@@ -76,7 +77,7 @@ public class TestAddress {
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         
-        ModifiedByInterface modTest5 = new ModifiedBy("JBLOGGS", "Updated Address");
+        ModifiedByInterface modTest5 = new ModifiedBy("JBLOGGS", new Date(), "Updated Address");
         
         test1.updateAddress(temp, temp, "7A", "Bourne Hill", temp, "The Ride", "Enfield", "London", "England", "EN3 4EN", modTest5);
         
@@ -84,7 +85,7 @@ public class TestAddress {
         System.out.println(test1.getLastModifiedBy());
         System.out.println(test1.getLastModifiedDate());
         
-        ModifiedByInterface modTest6 = new ModifiedBy("DEDWARDS", "Updated Address");
+        ModifiedByInterface modTest6 = new ModifiedBy("DEDWARDS", new Date(), "Updated Address");
         
         test1.updateAddress("12", "Kestrel House", temp, "Brook Crescent", temp, "Hertford Road", "Enfield", "London", "England", "EN3 4EN", modTest6);
         

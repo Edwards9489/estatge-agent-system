@@ -15,15 +15,11 @@ import java.util.List;
 public interface OfficeInterface {
     void setStartDate(Date startDate, ModifiedByInterface modifiedBy);
     void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void addAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy);
-    void addAccount(AccountInterface account, ModifiedByInterface modifiedBy);
     String getOfficeCode();
     AddressInterface getAddress();
     Date getStartDate();
     Date getEndDate();
     List getContacts();
-    List getAgreements();
-    List getAccounts();
     boolean isCurrent();
     boolean canCloseOffice();
     String getLastModifiedBy();

@@ -28,13 +28,13 @@ public class Contact implements ContactInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Contact(int ref, Element type, String value, Date date, String createdBy) {
+    public Contact(int ref, Element type, String value, Date date, String createdBy, Date createdDate) {
         this.contactRef = ref;
         contactType = type;
         contactValue = value;
         startDate = date;
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
     }
     

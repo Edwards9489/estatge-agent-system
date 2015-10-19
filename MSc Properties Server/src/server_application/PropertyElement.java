@@ -21,6 +21,7 @@ public class PropertyElement implements PropertyElementInterface {
     
     ///   VARIABLES   ///
     
+    private final int propertyElementRef;
     private final Element element;
     private String stringValue;
     private double doubleValue;
@@ -34,7 +35,8 @@ public class PropertyElement implements PropertyElementInterface {
     
     ///   CONSTRUCTORS ///
     
-    public PropertyElement(Element element, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy) {
+    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy, Date createdDate) {
+        this.propertyElementRef = propElementRef;
         this. element = element;
         this.startDate = startDate;
         this.charge = charge;
@@ -46,7 +48,7 @@ public class PropertyElement implements PropertyElementInterface {
         }
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
     }
     
     
@@ -105,13 +107,15 @@ public class PropertyElement implements PropertyElementInterface {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
-        
     }
     
     
     
     ///   ACCESSOR METHODS   ///
     
+    public int getPropertyElementRef() {
+        return this.propertyElementRef;
+    }
     /**
      * @return the element
      */

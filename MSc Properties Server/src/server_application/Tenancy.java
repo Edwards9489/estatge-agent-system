@@ -26,9 +26,8 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Tenancy(int tenRef, Date startDate, int length, String createdBy, PropertyInterface property,
-            ApplicationInterface application, Element tenType, String officeCode) {
-        super(tenRef, application.getAppCorrName(), startDate, length, createdBy, officeCode);
+    public Tenancy(int tenRef, Date startDate, int length, int accountRef, String createdBy, Date createdDate, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode) {
+        super(tenRef, application.getAppCorrName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.property = property;
         this.application = application;
         this.tenType = tenType;

@@ -20,24 +20,27 @@ import java.util.List;
 public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   VARIABLES   ///
+    private final int jobRoleBenefitRef;
     private final Element benefit;
     private String stringValue;
     private double doubleValue;
+    private Date startDate;
+    private Date endDate;
     private final ArrayList<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     private boolean salaryBenefit;
-    private boolean current;
     
     ///   CONSTRUCTORS   ///
     
-    public JobRoleBenefit(Element benefit, boolean salaryBenefit, String createdBy) {
+    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String createdBy, Date createdDate) {
+        this.jobRoleBenefitRef = ref;
         this.benefit = benefit;
+        this.startDate = startDate;
         this.salaryBenefit = salaryBenefit;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
-        this.createdDate = new Date();
-        this.current = true;
+        this.createdDate = createdDate;
     }
     
     
@@ -59,6 +62,13 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
+     * @param startDate the startDate to set
+     */
+    private void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
      * @param salaryBenefit the salaryBenefit to set
      */
     private void setSalaryBenefit(boolean salaryBenefit) {
@@ -69,12 +79,8 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         this.modifiedBy.add(modifiedBy);
     }
     
-    private void setCurrent(boolean current) {
-        this.current = current;
-    }
-    
     @Override
-    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, boolean current, ModifiedByInterface modifiedBy) {
+    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, Date startDate, ModifiedByInterface modifiedBy) {
         setSalaryBenefit(salaryBenefit);
         if(salaryBenefit) {
             setDoubleValue(doubleValue);
@@ -82,13 +88,33 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
-        this.setCurrent(current);
+        setStartDate(startDate);
         this.modifiedBy(modifiedBy);
+    }
+
+    /**
+     * @param endDate the endDate to set
+     * @param modifiedBy
+     */
+    @Override
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
+        if(endDate.after(this.startDate)) {
+            this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     
     
     ///   ACCESSOR METHODS   ///
+    
+    /**
+     * @return the benefitRef
+     */
+    @Override
+    public int getBenefitRef() {
+        return this.jobRoleBenefitRef;
+    }
     
     /**
      * @return the benefit
@@ -119,8 +145,30 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         return this.doubleValue;
     }
     
+    /**
+     * @return the startDate
+     */
+    @Override
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @return the endDate
+     */
+    @Override
+    public Date getEndDate() {
+        return endDate;
+    }
+    
+    @Override
     public boolean isCurrent() {
-        return this.current;
+        if(endDate == null) {
+            return true;
+        }
+        else {
+            return endDate.before(new Date());
+        }
     }
     
     @Override

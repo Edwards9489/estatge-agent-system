@@ -38,7 +38,7 @@ public class Property implements PropertyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Property(int propRef, AddressInterface address, boolean management, Date acquiredDate, Element propType, Element propSubType, String createdBy) {
+    public Property(int propRef, AddressInterface address, boolean management, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
@@ -56,6 +56,13 @@ public class Property implements PropertyInterface {
     
     
     ///   MUTATOR METHODS   ///
+    
+    /**
+     * @param acquiredDate the acquiredDate to set
+     */
+    private void setAddress(AddressInterface address) {
+        this.address = address;
+    }
     
     /**
      * @param acquiredDate the acquiredDate to set
@@ -113,10 +120,11 @@ public class Property implements PropertyInterface {
     }
     
     @Override
-    public void updateProperty(Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy) {
-        setAcquiredDate(acquiredDate);
-        setPropType(propType);
-        setPropSubType(propSubType);
+    public void updateProperty(AddressInterface address, Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy) {
+        this.setAddress(address);
+        this.setAcquiredDate(acquiredDate);
+        this.setPropType(propType);
+        this.setPropSubType(propSubType);
         this.modifiedBy(modifiedBy);
     }
 

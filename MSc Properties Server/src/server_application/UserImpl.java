@@ -14,14 +14,17 @@ public class UserImpl implements User {
     
     ///   VARIABLES   ///
         
-    private final int personRef;
-    private String username;
+    private final int employeeRef;
+    private final String username;
     private String password;
+    private boolean read;
+    private boolean write;
+    private boolean delete;
     
     ///   CONSTRUCTORS ///
     
-    public UserImpl(int personRef, String username, String password) {
-        this.personRef = personRef;
+    public UserImpl(int employeeRef, String username, String password) {
+        this.employeeRef = employeeRef;
         this.username = username;
         this.password = password;
     }
@@ -30,4 +33,5 @@ public class UserImpl implements User {
     public boolean isUser(String username, String password) {
         return (this.username.equals(username) && this.password.equals(password));
     }
+    
 }

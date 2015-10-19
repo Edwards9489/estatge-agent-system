@@ -63,38 +63,38 @@ public class TestApplication {
         dob4.setDate(5);
         
         
-        Element test = new ElementImpl("TEST", "TEST", "DEDWARDS");
+        Element test = new ElementImpl("TEST", "TEST", "DEDWARDS", new Date());
         ArrayList<ContactInterface> contacts = new ArrayList();
         
-        AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS");
+        AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
+        AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS", new Date());
         
-        PersonInterface person1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob1, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
-        PersonInterface person2 = new Person(2, test, "Penny", "Kay", "Brindle", dob2, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
-        PersonInterface person3 = new Person(3, test, "Tyrese", "Jerome", "Edwards", dob3, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
-        PersonInterface person4 = new Person(4, test, "Hermione", "Leroy", "Granger", dob4, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS");
+        PersonInterface person1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob1, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person2 = new Person(2, test, "Penny", "Kay", "Brindle", dob2, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person3 = new Person(3, test, "Tyrese", "Jerome", "Edwards", dob3, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person4 = new Person(4, test, "Hermione", "Leroy", "Granger", dob4, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
         
         Date start = new Date();
         start.setMonth(0);
         start.setDate(10);
         
-        Element relationship1 = new ElementImpl("APPL", "Applicant", "DEDWARDS");
-        Element relationship2 = new ElementImpl("PTNR", "Patner", "DEDWARDS");
-        Element relationship3 = new ElementImpl("SON", "Son", "DEDWARDS");
-        Element relationship4 = new ElementImpl("DAU", "Daughter", "DEDWARDS");
+        Element relationship1 = new ElementImpl("APPL", "Applicant", "DEDWARDS", new Date());
+        Element relationship2 = new ElementImpl("PTNR", "Patner", "DEDWARDS", new Date());
+        Element relationship3 = new ElementImpl("SON", "Son", "DEDWARDS", new Date());
+        Element relationship4 = new ElementImpl("DAU", "Daughter", "DEDWARDS", new Date());
         
-        InvolvedParty invParty1 = new InvolvedParty(1, 1, person1, true, true, start, relationship1, "DEDWARDS");
-        InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, start, relationship2, "DEDWARDS");
-        InvolvedParty invParty3 = new InvolvedParty(3, 1, person3, false, false, start, relationship3, "DEDWARDS");
-        InvolvedParty invParty4 = new InvolvedParty(4, 1, person4, false, false, dob4, relationship4, "DEDWARDS");
+        InvolvedParty invParty1 = new InvolvedParty(1, 1, person1, true, true, start, relationship1, "DEDWARDS", new Date());
+        InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, start, relationship2, "DEDWARDS", new Date());
+        InvolvedParty invParty3 = new InvolvedParty(3, 1, person3, false, false, start, relationship3, "DEDWARDS", new Date());
+        InvolvedParty invParty4 = new InvolvedParty(4, 1, person4, false, false, dob4, relationship4, "DEDWARDS", new Date());
         
-        AddressInterface address1 = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS");
-        AddressUsage addressUsage1 = new AddressUsage(2, address1, date, "DEDWARDS");
+        AddressInterface address1 = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
+        AddressUsage addressUsage1 = new AddressUsage(2, address1, date, "DEDWARDS", new Date());
         
-        Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS");
+        Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS", new Date());
         
-        PropertyInterface property = new Property(1, address1, false, date, test, test, "DEDWARDS");
-        TenancyInterface tenancy = new Tenancy(1, start, 12, "Mr Edwards & Ms Brindle", property, test1, test, "DEDWARDS");
+        PropertyInterface property = new Property(1, address1, false, date, test, test, "DEDWARDS", new Date());
+        TenancyInterface tenancy = new Tenancy(1, start, 12, 12, "DEDWARDS", new Date(), property, test1, test, "Mr Edwards & Ms Brindle");
         
         
         System.out.println("****** Testing Accessor Methods ******\n");
@@ -120,14 +120,14 @@ public class TestApplication {
         
         System.out.println("****** Testing Mutator Methods ******");
         
-        ModifiedByInterface modTest = new ModifiedBy("Updated Application", "DEDWARDS");
+        ModifiedByInterface modTest = new ModifiedBy("Updated Application", new Date(), "DEDWARDS");
         test1.updateApplication("Mr Edwards & Ms Brindle", date, modTest);
         System.out.println(test1.getAppCorrName());
         
         test1.setAppStatusCode("CUR");
         System.out.println(test1.getAppStatusCode());
         
-        ModifiedByInterface modTest1 = new ModifiedBy("Added Involved Party", "JBLOGGS");
+        ModifiedByInterface modTest1 = new ModifiedBy("Added Involved Party", new Date(), "JBLOGGS");
         System.out.println(test1.getHousehold());
         test1.addInvolvedParty(invParty2, modTest1);
         System.out.println(test1.getHousehold());
@@ -142,7 +142,7 @@ public class TestApplication {
         
         
         
-        ModifiedByInterface modTest2 = new ModifiedBy("Set Tenancy", "DEDWARDS");
+        ModifiedByInterface modTest2 = new ModifiedBy("Set Tenancy", new Date(), "DEDWARDS");
         System.out.println(test1.getTenancyRef());
         test1.setTenancy(tenancy.getAgreementRef(), modTest2);
         System.out.println(test1.getTenancyRef());

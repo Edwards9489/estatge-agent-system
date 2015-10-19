@@ -50,7 +50,7 @@ public class Address implements AddressInterface {
      */
     public Address(int addressRef, String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
-            String country, String postcode, String createdBy) {
+            String country, String postcode, String createdBy, Date createdDate) {
         
         this.addressRef = addressRef;
         this.setBuildingNumber(buildingNumber);
@@ -64,7 +64,7 @@ public class Address implements AddressInterface {
         this.setCountry(country);
         this.setPostcode(postcode);
         this.createdBy = createdBy;
-        this.createdDate = new Date();
+        this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
     }
     

@@ -20,6 +20,7 @@ public interface AgreementInterface {
     Date getActualEndDate();
     int getLength();
     String getOfficeCode();
+    int getAccountRef();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

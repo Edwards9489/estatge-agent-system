@@ -6,6 +6,7 @@
 package server_application;
 import interfaces.RentAccountInterface;
 import interfaces.TenancyInterface;
+import java.util.Date;
 
 /**
  *
@@ -20,8 +21,8 @@ public class RentAccount extends Account implements RentAccountInterface {
     
     ///   CONSTRUCTORS ///
     
-    public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy) {
-        super(rentAccRef, tenancy.getAgreementName(), tenancy.getOfficeCode(), tenancy.getStartDate(), createdBy);
+    public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy, Date createdDate) {
+        super(rentAccRef, tenancy.getAgreementName(), tenancy.getOfficeCode(), tenancy.getStartDate(), createdBy, createdDate);
         this.tenancy = tenancy;
         this.rent = tenancy.getRent() + tenancy.getCharges();
         //create processTransactions which calculates the transactions due from start date

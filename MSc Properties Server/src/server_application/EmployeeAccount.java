@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.ContractInterface;
 import interfaces.EmployeeAccountInterface;
+import java.util.Date;
 
 /**
  *
@@ -21,8 +22,8 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     
     ///   CONSTRUCTORS ///
     
-    public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy) {
-        super(employeeAccRef, contract.getAgreementName(), contract.getOfficeCode(), contract.getStartDate(), createdBy);
+    public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy, Date createdDate) {
+        super(employeeAccRef, contract.getAgreementName(), contract.getOfficeCode(), contract.getStartDate(), createdBy, createdDate);
         this.contract = contract;
         salary = contract.getJobRole().getSalary();
     }
