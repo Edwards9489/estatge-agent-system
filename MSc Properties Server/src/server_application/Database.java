@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.AddressInterface;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import java.sql.Connection;
@@ -16,7 +17,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,6 +63,9 @@ public class Database {
     private final HashMap<String, Element> nationalities;
     private final HashMap<String, Element> sexualities;
     private final HashMap<String, Element> religions;
+    
+    //List of Contact details
+    private final HashMap<String, Element> contactTypes;
 
     // List of Involved Party details
     private final HashMap<String, Element> endReasons;
@@ -115,6 +121,9 @@ public class Database {
         this.nationalities = new HashMap<>();
         this.sexualities = new HashMap<>();
         this.religions = new HashMap<>();
+        
+        //List of Contact details
+        this.contactTypes = new HashMap<>();
 
         // List of Involved Party details
         this.endReasons = new HashMap<>();
@@ -197,6 +206,7 @@ public class Database {
                 this.loadNationalties();
                 this.loadSexualities();
                 this.loadReligions();
+                this.loadContactTypes();
                 this.loadEndReasons();
                 this.loadRelationships();
                 this.loadTenancyTypes();
@@ -206,9 +216,11 @@ public class Database {
                 this.loadPropertyElements();
                 
                 
-                //this.loadAddresses();
-                //this.loadPerson();
-                
+                this.loadAddresses();
+                this.loadPeople();
+                this.loadOffices();
+                //this.loadInvolvedParties();
+                //this.loadApplications();
                 //this.loadJobBenefit();
                 //this.loadJobRoles();
                 
@@ -256,21 +268,21 @@ public class Database {
         }
     }
     
-    private List<Element> loadElements(String from) throws SQLException {
+    private List<ElementImpl> loadElements(String from) throws SQLException {
         String sql = "select code, description, createdBy, createdDate from " + from + " order by createdDate";
-        List<Element> elements = new ArrayList<>();
+        List<ElementImpl> elements = new ArrayList<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
             while(results.next()) {
                 String code = results.getString("code");
                 String description = results.getString("description");
-                //Boolean current = results.getBoolean("current");
+                Boolean current = results.getBoolean("current");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
                 ElementImpl temp = new ElementImpl(code, description, createdBy, createdDate);
-                //temp.setCurrent(current);
+                temp.setCurrent(current);
                 
                 elements.add(temp);
             }
@@ -293,7 +305,7 @@ public class Database {
         }
     }
     
-    private HashMap<Integer, ModifiedByInterface> loadModifiedByRef(String from) throws SQLException {
+    private HashMap<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException {
         String sql = "select ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
         HashMap<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -301,23 +313,23 @@ public class Database {
             
             while(results.next()) {
                 int ref = results.getInt("ref");
-                String modifiedBy = results.getString("modifiedBy");
-                Date modifiedDate = results.getDate("modifiedDate");
-                String description = results.getString("description");
-                
-                ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
-                
-                modifiedByMap.put(ref, temp);
-                
-                System.out.println(ref + "\n" + temp.toString()); // DELETE ONCE TESTED
+                if (reference == ref) {
+                    String modifiedBy = results.getString("modifiedBy");
+                    Date modifiedDate = results.getDate("modifiedDate");
+                    String description = results.getString("description");
+
+                    ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
+
+                    modifiedByMap.put(ref, temp);
+                }
             }
         }
         return modifiedByMap;
     }
     
-    private void createModifiedBy(String from, ModifiedByInterface modifiedBy, String code) throws SQLException {
+    public void createModifiedBy(String from, ModifiedByInterface modifiedBy, String code) throws SQLException {
         if(modifiedBy != null) {
-            String insertSql = "insert into " + from + " (code, modifiedBy, modifiedByDate, description) values (?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (code, modifiedBy, modifiedDate, description) values (?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, code);
@@ -330,7 +342,7 @@ public class Database {
         }
     }
     
-    private HashMap<String, ModifiedByInterface> loadModifiedByCode(String from) throws SQLException {
+    private HashMap<String, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
         String sql = "select code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
         HashMap<String, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -338,23 +350,75 @@ public class Database {
             
             while(results.next()) {
                 String code = results.getString("code");
-                String modifiedBy = results.getString("modifiedBy");
-                Date modifiedDate = results.getDate("modifiedDate");
-                String description = results.getString("description");
-                
-                ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
-                
-                modifiedByMap.put(code, temp);
-                
-                System.out.println(code + "\n" + temp.toString()); // DELETE ONCE TESTED
+                if (code.equals(uniqueCode)) {
+                    String modifiedBy = results.getString("modifiedBy");
+                    Date modifiedDate = results.getDate("modifiedDate");
+                    String description = results.getString("description");
+
+                    ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
+
+                    modifiedByMap.put(code, temp);
+                }
             }
         }
         return modifiedByMap;
     }
     
+    private void createElementMods(Element element, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (element != null && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(element.getCode().equals(temp.getKey())) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    ElementImpl tempElement = (ElementImpl) element;
+                    tempElement.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createContactType(Element conType) throws SQLException {
+        if(!this.contactTypeExists(conType.getCode())) {
+            this.contactTypes.put(conType.getCode(), conType);
+            this.createElement("contactTypes", conType);
+        }
+    }
+    
+    public void updateContactType(Element conType) throws SQLException {
+        if(this.contactTypeExists(conType.getCode())) {
+            this.updateElement("contactTypes", conType);
+            this.createModifiedBy("contactTypeModifications", conType.getLastModification(), conType.getCode());
+        }
+    }
+    
+    private void loadContactTypes() throws SQLException {
+        this.contactTypes.clear();
+        List<ElementImpl> loadedContactTypes;
+        loadedContactTypes = this.loadElements("contactTypes");
+        if (!loadedContactTypes.isEmpty()) {
+            for (Element temp : loadedContactTypes) {
+                if (temp instanceof Element) {
+                    this.contactTypes.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
+                }
+            }
+        }
+    }
+    
+    public Element getContactType(String code) {
+        Element conType = null;
+        if(this.contactTypeExists(code)) {
+            conType = this.contactTypes.get(code);
+        }
+        return conType;
+    }
+    
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null) {
-            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contact.getContactRef());
@@ -362,7 +426,6 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -371,9 +434,11 @@ public class Database {
         }
     }
     
+    
+    
     public void updatePersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null) {
-            String updateSql = "update officeContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and personRef=?";
+            String updateSql = "update personContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, contact.getContactType().getCode());
@@ -389,9 +454,54 @@ public class Database {
         }
     }
     
+    private void loadPersonContacts(int reference) throws SQLException {
+        String sql = "select contactRef, personRef, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from personContacts order by contactRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                if (this.personExists(reference)) {
+                    Person person = this.getPerson(reference);
+                    int contactRef = results.getInt("contactRef");
+                    int personRef = results.getInt("personRef");
+                    if (reference == personRef) {
+                        Element contactType = this.getContactType(results.getString("contactTypeCode"));
+                        String contactValue = results.getString("contactValue");
+                        Date startDate = results.getDate("startDate");
+                        Date endDate = results.getDate("endDate");
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+
+                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        if(endDate != null) {
+                            temp.setEndDate(endDate, null);
+                        }
+                        this.createPersonContactMods(temp, reference, this.loadModMap("personContactModifications", person.getPersonRef()));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createPersonContactMods(Contact contact, int personRef, HashMap<Integer, ModifiedByInterface> loadedContacts) {
+        if (contact != null && this.personExists(personRef) && !loadedContacts.isEmpty()) {
+            Iterator it = loadedContacts.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(contact.getContactRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Contact tempContact = (Contact) contact;
+                    tempContact.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException {
         if(contact != null) {
-            String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contact.getContactRef());
@@ -399,7 +509,6 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -426,16 +535,60 @@ public class Database {
         }
     }
     
+    private void loadOfficeContacts(String code) throws SQLException {
+        String sql = "select contactRef, officeCode, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from officeContacts order by contactRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                if (this.officeExists(code)) {
+                    Office office = this.getOffice(code);
+                    int contactRef = results.getInt("contactRef");
+                    String officeCode = results.getString("officeCode");
+                    if (code.equals(officeCode)) {
+                        Element contactType = this.getContactType(results.getString("contactTypeCode"));
+                        String contactValue = results.getString("contactValue");
+                        Date startDate = results.getDate("startDate");
+                        Date endDate = results.getDate("endDate");
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+
+                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        if(endDate != null) {
+                            temp.setEndDate(endDate, null);
+                        }
+                        this.createOfficeContactMods(temp, code, this.loadModMap("officeContactModifications", office.getOfficeCode()));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createOfficeContactMods(Contact contact, String code, HashMap<String, ModifiedByInterface> loadedContacts) {
+        if (contact != null && this.officeExists(code) && !loadedContacts.isEmpty()) {
+            Iterator it = loadedContacts.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(contact.getContactRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Contact tempContact = (Contact) contact;
+                    tempContact.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
         if(address != null && this.personExists(personRef)) {
-            String insertSql = "insert into personAddressess (addressUsageRef, addressRef, personRef, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into personAddressess (addressUsageRef, addressRef, personRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, personRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -461,16 +614,65 @@ public class Database {
         }
     }
     
+    private void loadPersonAddresses(int reference) throws SQLException {
+        String sql = "select addressUsageRef, addressRef, personRef, startDate, endDate, createdBy, createdDate from personAddresses order by addressUsageRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                if (this.personExists(reference)) {
+                    Person person = this.getPerson(reference);
+                    int addressUsageRef = results.getInt("addressUsageRef");
+                    
+                    AddressInterface address;
+                    if(this.addressExists(results.getInt("addressRef"))) {
+                        address = this.getAddress(results.getInt("addressRef"));
+                    } else {
+                        address = this.getAddress(results.getInt("addressRef")); // CREATE ERROR ADDRESS
+                    }
+                    int personRef = results.getInt("personRef");
+                    if (reference == personRef) {
+                        Date startDate = results.getDate("startDate");
+                        Date endDate = results.getDate("endDate");
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+
+                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        if(endDate != null) {
+                            temp.setEndDate(endDate, null);
+                        }
+                        this.createPersonAddressMods(temp, reference, this.loadModMap("personAddressesModifications", person.getPersonRef()));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createPersonAddressMods(AddressUsage address, int personRef, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
+        if (address != null && this.personExists(personRef) && !loadedAddresses.isEmpty()) {
+            Iterator it = loadedAddresses.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(address.getAddressUsageRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    AddressUsage tempAddress = (AddressUsage) address;
+                    tempAddress.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && this.applicationExists(appRef)) {
-            String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, applicationRef, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, applicationRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, appRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -496,6 +698,56 @@ public class Database {
         }
     }
     
+    private void loadApplicationAddresses(int reference) throws SQLException {
+        String sql = "select addressUsageRef, addressRef, applicationRef, startDate, endDate, createdBy, createdDate from applicationAddresses order by addressUsageRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                if (this.applicationExists(reference)) {
+                    Application application = this.getApplication(reference);
+                    int addressUsageRef = results.getInt("addressUsageRef");
+                    
+                    AddressInterface address;
+                    if(this.addressExists(results.getInt("addressRef"))) {
+                        address = this.getAddress(results.getInt("addressRef"));
+                    } else {
+                        address = this.getAddress(results.getInt("addressRef")); // CREATE ERROR ADDRESS
+                    }
+                    int applicationRef = results.getInt("applicationRef");
+                    if (reference == applicationRef) {
+                        Date startDate = results.getDate("startDate");
+                        Date endDate = results.getDate("endDate");
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+
+                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        if(endDate != null) {
+                            temp.setEndDate(endDate, null);
+                        }
+                        this.createApplicationAddressMods(temp, reference, this.loadModMap("applicationAddressesModifications", application.getApplicationRef()));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createApplicationAddressMods(AddressUsage address, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
+        if (address != null && this.applicationExists(applicationRef) && !loadedAddresses.isEmpty()) {
+            Iterator it = loadedAddresses.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(address.getAddressUsageRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    AddressUsage tempAddress = (AddressUsage) address;
+                    tempAddress.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public void createTitle(Element title) throws SQLException {
         if(!this.titleExists(title.getCode())) {
             this.titles.put(title.getCode(), title);
@@ -512,12 +764,13 @@ public class Database {
     
     private void loadTitles() throws SQLException {
         this.titles.clear();
-        List<Element> loadedTitles;
+        List<ElementImpl> loadedTitles;
         loadedTitles = this.loadElements("titles");
         if (!loadedTitles.isEmpty()) {
             for (Element temp : loadedTitles) {
                 if (temp instanceof Element) {
                     this.titles.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("titleModifications", temp.getCode()));
                 }
             }
         }
@@ -547,12 +800,13 @@ public class Database {
     
     private void loadGenders() throws SQLException {
         this.genders.clear();
-        List<Element> loadedGenders;
+        List<ElementImpl> loadedGenders;
         loadedGenders = this.loadElements("genders");
         if (!loadedGenders.isEmpty()) {
             for (Element temp : loadedGenders) {
                 if (temp instanceof Element) {
                     this.genders.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("genderModifications", temp.getCode()));
                 }
             }
         }
@@ -582,12 +836,13 @@ public class Database {
     
     private void loadMaritalStatuses() throws SQLException {
         this.maritalStatuses.clear();
-        List<Element> loadedStatuses;
+        List<ElementImpl> loadedStatuses;
         loadedStatuses = this.loadElements("maritalStatuses");
         if (!loadedStatuses.isEmpty()) {
             for (Element temp : loadedStatuses) {
                 if (temp instanceof Element) {
                     this.maritalStatuses.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("maritalStatusModifications", temp.getCode()));
                 }
             }
         }
@@ -617,12 +872,13 @@ public class Database {
     
     private void loadEthnicOrigins() throws SQLException {
         this.ethnicOrigins.clear();
-        List<Element> loadedEthnicOrigins;
+        List<ElementImpl> loadedEthnicOrigins;
         loadedEthnicOrigins = this.loadElements("ethnicOrigins");
         if (!loadedEthnicOrigins.isEmpty()) {
             for (Element temp : loadedEthnicOrigins) {
                 if (temp instanceof Element) {
                     this.ethnicOrigins.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("ethnicOriginModifications", temp.getCode()));
                 }
             }
         }
@@ -652,12 +908,13 @@ public class Database {
     
     private void loadLanguages() throws SQLException {
         this.languages.clear();
-        List<Element> loadedLanguages;
+        List<ElementImpl> loadedLanguages;
         loadedLanguages = this.loadElements("languages");
         if (!loadedLanguages.isEmpty()) {
             for (Element temp : loadedLanguages) {
                 if (temp instanceof Element) {
                     this.languages.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("languageModifications", temp.getCode()));
                 }
             }
         }
@@ -687,12 +944,13 @@ public class Database {
     
     private void loadNationalties() throws SQLException {
         this.nationalities.clear();
-        List<Element> loadedNationalities;
+        List<ElementImpl> loadedNationalities;
         loadedNationalities = this.loadElements("nationalities");
         if (!loadedNationalities.isEmpty()) {
             for (Element temp : loadedNationalities) {
                 if (temp instanceof Element) {
                     this.nationalities.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("nationalityModifications", temp.getCode()));
                 }
             }
         }
@@ -722,12 +980,13 @@ public class Database {
     
     private void loadSexualities() throws SQLException {
         this.sexualities.clear();
-        List<Element> loadedSexualities;
+        List<ElementImpl> loadedSexualities;
         loadedSexualities = this.loadElements("sexualities");
         if (!loadedSexualities.isEmpty()) {
             for (Element temp : loadedSexualities) {
                 if (temp instanceof Element) {
                     this.sexualities.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("sexualityModifications", temp.getCode()));
                 }
             }
         }
@@ -757,12 +1016,13 @@ public class Database {
     
     private void loadReligions() throws SQLException {
         this.religions.clear();
-        List<Element> loadedReligions;
+        List<ElementImpl> loadedReligions;
         loadedReligions = this.loadElements("religions");
         if (!loadedReligions.isEmpty()) {
             for (Element temp : loadedReligions) {
                 if (temp instanceof Element) {
                     this.religions.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("religionModifications", temp.getCode()));
                 }
             }
         }
@@ -823,6 +1083,51 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("addressModifications", address.getLastModification(), address.getAddressRef());
+        }
+    }
+    
+    private void loadAddresses() throws SQLException {
+        String sql = "select addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
+                    + "streetNumber, street, area, town, country, postcode, createdBy, createdDate from addresses order by addressRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int addressRef = results.getInt("addressRef");
+                String buildingNumber = results.getString("buildingNumber");
+                String buildingName = results.getString("buildingName");
+                String subStreetNumber = results.getString("subStreetNumber");
+                String subStreet = results.getString("subStreet");
+                String streetNumber = results.getString("streetNumber");
+                String street = results.getString("street");
+                String area = results.getString("area");
+                String town = results.getString("town");
+                String country = results.getString("country");
+                String postcode = results.getString("postcode");
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+
+                Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+                
+                this.addresses.put(temp.getAddressRef(), temp);
+                this.createAddressMods(this.getAddress(temp.getAddressRef()), this.loadModMap("addressModifications", temp.getAddressRef()));
+            }
+        }
+    }
+    
+    private void createAddressMods(Address address, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
+        if (address != null && this.addressExists(address.getAddressRef()) && !loadedAddresses.isEmpty()) {
+            Iterator it = loadedAddresses.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(address.getAddressRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Address tempAddress = (Address) address;
+                    tempAddress.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -901,12 +1206,13 @@ public class Database {
     
     private void loadPropertyTypes() throws SQLException {
         this.propertyTypes.clear();
-        List<Element> loadedPropTypes;
+        List<ElementImpl> loadedPropTypes;
         loadedPropTypes = this.loadElements("propertyTypes");
         if (!loadedPropTypes.isEmpty()) {
             for (Element temp : loadedPropTypes) {
                 if (temp instanceof Element) {
                     this.propertyTypes.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("propertyTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -936,12 +1242,13 @@ public class Database {
     
     private void loadPropertySubTypes() throws SQLException {
         this.propertySubTypes.clear();
-        List<Element> loadedPropSubTypes;
+        List<ElementImpl> loadedPropSubTypes;
         loadedPropSubTypes = this.loadElements("propertySubTypes");
         if (!loadedPropSubTypes.isEmpty()) {
             for (Element temp : loadedPropSubTypes) {
                 if (temp instanceof Element) {
                     this.propertySubTypes.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("propertySubTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -1034,12 +1341,13 @@ public class Database {
     
     private void loadPropertyElements() throws SQLException {
         this.propertyElements.clear();
-        List<Element> loadedPropertyElements;
+        List<ElementImpl> loadedPropertyElements;
         loadedPropertyElements = this.loadElements("propertyElements");
         if (!loadedPropertyElements.isEmpty()) {
             for (Element temp : loadedPropertyElements) {
                 if (temp instanceof Element) {
                     this.propertyElements.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("propertyElementModifications", temp.getCode()));
                 }
             }
         }
@@ -1111,6 +1419,107 @@ public class Database {
         }
     }
     
+    private void loadPeople() throws SQLException {
+        String sql = "select personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
+                + "nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, "
+                + "sexualityCode, religionCode, createdBy, createdDate from people order by personRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int personRef = results.getInt("personRef");
+                
+                Element title;
+                if(this.titleExists(results.getString("titleCode"))) {
+                    title = this.getTitle(results.getString("titleCode"));
+                } else {
+                    title = this.getTitle(results.getString("titleCode")); // Create ERROR Code
+                }
+                
+                String forename = results.getString("forename");
+                String middleNames = results.getString("middleNames");
+                String surname = results.getString("surname");
+                Date dateOfBirth = results.getDate("dateOfBirth");
+                String nationalInsurance = results.getString("nationalInsurance");
+                
+                Element gender;
+                if(this.genderExists(results.getString("genderCode"))) {
+                    gender = this.getGender(results.getString("genderCode"));
+                } else {
+                    gender = this.getGender(results.getString("genderCode")); // Create ERROR Code
+                }
+                
+                Element maritalStatus;
+                if(this.maritalStatusExists(results.getString("maritalStatusCode"))) {
+                    maritalStatus = this.getTitle(results.getString("maritalStatusCode"));
+                } else {
+                    maritalStatus = this.getTitle(results.getString("maritalStatusCode")); // Create ERROR Code
+                }
+                
+                Element ethnicOrigin;
+                if(this.ethnicOriginExists(results.getString("ethnicOriginCodec"))) {
+                    ethnicOrigin = this.getEthnicOrigin(results.getString("ethnicOriginCode"));
+                } else {
+                    ethnicOrigin = this.getEthnicOrigin(results.getString("ethnicOriginCode")); // Create ERROR Code
+                }
+                
+                Element language;
+                if(this.languageExists(results.getString("languageCode"))) {
+                    language = this.getLanguage(results.getString("languageCode"));
+                } else {
+                    language = this.getLanguage(results.getString("languageCode")); // Create ERROR Code
+                }
+                
+                Element nationality;
+                if(this.nationalityExists(results.getString("nationalityCode"))) {
+                    nationality = this.getNationality(results.getString("nationalityCode"));
+                } else {
+                    nationality = this.getNationality(results.getString("nationalityCode")); // Create ERROR Code
+                }
+                
+                Element sexuality;
+                if(this.sexualityExists(results.getString("sexualityCode"))) {
+                    sexuality = this.getSexuality(results.getString("sexualityCode"));
+                } else {
+                    sexuality = this.getSexuality(results.getString("sexualityCode")); // Create ERROR Code
+                }
+                
+                Element religion;
+                if(this.religionExists(results.getString("religionCode"))) {
+                    religion = this.getReligion(results.getString("religionCode"));
+                } else {
+                    religion = this.getReligion(results.getString("religionCode")); // Create ERROR Code
+                }
+                
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+
+                Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, null, createdBy, createdDate);
+                
+                this.people.put(temp.getPersonRef(), temp);
+                this.createPeopleMods(this.getPerson(temp.getPersonRef()), this.loadModMap("peopleModifications", temp.getPersonRef()));
+                this.loadPersonContacts(temp.getPersonRef());
+                this.loadPersonAddresses(temp.getPersonRef());
+            }
+        }
+    }
+    
+    private void createPeopleMods(Person person, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (person != null && this.personExists(person.getPersonRef()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(person.getPersonRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Person tempPerson = (Person) person;
+                    tempPerson.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public Person getPerson(int personRef) {
         Person person = null;
         if(this.personExists(personRef)) {
@@ -1123,7 +1532,7 @@ public class Database {
         if(!this.invPartyExists(invParty.getInvolvedPartyRef())) {
             involvedParties.put(invParty.getInvolvedPartyRef(), invParty);
             String insertSql = "insert into involvedParties (invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, "
-                    + "startDate, endDate relationshipCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "startDate, relationshipCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, invParty.getInvolvedPartyRef());
@@ -1132,16 +1541,15 @@ public class Database {
                 insertStat.setBoolean(col++, invParty.isJointInd());
                 insertStat.setBoolean(col++, invParty.isMainInd());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getEndDate()));
                 insertStat.setString(col++, invParty.getRelationship().getCode());
                 insertStat.executeUpdate();
                 insertStat.close();
             }
         }
     }
-    
+
     public void updateInvolvedParty(InvolvedParty invParty) throws SQLException {
-        if(this.invPartyExists(invParty.getInvolvedPartyRef())) {
+        if (this.invPartyExists(invParty.getInvolvedPartyRef())) {
             String updateSql = "update involvedParties set jointApplicantInd=?, mainApplicantInd=?, startDate=?, "
                     + "endDate=?, endReasonCode=?, relationshipCode=?, where involvedPartyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -1157,6 +1565,77 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("involvedPartyModifications", invParty.getLastModification(), invParty.getInvolvedPartyRef());
+        }
+    }
+    
+    private void loadInvolvedParties(int reference) throws SQLException {
+        String sql = "select invPartyRef, appRef, personRef jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
+                + "relationshipCode, createdBy, createdDate from involvedParties order by invPartyRef";
+
+        try (Statement selectInvStat = con.createStatement()) {
+            ResultSet results = selectInvStat.executeQuery(sql);
+            while (results.next()) {
+                int appRef = results.getInt("appRef");
+                if (this.applicationExists(reference) && appRef == reference) {
+                    Application application = this.getApplication(reference);
+                    int invPartyRef = results.getInt("invPartyRef");
+
+                    if (this.personExists(results.getInt("personRef")));
+                    {
+                        Person person = this.getPerson(results.getInt("personRef"));
+                        boolean jointApplicantInd = results.getBoolean("jointApplicantInd");
+                        boolean mainApplicantInd = results.getBoolean("mainApplicantInd");
+                        Date startDate = results.getDate("startDate");
+                        Date endDate = results.getDate("endDate");
+
+                        String endReasonCode = results.getString("endReasonCode");
+                        Element endReason = null;
+                        if (endReasonCode != null) {
+                            if (this.endReasonExists(endReasonCode)) {
+                                endReason = this.getEndReason(endReasonCode);
+                            } else {
+                                endReason = this.getEndReason(endReasonCode); // CREATE ERROR CODE
+                            }
+                        }
+
+                        Element relationship;
+                        if (this.relationshipExists(results.getString("relationshipCode"))) {
+                            relationship = this.getRelationship(results.getString("relationshipCode"));
+                        } else {
+                            relationship = this.getRelationship(results.getString("relationshipCode")); // CREATE ERROR CODE
+                        }
+
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+
+                        InvolvedParty temp = new InvolvedParty(invPartyRef, appRef, person, jointApplicantInd, mainApplicantInd, startDate, relationship, createdBy, createdDate);
+                        involvedParties.put(temp.getInvolvedPartyRef(), temp);
+                        application.addInvolvedParty(temp, null);
+                        if (endDate != null && endReason != null) {
+                            temp.endInvolvedParty(endDate, endReason, null);
+                        }
+                        this.createInvolvedPartyMods(temp, this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    private void createInvolvedPartyMods(InvolvedParty involvedParty, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (involvedParty != null && this.invPartyExists(involvedParty.getInvolvedPartyRef()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(involvedParty.getApplicationRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    InvolvedParty tempInvParty = involvedParty;
+                    tempInvParty.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -1184,12 +1663,13 @@ public class Database {
     
     private void loadEndReasons() throws SQLException {
         this.endReasons.clear();
-        List<Element> loadedEndReasons;
+        List<ElementImpl> loadedEndReasons;
         loadedEndReasons = this.loadElements("endReasons");
         if (!loadedEndReasons.isEmpty()) {
             for (Element temp : loadedEndReasons) {
                 if (temp instanceof Element) {
                     this.endReasons.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("endReasonModifications", temp.getCode()));
                 }
             }
         }
@@ -1219,12 +1699,13 @@ public class Database {
     
     private void loadRelationships() throws SQLException {
         this.relationships.clear();
-        List<Element> loadedRelationships;
+        List<ElementImpl> loadedRelationships;
         loadedRelationships = this.loadElements("relationships");
         if (!loadedRelationships.isEmpty()) {
             for (Element temp : loadedRelationships) {
                 if (temp instanceof Element) {
                     this.relationships.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("relationshipModifications", temp.getCode()));
                 }
             }
         }
@@ -1241,14 +1722,13 @@ public class Database {
     public void createApplication(Application application) throws SQLException {
         if(!this.applicationExists(application.getApplicationRef())) {
             this.applications.put(application.getApplicationRef(), application);
-            String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appEndDate, appStatusCode, "
-                    + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatusCode, "
+                    + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, application.getApplicationRef());
                 insertStat.setString(col++, application.getAppCorrName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppEndDate()));
                 insertStat.setString(col++, application.getAppStatusCode());
                 insertStat.setInt(col++, application.getTenancyRef());
                 insertStat.setString(col++, application.getCreatedBy());
@@ -1274,6 +1754,56 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("applicationModifications", application.getLastModification(), application.getApplicationRef());
+        }
+    }
+    
+    private void loadApplications() throws SQLException {
+        String sql = "select appRef, appCorrName, appStartDate, appEndDate, appStatusCode, "
+                    + "tenancyRef, createdBy, createdDate from applications order by appRef";
+        
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            while (results.next()) {
+                
+                int appRef = results.getInt("appRef");
+                
+                String appCorrName = results.getString("appCorrName");
+                Date appStartDate = results.getDate("appStartDate");
+                Date appEndDate = results.getDate("appEndDate");
+                String appStatusCode = results.getString("appStatusCode");
+                int tenancyRef = results.getInt("tenancyRef");
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+                
+                Application temp = new Application(appRef, appCorrName, appStartDate, appStatusCode, createdBy, createdDate);
+                
+                if(appEndDate != null) {
+                    temp.setEndDate(appEndDate, null);
+                }
+                
+                this.applications.put(temp.getApplicationRef(), temp);
+                
+                this.createApplicationMods(this.getApplication(temp.getApplicationRef()), this.loadModMap("applicationModifications", temp.getApplicationRef()));
+                this.loadApplicationAddresses(temp.getApplicationRef());
+                this.loadInvolvedParties(temp.getApplicationRef());
+                this.loadPropertiesInterestedIn(temp.getApplicationRef());   // LOOK OVER WHAT I AM DOING WITH PROPERTIESINTERESTED IN
+            }
+        }
+    }
+    
+    private void createApplicationMods(Application application, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (application != null && this.applicationExists(application.getApplicationRef()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(application.getApplicationRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Application tempApp = (Application) application;
+                    tempApp.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -1312,13 +1842,12 @@ public class Database {
     public void createOffice(Office office) throws SQLException {
         if(!this.officeExists(office.getOfficeCode())) {
             this.offices.put(office.getOfficeCode(), office);
-            String insertSql = "insert into Offices (officeCode, addressRef, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into Offices (officeCode, addressRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, office.getOfficeCode());
                 insertStat.setInt(col++, office.getAddress().getAddressRef());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(office.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(office.getEndDate()));
                 insertStat.setString(col++, office.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(office.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -1340,6 +1869,52 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("officeModifications", office.getLastModification(), office.getOfficeCode());
+        }
+    }
+    
+    private void loadOffices() throws SQLException {
+        String sql = "select officeCode, addressRef, startDate, endDate, createdBy, createdDate from offices order by createdDate";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                String officeCode = results.getString("officeCode");
+                AddressInterface address;
+                if(this.addressExists(results.getInt("addressRef"))) {
+                    address = this.getAddress(results.getInt("addressRef"));
+                } else {
+                    address = this.getAddress(results.getInt("addressRef")); // NEED TO CREATE AN ERROR ADDRESS
+                }
+                Date startDate = results.getDate("startDate");
+                Date endDate = results.getDate("endDate");
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+
+                Office temp = new Office(officeCode, address, startDate, createdBy, createdDate);
+                if(endDate != null) {
+                    temp.setEndDate(endDate, null);
+                }
+                
+                this.offices.put(temp.getOfficeCode(), temp);
+                this.createOfficeMods(this.getOffice(temp.getOfficeCode()), this.loadModMap("addressModifications", temp.getOfficeCode()));
+                this.loadOfficeContacts(temp.getOfficeCode());
+            }
+        }
+    }
+    
+    private void createOfficeMods(Office office, HashMap<String, ModifiedByInterface> loadedOffices) {
+        if (office != null && this.officeExists(office.getOfficeCode()) && !loadedOffices.isEmpty()) {
+            Iterator it = loadedOffices.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(temp.getKey().equals(office.getOfficeCode())) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    Office tempOffice = (Office) office;
+                    tempOffice.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -1497,12 +2072,13 @@ public class Database {
     
     private void loadJobRequirements() throws SQLException {
         this.jobRequirements.clear();
-        List<Element> loadedJobRequirements;
+        List<ElementImpl> loadedJobRequirements;
         loadedJobRequirements = this.loadElements("jobRequirements");
         if (!loadedJobRequirements.isEmpty()) {
             for (Element temp : loadedJobRequirements) {
                 if (temp instanceof Element) {
                     this.jobRequirements.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("jobRequirementModifications", temp.getCode()));
                 }
             }
         }
@@ -1532,12 +2108,13 @@ public class Database {
     
     private void loadJobBenefits() throws SQLException {
         this.jobBenefits.clear();
-        List<Element> loadedJobBenefits;
+        List<ElementImpl> loadedJobBenefits;
         loadedJobBenefits = this.loadElements("jobBenefits");
         if (!loadedJobBenefits.isEmpty()) {
             for (Element temp : loadedJobBenefits) {
                 if (temp instanceof Element) {
                     this.jobBenefits.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("jobBenefitModifications", temp.getCode()));
                 }
             }
         }
@@ -1593,15 +2170,14 @@ public class Database {
     public void createTenancy(Tenancy tenancy) throws SQLException {
         if(!this.tenancyExists(tenancy.getAgreementRef())) {
             tenancies.put(tenancy.getAgreementRef(), tenancy);
-            String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
-                    + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
+                    + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, tenancy.getAgreementRef());
                 insertStat.setString(col++, tenancy.getAgreementName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(tenancy.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(tenancy.getExpectedEndDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(tenancy.getActualEndDate()));
                 insertStat.setInt(col++, tenancy.getLength());
                 insertStat.setInt(col++, tenancy.getAccountRef());
                 insertStat.setString(col++, tenancy.getOfficeCode());
@@ -1664,12 +2240,13 @@ public class Database {
     
     private void loadTenancyTypes() throws SQLException {
         this.tenancyTypes.clear();
-        List<Element> loadedTenancyTypes;
-        loadedTenancyTypes = this.loadElements("jobBenefits");
+        List<ElementImpl> loadedTenancyTypes;
+        loadedTenancyTypes = this.loadElements("tenancyTypes");
         if (!loadedTenancyTypes.isEmpty()) {
             for (Element temp : loadedTenancyTypes) {
                 if (temp instanceof Element) {
                     this.tenancyTypes.put(temp.getCode(), temp);
+                    this.createElementMods(temp, this.loadModMap("tenancyTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -1686,15 +2263,14 @@ public class Database {
     public void createLease(Lease lease) throws SQLException {
         if(!this.leaseExists(lease.getAgreementRef())) {
             leases.put(lease.getAgreementRef(), lease);
-            String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef"
-                    + "officeCode, propertyRef, expenditure, fullManagement, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, length, accountRef"
+                    + "officeCode, propertyRef, expenditure, fullManagement, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, lease.getAgreementRef());
                 insertStat.setString(col++, lease.getAgreementName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(lease.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(lease.getExpectedEndDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(lease.getActualEndDate()));
                 insertStat.setInt(col++, lease.getLength());
                 insertStat.setInt(col++, lease.getAccountRef());
                 insertStat.setString(col++, lease.getOfficeCode());
@@ -1739,15 +2315,14 @@ public class Database {
     public void createContract(Contract contract) throws SQLException {
         if(!this.contractExists(contract.getAgreementRef())) {
             contracts.put(contract.getAgreementRef(), contract);
-            String insertSql = "insert into contracts (contractRef, name, startDate, expectedEndDate, actualEndDate, length, "
-                    + "accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into contracts (contractRef, name, startDate, expectedEndDate, length, "
+                    + "accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contract.getAgreementRef());
                 insertStat.setString(col++, contract.getAgreementName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contract.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contract.getExpectedEndDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contract.getActualEndDate()));
                 insertStat.setInt(col++, contract.getLength());
                 insertStat.setInt(col++, contract.getAccountRef());
                 insertStat.setString(col++, contract.getOfficeCode());
@@ -1791,14 +2366,13 @@ public class Database {
     public void createRentAccount(RentAccount rentAcc) throws SQLException {
         if(!this.rentAccountExists(rentAcc.getAccRef())) {
             rentAccounts.put(rentAcc.getAccRef(), rentAcc);
-            String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, endDate, balance, "
-                    + "officeCode, rent, tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, balance, "
+                    + "officeCode, rent, tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, rentAcc.getAccRef());
                 insertStat.setString(col++, rentAcc.getAccName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(rentAcc.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(rentAcc.getEndDate()));
                 insertStat.setDouble(col++, rentAcc.getBalance());
                 insertStat.setString(col++, rentAcc.getOfficeCode());
                 insertStat.setDouble(col++, rentAcc.getRent());
@@ -1841,14 +2415,13 @@ public class Database {
     public void createLeaseAccount(LeaseAccount leaseAcc) throws SQLException {
         if(!this.leaseAccountExists(leaseAcc.getAccRef())) {
             leaseAccounts.put(leaseAcc.getAccRef(), leaseAcc);
-            String insertSql = "insert into leaseAccounts (leaseAccRef, name, startDate, endDate, balance, "
-                    + "officeCode, leaseRef, expenditure, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into leaseAccounts (leaseAccRef, name, startDate, balance, "
+                    + "officeCode, leaseRef, expenditure, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, leaseAcc.getAccRef());
                 insertStat.setString(col++, leaseAcc.getAccName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(leaseAcc.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(leaseAcc.getEndDate()));
                 insertStat.setDouble(col++, leaseAcc.getBalance());
                 insertStat.setString(col++, leaseAcc.getOfficeCode());
                 insertStat.setInt(col++, leaseAcc.getLeaseRef());
@@ -1891,14 +2464,13 @@ public class Database {
     public void createEmployeeAccount(EmployeeAccount employeeAcc) throws SQLException {
         if(!this.employeeAccountExists(employeeAcc.getAccRef())) {
             employeeAccounts.put(employeeAcc.getAccRef(), employeeAcc);
-            String insertSql = "insert into employeeAccounts (employeeAccRef, name, startDate, endDate, "
-                    + "balance, officeCode, contractRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into employeeAccounts (employeeAccRef, name, startDate, "
+                    + "balance, officeCode, contractRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, employeeAcc.getAccRef());
                 insertStat.setString(col++, employeeAcc.getAccName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(employeeAcc.getStartDate()));
-                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(employeeAcc.getEndDate()));
                 insertStat.setDouble(col++, employeeAcc.getBalance());
                 insertStat.setString(col++, employeeAcc.getOfficeCode());
                 insertStat.setInt(col++, employeeAcc.getContractRef());
@@ -1997,6 +2569,10 @@ public class Database {
     
     public boolean religionExists(String code) {
         return religions.containsKey(code);
+    }
+    
+    private boolean contactTypeExists(String code) {
+        return this.contactTypes.containsKey(code);
     }
     
     public boolean propTypeExists(String code) {

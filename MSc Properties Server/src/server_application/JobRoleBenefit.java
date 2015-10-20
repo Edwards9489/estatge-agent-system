@@ -75,8 +75,10 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         this.salaryBenefit = salaryBenefit;
     }
     
-    private void modifiedBy(ModifiedByInterface modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void modifiedBy(ModifiedByInterface modifiedBy) {
+        if(modifiedBy != null) {
+            this.modifiedBy.add(modifiedBy);
+        }
     }
     
     @Override

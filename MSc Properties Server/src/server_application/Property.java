@@ -85,8 +85,10 @@ public class Property implements PropertyInterface {
         this.propSubType = propSubType;
     }
     
-    private void modifiedBy(ModifiedByInterface modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void modifiedBy(ModifiedByInterface modifiedBy) {
+        if(modifiedBy != null) {
+            this.modifiedBy.add(modifiedBy);
+        }
     }
 
     /**

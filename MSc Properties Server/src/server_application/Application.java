@@ -35,6 +35,18 @@ public class Application implements ApplicationInterface {
     
     
     
+    public Application(int appRef, String corrName, Date appStartDate, String statusCode, String createdBy, Date createdDate) {
+        this.appRef = appRef;
+        this.appCorrName = corrName;
+        this.appStartDate = appStartDate;
+        this.appStatusCode = statusCode;
+        this.household = new ArrayList();
+        this.propertiesInterestedIn = new ArrayList();
+        this.modifiedBy = new ArrayList();
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+    }
+    
     /**
      * Constructor for objects of class Person
      * @param appRef
@@ -43,19 +55,12 @@ public class Application implements ApplicationInterface {
      * @param mainApp
      * @param corrName
      * @param createdBy
+     * @param createdDate
      */
     public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy, Date createdDate) {
-        this.appRef = appRef;
-        this.appCorrName = corrName;
-        this.appStartDate = appStartDate;
-        this.appStatusCode = "NEW";
-        this.household = new ArrayList();
+        this(appRef, corrName, appStartDate, "NEW", createdBy, createdDate);
         this.household.add(mainApp);
         this.appAddresses.add(address);
-        this.propertiesInterestedIn = new ArrayList();
-        this.modifiedBy = new ArrayList();
-        this.createdBy = createdBy;
-        this.createdDate = createdDate;
     }
     
     
@@ -70,8 +75,10 @@ public class Application implements ApplicationInterface {
         this.appStartDate = startDate;
     }
     
-    private void modifiedBy(ModifiedByInterface modifiedBy) {
-        this.modifiedBy.add(modifiedBy);
+    public void modifiedBy(ModifiedByInterface modifiedBy) {
+        if(modifiedBy != null) {
+            this.modifiedBy.add(modifiedBy);
+        }
     }
     
     private void clearInterestedProperties(ModifiedByInterface modifiedBy) {
