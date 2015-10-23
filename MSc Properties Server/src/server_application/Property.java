@@ -38,7 +38,7 @@ public class Property implements PropertyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Property(int propRef, AddressInterface address, boolean management, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) {
+    public Property(int propRef, AddressInterface address, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
@@ -129,6 +129,13 @@ public class Property implements PropertyInterface {
         this.setPropSubType(propSubType);
         this.modifiedBy(modifiedBy);
     }
+    
+    public void createPropertyElement(PropertyElement element, ModifiedByInterface modifiedBy) {
+        if(!this.hasPropElement(element.getElementCode())) {
+            this.propertyElements.add(element);
+            this.modifiedBy(modifiedBy);
+        }
+    }
 
     
     
@@ -204,6 +211,19 @@ public class Property implements PropertyInterface {
     @Override
     public List getPropertyElements() {
         return Collections.unmodifiableList(propertyElements);
+    }
+    
+    
+    
+    public boolean hasPropElement(String code) {
+        if(!propertyElements.isEmpty()) {
+            for(PropertyElement element : propertyElements) {
+                if(element.isCurrent() && code.equals(element.getElementCode())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     @Override

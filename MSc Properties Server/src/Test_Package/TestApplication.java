@@ -93,7 +93,7 @@ public class TestApplication {
         
         Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS", new Date());
         
-        PropertyInterface property = new Property(1, address1, false, date, test, test, "DEDWARDS", new Date());
+        PropertyInterface property = new Property(1, address1, new Date(), false, date, test, test, "DEDWARDS", new Date());
         TenancyInterface tenancy = new Tenancy(1, start, 12, 12, "DEDWARDS", new Date(), property, test1, test, "Mr Edwards & Ms Brindle");
         
         

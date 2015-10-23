@@ -79,7 +79,7 @@ public class JobRole implements JobRoleInterface {
     /**
      * @param salary the salary to set
      */
-    private void setCurrent(boolean current) {
+    public void setCurrent(boolean current) {
         if (current) {
             this.current = current;
         } else if (!current) {

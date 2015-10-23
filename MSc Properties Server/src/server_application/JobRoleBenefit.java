@@ -33,11 +33,17 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   CONSTRUCTORS   ///
     
-    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String createdBy, Date createdDate) {
+    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy, Date createdDate) {
         this.jobRoleBenefitRef = ref;
         this.benefit = benefit;
         this.startDate = startDate;
         this.salaryBenefit = salaryBenefit;
+        if(salaryBenefit) {
+            setDoubleValue(doubleValue);
+        }
+        else if(!salaryBenefit) {
+            setStringValue(stringValue);
+        }
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;

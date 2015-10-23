@@ -34,7 +34,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private final HashMap<String,Client> users;
     
     // The database for the server
-    private final Database database;
+    private Database database;
     
     // List of reference counters
     private int personRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref

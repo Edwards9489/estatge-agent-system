@@ -219,10 +219,13 @@ public class Database {
                 this.loadAddresses();
                 this.loadPeople();
                 this.loadOffices();
-                //this.loadInvolvedParties();
-                //this.loadApplications();
-                //this.loadJobBenefit();
-                //this.loadJobRoles();
+                
+                this.loadLandlords();
+                this.loadEmployees();
+                this.loadProperties();
+                this.loadApplications();
+                this.loadJobBenefits();
+                this.loadJobRoles();
                 
                 
                 
@@ -483,9 +486,9 @@ public class Database {
         }
     }
     
-    private void createPersonContactMods(Contact contact, int personRef, HashMap<Integer, ModifiedByInterface> loadedContacts) {
-        if (contact != null && this.personExists(personRef) && !loadedContacts.isEmpty()) {
-            Iterator it = loadedContacts.entrySet().iterator();
+    private void createPersonContactMods(Contact contact, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (contact != null && this.personExists(personRef) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -564,9 +567,9 @@ public class Database {
         }
     }
     
-    private void createOfficeContactMods(Contact contact, String code, HashMap<String, ModifiedByInterface> loadedContacts) {
-        if (contact != null && this.officeExists(code) && !loadedContacts.isEmpty()) {
-            Iterator it = loadedContacts.entrySet().iterator();
+    private void createOfficeContactMods(Contact contact, String code, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (contact != null && this.officeExists(code) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -648,9 +651,9 @@ public class Database {
         }
     }
     
-    private void createPersonAddressMods(AddressUsage address, int personRef, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
-        if (address != null && this.personExists(personRef) && !loadedAddresses.isEmpty()) {
-            Iterator it = loadedAddresses.entrySet().iterator();
+    private void createPersonAddressMods(AddressUsage address, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (address != null && this.personExists(personRef) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -732,9 +735,9 @@ public class Database {
         }
     }
     
-    private void createApplicationAddressMods(AddressUsage address, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
-        if (address != null && this.applicationExists(applicationRef) && !loadedAddresses.isEmpty()) {
-            Iterator it = loadedAddresses.entrySet().iterator();
+    private void createApplicationAddressMods(AddressUsage address, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (address != null && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -1115,9 +1118,9 @@ public class Database {
         }
     }
     
-    private void createAddressMods(Address address, HashMap<Integer, ModifiedByInterface> loadedAddresses) {
-        if (address != null && this.addressExists(address.getAddressRef()) && !loadedAddresses.isEmpty()) {
-            Iterator it = loadedAddresses.entrySet().iterator();
+    private void createAddressMods(Address address, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (address != null && this.addressExists(address.getAddressRef()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -1179,6 +1182,66 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("propertyModifications", property.getLastModification(), property.getPropRef());
+        }
+    }
+    
+    private void loadProperties() throws SQLException {
+        String sql = "select propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
+                    + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propertyRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int propertyRef = results.getInt("propertyRef");
+                int addressRef = results.getInt("addressRef");
+                Address address;
+                if(this.addressExists(addressRef)) {
+                    address = this.getAddress(addressRef);
+                } else {
+                    address = this.getAddress(addressRef); // CREATE ERROR ADDRESS
+                }
+                Date acquiredDate = results.getDate("acquiredDate");
+                Date leaseEndDate = results.getDate("leaseEndDate");
+                String propTypeCode = results.getString("propTypeCode");
+                Element propType;
+                if(this.propTypeExists(propTypeCode)) {
+                    propType = this.getPropertyType(propTypeCode);
+                } else {
+                    propType = this.getPropertyType(propTypeCode); // CREATE ERROR PROP TYPE
+                }
+                String propSubTypeCode = results.getString("propSubTypeCode");
+                Element propSubType;
+                if(this.propSubTypeExists(propSubTypeCode)) {
+                    propSubType = this.getPropertySubType(propSubTypeCode);
+                } else {
+                    propSubType = this.getPropertySubType(propSubTypeCode); // CREATE ERROR PROP TYPE
+                }
+                String propStatus = results.getString("propStatus");
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+                
+                Property temp = new Property(propertyRef, address, acquiredDate, propType, propSubType, createdBy, createdDate);
+                
+                this.properties.put(temp.getPropRef(), temp);
+                this.createPropertyMods(this.getProperty(temp.getPropRef()), this.loadModMap("propertyModifications", temp.getPropRef()));
+            }
+        }
+    }
+    
+    
+    
+    private void createPropertyMods(Property property, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (property != null && this.propertyExists(property.getPropRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(property.getPropRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    property.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -1322,6 +1385,57 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("propertyElementValueModifications", propertyElement.getLastModification(), propertyElement.getPropertyElementRef()); // 
+        }
+    }
+    
+    private void loadPropertyElementValues(int propRef) throws SQLException {
+        if (this.propertyExists(propRef)) {
+            Property property = this.getProperty(propRef);
+            String sql = "select propertyElementRef, propertyRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
+            try (Statement selectStat = con.createStatement()) {
+                ResultSet results = selectStat.executeQuery(sql);
+                
+                while (results.next()) {
+                    int propertyElementRef = results.getInt("propertyElementRef");
+                    if (propertyElementRef == propRef) {
+                        int propertyRef = results.getInt("propertyRef");
+                        String elementCode = results.getString("elementCode");
+                        Element element;
+                        if(this.propElementExists(elementCode)) {
+                            element = this.getPropElement(elementCode);
+                            Date startDate = results.getDate("startDate");
+                            Date endDate = results.getDate("endDate");
+                            String stringValue = results.getString("stringValue");
+                            double doubleValue = results.getDouble("doubleValue");
+                            String createdBy = results.getString("createdBy");
+                            Date createdDate = results.getDate("createdDate");
+                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue!=null, stringValue, doubleValue, createdBy, createdDate);
+                            temp.updatePropertyElement(startDate, stringValue, doubleValue, stringValue!=null, null);
+                            if(endDate != null) {
+                                temp.setEndDate(endDate, null);
+                            }
+                            this.createPropElementMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getPropertyElementRef()));
+                            property.createPropertyElement(temp, null);
+                        }
+                    }
+                }
+            }
+        }
+    }
+        
+    
+    private void createPropElementMods(PropertyElement element, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (element != null && this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(element.getPropertyElementRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    element.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -1781,12 +1895,16 @@ public class Database {
                     temp.setEndDate(appEndDate, null);
                 }
                 
+                if(this.tenancyExists(tenancyRef)) {
+                    temp.setTenancy(tenancyRef, null);
+                }
+                
                 this.applications.put(temp.getApplicationRef(), temp);
                 
                 this.createApplicationMods(this.getApplication(temp.getApplicationRef()), this.loadModMap("applicationModifications", temp.getApplicationRef()));
                 this.loadApplicationAddresses(temp.getApplicationRef());
                 this.loadInvolvedParties(temp.getApplicationRef());
-                this.loadPropertiesInterestedIn(temp.getApplicationRef());   // LOOK OVER WHAT I AM DOING WITH PROPERTIESINTERESTED IN
+                this.loadPropertiesInterestedIn(temp.getApplicationRef());
             }
         }
     }
@@ -1815,6 +1933,109 @@ public class Database {
         return app;
     }
     
+    public void createPropertyInterest(int appRef, int propRef) throws SQLException {
+        if(this.applicationExists(appRef) && this.propertyExists(propRef)) {
+            
+            String checkSql = "select count(appRef) as count from propertyInterest where appRef=? and propRef=?";
+            PreparedStatement insertStat;
+            PreparedStatement updateStat;
+            try (PreparedStatement checkStat = con.prepareStatement(checkSql)) {
+                checkStat.setInt(1, appRef);
+                checkStat.setInt(2, propRef);
+                ResultSet checkResult = checkStat.executeQuery();
+                checkResult.next();
+                int count = checkResult.getInt("count");
+                Boolean current = true;
+                int col = 1;
+                if (count < 1) {
+                    String insertSql = "insert into propertyInterest (appRef, propRef, current) values (?, ?, ?)";
+                    insertStat = con.prepareStatement(insertSql);
+                
+                    System.out.println("Inserting property " + propRef + " for appliction " + appRef);
+                    insertStat.setInt(col++, appRef);
+                    insertStat.setInt(col++, propRef);
+                    insertStat.setBoolean(col++, current);
+                    System.out.println(insertStat);
+                    insertStat.executeUpdate();
+                    insertStat.close();
+                } else if (count >= 1) {
+                    String updateSql = "update propertyInterest set current=? where appRef=? and propRef=?";
+                    updateStat = con.prepareStatement(updateSql);
+                    
+                    System.out.println("Updating appliction " + appRef + " : Inserting property " + propRef + " for appliction " + appRef);
+                    updateStat.setBoolean(col++, current);
+                    System.out.println(updateStat);
+                    updateStat.executeUpdate();
+                    updateStat.close();
+                    if(count > 1) {
+                        System.out.println("ERROR IN DATABASE - MORE THAN ONE ENTRY FOR PROPERTY " + propRef + " - APPLICATION" + appRef);
+                    }
+                }
+                checkStat.close();
+            }
+        }
+    }
+
+    private void loadPropertiesInterestedIn(int appRef) throws SQLException {
+        if (this.applicationExists(appRef)) {
+            Application application = this.getApplication(appRef);
+            String sql = "select propRef from propertyInterest where appRef=? and current=?";
+            try (PreparedStatement selectStat = con.prepareStatement(sql)) {
+                selectStat.setInt(1, appRef);
+                selectStat.setBoolean(2, true);
+
+                ResultSet results = selectStat.executeQuery(sql);
+
+                while (results.next()) {
+                    int propRef = results.getInt("propRef");
+                    if (this.propertyExists(propRef)) {
+                        Property temp = this.getProperty(propRef);
+                        application.addInterestedProperty(temp, null);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void endPropertyInterest(int appRef, int propRef) throws SQLException {
+        if(this.applicationExists(appRef) && this.propertyExists(propRef)) {
+            
+            String checkSql = "select count(appRef) as count from propertyInterest where appRef=? and propRef=?";
+            PreparedStatement insertStat;
+            PreparedStatement updateStat;
+            try (PreparedStatement checkStat = con.prepareStatement(checkSql)) {
+                ResultSet checkResult = checkStat.executeQuery();
+                checkResult.next();
+                int count = checkResult.getInt("count");
+                Boolean current = false;
+                int col = 1;
+                if(count >= 1) {
+                    String updateSql = "update propertyInterest set current=? where appRef=? and propRef=?";
+                    updateStat = con.prepareStatement(updateSql);
+                    updateStat.setBoolean(col++, current);
+                    System.out.println(updateStat);
+                    updateStat.executeUpdate();
+                    if (count == 1) {
+                        System.out.println("Updating appliction " + appRef + " : Ending property " + propRef + " for appliction " + appRef);
+                    } else if (count > 1) {
+                        System.out.println("ERROR IN DATABASE - Updating appliction " + appRef + " : Ending property " + propRef + " for appliction " + appRef);
+                    }
+                } else if (count == 0) {
+                    String insertSql = "insert into propertyInterest (appRef, propRef, current) values (?, ?, ?)";
+                    insertStat = con.prepareStatement(insertSql);
+                    System.out.println("ERROR IN DATABASE - Creating not current record for appliction " + appRef + " : Inserting property " + propRef + " for appliction " + appRef);
+                    insertStat.setInt(col++, appRef);
+                    insertStat.setInt(col++, propRef);
+                    insertStat.setBoolean(col++, current);
+                    System.out.println(insertStat);
+                    insertStat.executeUpdate();
+                    insertStat.close();
+                }
+                checkStat.close();
+            }
+        }
+    }
+    
     public void createLandlord(Landlord landlord) throws SQLException {
         if(!this.landlordExists(landlord.getLandlordRef())) {
             landlords.put(landlord.getLandlordRef(), landlord);
@@ -1827,6 +2048,42 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(landlord.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
+            }
+        }
+    }
+
+    private void loadLandlords() throws SQLException {
+        String sql = "select landlordRef, personRef, createdBy, createdDate from landlords order by landlordRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int landlordRef = results.getInt("landlordRef");
+                int personRef = results.getInt("personRef");
+                if (this.personExists(personRef)) {
+                    Person person = this.getPerson(personRef);
+                    String createdBy = results.getString("createdBy");
+                    Date createdDate = results.getDate("createdDate");
+                    Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
+                    landlords.put(temp.getLandlordRef(), temp);
+                    this.createLandlordMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getLandlordRef()));
+                }
+            }
+        }
+    }
+        
+    
+    private void createLandlordMods(Landlord landlord, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (landlord != null && this.landlordExists(landlord.getLandlordRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(landlord.getLandlordRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    landlord.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
@@ -1902,9 +2159,9 @@ public class Database {
         }
     }
     
-    private void createOfficeMods(Office office, HashMap<String, ModifiedByInterface> loadedOffices) {
-        if (office != null && this.officeExists(office.getOfficeCode()) && !loadedOffices.isEmpty()) {
-            Iterator it = loadedOffices.entrySet().iterator();
+    private void createOfficeMods(Office office, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (office != null && this.officeExists(office.getOfficeCode()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
@@ -1944,8 +2201,8 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
-            this.createJobRequirements(jobRole.getJobRoleCode(), jobRole.getJobRequirements());
-            this.createJobBenefits(jobRole.getJobRoleCode(), jobRole.getBenefits());
+            this.createJobRoleRequirements(jobRole.getJobRoleCode(), jobRole.getJobRequirements());
+            this.createJobRoleBenefits(jobRole.getJobRoleCode(), jobRole.getBenefits());
         }
     }
 
@@ -1964,6 +2221,48 @@ public class Database {
         }
     }
     
+    public void loadJobRoles() throws SQLException {
+        String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
+                    + "current, createdBy, createdDate from jobRoles order by createdDate";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                String jobRoleCode = results.getString("jobRoleCode");
+                String jobTitle = results.getString("jobTitle");
+                String jobDescription = results.getString("jobDescription");
+                Boolean fullTime = results.getBoolean("fullTime");
+                double salary = results.getDouble("salary");
+                Boolean current = results.getBoolean("current");
+                String createdBy = results.getString("createdBy");
+                Date createdDate = results.getDate("createdDate");
+                
+                JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, createdBy, createdDate);
+                temp.setCurrent(current);
+                
+                this.jobRoles.put(temp.getJobRoleCode(), temp);
+                this.createJobRoleMods(this.getJobRole(temp.getJobRoleCode()), this.loadModMap("jobRoleModifications", temp.getJobRoleCode()));
+                this.loadJobRoleRequirements(temp.getJobRoleCode());
+                this.loadJobRoleBenefits(temp.getJobRoleCode());
+            }
+        }
+    }
+    
+    private void createJobRoleMods(JobRole jobRole, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (jobRole != null && this.jobRoleExists(jobRole.getJobRoleCode()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(temp.getKey().equals(jobRole.getJobRoleCode())) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    jobRole.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public JobRole getJobRole(String jobRoleCode) {
         JobRole jobRole = null;
         if(this.jobRoleExists(jobRoleCode)) {
@@ -1971,38 +2270,60 @@ public class Database {
         }
         return jobRole;
     }
-    
-    private void createJobRequirements(String code, List<String> jobRequirements) throws SQLException {
+
+    // IS THE PRIVATE METHOD USED TO STORE JOB REQUIREMENTS IN BULK WHEN A JOB ROLE IS CREATED
+    private void createJobRoleRequirements(String code, List<String> jobRequirements) throws SQLException {
         if (!jobRequirements.isEmpty() && this.jobRoleExists(code)) {
             for (String temp : jobRequirements) {
-                this.createJobRequirement(code, temp);
+                this.createJobRoleRequirement(code, temp);
             }
         }
     }
-    
-    public void createJobRequirement(String code, String jobRequirement) throws SQLException {
-        if (!jobRequirement.isEmpty() && this.jobRoleExists(code)) {
-            String insertSql = "insert into jobRoleRequirements (jobRoleCode, requirement) values (?, ?)";
+
+    public void createJobRoleRequirement(String jobRoleCode, String requirementCode) throws SQLException {
+        if (!requirementCode.isEmpty() && this.jobRoleExists(jobRoleCode) && this.jobRequirementExists(requirementCode)) {
+            String insertSql = "insert into jobRoleRequirements (jobRoleCode, requirementCode) values (?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
-                insertStat.setString(col++, code);
-                insertStat.setString(col++, jobRequirement);
+                insertStat.setString(col++, jobRoleCode);
+                insertStat.setString(col++, requirementCode);
                 insertStat.executeUpdate();
                 insertStat.close();
             }
         }
     }
-    
-    private void createJobBenefits(String code, List<JobRoleBenefit> benefits) throws SQLException {
-        if (!benefits.isEmpty() && this.jobRoleExists(code)) {
-            for (JobRoleBenefit temp : benefits) {
-                this.createJobBenefit(code, temp);
+
+    private void loadJobRoleRequirements(String code) throws SQLException {
+        if (this.jobRoleExists(code)) {
+            JobRole jobRole = this.getJobRole(code);
+            String sql = "select jobRoleCode, requirementCode from jobRoleRequirements order by createdDate";
+            try (Statement selectStat = con.createStatement()) {
+                ResultSet results = selectStat.executeQuery(sql);
+
+                while (results.next()) {
+                    String jobRoleCode = results.getString("jobRoleCode");
+                    if (jobRoleCode.equals(code));
+                    {
+                        String requirementCode = results.getString("requirementCode");
+                        Element temp = this.getJobRequirement(requirementCode);
+                        jobRole.createJobRequirement(temp, null);
+                    }
+                }
             }
         }
     }
     
-    public void createJobBenefit(String code, JobRoleBenefit benefit) throws SQLException {
-        if (benefit != null && this.jobRoleExists(code) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
+    // IS THE PRIVATE METHOD USED TO STORE JOB BENEFITS IN BULK WHEN A JOB ROLE IS CREATED
+    private void createJobRoleBenefits(String code, List<JobRoleBenefit> benefits) throws SQLException {
+        if (!benefits.isEmpty() && this.jobRoleExists(code)) {
+            for (JobRoleBenefit temp : benefits) {
+                this.createJobRoleBenefit(code, temp);
+            }
+        }
+    }
+    
+    public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException {
+        if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
             String insertSql = "";
             if (benefit.isSalaryBenefit()) {
                 insertSql = "insert into jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -2012,7 +2333,7 @@ public class Database {
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, benefit.getBenefitRef());
-                insertStat.setString(col++, code);
+                insertStat.setString(col++, jobRoleCode);
                 insertStat.setString(col++, benefit.getBenefitCode());
                 if (benefit.isSalaryBenefit()) {
                     insertStat.setDouble(col++, benefit.getDoubleValue());
@@ -2029,7 +2350,7 @@ public class Database {
         }
     }
     
-    public void updateJobBenefit(String code, JobRoleBenefit benefit) throws SQLException {
+    public void updateJobRoleBenefit(String code, JobRoleBenefit benefit) throws SQLException {
         if(benefit != null && this.jobRoleExists(code) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
             String updateSql = "";
             if (benefit.isSalaryBenefit()) {
@@ -2053,6 +2374,53 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("jobBenefitModifications", benefit.getLastModification(), benefit.getBenefitRef()); // 
+        }
+    }
+    
+    private void loadJobRoleBenefits(String code) throws SQLException {
+        if (this.jobRoleExists(code)) {
+            JobRole jobRole = this.getJobRole(code);
+            String sql = "select jobBenefitRef, jobRoleCode, benefitCode, doubleValue, stringValue, startDate, endDate, createdBy, createdDate from jobRoleBenefits order by createdDate";
+            try (Statement selectStat = con.createStatement()) {
+                ResultSet results = selectStat.executeQuery(sql);
+                
+                while (results.next()) {
+                    String jobRoleCode = results.getString("jobRoleCode");
+                    if (jobRoleCode.equals(code)) {
+                        int jobBenefitRef = results.getInt("requirementCode");
+                        String benefitCode = results.getString("benefitCode");
+                        if(this.jobBenefitExists(benefitCode)) {
+                            Date startDate = results.getDate("startDate");
+                            Date endDate = results.getDate("endDate");
+                            String stringValue = results.getString("stringValue");
+                            double doubleValue = results.getDouble("doubleValue");
+                            String createdBy = results.getString("createdBy");
+                            Date createdDate = results.getDate("createdDate");
+                            JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue!=null, stringValue, doubleValue, createdBy, createdDate);
+                            if(endDate != null) {
+                                temp.setEndDate(endDate, null);
+                            }
+                            this.createBenefitMods(temp, this.loadModMap("jobRoleBenefitModifications", temp.getBenefitRef()));
+                            jobRole.createBenefit(temp, null);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createBenefitMods(JobRoleBenefit benefit, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (benefit != null && this.jobBenefitExists(benefit.getBenefit().getCode()) && !loadedMods.isEmpty()) {
+            Iterator it = loadedMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(temp.getKey().equals(benefit.getBenefitRef())) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    benefit.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -2159,6 +2527,44 @@ public class Database {
         }
     }
     
+    private void loadEmployees() throws SQLException {
+        String sql = "select employeeRef, personRef, officeCode, createdBy, createdDate from employees order by employeeRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int employeeRef = results.getInt("employeeRef");
+                int personRef = results.getInt("personRef");
+                if (this.personExists(personRef)) {
+                    Person person = this.getPerson(personRef);
+                    String officeCode = results.getString("officeCode");
+                    if(this.officeExists(officeCode)) {
+                        String createdBy = results.getString("createdBy");
+                        Date createdDate = results.getDate("createdDate");
+                        Employee temp = new Employee(employeeRef, person, createdBy, createdDate);
+                        employees.put(temp.getEmployeeRef(), temp);
+                        this.createEmployeeMods(temp, this.loadModMap("employeeModifications", temp.getEmployeeRef()));
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createEmployeeMods(Employee employee, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (employee != null && this.employeeExists(employee.getEmployeeRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(employee.getEmployeeRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    employee.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
     public Employee getEmployee(int employeeRef) {
         Employee employee = null;
         if(this.employeeExists(employeeRef)) {
@@ -2213,6 +2619,60 @@ public class Database {
                 updateStat.close();
             }
             this.createModifiedBy("agreementModifications", tenancy.getLastModification(), tenancy.getAgreementRef());
+        }
+    }
+
+    private void loadTenancies() throws SQLException {
+        String sql = "select tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
+                + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate from tenancies order by tenancyRef";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+
+            while (results.next()) {
+                int tenancyRef = results.getInt("tenancyRef");
+                String name = results.getString("name");
+                Date startDate = results.getDate("startDate");
+                Date expectedEndDate = results.getDate("expectedEndDate");
+                int length = results.getInt("length");
+                int accountRef = results.getInt("accountRef");
+                String officeCode = results.getString("officeCode");
+                if (this.officeExists(officeCode)) {
+                    int appRef = results.getInt("appRef");
+                    if (this.applicationExists(appRef)) {
+                        Application application = this.getApplication(appRef);
+                        int propRef = results.getInt("propRef");
+                        if (this.propertyExists(propRef)) {
+                            Property property = this.getProperty(propRef);
+                            String tenTypeCode = results.getString("tenTypeCode");
+                            if (this.tenancyTypeExists(tenTypeCode)) {
+                                Element tenType = this.getTenancyType(tenTypeCode);
+                                if (this.tenancyTypeExists(tenTypeCode)) {
+                                    String createdBy = results.getString("createdBy");
+                                    Date createdDate = results.getDate("createdDate");
+                                    Tenancy temp = new Tenancy(tenancyRef, startDate, length, accountRef, createdBy, createdDate, property, application, tenType, officeCode);
+                                    this.tenancies.put(temp.getAgreementRef(), temp);
+                                    this.createTenancyMods(temp, this.loadModMap("tenancyModifications", temp.getAgreementRef()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createTenancyMods(Tenancy tenancy, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (tenancy != null && this.tenancyExists(tenancy.getAgreementRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(tenancy.getAgreementRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    tenancy.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
         }
     }
     
@@ -2304,6 +2764,10 @@ public class Database {
         }
     }
     
+    private void loadLeases() throws SQLException {
+        g
+    }
+    
     public Lease getLease(int leaseRef) {
         Lease temp = null;
         if (leases.containsKey(leaseRef)) {
@@ -2355,6 +2819,10 @@ public class Database {
         }
     }
     
+    private void loadContracts() throws SQLException {
+       g
+    }
+    
     public Contract getContract(int contractRef) {
         Contract temp = null;
         if (contracts.containsKey(contractRef)) {
@@ -2402,6 +2870,10 @@ public class Database {
             }
             this.createModifiedBy("accountModifications", rentAcc.getLastModification(), rentAcc.getAccRef());
         }
+    }
+    
+    private void loadRentAccounts() throws SQLException {
+       g
     }
     
     public RentAccount getRentAccount(int rentAccRef) {
@@ -2453,6 +2925,10 @@ public class Database {
         }
     }
     
+    private void loadLeaseAccounts() throws SQLException {
+        g
+    }
+    
     public LeaseAccount getLeaseAccount(int leaseAccRef) {
         LeaseAccount temp = null;
         if (leaseAccounts.containsKey(leaseAccRef)) {
@@ -2501,6 +2977,10 @@ public class Database {
         }
     }
     
+    private void loadEmployeeAccounts() throws SQLException {
+       g
+    }
+    
     public Tenancy getEmployeeAccount(int tenancyRef) {
         Tenancy temp = null;
         if (tenancies.containsKey(tenancyRef)) {
@@ -2509,7 +2989,7 @@ public class Database {
         return temp;
     }
     
-    public void createTransaction(Transaction transaction) throws SQLException {
+    public void createTransaction(String from, Transaction transaction) throws SQLException {
         if(!this.transactionExists(transaction.getTransactionRef())) {
             transactions.put(transaction.getTransactionRef(), transaction);
             String insertSql = "insert into transactions (transactionRef, accountRef, fromRef, toRef, amount, "
@@ -2531,12 +3011,8 @@ public class Database {
         }
     }
     
-    public Tenancy getTransaction(int tenancyRef) {
-        Tenancy temp = null;
-        if (tenancies.containsKey(tenancyRef)) {
-            temp = tenancies.get(tenancyRef);
-        }
-        return temp;
+    private void loadTransactions(String from, int ref) throws SQLException {
+        g
     }
     
     public boolean titleExists(String code) {
