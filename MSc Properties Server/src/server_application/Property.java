@@ -25,14 +25,14 @@ public class Property implements PropertyInterface {
         
     private final int propRef;
     private AddressInterface address;
-    private ArrayList<LandlordInterface> landlords;
+    private List<LandlordInterface> landlords;
     private Date acquiredDate;
     private Date leaseEndDate;
     private Element propType;
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
-    private final ArrayList<PropertyElement> propertyElements;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<PropertyElement> propertyElements;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -96,7 +96,7 @@ public class Property implements PropertyInterface {
      * @param modifiedBy
      */
     @Override
-    public void setLandlords(ArrayList<LandlordInterface> landlords, ModifiedByInterface modifiedBy) {
+    public void setLandlords(List<LandlordInterface> landlords, ModifiedByInterface modifiedBy) {
         this.landlords = landlords;
         this.modifiedBy(modifiedBy);
     }
@@ -161,7 +161,7 @@ public class Property implements PropertyInterface {
      * @return the landlord
      */
     @Override
-    public List getLandlords() {
+    public List<LandlordInterface> getLandlords() {
         return Collections.unmodifiableList(landlords);
     }
 
@@ -209,7 +209,7 @@ public class Property implements PropertyInterface {
      * @return the propertyElements
      */
     @Override
-    public List getPropertyElements() {
+    public List<PropertyElement> getPropertyElements() {
         return Collections.unmodifiableList(propertyElements);
     }
     
@@ -279,7 +279,7 @@ public class Property implements PropertyInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

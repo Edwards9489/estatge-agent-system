@@ -29,7 +29,7 @@ public class Address implements AddressInterface {
     private String postcode;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     
     
 
@@ -288,7 +288,7 @@ public class Address implements AddressInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

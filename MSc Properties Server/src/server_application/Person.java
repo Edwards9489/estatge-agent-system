@@ -33,11 +33,11 @@ public class Person implements PersonInterface {
     private Element nationality;
     private Element sexuality;
     private Element religion;
-    private final ArrayList<ContactInterface> contacts;
-    private final ArrayList<AddressUsageInterface> addresses;
+    private final List<ContactInterface> contacts;
+    private final List<AddressUsageInterface> addresses;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
 
     /**
      * Constructor for objects of class Person
@@ -61,7 +61,7 @@ public class Person implements PersonInterface {
      * @param createdDate
      */
     public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,Element maritalStatus, Element ethnicOrigin,
-            Element language, Element nationality, Element sexuality, Element religion, ArrayList<ContactInterface> contacts, AddressUsageInterface address, String createdBy, Date createdDate) {
+            Element language, Element nationality, Element sexuality, Element religion, List<ContactInterface> contacts, AddressUsageInterface address, String createdBy, Date createdDate) {
         this.personRef = personRef;
         this.setTitle(title);
         this.setForename(forename);
@@ -314,7 +314,7 @@ public class Person implements PersonInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
@@ -324,6 +324,10 @@ public class Person implements PersonInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    public List<ContactInterface> getContacts() {
+        return Collections.unmodifiableList(this.contacts);
     }
     
     /**

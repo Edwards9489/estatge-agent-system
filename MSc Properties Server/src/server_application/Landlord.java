@@ -24,8 +24,8 @@ public class Landlord implements LandlordInterface {
     
     private final int landlordRef;
     private final PersonInterface person;
-    private final ArrayList<LeaseInterface> leases;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<LeaseInterface> leases;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -86,7 +86,7 @@ public class Landlord implements LandlordInterface {
      * @return the addressUsages
      */
     @Override
-    public List getLeases() {
+    public List<LeaseInterface> getLeases() {
         return Collections.unmodifiableList(leases);
     }
     
@@ -107,7 +107,7 @@ public class Landlord implements LandlordInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

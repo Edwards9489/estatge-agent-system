@@ -22,7 +22,7 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   VARIABLES   ///
     
-    private final ArrayList<LandlordInterface> landlords;
+    private final List<LandlordInterface> landlords;
     private final PropertyInterface property;
     private final boolean fullManagement; // indicates if MSc Properties will manage all of the managerial affairs such as damage to prop, or just renting
     private final double expenditure; // money to landlord(s)
@@ -50,13 +50,14 @@ public class Lease extends Agreement implements LeaseInterface {
     }
     
     
+    
     ///   ACCESSOR METHODS   ///
     
     /**
      * @return the landlords
      */
     @Override
-    public List getLandlords() {
+    public List<LandlordInterface> getLandlords() {
         return Collections.unmodifiableList(landlords);
     }
 

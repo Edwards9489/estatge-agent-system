@@ -26,8 +26,8 @@ public class Office implements OfficeInterface {
     private final AddressInterface address;
     private Date startDate;
     private Date endDate;
-    private ArrayList<ContactInterface> contacts;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private List<ContactInterface> contacts;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -102,7 +102,7 @@ public class Office implements OfficeInterface {
      * @return the contacts
      */
     @Override
-    public List getContacts() {
+    public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(contacts);
     }
     
@@ -157,7 +157,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

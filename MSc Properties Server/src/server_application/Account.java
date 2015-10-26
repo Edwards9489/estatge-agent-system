@@ -25,9 +25,9 @@ public class Account implements AccountInterface {
     private final String officeCode;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
-    private final ArrayList<TransactionInterface> debitTransactions;
-    private final ArrayList<TransactionInterface> creditTransactions;
+    private final List<ModifiedByInterface> modifiedBy;
+    private final List<TransactionInterface> debitTransactions;
+    private final List<TransactionInterface> creditTransactions;
     
     ///   CONSTRUCTORS ///
 
@@ -50,7 +50,7 @@ public class Account implements AccountInterface {
     /**
      * @param balance the balance to set
      */
-    private void setBalance(double balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
     /**
@@ -96,7 +96,7 @@ public class Account implements AccountInterface {
 
     }
 
-    public void createTransaction(TransactionInterface transaction) {
+    public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) {
         if (this.isCurrent()) {
             if (transaction.isDebit()) {
                 this.debitTransactions.add(transaction);
@@ -105,6 +105,7 @@ public class Account implements AccountInterface {
                 this.creditTransactions.add(transaction);
                 this.setBalance(this.balance - transaction.getAmount());
             }
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -192,7 +193,7 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
@@ -224,7 +225,7 @@ public class Account implements AccountInterface {
      * @return the debitTransactions
      */
     @Override
-    public List getDebitTransactions() {
+    public List<TransactionInterface> getDebitTransactions() {
         return Collections.unmodifiableList(this.debitTransactions);
     }
     
@@ -232,7 +233,7 @@ public class Account implements AccountInterface {
      * @return the creditTransactions
      */
     @Override
-    public List getCreditTransactions() {
+    public List<TransactionInterface> getCreditTransactions() {
         return Collections.unmodifiableList(this.creditTransactions);
     }
     

@@ -30,7 +30,7 @@ public class Agreement implements AgreementInterface {
     private final int accountRef;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String officeCode;
     
     ///   CONSTRUCTORS ///
@@ -218,7 +218,7 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

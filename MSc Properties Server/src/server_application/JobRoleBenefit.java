@@ -26,7 +26,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     private double doubleValue;
     private Date startDate;
     private Date endDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     private boolean salaryBenefit;
@@ -196,7 +196,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

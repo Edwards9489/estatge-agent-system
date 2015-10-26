@@ -23,7 +23,7 @@ public class ElementImpl implements Element {
     private final String code;
     private String description;
     private boolean current;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -103,7 +103,7 @@ public class ElementImpl implements Element {
     
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

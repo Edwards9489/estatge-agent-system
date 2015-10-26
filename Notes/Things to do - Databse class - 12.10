@@ -23,8 +23,13 @@ jobRequirements - DONE
 peopleAddressUsage - DONE
 applicationAddressUsages - DONE
 propertiesInterestedIn - app
-leaseLandlords - lease
-
-
-
-
+ - add column to table of properties interested in called current, and when ever a tenancy is created on application and clearInterestedRoperties
+ is called on application, a call to the database table is made which amends all current properties in properties interetsed in table for app to
+ be made current is mmade false.
+		- makePropertiesInterestedInFalse(appRef)
+		- createPropertiesInterestedIn(appRef, propertyRef)
+				- return resultset of propertiesInterestedIn and check if record already exists for propertyRef, if true, then make current column true
+				  if false then insert record to table
+leaseLandlords - lease - DONE
+ - NEED to do same thing as propertiesInterestedIn - as landlord may be removed and then added again
+Transactions

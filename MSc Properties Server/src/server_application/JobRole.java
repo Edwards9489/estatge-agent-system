@@ -31,7 +31,7 @@ public class JobRole implements JobRoleInterface {
     private double salary;
     private boolean current;
     private final HashMap<String, JobRoleBenefitInterface> benefits; // Create Job Role Benefit class
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -167,7 +167,7 @@ public class JobRole implements JobRoleInterface {
      * @return the jobRequirements
      */
     @Override
-    public List getJobRequirements() {
+    public List<Element> getJobRequirements() {
         return Collections.unmodifiableList((List) this.requirements.values());
     }
 
@@ -207,7 +207,7 @@ public class JobRole implements JobRoleInterface {
      * @return the benefits
      */
     @Override
-    public List getBenefits() {
+    public List<JobRoleBenefit> getBenefits() {
         return Collections.unmodifiableList((List) this.benefits.values());
     }
     
@@ -228,7 +228,7 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

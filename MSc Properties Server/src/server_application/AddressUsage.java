@@ -28,7 +28,7 @@ public class AddressUsage implements AddressUsageInterface {
     private Date endDate;
     private final String createdBy;
     private final Date createdDate;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     
     ///   CONSTRUCTORS ///
     
@@ -157,7 +157,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

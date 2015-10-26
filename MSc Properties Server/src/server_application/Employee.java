@@ -25,9 +25,9 @@ public class Employee implements EmployeeInterface {
     
     private final int employeeRef;
     private final PersonInterface person;
-    private final ArrayList<ContractInterface> contracts;
+    private final List<ContractInterface> contracts;
     private String officeCode; // Create a class for office, which stores the office information
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -125,7 +125,7 @@ public class Employee implements EmployeeInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
@@ -165,7 +165,7 @@ public class Employee implements EmployeeInterface {
      * @return the addresses
      */
     @Override
-    public List getContracts() {
+    public List<ContractInterface> getContracts() {
         return Collections.unmodifiableList(contracts);
     }
 }

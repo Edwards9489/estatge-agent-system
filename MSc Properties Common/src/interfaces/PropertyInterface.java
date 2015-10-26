@@ -14,7 +14,7 @@ import java.util.List;
  * @author Dwayne
  */
 public interface PropertyInterface {
-    void setLandlords(ArrayList<LandlordInterface> landlord, ModifiedByInterface modifiedBy);
+    void setLandlords(List<LandlordInterface> landlord, ModifiedByInterface modifiedBy);
     void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy);
     void setPropStatus(String propStatus, ModifiedByInterface modifiedBy);
     void updateProperty(AddressInterface address, Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy);

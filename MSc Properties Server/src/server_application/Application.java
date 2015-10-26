@@ -24,10 +24,10 @@ public class Application implements ApplicationInterface {
     private Date appStartDate;
     private Date appEndDate;
     private String appStatusCode; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
-    private final ArrayList<InvolvedParty> household;
-    private final ArrayList<AddressUsage> appAddresses = new ArrayList();
-    private final ArrayList<PropertyInterface> propertiesInterestedIn;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<InvolvedParty> household;
+    private final List<AddressUsage> appAddresses;
+    private final List<PropertyInterface> propertiesInterestedIn;
+    private final List<ModifiedByInterface> modifiedBy;
     private int tenancyRef;
     
     private final String createdBy;
@@ -41,6 +41,7 @@ public class Application implements ApplicationInterface {
         this.appStartDate = appStartDate;
         this.appStatusCode = statusCode;
         this.household = new ArrayList();
+        this.appAddresses = new ArrayList();
         this.propertiesInterestedIn = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
@@ -289,7 +290,7 @@ public class Application implements ApplicationInterface {
      * @return the appAddresses
      */
     @Override
-    public List getApplicationAddressess() {
+    public List<AddressUsage> getApplicationAddressess() {
         return Collections.unmodifiableList(this.appAddresses);
     }
 
@@ -305,7 +306,7 @@ public class Application implements ApplicationInterface {
      * @return the household
      */
     @Override
-    public List getHousehold() {
+    public List<InvolvedParty> getHousehold() {
         return Collections.unmodifiableList(this.household);
     }
 
@@ -313,7 +314,7 @@ public class Application implements ApplicationInterface {
      * @return the propertiesIntrestedIn
      */
     @Override
-    public List getPropertiesInterestedIn() {
+    public List<PropertyInterface> getPropertiesInterestedIn() {
         return Collections.unmodifiableList(this.propertiesInterestedIn);
     }
 
@@ -352,7 +353,7 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

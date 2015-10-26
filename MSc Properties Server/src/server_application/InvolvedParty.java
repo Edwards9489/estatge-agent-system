@@ -30,7 +30,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     private Date endDate; // end date of the involved party against the application
     private Element endReason; // Indicates the reason the involved party was ended against the application
     private Element relationship; // Indicates the relationship of this involved party to the main applicant
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -192,7 +192,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     

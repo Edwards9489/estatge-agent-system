@@ -28,7 +28,7 @@ public class PropertyElement implements PropertyElementInterface {
     private Date startDate;
     private Date endDate;
     private boolean charge;
-    private final ArrayList<ModifiedByInterface> modifiedBy;
+    private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
@@ -206,7 +206,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
     
     @Override
-    public List getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
