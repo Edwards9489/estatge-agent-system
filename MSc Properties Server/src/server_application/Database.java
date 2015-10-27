@@ -88,6 +88,8 @@ public class Database {
     // List of Account Transactions
     private final HashMap<Integer, Transaction> transactions;
     
+    private final HashMap<Integer, AddressUsage> addressUsages;
+    private final HashMap<Integer, Contact> contacts;
     
     
     ///   CONSTRUCTORS ///
@@ -145,6 +147,9 @@ public class Database {
         
         // List of Account Transactions
         this.transactions = new HashMap<>();
+        
+        this.addressUsages = new HashMap<>();
+        this.contacts = new HashMap<>();
         
         
         try {
@@ -422,11 +427,10 @@ public class Database {
     }
     
     public Element getContactType(String code) {
-        Element conType = null;
         if(this.contactTypeExists(code)) {
-            conType = this.contactTypes.get(code);
+            return this.contactTypes.get(code);
         }
-        return conType;
+        return null;
     }
     
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
@@ -484,6 +488,7 @@ public class Database {
                         Date createdDate = results.getDate("createdDate");
 
                         Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        contacts.put(temp.getContactRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -565,6 +570,7 @@ public class Database {
                         Date createdDate = results.getDate("createdDate");
 
                         Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        contacts.put(temp.getContactRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -649,6 +655,7 @@ public class Database {
                         Date createdDate = results.getDate("createdDate");
 
                         AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        addressUsages.put(temp.getAddressUsageRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -733,6 +740,7 @@ public class Database {
                         Date createdDate = results.getDate("createdDate");
 
                         AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        addressUsages.put(temp.getAddressUsageRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -788,11 +796,10 @@ public class Database {
     }
     
     public Element getTitle(String code) {
-        Element title = null;
         if(this.titleExists(code)) {
-            title = this.titles.get(code);
+            return this.titles.get(code);
         }
-        return title;
+        return null;
     }
     
     public void createGender(Element gender) throws SQLException {
@@ -824,11 +831,10 @@ public class Database {
     }
     
     public Element getGender(String code) {
-        Element gender = null;
         if(this.genderExists(code)) {
-            gender = this.genders.get(code);
+            return this.genders.get(code);
         }
-        return gender;
+        return null;
     }
     
     public void createMaritalStatus(Element status) throws SQLException {
@@ -860,11 +866,10 @@ public class Database {
     }
     
     public Element getMaritalStatus(String code) {
-        Element status = null;
         if(this.maritalStatusExists(code)) {
-            status = this.maritalStatuses.get(code);
+            return this.maritalStatuses.get(code);
         }
-        return status;
+        return null;
     }
     
     public void createEthnicOrigin(Element ethnicOrigin) throws SQLException {
@@ -896,11 +901,10 @@ public class Database {
     }
     
     public Element getEthnicOrigin(String code) {
-        Element origin = null;
         if(this.ethnicOriginExists(code)) {
-            origin = this.ethnicOrigins.get(code);
+            return this.ethnicOrigins.get(code);
         }
-        return origin;
+        return null;
     }
     
     public void createLanguage(Element language) throws SQLException {
@@ -932,11 +936,10 @@ public class Database {
     }
     
     public Element getLanguage(String code) {
-        Element language = null;
         if(this.languageExists(code)) {
-            language = this.languages.get(code);
+            return this.languages.get(code);
         }
-        return language;
+        return null;
     }
     
     public void createNationality(Element nationality) throws SQLException {
@@ -968,11 +971,10 @@ public class Database {
     }
     
     public Element getNationality(String code) {
-        Element nationality = null;
         if(this.nationalityExists(code)) {
-            nationality = this.nationalities.get(code);
+            return this.nationalities.get(code);
         }
-        return nationality;
+        return null;
     }
     
     public void createSexuality(Element sex) throws SQLException {
@@ -1004,11 +1006,10 @@ public class Database {
     }
     
     public Element getSexuality(String code) {
-        Element sex = null;
         if(this.sexualityExists(code)) {
-            sex = this.sexualities.get(code);
+            return this.sexualities.get(code);
         }
-        return sex;
+        return null;
     }
     
     public void createReligion(Element religion) throws SQLException {
@@ -1040,11 +1041,10 @@ public class Database {
     }
     
     public Element getReligion(String code) {
-        Element religion = null;
         if(this.religionExists(code)) {
-            religion = this.religions.get(code);
+            return this.religions.get(code);
         }
-        return religion;
+        return null;
     }
     
     public void createAddress(Address address) throws SQLException {
@@ -1143,11 +1143,10 @@ public class Database {
     }
     
     public Address getAddress(int addressRef) {
-        Address address = null;
         if(this.addressExists(addressRef)) {
-            address = this.addresses.get(addressRef);
+            return this.addresses.get(addressRef);
         }
-        return address;
+        return null;
     }
     
     public void createProperty(Property property) throws SQLException {
@@ -1254,11 +1253,10 @@ public class Database {
     }
     
     public Property getProperty(int propRef) {
-        Property temp = null;
         if (properties.containsKey(propRef)) {
-            temp = properties.get(propRef);
+            return properties.get(propRef);
         }
-        return temp;
+        return null;
     }
     
     public void createPropertyType(Element type) throws SQLException {
@@ -1290,11 +1288,10 @@ public class Database {
     }
     
     public Element getPropertyType(String code) {
-        Element type = null;
         if(this.propTypeExists(code)) {
-            type = this.propertyTypes.get(code);
+            return this.propertyTypes.get(code);
         }
-        return type;
+        return null;
     }
     
     public void createPropertySubType(Element type) throws SQLException {
@@ -1326,11 +1323,10 @@ public class Database {
     }
     
     public Element getPropertySubType(String code) {
-        Element type = null;
         if(this.propSubTypeExists(code)) {
-            type = this.propertySubTypes.get(code);
+            return this.propertySubTypes.get(code);
         }
-        return type;
+        return null;
     }
     
     private void createPropertyElementValues(int propertyRef, List<PropertyElement> propertyElements) throws SQLException {
@@ -1475,11 +1471,10 @@ public class Database {
     }
     
     public Element getPropElement(String code) {
-        Element element = null;
         if(this.propElementExists(code)) {
-            element = this.propertyElements.get(code);
+            return this.propertyElements.get(code);
         }
-        return element;
+        return null;
     }
     
     public void createPerson(Person person) throws SQLException {
@@ -1616,7 +1611,7 @@ public class Database {
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
 
-                Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, null, createdBy, createdDate);
+                Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, createdBy, createdDate);
                 
                 this.people.put(temp.getPersonRef(), temp);
                 this.createPeopleMods(this.getPerson(temp.getPersonRef()), this.loadModMap("peopleModifications", temp.getPersonRef()));
@@ -1643,11 +1638,10 @@ public class Database {
     }
     
     public Person getPerson(int personRef) {
-        Person person = null;
         if(this.personExists(personRef)) {
-            person = this.people.get(personRef);
+            return this.people.get(personRef);
         }
-        return person;
+        return null;
     }
     
     public void createInvolvedParty(InvolvedParty invParty) throws SQLException {
@@ -1797,11 +1791,10 @@ public class Database {
     }
     
     public Element getEndReason(String code) {
-        Element endReason = null;
         if(this.endReasonExists(code)) {
-            endReason = this.endReasons.get(code);
+            return this.endReasons.get(code);
         }
-        return endReason;
+        return null;
     }
     
     public void createRelationship(Element relationship) throws SQLException {
@@ -1833,11 +1826,10 @@ public class Database {
     }
     
     public Element getRelationship(String code) {
-        Element reltionship = null;
         if(this.relationshipExists(code)) {
-            reltionship = this.relationships.get(code);
+            return this.relationships.get(code);
         }
-        return reltionship;
+        return null;
     }
     
     public void createApplication(Application application) throws SQLException {
@@ -1934,11 +1926,10 @@ public class Database {
     }
     
     public Application getApplication(int appRef) {
-        Application app = null;
         if(this.applicationExists(appRef)) {
-            app = this.applications.get(appRef);
+            return this.applications.get(appRef);
         }
-        return app;
+        return null;
     }
     
     public void createPropertyInterest(int appRef, int propRef) throws SQLException {
@@ -2095,11 +2086,10 @@ public class Database {
     }
     
     public Landlord getLandlord(int landlordRef) {
-        Landlord landlord = null;
         if(this.landlordExists(landlordRef)) {
-            landlord = this.landlords.get(landlordRef);
+            return this.landlords.get(landlordRef);
         }
-        return landlord;
+        return null;
     }
     
     public void createOffice(Office office) throws SQLException {
@@ -2183,11 +2173,10 @@ public class Database {
     }
     
     public Office getOffice(String code) {
-        Office office = null;
         if(this.officeExists(code)) {
-            office = this.offices.get(code);
+            return this.offices.get(code);
         }
-        return office;
+        return null;
     }
     
     public void createJobRole(JobRole jobRole) throws SQLException {
@@ -2272,11 +2261,10 @@ public class Database {
     }
     
     public JobRole getJobRole(String jobRoleCode) {
-        JobRole jobRole = null;
         if(this.jobRoleExists(jobRoleCode)) {
-            jobRole = this.jobRoles.get(jobRoleCode);
+            return this.jobRoles.get(jobRoleCode);
         }
-        return jobRole;
+        return null;
     }
     
     // IS THE PRIVATE METHOD USED TO STORE JOB REQUIREMENTS IN BULK WHEN A JOB ROLE IS CREATED
@@ -2461,11 +2449,10 @@ public class Database {
     }
     
     public Element getJobRequirement(String code) {
-        Element requirement = null;
         if(this.jobRequirementExists(code)) {
-            requirement = this.jobRequirements.get(code);
+            return this.jobRequirements.get(code);
         }
-        return requirement;
+        return null;
     }
     
     public void createJobBenefit(Element benefit) throws SQLException {
@@ -2497,11 +2484,10 @@ public class Database {
     }
     
     public Element getJobBenefit(String code) {
-        Element benefit = null;
         if(this.jobBenefitExists(code)) {
-            benefit = this.jobBenefits.get(code);
+            return this.jobBenefits.get(code);
         }
-        return benefit;
+        return null;
     }
     
     public void createEmployee(Employee employee) throws SQLException {
@@ -2575,11 +2561,10 @@ public class Database {
     }
     
     public Employee getEmployee(int employeeRef) {
-        Employee employee = null;
         if(this.employeeExists(employeeRef)) {
-            employee = this.employees.get(employeeRef);
+            return this.employees.get(employeeRef);
         }
-        return employee;
+        return null;
     }
     
     public void createTenancy(Tenancy tenancy) throws SQLException {
@@ -2687,11 +2672,10 @@ public class Database {
     }
     
     public Tenancy getTenancy(int tenancyRef) {
-        Tenancy temp = null;
         if (tenancies.containsKey(tenancyRef)) {
-            temp = tenancies.get(tenancyRef);
+            return tenancies.get(tenancyRef);
         }
-        return temp;
+        return null;
     }
     
     public void createTenancyType(Element tenTpe) throws SQLException {
@@ -2723,11 +2707,10 @@ public class Database {
     }
     
     public Element getTenancyType(String code) {
-        Element tenType = null;
         if(this.tenancyTypeExists(code)) {
-            tenType = this.tenancyTypes.get(code);
+            return this.tenancyTypes.get(code);
         }
-        return tenType;
+        return null;
     }
     
     public void createLease(Lease lease) throws SQLException {
@@ -2827,11 +2810,10 @@ public class Database {
     }
     
     public Lease getLease(int leaseRef) {
-        Lease temp = null;
         if (leases.containsKey(leaseRef)) {
-            temp = leases.get(leaseRef);
+            return leases.get(leaseRef);
         }
-        return temp;
+        return null;
     }
     
     public void createLeaseLandlord(int landlordRef, int leaseRef) throws SQLException {
@@ -3026,11 +3008,10 @@ public class Database {
     }
     
     public Contract getContract(int contractRef) {
-        Contract temp = null;
         if (contracts.containsKey(contractRef)) {
-            temp = contracts.get(contractRef);
+            return contracts.get(contractRef);
         }
-        return temp;
+        return null;
     }
     
     public void createRentAccount(RentAccount rentAcc) throws SQLException {
@@ -3122,11 +3103,10 @@ public class Database {
     }
     
     public RentAccount getRentAccount(int rentAccRef) {
-        RentAccount temp = null;
         if (rentAccounts.containsKey(rentAccRef)) {
-            temp = rentAccounts.get(rentAccRef);
+            return rentAccounts.get(rentAccRef);
         }
-        return temp;
+        return null;
     }
     
     public void createLeaseAccount(LeaseAccount leaseAcc) throws SQLException {
@@ -3218,11 +3198,10 @@ public class Database {
     }
     
     public LeaseAccount getLeaseAccount(int leaseAccRef) {
-        LeaseAccount temp = null;
         if (leaseAccounts.containsKey(leaseAccRef)) {
-            temp = leaseAccounts.get(leaseAccRef);
+            return leaseAccounts.get(leaseAccRef);
         }
-        return temp;
+        return null;
     }
     
     public void createEmployeeAccount(EmployeeAccount employeeAcc) throws SQLException {
@@ -3313,11 +3292,10 @@ public class Database {
     }
     
     public Tenancy getEmployeeAccount(int tenancyRef) {
-        Tenancy temp = null;
         if (tenancies.containsKey(tenancyRef)) {
-            temp = tenancies.get(tenancyRef);
+            return tenancies.get(tenancyRef);
         }
-        return temp;
+        return null;
     }
     
     public void createTransaction(String from, Transaction transaction) throws SQLException {
@@ -3343,6 +3321,7 @@ public class Database {
     }
     
     private void loadTransactions(String from, Account account) throws SQLException {
+        this.transactions.clear();
         String sql = "select transactionRef, accountRef, fromRef, toRef, amount, "
                     + "isDebit, transactionDate, createdBy, createdDate from ? where accountRef=? order by transactionRef";
         try (PreparedStatement selectStat = con.prepareStatement(sql)) {
@@ -3363,10 +3342,25 @@ public class Database {
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
                     Transaction temp = new Transaction(transactionRef, accountRef, fromRef, toRef, amount, isDebit, transactionDate, createdBy, createdDate);
+                    this.transactions.put(temp.getTransactionRef(), temp);
                     account.createTransaction(temp, null);
                 }
             }
         }
+    }
+    
+    public Contact getContact(int contactRef) {
+        if(this.contactExists(contactRef)) {
+            return contacts.get(contactRef);
+        }
+        return null;
+    }
+    
+    public AddressUsage getAddressUSage(int addressUsageRef) {
+        if(this.addressUsageExists(addressUsageRef)) {
+            return this.addressUsages.get(addressUsageRef);
+        }
+        return null;
     }
 
     public boolean titleExists(String code) {
@@ -3401,7 +3395,7 @@ public class Database {
         return religions.containsKey(code);
     }
     
-    private boolean contactTypeExists(String code) {
+    public boolean contactTypeExists(String code) {
         return this.contactTypes.containsKey(code);
     }
     
@@ -3473,7 +3467,7 @@ public class Database {
         return this.tenancies.containsKey(tenancyRef);
     }
     
-    private boolean tenancyTypeExists(String code) {
+    public boolean tenancyTypeExists(String code) {
         return this.tenancyTypes.containsKey(code);
     }
     
@@ -3499,6 +3493,82 @@ public class Database {
     
     public boolean transactionExists(int transactionRef) {
         return this.transactions.containsKey(transactionRef);
+    }
+    
+    public boolean contactExists(int contactRef) {
+        return this.contacts.containsKey(contactRef);
+    }
+    
+    public boolean addressUsageExists(int addressUsageRef) {
+        return this.addressUsages.containsKey(addressUsageRef);
+    }
+    
+    public int countPeople() {
+        return this.people.size();
+    }
+    
+    public int countInvolvedParties() {
+        return this.involvedParties.size();
+    }
+    
+    public int countLandords() {
+        return this.landlords.size();
+    }
+    
+    public int countEmployees() {
+        return this.employees.size();
+    }
+    
+    public int countApplications() {
+        return this.applications.size();
+    }
+    
+    public int countProperties() {
+        return this.properties.size();
+    }
+    
+    public int countTenancies() {
+        return this.tenancies.size();
+    }
+    
+    public int countLeases() {
+        return this.leases.size();
+    }
+    
+    public int countContracts() {
+        return this.contracts.size();
+    }
+    
+    public int countRentAccounts() {
+        return this.rentAccounts.size();
+    }
+    
+    public int countLeaseAccounts() {
+        return this.titles.size();
+    }
+    
+    public int countEmployeeAccounts() {
+        return this.employeeAccounts.size();
+    }
+    
+    public int countJobBenefits() {
+        return this.jobBenefits.size();
+    }
+    
+    public int countAddresses() {
+        return this.addresses.size();
+    }
+    
+    public int countTransactions() {
+        return this.transactions.size();
+    }
+    
+    public int countAddressUsages() {
+        return this.addressUsages.size();
+    }
+    
+    public int countContacts() {
+        return this.contacts.size();
     }
     
     ///////    FOR ADVANCED SEARCH, USE METHODS LIKE GET APPLICATIONS(person details), GET APPLICATIONS (property details), GET APPLICATIONS(application details)

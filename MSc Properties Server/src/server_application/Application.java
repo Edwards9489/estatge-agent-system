@@ -134,7 +134,7 @@ public class Application implements ApplicationInterface {
     }
     
     public void addInvolvedParty(InvolvedParty party, ModifiedByInterface modifiedBy) {
-        if(!this.isHouseholdMember(party.getInvolvedPartyRef())) {
+        if(!this.isHouseholdMember(party.getPersonRef())) {
             this.household.add(this.getHousehold().size(), party);
             this.modifiedBy(modifiedBy);
         }
@@ -149,8 +149,7 @@ public class Application implements ApplicationInterface {
                     this.getMainApp().endInvolvedParty(end, endReason, modifiedBy);
                     InvolvedParty main = (InvolvedParty) this.getMainApp();
                     main.setMainInd();
-                    InvolvedParty newMain = (InvolvedParty) party;
-                    newMain.setMainInd();
+                    party.setMainInd();
                 }
             }
         }
@@ -192,11 +191,11 @@ public class Application implements ApplicationInterface {
     
     /// ACCESSOR METHODS   ///
     
-    public boolean isHouseholdMember(int invPartyRef) {
+    public boolean isHouseholdMember(int personRef) {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface invParty : this.household) {
                 if(invParty.isCurrent()) {
-                    if(invParty.getPersonRef() == invPartyRef) {
+                    if(invParty.getPersonRef() == personRef) {
                         return true;
                     }
                 }
@@ -216,6 +215,17 @@ public class Application implements ApplicationInterface {
         return null;
     }
     
+    public InvolvedParty getMainApp() {
+        if(!this.household.isEmpty()) {
+            for(InvolvedParty party : this.household) {
+                if(party.isMainInd() && party.isCurrent()) {
+                    return party;
+                }
+            }
+        }
+        return null;
+    }
+    
     private boolean isInterestedProperty(PropertyInterface property) {
         if(!this.propertiesInterestedIn.isEmpty()) {
             for(PropertyInterface prop : this.propertiesInterestedIn) {
@@ -225,16 +235,6 @@ public class Application implements ApplicationInterface {
             }
         }
         return false;
-    }
-    
-    private InvolvedPartyInterface getMainApp() {
-        InvolvedPartyInterface main = null;
-        for(InvolvedPartyInterface temp : household) {
-            if(temp.getRelationship().getCode().equals("APPL")) {
-                main = temp;
-            }
-        }
-        return main;
     }
     
     private boolean isAppEndDateNull() {

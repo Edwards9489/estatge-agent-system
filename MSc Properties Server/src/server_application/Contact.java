@@ -92,7 +92,8 @@ public class Contact implements ContactInterface {
     
     
     ///   ACCESSOR METHODS   ///
-
+    
+    @Override
     public int getContactRef() {
         return this.contactRef;
     }

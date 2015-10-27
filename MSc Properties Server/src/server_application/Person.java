@@ -61,7 +61,7 @@ public class Person implements PersonInterface {
      * @param createdDate
      */
     public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,Element maritalStatus, Element ethnicOrigin,
-            Element language, Element nationality, Element sexuality, Element religion, List<ContactInterface> contacts, AddressUsageInterface address, String createdBy, Date createdDate) {
+            Element language, Element nationality, Element sexuality, Element religion, AddressUsageInterface address, String createdBy, Date createdDate) {
         this.personRef = personRef;
         this.setTitle(title);
         this.setForename(forename);
@@ -76,7 +76,7 @@ public class Person implements PersonInterface {
         this.setNationality(nationality);
         this.setSexuality(sexuality);
         this.setReligion(religion);
-        this.contacts = contacts;
+        this.contacts = new ArrayList();
         this.addresses = new ArrayList();
         this.addresses.add(address);
         this.modifiedBy = new ArrayList();
@@ -324,6 +324,15 @@ public class Person implements PersonInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    public boolean hasContact(int contactRef) {
+        for(ContactInterface contact : contacts) {
+            if(contact.getContactRef() == contactRef) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public List<ContactInterface> getContacts() {

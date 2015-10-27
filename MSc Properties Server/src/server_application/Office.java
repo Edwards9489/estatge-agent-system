@@ -114,6 +114,15 @@ public class Office implements OfficeInterface {
         return false;
     }
     
+    public boolean hasContact(int contactRef) {
+        for(ContactInterface contact : contacts) {
+            if(contact.getContactRef() == contactRef) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public boolean canCloseOffice() {
 //        if(agreements.isEmpty()) {

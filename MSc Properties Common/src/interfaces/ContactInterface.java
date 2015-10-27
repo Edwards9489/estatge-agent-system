@@ -15,6 +15,7 @@ import java.util.List;
 public interface ContactInterface {
     void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
     void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy);
+    int getContactRef();
     Element getContactType();
     String getContactTypeDescription();
     String getContactValue();
