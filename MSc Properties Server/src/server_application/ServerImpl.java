@@ -11,7 +11,6 @@ import interfaces.RegistryLoader;
 import interfaces.Client;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
-import interfaces.PersonInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -34,7 +33,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private final HashMap<String,Client> users;
     
     // The database for the server
-    private Database database;
+    private final Database database;
     
     // List of reference counters
     private int personRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
@@ -52,8 +51,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int addressRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
     private int addressUsageRef;
     private int contactRef;
-    private int jobBenefitRef;
     private int transactionRef;
+    private int propertyElementRef;
+    private int jobBenefitRef;
     
     ///   CONSTRUCTORS ///
     
@@ -74,11 +74,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.rentAccRef = this.database.countRentAccounts() + 1;
         this.leaseAccRef = this.database.countLeaseAccounts() + 1;
         this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
-        this.jobBenefitRef = this.database.countJobBenefits() + 1;
         this.addressRef = this.database.countAddresses() + 1;
         this.transactionRef = this.database.countTransactions() + 1;
         this.addressUsageRef = this.database.countAddressUsages() + 1;
         this.contactRef = this.database.countContacts() + 1;
+        try {
+            this.propertyElementRef = this.database.getPropElementCount() + 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -116,7 +125,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Title", new Date(), modifiedBy);
             Element title = this.database.getTitle(code);
             title.updateElement(description, current, modified);
-            this.database.updateTitle(title);
+            this.database.updateTitle(title.getCode());
             return 1;
         }
         return 0;
@@ -136,7 +145,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Gender", new Date(), modifiedBy);
             Element gender = this.database.getGender(code);
             gender.updateElement(description, current, modified);
-            this.database.updateGender(gender);
+            this.database.updateGender(gender.getCode());
             return 1;
         }
         return 0;
@@ -156,7 +165,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Marital Status", new Date(), modifiedBy);
             Element status = this.database.getMaritalStatus(code);
             status.updateElement(description, current, modified);
-            this.database.updateMaritalStatus(status);
+            this.database.updateMaritalStatus(status.getCode());
             return 1;
         }
         return 0;
@@ -176,7 +185,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Ethnic Origin", new Date(), modifiedBy);
             Element origin = this.database.getEthnicOrigin(code);
             origin.updateElement(description, current, modified);
-            this.database.updateEthnicOrigin(origin);
+            this.database.updateEthnicOrigin(origin.getCode());
             return 1;
         }
         return 0;
@@ -196,7 +205,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Language", new Date(), modifiedBy);
             Element language = this.database.getLanguage(code);
             language.updateElement(description, current, modified);
-            this.database.updateLanguage(language);
+            this.database.updateLanguage(language.getCode());
             return 1;
         }
         return 0;
@@ -216,7 +225,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Nationality", new Date(), modifiedBy);
             Element nationality = this.database.getNationality(code);
             nationality.updateElement(description, current, modified);
-            this.database.updateNationality(nationality);
+            this.database.updateNationality(nationality.getCode());
             return 1;
         }
         return 0;
@@ -236,7 +245,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Sexuality", new Date(), modifiedBy);
             Element sexuality = this.database.getSexuality(code);
             sexuality.updateElement(description, current, modified);
-            this.database.updateSexuality(sexuality);
+            this.database.updateSexuality(sexuality.getCode());
             return 1;
         }
         return 0;
@@ -256,7 +265,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Religion", new Date(), modifiedBy);
             Element religion = this.database.getReligion(code);
             religion.updateElement(description, current, modified);
-            this.database.updateReligion(religion);
+            this.database.updateReligion(religion.getCode());
             return 1;
         }
         return 0;
@@ -276,7 +285,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Type", new Date(), modifiedBy);
             Element propType = this.database.getPropertyType(code);
             propType.updateElement(description, current, modified);
-            this.database.updatePropertyType(propType);
+            this.database.updatePropertyType(propType.getCode());
             return 1;
         }
         return 0;
@@ -296,7 +305,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Sub Type", new Date(), modifiedBy);
             Element propType = this.database.getPropertySubType(code);
             propType.updateElement(description, current, modified);
-            this.database.updatePropertySubType(propType);
+            this.database.updatePropertySubType(propType.getCode());
             return 1;
         }
         return 0;
@@ -316,20 +325,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Element", new Date(), modifiedBy);
             Element propElement = this.database.getPropElement(code);
             propElement.updateElement(description, current, modified);
-            this.database.updatePropertyElement(propElement);
+            this.database.updatePropertyElement(propElement.getCode());
             return 1;
         }
         return 0;
     }
     
     public int createPerson(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
-            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addressRef, Date addressStartDate, String createdBy) throws RemoteException, SQLException {
+            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException, SQLException {
         if (this.database.titleExists(titleCode) && this.database.genderExists(genderCode) && this.database.maritalStatusExists(maritalStatusCode) && this.database.ethnicOriginExists(ethnicOriginCode) && this.database.languageExists(languageCode) && this.database.nationalityExists(nationalityCode) && this.database.sexualityExists(sexualityCode) && this.database.religionExists(religionCode)) {
             if (this.database.getTitle(titleCode).isCurrent() && this.database.getGender(genderCode).isCurrent() && this.database.getMaritalStatus(maritalStatusCode).isCurrent() && this.database.getEthnicOrigin(ethnicOriginCode).isCurrent() && this.database.getLanguage(languageCode).isCurrent() && this.database.getNationality(nationalityCode).isCurrent() && this.database.getSexuality(sexualityCode).isCurrent() && this.database.getReligion(religionCode).isCurrent()) {
                 Person person = new Person(personRef++, this.database.getTitle(titleCode), forename, middleNames, surname, dateOfBirth, nationalInsurance, this.database.getGender(genderCode),
                         this.database.getMaritalStatus(maritalStatusCode), this.database.getEthnicOrigin(ethnicOriginCode), this.database.getLanguage(languageCode), this.database.getNationality(nationalityCode),
                         this.database.getSexuality(sexualityCode), this.database.getReligion(religionCode), null, createdBy, new Date());
-                AddressUsage address = this.createAddressUsage(addressRef, addressStartDate, createdBy);
+                AddressUsage address = this.createAddressUsage(addrRef, addressStartDate, createdBy);
                 this.database.createPersonAddressUsage(address, person.getPersonRef());
                 this.database.createPerson(person);
                 return person.getPersonRef();
@@ -347,7 +356,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 person.updatePerson(this.database.getTitle(titleCode), forename, middleNames, surname, dateOfBirth, nationalInsurance, this.database.getGender(genderCode),
                         this.database.getMaritalStatus(maritalStatusCode), this.database.getEthnicOrigin(ethnicOriginCode), this.database.getLanguage(languageCode), this.database.getNationality(nationalityCode),
                         this.database.getSexuality(sexualityCode), this.database.getReligion(religionCode), modified);
-                this.database.updatePerson(person);
+                this.database.updatePerson(person.getPersonRef());
                 return 1;
             }
         }
@@ -373,7 +382,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 ModifiedByInterface modified = new ModifiedBy("Updated Person Contact", new Date(), modifiedBy);
                 Contact contact = this.database.getContact(cRef);
                 contact.updateContact(this.database.getContactType(contactTypeCode), value, date, modified);
-                this.database.updatePersonContact(contact, person.getPersonRef());
+                this.database.updatePersonContact(contact.getContactRef(), person.getPersonRef());
                 return 1;
             }
         }
@@ -399,7 +408,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 ModifiedByInterface modified = new ModifiedBy("Updated Office Contact", new Date(), modifiedBy);
                 Contact contact = this.database.getContact(cRef);
                 contact.updateContact(this.database.getContactType(contactTypeCode), value, date, modified);
-                this.database.updateOfficeContact(contact, office.getOfficeCode());
+                this.database.updateOfficeContact(contact.getContactRef(), office.getOfficeCode());
                 return 1;
             }
         }
@@ -420,7 +429,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             InvolvedParty invParty = this.database.getInvolvedParty(iRef);
             ModifiedByInterface modified = new ModifiedBy("Updated Involved Party", new Date(), modifiedBy);
             invParty.updateInvolvedParty(joint, start, this.database.getRelationship(relationshipCode), modified);
-            this.database.updateInvolvedParty(invParty);
+            this.database.updateInvolvedParty(invParty.getInvolvedPartyRef());
             return 1;
         }
         return 0;
@@ -444,7 +453,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.applicationExists(aRef)) {
             Application application = this.database.getApplication(aRef);
             application.updateApplication(corrName, appStartDate, new ModifiedBy("Updated Application", new Date(), modifiedBy));
-            this.database.updateApplication(application);
+            this.database.updateApplication(application.getApplicationRef());
             return application.getApplicationRef();
         }
         return 0;
@@ -473,8 +482,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!party.isMainInd() && party.isOver18()) {
                     application.changeMainApp(party.getInvolvedPartyRef(), end, this.database.getEndReason(endReasonCode), new ModifiedBy("Changed Main Applicant", new Date(), createdBy));
                 }
-                this.database.updateInvolvedParty(mainApp);
-                this.database.updateInvolvedParty(party);
+                this.database.updateInvolvedParty(mainApp.getInvolvedPartyRef());
+                this.database.updateInvolvedParty(party.getInvolvedPartyRef());
                 return 1;
             }
         }
@@ -488,7 +497,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(application.isHouseholdMember(party.getPersonRef())) {
                 if(!party.isCurrent()) {
                     application.endInvolvedParty(party.getInvolvedPartyRef(), end, this.database.getEndReason(endReasonCode), new ModifiedBy("Ended Involved Party", new Date(), createdBy));
-                    this.database.updateInvolvedParty(party);
+                    this.database.updateInvolvedParty(party.getInvolvedPartyRef());
                     return 1;
                 }
             }
@@ -500,7 +509,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(database.applicationExists(appRef) && database.tenancyExists(tenancyRef)) {
             Application application = database.getApplication(appRef);
             application.setTenancy(tenancyRef, new ModifiedBy("Assigned Application Tenancy", new Date(), createdBy));
-            this.database.updateApplication(application);
+            this.database.updateApplication(application.getApplicationRef());
             return 1;
         }
         return 0;
@@ -526,8 +535,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    look over how I am creating address usages for applications and people
-    
     public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
             String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
         Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, new Date());
@@ -540,54 +547,202 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(database.addressExists(addressRef)) {
             Address address = database.getAddress(addressRef);
             address.updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, new ModifiedBy("Updated Address", new Date(), createdBy));
-            this.database.updateAddress(address);
+            this.database.updateAddress(address.getAddressRef());
             return 1;
         }
         return 0;
     }
     
-    private AddressUsage createAddressUsage(int addressRef, Date startDate, String createdBy) throws RemoteException, SQLException {
-        if(database.addressExists(addressRef)) {
-            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addressRef), startDate, createdBy, new Date());
+    private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if(database.addressExists(addrRef)) {
+            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, createdBy, new Date());
             return addressUsage;
         }
         return null;
     }
     
-    private int updateAddressUsage(AddressUsageInterface addressUsage, int addressRef, Date startDate, String createdBy) throws RemoteException, SQLException {
-        if(addressUsage.isCurrent() && database.addressExists(addressRef)) {
-            ModifiedByInterface modifiedBy = new ModifiedBy("Updated Address", new Date(), createdBy);
-            addressUsage.updateAddress(database.getAddress(addressRef), startDate, modifiedBy);
-            return 1;
-        }
-        return 0;
-    }
-    
-    public int createApplicationAddressUsage(int applicationRef, int addressRef, Date startDate, String createdBy) throws RemoteException, SQLException {
-        if(database.applicationExists(appRef) && database.addressExists(addressRef)) {
-            AddressUsageInterface addressUsage = this.createAddressUsage(addressRef, startDate, createdBy);
+    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if(this.database.applicationExists(applicationRef) && this.database.addressExists(addressRef)) {
+            AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
             database.getApplication(applicationRef).setAppAddress((AddressUsage) addressUsage, new ModifiedBy("Created Address", new Date(), createdBy));
             return 1;
         }
         return 0;
     }
     
-    public int createPersonAddressUsage(int personRef, int addressRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+    public int updateApplicationAddressUsage(int applicationRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.applicationExists(applicationRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
+            AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
+            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
+            this.database.updateApplicationAddressUsage(addrUsageRef, applicationRef);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createPersonAddressUsage(int personRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.personExists(personRef)) {
-            AddressUsageInterface addressUsage = this.createAddressUsage(addressRef, startDate, createdBy);
+            AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
             database.getPerson(personRef).createAddress(addressUsage, new ModifiedBy("Created Address", new Date(), createdBy));
             return 1;
         }
         return 0;
     }
     
-//    public int createAgreement(String agreementName, Date startDate, int length, String createdBy, String officeCode) {
-//        if(database.officeExists(officeCode)) {
-//            Agreement agreement
-//            return 1;
-//        }
-//        return 0;
-//    }
+    public int updatePersonAddressUsage(int personRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.personExists(personRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
+            AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
+            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
+            this.database.updatePersonAddressUsage(addrUsageRef, personRef);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException, SQLException {
+        if(this.database.personExists(pRef) && !this.database.userExists(username)) {
+            Employee employee = new Employee(employeeRef++, this.database.getPerson(pRef), username, password, createdBy, new Date());
+            this.database.createEmployee(employee);
+            this.database.createUser(employee.getUser());
+            return employee.getEmployeeRef();
+        }
+        return 0;
+    }
+    
+    
+    public int createLandlord(int pRef, String createdBy) throws RemoteException, SQLException {
+        if(this.database.personExists(pRef)) {
+            Landlord landlord = new Landlord(landlordRef++, this.database.getPerson(pRef), createdBy, new Date());
+            this.database.createLandlord(landlord);
+            return landlord.getLandlordRef();
+        }
+        return 0;
+    }
+    
+    public int createProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.propertyExists(pRef) && this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
+            Property property = new Property(propRef++, this.database.getAddress(addrRef), startDate, this.database.getPropertyType(propTypeCode), this.database.getPropertySubType(propSubTypeCode), createdBy, new Date());
+            this.database.createProperty(property);
+            return property.getPropRef();
+        }
+        return 0;
+    }
+    
+    public int updateProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef) && this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
+            Property property = this.database.getProperty(pRef);
+            property.updateProperty(this.database.getAddress(addrRef), startDate, this.database.getPropertyType(propTypeCode), this.database.getPropertySubType(propSubTypeCode), new ModifiedBy("Updated Property", new Date(), modifiedBy));
+            this.database.updateProperty(pRef);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef) && this.database.propElementExists(elementCode)) {
+            PropertyElement propElement = new PropertyElement(propertyElementRef++, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, createdBy, new Date());
+            Property property = this.database.getProperty(pRef);
+            property.createPropertyElement(propElement, new ModifiedBy("Created Property Element", new Date(), createdBy));
+            this.database.createPropertyElementValue(pRef, propElement);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.jobRoleExists(code)) {
+            JobRole jobRole = new JobRole(code, jobTitle, jobDescription, fullTime, salary, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, new Date());
+            this.database.createJobRole(jobRole);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.jobRoleExists(code)) {
+            JobRole jobRole = this.database.getJobRole(code);
+            jobRole.updateJobRole(jobTitle, jobDescription, salary, read, read, write, update, employeeRead, employeeWrite, employeeUpdate, new ModifiedBy("Updated Job Role", new Date(), modifiedBy));
+            this.database.updateJobRole(code);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createJobRoleRequirement(String jobRoleCode, String requirement, String createdBy) throws RemoteException, SQLException {
+        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobRequirementExists(requirement)) {
+            JobRole jobRole = this.database.getJobRole(jobRoleCode);
+            if(!jobRole.hasRequirement(requirement)) {
+                jobRole.createJobRequirement(this.database.getJobRequirement(requirement), new ModifiedBy("Created Job Role Requirement", new Date(), createdBy));
+                this.database.createJobRoleRequirement(jobRoleCode, requirement);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy) throws RemoteException, SQLException {
+        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefit)) {
+            JobRole jobRole = this.database.getJobRole(jobRoleCode);
+            if(!jobRole.hasBenefit(benefit)) {
+                JobRoleBenefit jobBenefit = new JobRoleBenefit(jobBenefitRef++, this.database.getJobBenefit(benefit), startDate, salaryBenefit, stringValue, doubleValue, createdBy, new Date());
+                jobRole.createJobBenefit(jobBenefit, new ModifiedBy("Created Job Role Benefit", new Date(), createdBy));
+                this.database.createJobRoleBenefit(jobRoleCode, jobBenefit);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefitCode)) {
+            JobRoleBenefit jobRoleBenefit = this.database.getJobRoleBenefit(benefitRef);
+            jobRoleBenefit.updateJobRoleBenefit(stringValue, doubleValue, salaryBenefit, startDate, new ModifiedBy("Updated Job Role Benefit", new Date(), modifiedBy));
+            this.database.updateJobRoleBenefit(jobRoleCode, benefitRef);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createJobRequirement(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.jobRequirementExists(code)) {
+            Element requirement = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createJobRequirement(requirement);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateJobRequirement(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+        if(!this.database.jobRequirementExists(code)) {
+            Element requirement = this.database.getJobRequirement(code);
+            requirement.updateElement(description, current, new ModifiedBy("Updated Requirement", new Date(), modifiedBy));
+            this.database.updateJobRequirement(requirement.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createJobBenefit(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.jobBenefitExists(code)) {
+            Element benefit = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createJobBenefit(benefit);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateJobBenefit(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+        if(!this.database.jobBenefitExists(code)) {
+            Element benefit = this.database.getJobBenefit(code);
+            benefit.updateElement(description, current, new ModifiedBy("Updated Benefit", new Date(), modifiedBy));
+            this.database.updateJobBenefit(benefit.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
     
     
     //add a client to the users list

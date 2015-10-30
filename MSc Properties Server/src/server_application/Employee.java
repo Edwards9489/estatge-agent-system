@@ -30,17 +30,19 @@ public class Employee implements EmployeeInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
+    private final UserImpl user;
     
     ///   CONSTRUCTORS ///
     
     
-    public Employee(int employeeRef, PersonInterface person, String createdBy, Date createdDate) {
+    public Employee(int employeeRef, PersonInterface person, String username, String password, String createdBy, Date createdDate) {
         this.employeeRef = employeeRef;
         this.person = person;
         this.contracts = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
+        this.user = new UserImpl(employeeRef, username, password);
     }
     
     
@@ -98,6 +100,10 @@ public class Employee implements EmployeeInterface {
     @Override
     public int getPersonRef() {
         return person.getPersonRef();
+    }
+    
+    public UserImpl getUser() {
+        return this.user;
     }
 
     /**

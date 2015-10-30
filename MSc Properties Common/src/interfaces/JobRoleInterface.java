@@ -27,9 +27,10 @@ public interface JobRoleInterface {
     List getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void updateJobRole(String title, String description, double salary, boolean current, ModifiedByInterface modifiedBy);
+    void updateJobRole(String title, String description, double salary, boolean current, boolean read, boolean write,
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, ModifiedByInterface modifiedBy);
     void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
     void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy);
-    void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
-    void removeBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
+    void createJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
+    void removeJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy);
 }

@@ -34,10 +34,17 @@ public class JobRole implements JobRoleInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
+    private boolean read;
+    private boolean write;
+    private boolean update;
+    private boolean employeeRead;
+    private boolean employeeWrite;
+    private boolean employeeUpdate;
     
     ///   CONSTRUCTORS ///
     
-    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, String createdBy, Date createdDate) {
+    public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy, Date createdDate) {
         this.jobRoleCode = code;
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
@@ -47,6 +54,12 @@ public class JobRole implements JobRoleInterface {
         this.requirements = new HashMap<>();
         this.benefits = new HashMap<>();
         this.modifiedBy = new ArrayList();
+        this.read = read;
+        this.write = write;
+        this.update = update;
+        this.employeeRead = employeeRead;
+        this.employeeWrite = employeeWrite;
+        this.employeeUpdate = employeeUpdate;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -75,9 +88,51 @@ public class JobRole implements JobRoleInterface {
     private void setSalary(double salary) {
         this.salary = salary;
     }
+
+    /**
+     * @param read the read to set
+     */
+    private void setRead(boolean read) {
+        this.read = read;
+    }
+
+    /**
+     * @param write the write to set
+     */
+    private void setWrite(boolean write) {
+        this.write = write;
+    }
+
+    /**
+     * @param update the update to set
+     */
+    private void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    /**
+     * @param employeeRead the employeeRead to set
+     */
+    private void setEmployeeRead(boolean employeeRead) {
+        this.employeeRead = employeeRead;
+    }
+
+    /**
+     * @param employeeWrite the employeeWrite to set
+     */
+    private void setEmployeeWrite(boolean employeeWrite) {
+        this.employeeWrite = employeeWrite;
+    }
+
+    /**
+     * @param employeeUpdate the employeeUpdate to set
+     */
+    private void setEmployeeUpdate(boolean employeeUpdate) {
+        this.employeeUpdate = employeeUpdate;
+    }
     
     /**
-     * @param salary the salary to set
+     * @param current
      */
     public void setCurrent(boolean current) {
         if (current) {
@@ -95,11 +150,18 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public void updateJobRole(String title, String description, double salary, boolean current, ModifiedByInterface modifiedBy) {
+    public void updateJobRole(String title, String description, double salary, boolean current, boolean read, boolean write,
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, ModifiedByInterface modifiedBy) {
         this.setJobTitle(title);
         this.setJobDescription(description);
         this.setSalary(salary);
         this.setCurrent(current);
+        this.setRead(read);
+        this.setWrite(write);
+        this.setUpdate(update);
+        this.setEmployeeRead(employeeRead);
+        this.setEmployeeWrite(employeeWrite);
+        this.setEmployeeUpdate(employeeUpdate);
         this.modifiedBy(modifiedBy);
     }
     
@@ -120,7 +182,7 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public void createBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
+    public void createJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
         if(!this.hasBenefit(benefit.getBenefitCode())) {
             this.benefits.put(benefit.getBenefitCode(), benefit);
             this.modifiedBy(modifiedBy);
@@ -128,7 +190,7 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public void removeBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
+    public void removeJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
         if(this.hasBenefit(benefit.getBenefitCode())) {
             this.benefits.remove(benefit.getBenefitCode());
             this.modifiedBy(modifiedBy);
@@ -254,5 +316,47 @@ public class JobRole implements JobRoleInterface {
     @Override
     public Date getCreatedDate() {
         return this.createdDate;
+    }
+
+    /**
+     * @return the read
+     */
+    public boolean isRead() {
+        return read;
+    }
+
+    /**
+     * @return the write
+     */
+    public boolean isWrite() {
+        return write;
+    }
+
+    /**
+     * @return the update
+     */
+    public boolean isUpdate() {
+        return update;
+    }
+
+    /**
+     * @return the employeeRead
+     */
+    public boolean isEmployeeRead() {
+        return employeeRead;
+    }
+
+    /**
+     * @return the employeeWrite
+     */
+    public boolean isEmployeeWrite() {
+        return employeeWrite;
+    }
+
+    /**
+     * @return the employeeUpdate
+     */
+    public boolean isEmployeeUpdate() {
+        return employeeUpdate;
     }
 }

@@ -78,6 +78,7 @@ public class Database {
     private final HashMap<String, JobRole> jobRoles;
     private final HashMap<String, Element> jobBenefits;
     private final HashMap<String, Element> jobRequirements;
+    private final HashMap<Integer, JobRoleBenefit> jobRoleBenefits;
 
     // Lists of Property details
     private final HashMap<Integer, Address> addresses;
@@ -90,6 +91,7 @@ public class Database {
     
     private final HashMap<Integer, AddressUsage> addressUsages;
     private final HashMap<Integer, Contact> contacts;
+    private final HashMap<String, UserImpl> users;
     
     
     ///   CONSTRUCTORS ///
@@ -138,6 +140,7 @@ public class Database {
         this.jobRoles = new HashMap<>();
         this.jobBenefits = new HashMap<>();
         this.jobRequirements = new HashMap<>();
+        this.jobRoleBenefits = new HashMap<>();
 
         // Lists of Property details
         this.addresses = new HashMap<>();
@@ -150,6 +153,7 @@ public class Database {
         
         this.addressUsages = new HashMap<>();
         this.contacts = new HashMap<>();
+        this.users = new HashMap<>();
         
         
         try {
@@ -434,7 +438,8 @@ public class Database {
     }
     
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
-        if(contact != null) {
+        if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
+            contacts.put(contact.getContactRef(), contact);
             String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -451,8 +456,9 @@ public class Database {
         }
     }
     
-    public void updatePersonContact(Contact contact, int personRef) throws SQLException {
-        if(contact != null) {
+    public void updatePersonContact(int contactRef, int personRef) throws SQLException {
+        if(this.contactExists(contactRef) && this.personExists(personRef)) {
+            Contact contact = this.getContact(contactRef);
             String updateSql = "update personContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -492,15 +498,16 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createPersonContactMods(temp, reference, this.loadModMap("personContactModifications", person.getPersonRef()));
+                        this.createPersonContactMods(temp.getContactRef(), reference, this.loadModMap("personContactModifications", person.getPersonRef()));
                     }
                 }
             }
         }
     }
     
-    private void createPersonContactMods(Contact contact, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (contact != null && this.personExists(personRef) && !loadedMods.isEmpty()) {
+    private void createPersonContactMods(int contactRef, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.contactExists(contactRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
+            Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -516,7 +523,8 @@ public class Database {
     }
     
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException {
-        if(contact != null) {
+        if(contact != null && !this.contactExists(contact.getContactRef()) && this.officeExists(officeCode)) {
+            contacts.put(contact.getContactRef(), contact);
             String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -533,8 +541,9 @@ public class Database {
         }
     }
     
-    public void updateOfficeContact(Contact contact, String officeCode) throws SQLException {
-        if(contact != null) {
+    public void updateOfficeContact(int contactRef, String officeCode) throws SQLException {
+        if(this.contactExists(contactRef) && this.officeExists(officeCode)) {
+            Contact contact = this.getContact(contactRef);
             String updateSql = "update officeContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and officeCode=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -574,15 +583,16 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createOfficeContactMods(temp, code, this.loadModMap("officeContactModifications", office.getOfficeCode()));
+                        this.createOfficeContactMods(temp.getContactRef(), code, this.loadModMap("officeContactModifications", office.getOfficeCode()));
                     }
                 }
             }
         }
     }
     
-    private void createOfficeContactMods(Contact contact, String code, HashMap<String, ModifiedByInterface> loadedMods) {
-        if (contact != null && this.officeExists(code) && !loadedMods.isEmpty()) {
+    private void createOfficeContactMods(int contactRef, String code, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (this.contactExists(contactRef) && this.officeExists(code) && !loadedMods.isEmpty()) {
+            Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -598,7 +608,8 @@ public class Database {
     }
     
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
-        if(address != null && this.personExists(personRef)) {
+        if(address != null && this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
+            addressUsages.put(address.getAddressUsageRef(), address);
             String insertSql = "insert into personAddressess (addressUsageRef, addressRef, personRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -614,8 +625,9 @@ public class Database {
         }
     }
     
-    public void updatePersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
-        if(address != null && this.personExists(personRef)) {
+    public void updatePersonAddressUsage(int addressRef, int personRef) throws SQLException {
+        if(this.addressUsageExists(addressRef) && this.personExists(personRef)) {
+            AddressUsage address = this.getAddressUsage(addressRef);
             String updateSql = "update peopleAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -635,7 +647,7 @@ public class Database {
         String sql = "select addressUsageRef, addressRef, personRef, startDate, endDate, createdBy, createdDate from personAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-
+            
             while (results.next()) {
                 if (this.personExists(reference)) {
                     Person person = this.getPerson(reference);
@@ -659,15 +671,16 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createPersonAddressMods(temp, reference, this.loadModMap("personAddressesModifications", person.getPersonRef()));
+                        this.createPersonAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("personAddressesModifications", person.getPersonRef()));
                     }
                 }
             }
         }
     }
     
-    private void createPersonAddressMods(AddressUsage address, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (address != null && this.personExists(personRef) && !loadedMods.isEmpty()) {
+    private void createPersonAddressMods(int addressRef, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.addressUsageExists(addressRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
+            AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -683,7 +696,8 @@ public class Database {
     }
     
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
-        if(address != null && this.applicationExists(appRef)) {
+        if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
+            addressUsages.put(address.getAddressUsageRef(), address);
             String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, applicationRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -699,8 +713,9 @@ public class Database {
         }
     }
     
-    public void updateApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
-        if(address != null && this.applicationExists(appRef)) {
+    public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException {
+        if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
+            AddressUsage address = this.getAddressUsage(addressRef);
             String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and applicationRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -744,15 +759,16 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createApplicationAddressMods(temp, reference, this.loadModMap("applicationAddressesModifications", application.getApplicationRef()));
+                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressesModifications", application.getApplicationRef()));
                     }
                 }
             }
         }
     }
     
-    private void createApplicationAddressMods(AddressUsage address, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (address != null && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
+    private void createApplicationAddressMods(int addressRef, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.addressUsageExists(addressRef) && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
+            AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -774,8 +790,9 @@ public class Database {
         }
     }
     
-    public void updateTitle(Element title) throws SQLException {
-        if(this.titleExists(title.getCode())) {
+    public void updateTitle(String titleCode) throws SQLException {
+        if(this.titleExists(titleCode)) {
+            Element title = this.getTitle(titleCode);
             this.updateElement("titles", title);
             this.createModifiedBy("titleModifications", title.getLastModification(), title.getCode());
         }
@@ -809,8 +826,9 @@ public class Database {
         }
     }
     
-    public void updateGender(Element gender) throws SQLException {
-        if(this.genderExists(gender.getCode())) {
+    public void updateGender(String genderCode) throws SQLException {
+        if(this.genderExists(genderCode)) {
+            Element gender = this.getGender(genderCode);
             this.updateElement("genders", gender);
             this.createModifiedBy("genderModifications", gender.getLastModification(), gender.getCode());
         }
@@ -844,8 +862,9 @@ public class Database {
         }
     }
     
-    public void updateMaritalStatus(Element status) throws SQLException {
-        if(this.maritalStatusExists(status.getCode())) {
+    public void updateMaritalStatus(String statusCode) throws SQLException {
+        if(this.maritalStatusExists(statusCode)) {
+            Element status = this.getMaritalStatus(statusCode);
             this.updateElement("maritalStatuses", status);
             this.createModifiedBy("maritalStatusModifications", status.getLastModification(), status.getCode());
         }
@@ -879,8 +898,9 @@ public class Database {
         }
     }
     
-    public void updateEthnicOrigin(Element origin) throws SQLException {
-        if(this.ethnicOriginExists(origin.getCode())) {
+    public void updateEthnicOrigin(String originCode) throws SQLException {
+        if(this.ethnicOriginExists(originCode)) {
+            Element origin = this.getEthnicOrigin(originCode);
             this.updateElement("ethnicOrigins", origin);
             this.createModifiedBy("ethnicOriginModifications", origin.getLastModification(), origin.getCode());
         }
@@ -914,8 +934,9 @@ public class Database {
         }
     }
     
-    public void updateLanguage(Element language) throws SQLException {
-        if(this.languageExists(language.getCode())) {
+    public void updateLanguage(String languageCode) throws SQLException {
+        if(this.languageExists(languageCode)) {
+            Element language = this.getLanguage(languageCode);
             this.updateElement("languages", language);
             this.createModifiedBy("languageModifications", language.getLastModification(), language.getCode());
         }
@@ -949,8 +970,9 @@ public class Database {
         }
     }
     
-    public void updateNationality(Element nationality) throws SQLException {
-        if(this.nationalityExists(nationality.getCode())) {
+    public void updateNationality(String nationalityCode) throws SQLException {
+        if(this.nationalityExists(nationalityCode)) {
+            Element nationality = this.getNationality(nationalityCode);
             this.updateElement("nationalities", nationality);
             this.createModifiedBy("nationalityModifications", nationality.getLastModification(), nationality.getCode());
         }
@@ -984,8 +1006,9 @@ public class Database {
         }
     }
     
-    public void updateSexuality(Element sex) throws SQLException {
-        if(this.sexualityExists(sex.getCode())) {
+    public void updateSexuality(String sexCode) throws SQLException {
+        if(this.sexualityExists(sexCode)) {
+            Element sex = this.getSexuality(sexCode);
             this.updateElement("sexualities", sex);
             this.createModifiedBy("sexualityModifications", sex.getLastModification(), sex.getCode());
         }
@@ -1019,8 +1042,9 @@ public class Database {
         }
     }
     
-    public void updateReligion(Element religion) throws SQLException {
-        if(this.religionExists(religion.getCode())) {
+    public void updateReligion(String religionCode) throws SQLException {
+        if(this.religionExists(religionCode)) {
+            Element religion = this.getReligion(religionCode);
             this.updateElement("religions", religion);
             this.createModifiedBy("religionModifications", religion.getLastModification(), religion.getCode());
         }
@@ -1073,8 +1097,9 @@ public class Database {
         }
     }
     
-    public void updateAddress(Address address) throws SQLException {
-        if(this.addressExists(address.getAddressRef())) {
+    public void updateAddress(int addressRef) throws SQLException {
+        if(this.addressExists(addressRef)) {
+            Address address = this.getAddress(addressRef);
             String updateSql = "update addresses set buildingNumber=?, buildingName=?, subStreetNumber=?, subStreet=?, "
                     + "streetNumber=?, street=?, area=?, town=?, country=?, postcode=? where addressRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -1121,13 +1146,14 @@ public class Database {
                 Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
                 
                 this.addresses.put(temp.getAddressRef(), temp);
-                this.createAddressMods(this.getAddress(temp.getAddressRef()), this.loadModMap("addressModifications", temp.getAddressRef()));
+                this.createAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
             }
         }
     }
     
-    private void createAddressMods(Address address, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (address != null && this.addressExists(address.getAddressRef()) && !loadedMods.isEmpty()) {
+    private void createAddressMods(int addressRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.addressExists(addressRef) && !loadedMods.isEmpty()) {
+            Address address = this.getAddress(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -1172,8 +1198,9 @@ public class Database {
         }
     }
     
-    public void updateProperty(Property property) throws SQLException {
-        if(this.propertyExists(property.getPropRef())) {
+    public void updateProperty(int propRef) throws SQLException {
+        if(this.propertyExists(propRef)) {
+            Property property = this.getProperty(propRef);
             String updateSql = "update properties set addressRef=?, acquiredDate=?, leaseEndDate=?, "
                     + "propTypeCode=?, propSubTypeCode=?, propStatus=? where propertyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -1230,15 +1257,16 @@ public class Database {
                 Property temp = new Property(propertyRef, address, acquiredDate, propType, propSubType, createdBy, createdDate);
                 this.loadPropertyElementValues(temp.getPropRef());
                 this.properties.put(temp.getPropRef(), temp);
-                this.createPropertyMods(this.getProperty(temp.getPropRef()), this.loadModMap("propertyModifications", temp.getPropRef()));
+                this.createPropertyMods(temp.getPropRef(), this.loadModMap("propertyModifications", temp.getPropRef()));
                 temp.setLeaseEndDate(leaseEndDate, null);
                 temp.setPropStatus(propStatus, null);
             }
         }
     }
     
-    private void createPropertyMods(Property property, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (property != null && this.propertyExists(property.getPropRef()) && !loadadMods.isEmpty()) {
+    private void createPropertyMods(int propRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.propertyExists(propRef) && !loadadMods.isEmpty()) {
+            Property property = this.getProperty(propRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -1266,8 +1294,9 @@ public class Database {
         }
     }
     
-    public void updatePropertyType(Element type) throws SQLException {
-        if(this.propTypeExists(type.getCode())) {
+    public void updatePropertyType(String typeCode) throws SQLException {
+        if(this.propTypeExists(typeCode)) {
+            Element type = this.getPropertyType(typeCode);
             this.updateElement("propertyTypes", type);
             this.createModifiedBy("propertyTypeModifications", type.getLastModification(), type.getCode());
         }
@@ -1301,7 +1330,8 @@ public class Database {
         }
     }
     
-    public void updatePropertySubType(Element type) throws SQLException {
+    public void updatePropertySubType(String typeCode) throws SQLException {
+        Element type = this.getPropertySubType(typeCode);
         if(this.propSubTypeExists(type.getCode())) {
             this.updateElement("propertySubTypes", type);
             this.createModifiedBy("propertySubTypeModifications", type.getLastModification(), type.getCode());
@@ -1428,7 +1458,7 @@ public class Database {
     }
     
     private void createPropElementMods(PropertyElement element, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (element != null && this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
+        if (this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -1449,7 +1479,8 @@ public class Database {
         }
     }
     
-    public void updatePropertyElement(Element element) throws SQLException {
+    public void updatePropertyElement(String elementCode) throws SQLException {
+        Element element = this.getPropElement(elementCode);
         if(this.propElementExists(element.getCode())) {
             this.updateElement("propertyElements", element);
             this.createModifiedBy("propertyElementModifications", element.getLastModification(), element.getCode());
@@ -1507,8 +1538,9 @@ public class Database {
         }
     }
     
-    public void updatePerson(Person person) throws SQLException {
-        if(this.personExists(person.getPersonRef())) {
+    public void updatePerson(int personRef) throws SQLException {
+        if(this.personExists(personRef)) {
+            Person person = this.getPerson(personRef);
             String updateSql = "update people set titleCode=?, forename=?, middleNames=?, surname=?, dateOfBirth=?, nationalInsurance=?, "
                     + "genderCode=?, maritalStatusCode=?, ethnicOriginCode=?, languageCode=?, nationalityCode=?, sexualityCode=?, "
                     + "religionCode=?, where personRef=?";
@@ -1614,15 +1646,16 @@ public class Database {
                 Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, createdBy, createdDate);
                 
                 this.people.put(temp.getPersonRef(), temp);
-                this.createPeopleMods(this.getPerson(temp.getPersonRef()), this.loadModMap("peopleModifications", temp.getPersonRef()));
+                this.createPeopleMods(temp.getPersonRef(), this.loadModMap("peopleModifications", temp.getPersonRef()));
                 this.loadPersonContacts(temp.getPersonRef());
                 this.loadPersonAddresses(temp.getPersonRef());
             }
         }
     }
     
-    private void createPeopleMods(Person person, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (person != null && this.personExists(person.getPersonRef()) && !loadedMods.isEmpty()) {
+    private void createPeopleMods(int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.personExists(personRef) && !loadedMods.isEmpty()) {
+            Person person = this.getPerson(personRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -1664,8 +1697,9 @@ public class Database {
         }
     }
 
-    public void updateInvolvedParty(InvolvedParty invParty) throws SQLException {
-        if (this.invPartyExists(invParty.getInvolvedPartyRef())) {
+    public void updateInvolvedParty(int invPartyRef) throws SQLException {
+        if (this.invPartyExists(invPartyRef)) {
+            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             String updateSql = "update involvedParties set jointApplicantInd=?, mainApplicantInd=?, startDate=?, "
                     + "endDate=?, endReasonCode=?, relationshipCode=?, where involvedPartyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -1731,22 +1765,23 @@ public class Database {
                         if (endDate != null && endReason != null) {
                             temp.endInvolvedParty(endDate, endReason, null);
                         }
-                        this.createInvolvedPartyMods(temp, this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
+                        this.createInvolvedPartyMods(temp.getInvolvedPartyRef(), this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
                     }
                 }
             }
         }
     }
     
-    private void createInvolvedPartyMods(InvolvedParty involvedParty, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (involvedParty != null && this.invPartyExists(involvedParty.getInvolvedPartyRef()) && !loadedMods.isEmpty()) {
+    private void createInvolvedPartyMods(int invPartyRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.invPartyExists(invPartyRef) && !loadedMods.isEmpty()) {
+            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(involvedParty.getApplicationRef() == (Integer) temp.getKey()) {
+                if(invParty.getApplicationRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
-                    InvolvedParty tempInvParty = involvedParty;
+                    InvolvedParty tempInvParty = invParty;
                     tempInvParty.modifiedBy(tempMod);
                 }
                 it.remove(); // avoids a ConcurrentModificationException
@@ -1769,8 +1804,9 @@ public class Database {
         }
     }
     
-    public void updateEndReason(Element endReason) throws SQLException {
-        if(this.endReasonExists(endReason.getCode())) {
+    public void updateEndReason(String endReasonCode) throws SQLException {
+        if(this.endReasonExists(endReasonCode)) {
+            Element endReason = this.getEndReason(endReasonCode);
             this.updateElement("endReasons", endReason);
             this.createModifiedBy("endReasonModifications", endReason.getLastModification(), endReason.getCode());
         }
@@ -1804,8 +1840,9 @@ public class Database {
         }
     }
     
-    public void updateRelationship(Element relationship) throws SQLException {
-        if(this.relationshipExists(relationship.getCode())) {
+    public void updateRelationship(String relationshipCode) throws SQLException {
+        if(this.relationshipExists(relationshipCode)) {
+            Element relationship = this.getRelationship(relationshipCode);
             this.updateElement("relationships", relationship);
             this.createModifiedBy("relationshipModifications", relationship.getLastModification(), relationship.getCode());
         }
@@ -1852,8 +1889,9 @@ public class Database {
         }
     }
     
-    public void updateApplication(Application application) throws SQLException {
-        if(this.applicationExists(application.getApplicationRef())) {
+    public void updateApplication(int appRef) throws SQLException {
+        if(this.applicationExists(appRef)) {
+            Application application = this.getApplication(appRef);
             String updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
                     + "appStatusCode=?, tenancyRef=? where appRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -1901,7 +1939,7 @@ public class Database {
                 
                 this.applications.put(temp.getApplicationRef(), temp);
                 
-                this.createApplicationMods(this.getApplication(temp.getApplicationRef()), this.loadModMap("applicationModifications", temp.getApplicationRef()));
+                this.createApplicationMods(temp.getApplicationRef(), this.loadModMap("applicationModifications", temp.getApplicationRef()));
                 this.loadApplicationAddresses(temp.getApplicationRef());
                 this.loadInvolvedParties(temp.getApplicationRef());
                 this.loadPropertiesInterestedIn(temp.getApplicationRef());
@@ -1909,8 +1947,9 @@ public class Database {
         }
     }
     
-    private void createApplicationMods(Application application, HashMap<Integer, ModifiedByInterface> loadedMods) {
-        if (application != null && this.applicationExists(application.getApplicationRef()) && !loadedMods.isEmpty()) {
+    private void createApplicationMods(int appRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+        if (this.applicationExists(appRef) && !loadedMods.isEmpty()) {
+            Application application = this.getApplication(appRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2064,14 +2103,15 @@ public class Database {
                     Date createdDate = results.getDate("createdDate");
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
                     landlords.put(temp.getLandlordRef(), temp);
-                    this.createLandlordMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getLandlordRef()));
+                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("PropertyElementValueModifications", temp.getLandlordRef()));
                 }
             }
         }
     }
     
-    private void createLandlordMods(Landlord landlord, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (landlord != null && this.landlordExists(landlord.getLandlordRef()) && !loadadMods.isEmpty()) {
+    private void createLandlordMods(int landlordRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.landlordExists(landlordRef) && !loadadMods.isEmpty()) {
+            Landlord landlord = this.getLandlord(landlordRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2109,8 +2149,9 @@ public class Database {
         }
     }
     
-    public void updateOffice(Office office) throws SQLException {
-        if(this.officeExists(office.getOfficeCode())) {
+    public void updateOffice(String officeCode) throws SQLException {
+        if(this.officeExists(officeCode)) {
+            Office office = this.getOffice(officeCode);
             String updateSql = "update Offices set addressRef=?, startDate=?, endDate=?, where officeCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -2150,14 +2191,15 @@ public class Database {
                 }
                 
                 this.offices.put(temp.getOfficeCode(), temp);
-                this.createOfficeMods(this.getOffice(temp.getOfficeCode()), this.loadModMap("addressModifications", temp.getOfficeCode()));
+                this.createOfficeMods(temp.getOfficeCode(), this.loadModMap("addressModifications", temp.getOfficeCode()));
                 this.loadOfficeContacts(temp.getOfficeCode());
             }
         }
     }
     
-    private void createOfficeMods(Office office, HashMap<String, ModifiedByInterface> loadedMods) {
-        if (office != null && this.officeExists(office.getOfficeCode()) && !loadedMods.isEmpty()) {
+    private void createOfficeMods(String officeCode, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
+            Office office = this.getOffice(officeCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2183,7 +2225,8 @@ public class Database {
         if(!this.jobRoleExists(jobRole.getJobRoleCode())) {
             jobRoles.put(jobRole.getJobRoleCode(), jobRole);
             String insertSql = "insert into jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
-                    + "current, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "current, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, "
+                    + "createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, jobRole.getJobRoleCode());
@@ -2202,13 +2245,22 @@ public class Database {
         }
     }
 
-    public void updateJobRole(JobRole jobRole) throws SQLException {
-        if (this.jobRoleExists(jobRole.getJobRoleCode())) {
-            String updateSql = "update jobRole set jobTitle=?, jobDescription=? salary=?, current=?, where jobRoleCode=?";
+    public void updateJobRole(String jobRoleCode) throws SQLException {
+        if (this.jobRoleExists(jobRoleCode)) {
+            JobRole jobRole = this.getJobRole(jobRoleCode);
+            String updateSql = "update jobRole set jobTitle=?, jobDescription=? salary=?, current=?, "
+                    + "read=?, write=?, update=?, employeeRead=?, employeeWrite=?, "
+                    + "employeeUpdate=?, where jobRoleCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, jobRole.getJobTitle());
                 updateStat.setString(col++, jobRole.getJobDescription());
+                updateStat.setBoolean(col++, jobRole.isRead());
+                updateStat.setBoolean(col++, jobRole.isWrite());
+                updateStat.setBoolean(col++, jobRole.isUpdate());
+                updateStat.setBoolean(col++, jobRole.isEmployeeRead());
+                updateStat.setBoolean(col++, jobRole.isEmployeeWrite());
+                updateStat.setBoolean(col++, jobRole.isEmployeeUpdate());
                 updateStat.setString(col++, jobRole.getJobRoleCode());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -2220,7 +2272,8 @@ public class Database {
     private void loadJobRoles() throws SQLException {
         this.jobRoles.clear();
         String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
-                    + "current, createdBy, createdDate from jobRoles order by createdDate";
+                    + "current, read, write, update, employeeRead, employeeWrite, employeeUpdate, "
+                    + "createdBy, createdDate from jobRoles order by createdDate";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -2229,24 +2282,31 @@ public class Database {
                 String jobTitle = results.getString("jobTitle");
                 String jobDescription = results.getString("jobDescription");
                 boolean fullTime = results.getBoolean("fullTime");
+                boolean read = results.getBoolean("read");
+                boolean write = results.getBoolean("write");
+                boolean update = results.getBoolean("update");
+                boolean employeeRead = results.getBoolean("employeeRead");
+                boolean employeeWrite = results.getBoolean("employeeWrite");
+                boolean employeeUpdate = results.getBoolean("employeeUpdate");
                 double salary = results.getDouble("salary");
                 boolean current = results.getBoolean("current");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
-                JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, createdBy, createdDate);
+                JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, createdDate);
                 temp.setCurrent(current);
                 
                 this.jobRoles.put(temp.getJobRoleCode(), temp);
-                this.createJobRoleMods(this.getJobRole(temp.getJobRoleCode()), this.loadModMap("jobRoleModifications", temp.getJobRoleCode()));
+                this.createJobRoleMods(temp.getJobRoleCode(), this.loadModMap("jobRoleModifications", temp.getJobRoleCode()));
                 this.loadJobRoleRequirements(temp.getJobRoleCode());
                 this.loadJobRoleBenefits(temp.getJobRoleCode());
             }
         }
     }
     
-    private void createJobRoleMods(JobRole jobRole, HashMap<String, ModifiedByInterface> loadedMods) {
-        if (jobRole != null && this.jobRoleExists(jobRole.getJobRoleCode()) && !loadedMods.isEmpty()) {
+    private void createJobRoleMods(String jobRoleCode, HashMap<String, ModifiedByInterface> loadedMods) {
+        if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
+            JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2320,6 +2380,7 @@ public class Database {
     
     public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException {
         if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
+            this.jobRoleBenefits.put(benefit.getBenefitRef(), benefit);
             String insertSql = "";
             if (benefit.isSalaryBenefit()) {
                 insertSql = "insert into jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -2346,8 +2407,9 @@ public class Database {
         }
     }
     
-    public void updateJobRoleBenefit(String code, JobRoleBenefit benefit) throws SQLException {
-        if(benefit != null && this.jobRoleExists(code) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
+    public void updateJobRoleBenefit(String code, int benefitRef) throws SQLException {
+        if(this.jobRoleExists(code) && this.jobRoleBenefitExists(benefitRef)) {
+            JobRoleBenefit benefit = this.getJobRoleBenefit(benefitRef);
             String updateSql = "";
             if (benefit.isSalaryBenefit()) {
                 updateSql = "update jobRoleBenefits set doubleValue=?, startDate=?, endDate=? where jobBenefitRef=? and jobRoleCode=? and benefitCode=?";
@@ -2396,8 +2458,9 @@ public class Database {
                             if(endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
+                            this.jobRoleBenefits.put(temp.getBenefitRef(), temp);
                             this.createBenefitMods(temp, this.loadModMap("jobRoleBenefitModifications", temp.getBenefitRef()));
-                            jobRole.createBenefit(temp, null);
+                            jobRole.createJobBenefit(temp, null);
                         }
                     }
                 }
@@ -2427,8 +2490,9 @@ public class Database {
         }
     }
     
-    public void updateJobRequirement(Element requirement) throws SQLException {
-        if(this.jobRequirementExists(requirement.getCode())) {
+    public void updateJobRequirement(String requirementCode) throws SQLException {
+        if(this.jobRequirementExists(requirementCode)) {
+            Element requirement = this.getJobRequirement(requirementCode);
             this.updateElement("jobRequirements", requirement);
             this.createModifiedBy("jobRequirementModifications", requirement.getLastModification(), requirement.getCode());
         }
@@ -2462,8 +2526,9 @@ public class Database {
         }
     }
     
-    public void updateJobBenefit(Element benefit) throws SQLException {
-        if(this.jobBenefitExists(benefit.getCode())) {
+    public void updateJobBenefit(String benefitCode) throws SQLException {
+        if(this.jobBenefitExists(benefitCode)) {
+            Element benefit = this.getJobBenefit(benefitCode);
             this.updateElement("jobBenefits", benefit);
             this.createModifiedBy("jobBenefitModifications", benefit.getLastModification(), benefit.getCode());
         }
@@ -2482,16 +2547,16 @@ public class Database {
             }
         }
     }
-    
+
     public Element getJobBenefit(String code) {
-        if(this.jobBenefitExists(code)) {
+        if (this.jobBenefitExists(code)) {
             return this.jobBenefits.get(code);
         }
         return null;
     }
-    
+
     public void createEmployee(Employee employee) throws SQLException {
-        if(!this.employeeExists(employee.getEmployeeRef())) {
+        if (!this.employeeExists(employee.getEmployeeRef())) {
             employees.put(employee.getEmployeeRef(), employee);
             String insertSql = "insert into employees (employeeRef, personRef, officeCode, createdBy, createdDate) values (?, ?, ?, ?,)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -2506,9 +2571,10 @@ public class Database {
             }
         }
     }
-    
-    public void updateEmployee(Employee employee) throws SQLException {
-        if(this.employeeExists(employee.getEmployeeRef())) {
+
+    public void updateEmployee(int employeeRef) throws SQLException {
+        if (this.employeeExists(employeeRef)) {
+            Employee employee = this.getEmployee(employeeRef);
             String updateSql = "update employees set officeCode=? where employeeRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -2520,33 +2586,51 @@ public class Database {
             this.createModifiedBy("employeeModifications", employee.getLastModification(), employee.getEmployeeRef());
         }
     }
-    
+
     private void loadEmployees() throws SQLException {
         this.employees.clear();
         String sql = "select employeeRef, personRef, officeCode, createdBy, createdDate from employees order by employeeRef";
+        String sql1 = "select count(employeeRef) as count from users where employeeRef=?";
+        String sql2 = "select username, password from users where employeeRef=?";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-
+            
             while (results.next()) {
                 int employeeRef = results.getInt("employeeRef");
                 int personRef = results.getInt("personRef");
                 if (this.personExists(personRef)) {
                     Person person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
-                    if(this.officeExists(officeCode)) {
+                    if (this.officeExists(officeCode)) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-                        Employee temp = new Employee(employeeRef, person, createdBy, createdDate);
-                        employees.put(temp.getEmployeeRef(), temp);
-                        this.createEmployeeMods(temp, this.loadModMap("employeeModifications", temp.getEmployeeRef()));
+                        try (PreparedStatement selectStat1 = con.prepareStatement(sql1)) {
+                            selectStat1.setInt(1, employeeRef);
+                            ResultSet results1 = selectStat1.executeQuery();
+                            results1.next();
+                            int count = results1.getInt("count");
+                            if(count == 1) {
+                                try (PreparedStatement selectStat2 = con.prepareStatement(sql2)) {
+                                selectStat2.setInt(1, employeeRef);
+                                ResultSet results2 = selectStat2.executeQuery();
+                                String username = results2.getString("username");
+                                String password =  results2.getString("password");
+                                Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
+                                employees.put(temp.getEmployeeRef(), temp);
+                                users.put(temp.getUser().getUsername(), temp.getUser());
+                                this.createEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
     
-    private void createEmployeeMods(Employee employee, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (employee != null && this.employeeExists(employee.getEmployeeRef()) && !loadadMods.isEmpty()) {
+    private void createEmployeeMods(int employeeRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.employeeExists(employeeRef) && !loadadMods.isEmpty()) {
+            Employee employee = this.getEmployee(employeeRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2594,8 +2678,9 @@ public class Database {
         }
     }
     
-    public void updateTenancy(Tenancy tenancy) throws SQLException {
-        if(this.tenancyExists(tenancy.getAgreementRef())) {
+    public void updateTenancy(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef)) {
+            Tenancy tenancy = this.getTenancy(tenancyRef);
             String updateSql = "update tenancies set name=?, startDate=?, expectedEndDate=?, actualEndDate=?, "
                     + "length=?, tenTypeCode=?, rent=?, charges=? where tenancyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -2647,7 +2732,7 @@ public class Database {
                                 if (actualEndDate != null) {
                                     temp.setActualEndDate(actualEndDate, null);
                                 }
-                                this.createTenancyMods(temp, this.loadModMap("tenancyModifications", temp.getAgreementRef()));
+                                this.createTenancyMods(temp.getAgreementRef(), this.loadModMap("tenancyModifications", temp.getAgreementRef()));
                             }
                         }
                     }
@@ -2656,8 +2741,9 @@ public class Database {
         }
     }
     
-    private void createTenancyMods(Tenancy tenancy, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (tenancy != null && this.tenancyExists(tenancy.getAgreementRef()) && !loadadMods.isEmpty()) {
+    private void createTenancyMods(int tenancyRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.tenancyExists(tenancyRef) && !loadadMods.isEmpty()) {
+            Tenancy tenancy = this.getTenancy(tenancyRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2685,8 +2771,9 @@ public class Database {
         }
     }
     
-    public void updateTenancyType(Element tenType) throws SQLException {
-        if(this.tenancyTypeExists(tenType.getCode())) {
+    public void updateTenancyType(String tenTypeCode) throws SQLException {
+        if(this.tenancyTypeExists(tenTypeCode)) {
+            Element tenType = this.getTenancyType(tenTypeCode);
             this.updateElement("tenancyTypes", tenType);
             this.createModifiedBy("tenancyTypeModifications", tenType.getLastModification(), tenType.getCode());
         }
@@ -2738,8 +2825,9 @@ public class Database {
         }
     }
     
-    public void updateLease(Lease lease) throws SQLException {
-        if(this.leaseExists(lease.getAgreementRef())) {
+    public void updateLease(int leaseRef) throws SQLException {
+        if(this.leaseExists(leaseRef)) {
+            Lease lease = this.getLease(leaseRef);
             String updateSql = "update leases set name=?, startDate=?, expectedEndDate=?, "
                     + "actualEndDate=?, length=? where leaseRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -2787,15 +2875,16 @@ public class Database {
                         }
                         this.loadLeaseLandlords(temp.getAccountRef());
                         property.setLandlords(temp.getLandlords(), null);
-                        this.createLeaseMods(temp, this.loadModMap("leaseModifications", temp.getAgreementRef()));
+                        this.createLeaseMods(temp.getAgreementRef(), this.loadModMap("leaseModifications", temp.getAgreementRef()));
                     }
                 }
             }
         }
     }
     
-    private void createLeaseMods(Lease lease, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (lease != null && this.leaseExists(lease.getAgreementRef()) && !loadadMods.isEmpty()) {
+    private void createLeaseMods(int leaseRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.leaseExists(leaseRef) && !loadadMods.isEmpty()) {
+            Lease lease = this.getLease(leaseRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2937,8 +3026,9 @@ public class Database {
         }
     }
     
-    public void updateContract(Contract contract) throws SQLException {
-        if(this.contractExists(contract.getAgreementRef())) {
+    public void updateContract(int contractRef) throws SQLException {
+        if(this.contractExists(contractRef)) {
+            Contract contract = this.getContract(contractRef);
             String updateSql = "update contracts set name=?, startDate=?, expectedEndDate=?, "
                     + "actualEndDate=?, length=?, where contractRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -2984,7 +3074,7 @@ public class Database {
                                 temp.setActualEndDate(actualEndDate, null);
                             }
                             this.contracts.put(temp.getAgreementRef(), temp);
-                            this.createContractMods(temp, this.loadModMap("contractModifications", temp.getAgreementRef()));
+                            this.createContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
                         }
                     }
                 }
@@ -2992,8 +3082,9 @@ public class Database {
         }
     }
     
-    private void createContractMods(Contract contract, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (contract != null && this.contractExists(contract.getAgreementRef()) && !loadadMods.isEmpty()) {
+    private void createContractMods(int contractRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.contractExists(contractRef) && !loadadMods.isEmpty()) {
+            Contract contract = this.getContract(contractRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -3036,8 +3127,9 @@ public class Database {
         }
     }
     
-    public void updateRentAccount(RentAccount rentAcc) throws SQLException {
-        if(this.rentAccountExists(rentAcc.getAccRef())) {
+    public void updateRentAccount(int rentAccRef) throws SQLException {
+        if(this.rentAccountExists(rentAccRef)) {
+            RentAccount rentAcc = this.getRentAccount(rentAccRef);
             String updateSql = "update rentAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, rent=? where rentAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -3080,22 +3172,23 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.rentAccounts.put(temp.getAccRef(), temp);
-                        this.createRentAccMods(temp, this.loadModMap("rentAccountModifications", temp.getAccRef()));
+                        this.createRentAccMods(temp.getAccRef(), this.loadModMap("rentAccountModifications", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createRentAccMods(RentAccount account, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (account != null && this.rentAccountExists(account.getAccRef()) && !loadadMods.isEmpty()) {
+    private void createRentAccMods(int rentAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.rentAccountExists(rentAccRef) && !loadadMods.isEmpty()) {
+            RentAccount rentAcc = this.getRentAccount(rentAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(account.getAccRef() == (Integer) temp.getKey()) {
+                if(rentAcc.getAccRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
-                    account.modifiedBy(tempMod);
+                    rentAcc.modifiedBy(tempMod);
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
@@ -3131,8 +3224,9 @@ public class Database {
         }
     }
 
-    public void updateLeaseAccount(LeaseAccount leaseAcc) throws SQLException {
-        if (this.leaseAccountExists(leaseAcc.getAccRef())) {
+    public void updateLeaseAccount(int leaseAccRef) throws SQLException {
+        if (this.leaseAccountExists(leaseAccRef)) {
+            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
             String updateSql = "update leaseAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, expenditure=? where leaseAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -3175,22 +3269,23 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.leaseAccounts.put(temp.getAccRef(), temp);
-                        this.createLeaseAccMods(temp, this.loadModMap("leaseAccountModifications", temp.getAccRef()));
+                        this.createLeaseAccMods(temp.getAccRef(), this.loadModMap("leaseAccountModifications", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createLeaseAccMods(LeaseAccount account, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (account != null && this.leaseAccountExists(account.getAccRef()) && !loadadMods.isEmpty()) {
+    private void createLeaseAccMods(int leaseAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.leaseAccountExists(leaseAccRef) && !loadadMods.isEmpty()) {
+            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(account.getAccRef() == (Integer) temp.getKey()) {
+                if(leaseAcc.getAccRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
-                    account.modifiedBy(tempMod);
+                    leaseAcc.modifiedBy(tempMod);
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
@@ -3225,8 +3320,9 @@ public class Database {
         }
     }
     
-    public void updateEmployeeAccount(EmployeeAccount employeeAcc) throws SQLException {
-        if(this.employeeAccountExists(employeeAcc.getAccRef())) {
+    public void updateEmployeeAccount(int employeeAccRef) throws SQLException {
+        if(this.employeeAccountExists(employeeAccRef)) {
+            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             String updateSql = "update employeeAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, salary=?, where employeeAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -3269,31 +3365,32 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.employeeAccounts.put(temp.getAccRef(), temp);
-                        this.createEmployeeAccMods(temp, this.loadModMap("employeeAccountModifications", temp.getAccRef()));
+                        this.createEmployeeAccMods(temp.getAccRef(), this.loadModMap("employeeAccountModifications", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createEmployeeAccMods(EmployeeAccount account, HashMap<Integer, ModifiedByInterface> loadadMods) {
-        if (account != null && this.contractExists(account.getAccRef()) && !loadadMods.isEmpty()) {
+    private void createEmployeeAccMods(int employeeAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+        if (this.contractExists(employeeAccRef) && !loadadMods.isEmpty()) {
+            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(account.getAccRef() == (Integer) temp.getKey()) {
+                if(employeeAcc.getAccRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
-                    account.modifiedBy(tempMod);
+                    employeeAcc.modifiedBy(tempMod);
                 }
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
-    public Tenancy getEmployeeAccount(int tenancyRef) {
-        if (tenancies.containsKey(tenancyRef)) {
-            return tenancies.get(tenancyRef);
+    public EmployeeAccount getEmployeeAccount(int employeeAccRef) {
+        if (employeeAccounts.containsKey(employeeAccRef)) {
+            return employeeAccounts.get(employeeAccRef);
         }
         return null;
     }
@@ -3349,6 +3446,13 @@ public class Database {
         }
     }
     
+    public JobRoleBenefit getJobRoleBenefit(int benRef) {
+        if(this.jobRoleBenefitExists(benRef)) {
+            return jobRoleBenefits.get(benRef);
+        }
+        return null;
+    }
+    
     public Contact getContact(int contactRef) {
         if(this.contactExists(contactRef)) {
             return contacts.get(contactRef);
@@ -3356,9 +3460,60 @@ public class Database {
         return null;
     }
     
-    public AddressUsage getAddressUSage(int addressUsageRef) {
+    public AddressUsage getAddressUsage(int addressUsageRef) {
         if(this.addressUsageExists(addressUsageRef)) {
             return this.addressUsages.get(addressUsageRef);
+        }
+        return null;
+    }
+    
+    public void createUser(UserImpl user) throws SQLException {
+        if(!this.userExists(user.getUsername())) {
+            users.put(user.getUsername(), user);
+            String insertSql = "insert into users (employeeRef, username, password, read, write, update, "
+                    + "employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, user.getEmployeeRef());
+                insertStat.setString(col++, user.getUsername());
+                insertStat.setString(col++, user.getPassword());
+                insertStat.setBoolean(col++, user.getRead());
+                insertStat.setBoolean(col++, user.getWrite());
+                insertStat.setBoolean(col++, user.getUpdate());
+                insertStat.setBoolean(col++, user.getEmployeeRead());
+                insertStat.setBoolean(col++, user.getEmployeeWrite());
+                insertStat.setBoolean(col++, user.getEmployeeUpdate());
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+        }
+    }
+    
+    public void updateUser(String username) throws SQLException {
+        if(this.userExists(username)) {
+            UserImpl user = this.getUser(username);
+            String updateSql = "update users set password=?, read=?, write=?, update=?, "
+                    + "employeeRead=?, employeeWrite=?, employeeUpdate=? where username=? and employeeRef=?";
+            try(PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, user.getPassword());
+                updateStat.setBoolean(col++, user.getRead());
+                updateStat.setBoolean(col++, user.getWrite());
+                updateStat.setBoolean(col++, user.getUpdate());
+                updateStat.setBoolean(col++, user.getEmployeeRead());
+                updateStat.setBoolean(col++, user.getEmployeeWrite());
+                updateStat.setBoolean(col++, user.getEmployeeUpdate());
+                updateStat.setString(col++, user.getUsername());
+                updateStat.setInt(col++, user.getEmployeeRef());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+        }
+    }
+    
+    public UserImpl getUser(String username) {
+        if(this.userExists(username)) {
+            return this.users.get(username);
         }
         return null;
     }
@@ -3451,6 +3606,10 @@ public class Database {
         return jobRoles.containsKey(code);
     }
     
+    public boolean jobRoleBenefitExists(int benRef) {
+        return jobRoleBenefits.containsKey(benRef);
+    }
+    
     public boolean jobBenefitExists(String code) {
         return this.jobBenefits.containsKey(code);
     }
@@ -3503,6 +3662,10 @@ public class Database {
         return this.addressUsages.containsKey(addressUsageRef);
     }
     
+    public boolean userExists(String username) {
+        return this.users.containsKey(username);
+    }
+    
     public int countPeople() {
         return this.people.size();
     }
@@ -3551,10 +3714,6 @@ public class Database {
         return this.employeeAccounts.size();
     }
     
-    public int countJobBenefits() {
-        return this.jobBenefits.size();
-    }
-    
     public int countAddresses() {
         return this.addresses.size();
     }
@@ -3569,6 +3728,24 @@ public class Database {
     
     public int countContacts() {
         return this.contacts.size();
+    }
+    
+    public int getPropElementCount() throws SQLException {
+        String selectSql = "select count(propertyElementRef) as count from propertyElementValues";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            int checkSum = results.getInt("count");
+            return checkSum;
+        }
+    }
+    
+    public int getJobBenefitCount() throws SQLException {
+        String selectSql = "select count(jobBenefitRef) as count from jobRoleBenefits";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            int checkSum = results.getInt("count");
+            return checkSum;
+        }
     }
     
     ///////    FOR ADVANCED SEARCH, USE METHODS LIKE GET APPLICATIONS(person details), GET APPLICATIONS (property details), GET APPLICATIONS(application details)
