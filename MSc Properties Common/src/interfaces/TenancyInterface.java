@@ -12,7 +12,7 @@ package interfaces;
 public interface TenancyInterface extends AgreementInterface {
     void setRent(double rent);
     void setCharges(double charges);
-    void setTenType(Element tenType);
+    void setTenType(Element tenType, ModifiedByInterface modifiedBy);
     PropertyInterface getProperty();
     ApplicationInterface getApplication();
     Element getTenType();

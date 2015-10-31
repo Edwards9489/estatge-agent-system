@@ -11,6 +11,7 @@ import interfaces.RegistryLoader;
 import interfaces.Client;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import interfaces.PropertyInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -331,6 +332,32 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
+            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
+        Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, new Date());
+        this.database.createAddress(address);
+        return address.getAddressRef();
+    }
+    
+    public int updateAddress(int addressRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
+            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
+        if(database.addressExists(addressRef)) {
+            Address address = database.getAddress(addressRef);
+            address.updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, new ModifiedBy("Updated Address", new Date(), createdBy));
+            this.database.updateAddress(address.getAddressRef());
+            return 1;
+        }
+        return 0;
+    }
+    
+    private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if(database.addressExists(addrRef)) {
+            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, createdBy, new Date());
+            return addressUsage;
+        }
+        return null;
+    }
+    
     public int createPerson(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException, SQLException {
         if (this.database.titleExists(titleCode) && this.database.genderExists(genderCode) && this.database.maritalStatusExists(maritalStatusCode) && this.database.ethnicOriginExists(ethnicOriginCode) && this.database.languageExists(languageCode) && this.database.nationalityExists(nationalityCode) && this.database.sexualityExists(sexualityCode) && this.database.religionExists(religionCode)) {
@@ -385,6 +412,45 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updatePersonContact(contact.getContactRef(), person.getPersonRef());
                 return 1;
             }
+        }
+        return 0;
+    }
+    
+    public int createPersonAddressUsage(int personRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if(database.personExists(personRef)) {
+            AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
+            database.getPerson(personRef).createAddress(addressUsage, new ModifiedBy("Created Address", new Date(), createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updatePersonAddressUsage(int personRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.personExists(personRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
+            AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
+            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
+            this.database.updatePersonAddressUsage(addrUsageRef, personRef);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createOffice(String officeCode, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if (!this.database.officeExists(officeCode) && this.database.addressExists(addrRef)) {
+            Office office = new Office(officeCode, this.database.getAddress(addrRef), startDate, createdBy, new Date());
+            this.database.createOffice(office);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateOffice(String officeCode, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.officeExists(officeCode)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Office", new Date(), modifiedBy);
+            Office office = this.database.getOffice(officeCode);
+            office.setStartDate(startDate, modified);
+            this.database.updateOffice(office.getOfficeCode());
+            return 1;
         }
         return 0;
     }
@@ -508,7 +574,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int setApplicationTenancy (int appRef, int tenancyRef, String createdBy) throws RemoteException, SQLException {
         if(database.applicationExists(appRef) && database.tenancyExists(tenancyRef)) {
             Application application = database.getApplication(appRef);
-            application.setTenancy(tenancyRef, new ModifiedBy("Assigned Application Tenancy", new Date(), createdBy));
+            List<PropertyInterface> properties = application.setTenancy(tenancyRef, new ModifiedBy("Assigned Application Tenancy", new Date(), createdBy));
+            for(PropertyInterface property : properties) {
+                this.database.endPropertyInterest(appRef, property.getPropRef());
+            }
+            application.setAppStatusCode("HSED");
             this.database.updateApplication(application.getApplicationRef());
             return 1;
         }
@@ -535,32 +605,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
-        Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, new Date());
-        this.database.createAddress(address);
-        return address.getAddressRef();
-    }
-    
-    public int updateAddress(int addressRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
-        if(database.addressExists(addressRef)) {
-            Address address = database.getAddress(addressRef);
-            address.updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, new ModifiedBy("Updated Address", new Date(), createdBy));
-            this.database.updateAddress(address.getAddressRef());
-            return 1;
-        }
-        return 0;
-    }
-    
-    private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
-        if(database.addressExists(addrRef)) {
-            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, createdBy, new Date());
-            return addressUsage;
-        }
-        return null;
-    }
-    
     public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(this.database.applicationExists(applicationRef) && this.database.addressExists(addressRef)) {
             AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
@@ -580,25 +624,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createPersonAddressUsage(int personRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
-        if(database.personExists(personRef)) {
-            AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
-            database.getPerson(personRef).createAddress(addressUsage, new ModifiedBy("Created Address", new Date(), createdBy));
-            return 1;
-        }
-        return 0;
-    }
-    
-    public int updatePersonAddressUsage(int personRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
-        if(this.database.personExists(personRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
-            AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
-            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
-            this.database.updatePersonAddressUsage(addrUsageRef, personRef);
-            return 1;
-        }
-        return 0;
-    }
-    
     public int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException, SQLException {
         if(this.database.personExists(pRef) && !this.database.userExists(username)) {
             Employee employee = new Employee(employeeRef++, this.database.getPerson(pRef), username, password, createdBy, new Date());
@@ -608,6 +633,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    
     
     
     public int createLandlord(int pRef, String createdBy) throws RemoteException, SQLException {
@@ -664,6 +691,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(this.database.jobRoleExists(code)) {
             JobRole jobRole = this.database.getJobRole(code);
             jobRole.updateJobRole(jobTitle, jobDescription, salary, read, read, write, update, employeeRead, employeeWrite, employeeUpdate, new ModifiedBy("Updated Job Role", new Date(), modifiedBy));
+            List<Contract> contracts = this.database.getContracts(null, jobRoleCode, null, etc);
+            for(Contract contract : contracts) {
+                EmployeeAccount account = this.database.getEmployeeAccount(contract.getAccountRef());
+                account.setSalary(salary);
+                this.database.updateEmployeeAccount(account.getAccRef());
+            }
             this.database.updateJobRole(code);
             return 1;
         }
@@ -738,6 +771,162 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Element benefit = this.database.getJobBenefit(code);
             benefit.updateElement(description, current, new ModifiedBy("Updated Benefit", new Date(), modifiedBy));
             this.database.updateJobBenefit(benefit.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode, String createdBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef) && this.database.applicationExists(aRef) && this.database.tenancyTypeExists(tenTypeCode) && this.database.officeExists(officeCode)) {
+            Tenancy tenancy = new Tenancy(tenRef++, startDate, length, rentAccRef, this.database.getProperty(pRef), this.database.getApplication(aRef), this.database.getTenancyType(tenTypeCode), officeCode, createdBy, new Date());
+            RentAccount rentAcc = new RentAccount(rentAccRef++, tenancy, createdBy, new Date());
+            this.database.createTenancy(tenancy);
+            this.database.createRentAccount(rentAcc);
+            return tenancy.getAgreementRef();
+        }
+        return 0;
+    }
+    
+    public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.tenancyExists(tRef) && this.database.tenancyTypeExists(tenTypeCode)) {
+            Tenancy tenancy = this.database.getTenancy(tRef);
+            tenancy.updateAgreement(name, startDate, length, null);
+            tenancy.setTenType(this.database.getTenancyType(tenTypeCode), new ModifiedBy("Updated Tenancy", new Date(), modifiedBy));
+            this.updateRentAccount(tenancy.getAccountRef(), name, startDate, (tenancy.getRent() + tenancy.getCharges()), modifiedBy);
+            this.database.updateTenancy(tenancy.getAgreementRef());
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode, String createdBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef) && this.database.officeExists(officeCode)) {
+            Lease lease = new Lease(leaseRef++, startDate, length, leaseAccRef, this.database.getProperty(pRef), management, expenditure, officeCode, createdBy, new Date());
+            LeaseAccount leaseAcc = new LeaseAccount(leaseAccRef++, lease, createdBy, new Date());
+            this.database.createLease(lease);
+            this.database.createLeaseAccount(leaseAcc);
+            return lease.getAgreementRef();
+        }
+        return 0;
+    }
+    
+    public int updateLease(int lRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.leaseExists(lRef)) {
+            Lease lease = this.database.getLease(lRef);
+            lease.updateAgreement(name, startDate, length, new ModifiedBy("Updated Lease", new Date(), modifiedBy));
+            this.database.updateLease(lease.getAgreementRef());
+            this.updateLeaseAccount(lease.getAccountRef(), name, startDate, lease.getExpenditure(), modifiedBy);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createLeaseLandlord(int lRef, int landRef, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.leaseExists(lRef) && this.database.landlordExists(landRef)) {
+            Lease lease = this.database.getLease(lRef);
+            if(!lease.isAlreadyLandlord(lRef)) {
+                Landlord landlord = this.database.getLandlord(landRef);
+                lease.addLandlord(landlord, new ModifiedBy("Assigned Landlord to Lease", new Date(), modifiedBy));
+                this.database.createLeaseLandlord(landRef, lRef);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    
+    
+    public int endLeaseLandlord(int lRef, int landRef, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.leaseExists(lRef) && this.database.landlordExists(landRef)) {
+            Lease lease = this.database.getLease(lRef);
+            if(lease.isAlreadyLandlord(lRef)) {
+                lease.endLandlord(lRef, new ModifiedBy("Ended Landlord for Lease", new Date(), modifiedBy));
+                this.database.endLeaseLandlord(landRef, lRef);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode, String createdBy) throws RemoteException, SQLException {
+        if(this.database.employeeExists(eRef) && this.database.jobRoleExists(jobRoleCode) && this.database.officeExists(officeCode)) {
+            Contract contract = new Contract(contractRef++, employeeAccRef, startDate, length, this.database.getEmployee(eRef), this.database.getJobRole(jobRoleCode), officeCode, createdBy, new Date());
+            EmployeeAccount employeeAcc = new EmployeeAccount(employeeAccRef++, contract, createdBy, new Date());
+            this.database.createContract(contract);
+            this.database.createEmployeeAccount(employeeAcc);
+            return contract.getAgreementRef();
+        }
+        return 0;
+    }
+    
+    public int updateContract(int cRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.contractExists(cRef)) {
+            Contract contract = this.database.getContract(cRef);
+            contract.updateAgreement(name, startDate, length, new ModifiedBy("Updated Contract", new Date(), modifiedBy));
+            this.database.updateLease(contract.getAgreementRef());
+            this.updateEmployeeAccount(contract.getAccountRef(), name, startDate, modifiedBy);
+            return 1;
+        }
+        return 0;
+    }
+    
+    private int updateRentAccount(int rRef, String name, Date startDate, double rent, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.rentAccountExists(rRef)) {
+            RentAccount account = this.database.getRentAccount(rRef);
+            account.updateAccount(startDate, name, new ModifiedBy("Updated Rent Account", new Date(), modifiedBy));
+            account.setRent(rent);
+            this.database.updateRentAccount(account.getAccRef());
+            return 1;
+        }
+        return 0;
+    }
+    
+    private int updateLeaseAccount(int lRef, String name, Date startDate, double expenditure, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.leaseAccountExists(lRef)) {
+            LeaseAccount account = this.database.getLeaseAccount(lRef);
+            account.updateAccount(startDate, name, new ModifiedBy("Updated Lease Account", new Date(), modifiedBy));
+            account.setExpenditure(expenditure);
+            this.database.updateLeaseAccount(account.getAccRef());
+            return 1;
+        }
+        return 0;
+    }
+    
+    private int updateEmployeeAccount(int eRef, String name, Date startDate, String modifiedBy) throws SQLException, RemoteException {
+        if(this.database.employeeAccountExists(eRef)) {
+            EmployeeAccount account = this.database.getEmployeeAccount(eRef);
+            account.updateAccount(startDate, name, new ModifiedBy("Updated Employee Account", new Date(), modifiedBy));
+            this.database.updateEmployeeAccount(account.getAccRef());
+            return 1;
+        }
+        return 0;
+    }
+
+    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+        if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
+            Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            RentAccount account = this.database.getRentAccount(rAccRef);
+            account.createTransaction(transaction, new ModifiedBy("Created Rent Transaction", new Date(), createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+        if (this.database.leaseAccountExists(lAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
+            Transaction transaction = new Transaction(transactionRef++, lAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            LeaseAccount account = this.database.getLeaseAccount(lAccRef);
+            account.createTransaction(transaction, new ModifiedBy("Created Lease Transaction", new Date(), createdBy));
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+        if (this.database.employeeAccountExists(eAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
+            Transaction transaction = new Transaction(transactionRef++, eAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            EmployeeAccount account = this.database.getEmployeeAccount(eAccRef);
+            account.createTransaction(transaction, new ModifiedBy("Created Employee Transaction", new Date(), createdBy));
             return 1;
         }
         return 0;

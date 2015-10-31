@@ -2727,7 +2727,7 @@ public class Database {
                                 Element tenType = this.getTenancyType(tenTypeCode);
                                 String createdBy = results.getString("createdBy");
                                 Date createdDate = results.getDate("createdDate");
-                                Tenancy temp = new Tenancy(tenancyRef, startDate, length, accountRef, createdBy, createdDate, property, application, tenType, officeCode);
+                                Tenancy temp = new Tenancy(tenancyRef, startDate, length, accountRef, property, application, tenType, officeCode, createdBy, createdDate);
                                 this.tenancies.put(temp.getAgreementRef(), temp);
                                 if (actualEndDate != null) {
                                     temp.setActualEndDate(actualEndDate, null);
@@ -2865,10 +2865,10 @@ public class Database {
                     if (this.propertyExists(propRef)) {
                         Property property = this.getProperty(propRef);
                         boolean fullManagement = results.getBoolean("fullManagement");
-                        int expenditure = results.getInt("expenditure");
+                        double expenditure = results.getDouble("expenditure");
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-                        Lease temp = new Lease(leaseRef, startDate, length, accountRef, name, property, fullManagement, expenditure, createdBy, createdDate);
+                        Lease temp = new Lease(leaseRef, startDate, length, accountRef, property, fullManagement, expenditure, officeCode, createdBy, createdDate);
                         this.leases.put(temp.getAgreementRef(), temp);
                         if (actualEndDate != null) {
                             temp.setActualEndDate(actualEndDate, null);
@@ -3069,7 +3069,7 @@ public class Database {
                             JobRole jobRole = this.getJobRole(jobRoleCode);
                             String createdBy = results.getString("createdBy");
                             Date createdDate = results.getDate("createdDate");
-                            Contract temp = new Contract(contractRef, accountRef, startDate, length, createdBy, createdDate, employee, jobRole, officeCode);
+                            Contract temp = new Contract(contractRef, accountRef, startDate, length, employee, jobRole, officeCode, createdBy, createdDate);
                             if (actualEndDate != null) {
                                 temp.setActualEndDate(actualEndDate, null);
                             }

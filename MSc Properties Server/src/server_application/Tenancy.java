@@ -6,6 +6,7 @@
 package server_application;
 import interfaces.ApplicationInterface;
 import interfaces.Element;
+import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
 import interfaces.TenancyInterface;
 import java.util.Date;
@@ -26,7 +27,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Tenancy(int tenRef, Date startDate, int length, int accountRef, String createdBy, Date createdDate, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode) {
+    public Tenancy(int tenRef, Date startDate, int length, int accountRef, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode, String createdBy, Date createdDate) {
         super(tenRef, application.getAppCorrName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.property = property;
         this.application = application;
@@ -41,10 +42,12 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     /**
      * @param tenType the tenType to set
+     * @param modifiedBy
      */
     @Override
-    public void setTenType(Element tenType) {
+    public void setTenType(Element tenType, ModifiedByInterface modifiedBy) {
         this.tenType = tenType;
+        this.modifiedBy(modifiedBy);
     }
 
     /**

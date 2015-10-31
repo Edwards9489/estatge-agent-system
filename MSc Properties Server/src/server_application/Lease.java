@@ -29,7 +29,7 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Lease(int leaseRef, Date startDate, int length, int accountRef, String createdBy, Property property, boolean management, double expenditure, String officeCode, Date createdDate) {
+    public Lease(int leaseRef, Date startDate, int length, int accountRef, Property property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) {
         super(leaseRef, property.getAddress().toString(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.landlords = new ArrayList();
         this.property = property;
@@ -43,9 +43,18 @@ public class Lease extends Agreement implements LeaseInterface {
 
     @Override
     public void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy) {
-        if(!isAlreadyLandlord(landlord)) {
+        if(!isAlreadyLandlord(landlord.getLandlordRef())) {
             landlords.add(landlord);
             property.setLandlords(landlords, modifiedBy);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void endLandlord(int landlordRef, ModifiedByInterface modifiedBy) {
+        if(isAlreadyLandlord(landlordRef)) {
+            landlords.remove(landlordRef);
+            property.setLandlords(landlords, modifiedBy);
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -86,11 +95,11 @@ public class Lease extends Agreement implements LeaseInterface {
     }
     
     @Override
-    public boolean isAlreadyLandlord(LandlordInterface landlord) {
+    public boolean isAlreadyLandlord(int landlordRef) {
         boolean answer = false;
         if (!landlords.isEmpty()) {
             for (LandlordInterface temp : landlords) {
-                if (temp.getLandlordRef() == landlord.getLandlordRef()) {
+                if (temp.getLandlordRef() == landlordRef) {
                     answer = true;
                 }
             }

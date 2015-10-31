@@ -167,10 +167,12 @@ public class Application implements ApplicationInterface {
         }
     }
     
-    public void setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) {
+    public List<PropertyInterface> setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) {
         this.tenancyRef = tenancyRef;
+        List<PropertyInterface> properties = this.getPropertiesInterestedIn();
         this.clearInterestedProperties(modifiedBy);
         this.modifiedBy(modifiedBy);
+        return properties;
     }
     
     public void addInterestedProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {

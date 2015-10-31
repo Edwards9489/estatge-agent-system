@@ -18,6 +18,6 @@ public interface LeaseInterface extends AgreementInterface {
     PropertyInterface getProperty();
     int getPropertyRef();
     boolean isFullManagement();
-    boolean isAlreadyLandlord(LandlordInterface landlord);
+    boolean isAlreadyLandlord(int landlordRef);
     double getExpenditure();
 }

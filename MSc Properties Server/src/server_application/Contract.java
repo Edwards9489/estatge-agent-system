@@ -22,7 +22,7 @@ public class Contract extends Agreement implements ContractInterface {
     
     ///   CONSTRUCTORS ///
     
-    public Contract(int contractRef, int accountRef, Date startDate, int length, String createdBy, Date createdDate, EmployeeInterface employee, JobRoleInterface jobRole, String officeCode) {
+    public Contract(int contractRef, int accountRef, Date startDate, int length, EmployeeInterface employee, JobRoleInterface jobRole, String officeCode, String createdBy, Date createdDate) {
         super(contractRef, employee.getPerson().getName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.employee = employee;
         this.jobRole = jobRole;
