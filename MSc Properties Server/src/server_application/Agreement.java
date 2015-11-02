@@ -105,7 +105,7 @@ public class Agreement implements AgreementInterface {
     
     @Override
     public void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy) {
-        if(isCurrent()) {
+        if(this.isCurrent()) {
             this.setAgreementName(name);
             this.setStartDate(startDate);
             this.setLength(length);

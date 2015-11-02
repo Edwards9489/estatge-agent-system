@@ -69,10 +69,10 @@ public class TestApplication {
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
         AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS", new Date());
         
-        PersonInterface person1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob1, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
-        PersonInterface person2 = new Person(2, test, "Penny", "Kay", "Brindle", dob2, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
-        PersonInterface person3 = new Person(3, test, "Tyrese", "Jerome", "Edwards", dob3, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
-        PersonInterface person4 = new Person(4, test, "Hermione", "Leroy", "Granger", dob4, "", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person1 = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob1, "JL 81 61 90 C", test, test, test, test, test, test, test, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person2 = new Person(2, test, "Penny", "Kay", "Brindle", dob2, "JL 81 61 90 C", test, test, test, test, test, test, test, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person3 = new Person(3, test, "Tyrese", "Jerome", "Edwards", dob3, "", test, test, test, test, test, test, test, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person4 = new Person(4, test, "Hermione", "Leroy", "Granger", dob4, "", test, test, test, test, test, test, test, addressUsage, "DEDWARDS", new Date());
         
         Date start = new Date();
         start.setMonth(0);
@@ -93,8 +93,8 @@ public class TestApplication {
         
         Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS", new Date());
         
-        PropertyInterface property = new Property(1, address1, new Date(), false, date, test, test, "DEDWARDS", new Date());
-        TenancyInterface tenancy = new Tenancy(1, start, 12, 12, "DEDWARDS", new Date(), property, test1, test, "Mr Edwards & Ms Brindle");
+        PropertyInterface property = new Property(1, address1, new Date(), test, test, "DEDWARDS", new Date());
+        TenancyInterface tenancy = new Tenancy(1, start, 12, 12, property, test1, test, "Mr Edwards & Ms Brindle", "DEDWARDS", new Date());
         
         
         System.out.println("****** Testing Accessor Methods ******\n");

@@ -409,10 +409,11 @@ public class Database {
         }
     }
     
-    public void updateContactType(Element conType) throws SQLException {
-        if(this.contactTypeExists(conType.getCode())) {
-            this.updateElement("contactTypes", conType);
-            this.createModifiedBy("contactTypeModifications", conType.getLastModification(), conType.getCode());
+    public void updateContactType(String contactTypeCode) throws SQLException {
+        if(this.contactTypeExists(contactTypeCode)) {
+            Element contactType = this.getContactType(contactTypeCode);
+            this.updateElement("contactTypes", contactType);
+            this.createModifiedBy("contactTypeModifications", contactType.getLastModification(), contactType.getCode());
         }
     }
     
@@ -3574,6 +3575,15 @@ public class Database {
         return this.involvedParties.containsKey(invPartyRef);
     }
     
+    public boolean invPartyExists(Person person) {
+        for(InvolvedParty invParties : involvedParties.values()) {
+            if(invParties.getPersonRef() == person.getPersonRef()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean endReasonExists(String code) {
         return endReasons.containsKey(code);
     }
@@ -3598,6 +3608,15 @@ public class Database {
         return this.landlords.containsKey(landlordRef);
     }
     
+    public boolean landlordExists(Person person) {
+        for(Landlord landlord : landlords.values()) {
+            if(landlord.getPersonRef() == person.getPersonRef()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean officeExists(String code) {
         return offices.containsKey(code);
     }
@@ -3620,6 +3639,15 @@ public class Database {
     
     public boolean employeeExists(int employeeRef) {
         return this.employees.containsKey(employeeRef);
+    }
+    
+    public boolean employeeExists(Person person) {
+        for(Employee employee : employees.values()) {
+            if(employee.getPersonRef() == person.getPersonRef()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public boolean tenancyExists(int tenancyRef) {
@@ -3748,6 +3776,575 @@ public class Database {
         }
     }
     
-    ///////    FOR ADVANCED SEARCH, USE METHODS LIKE GET APPLICATIONS(person details), GET APPLICATIONS (property details), GET APPLICATIONS(application details)
-    //////     GET TENANCIES(person details), GET TENANCIES(property details), GET TENANCIES (landlord details) and so on for each thing I want to return
+    public List<Office> getOffices() {
+        return (List<Office>) offices.values();
+    }
+    
+    public List<Address> getAddresses() {
+        return (List<Address>) addresses.values();
+    }
+    
+    public List<Person> getPeople() {
+        return (List<Person>) people.values();
+    }
+    
+    public List<InvolvedParty> getInvolvedParties() {
+        return (List<InvolvedParty>) involvedParties.values();
+    }
+    
+    public List<Landlord> getLandlords() {
+        return (List<Landlord>) landlords.values();
+    }
+    
+    public List<Employee> getEmployees() {
+        return (List<Employee>) employees.values();
+    }
+    
+    public List<Application> getApplications() {
+        return (List<Application>) applications.values();
+    }
+    
+    public List<Property> getProperties() {
+        return (List<Property>) properties.values();
+    }
+    
+    public List<Tenancy> getTenancies() {
+        return (List<Tenancy>) tenancies.values();
+    }
+    
+    public List<Lease> getLeases() {
+        return (List<Lease>) leases.values();
+    }
+    
+    public List<Contract> getContracts() {
+        return (List<Contract>) contracts.values();
+    }
+    
+    public List<RentAccount> getRentAccounts() {
+        return (List<RentAccount>) rentAccounts.values();
+    }
+    
+    public List<LeaseAccount> getLeaseAccounts() {
+        return (List<LeaseAccount>) leaseAccounts.values();
+    }
+    
+    public List<EmployeeAccount> getEmployeeAccounts() {
+        return (List<EmployeeAccount>) employeeAccounts.values();
+    }
+    
+    public List<Element> getTitles() {
+        return (List<Element>) titles.values();
+    }
+    
+    public List<Element> getGenders() {
+        return (List<Element>) genders.values();
+    }
+    
+    public List<Element> getMaritalStatuses() {
+        return (List<Element>) maritalStatuses.values();
+    }
+    
+    public List<Element> getEthnicOrigins() {
+        return (List<Element>) ethnicOrigins.values();
+    }
+    
+    public List<Element> getLanguages() {
+        return (List<Element>) languages.values();
+    }
+    
+    public List<Element> getNationalities() {
+        return (List<Element>) nationalities.values();
+    }
+    
+    public List<Element> getSexualities() {
+        return (List<Element>) sexualities.values();
+    }
+    
+    public List<Element> getReligions() {
+        return (List<Element>) religions.values();
+    }
+    
+    public List<Element> getPropertyTypes() {
+        return (List<Element>) propertyTypes.values();
+    }
+    
+    public List<Element> getPropertySubTypes() {
+        return (List<Element>) propertySubTypes.values();
+    }
+    
+    public List<Element> getPropElements() {
+        return (List<Element>) propertyElements.values();
+    }
+    
+    public List<Element> getContactTypes() {
+        return (List<Element>) contactTypes.values();
+    }
+    
+    public List<Element> getEndReasons() {
+        return (List<Element>) endReasons.values();
+    }
+    
+    public List<JobRole> getJobRoles() {
+        return (List<JobRole>) jobRoles.values();
+    }
+    
+    public List<Element> getRelationships() {
+        return (List<Element>) relationships.values();
+    }
+    
+    public List<Element> getJobBenefits() {
+        return (List<Element>) jobBenefits.values();
+    }
+    
+    public List<Element> getJobRequirements() {
+        return (List<Element>) jobRequirements.values();
+    }
+    
+    public List<Element> getTenancyTypes() {
+        return (List<Element>) tenancyTypes.values();
+    }
+    
+    public List<Transaction> getTransactions() {
+        return (List<Transaction>) transactions.values();
+    }
+    
+    public List<Person> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
+            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) {
+        List<Person> tempPeople = this.getPeople();
+        if(!tempPeople.isEmpty()) {
+            for(Person temp : tempPeople) {
+                if(titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
+                    tempPeople.remove(temp);
+                } else if(forename != null && !forename.isEmpty() && !forename.equals(temp.getForename())) {
+                    tempPeople.remove(temp);
+                } else if(middleNames != null && !middleNames.isEmpty() && !middleNames.equals(temp.getMiddleNames())) {
+                    tempPeople.remove(temp);
+                } else if(surname != null && !surname.isEmpty() && !surname.equals(temp.getSurname())) {
+                    tempPeople.remove(temp);
+                } else if(dateOfBirth != null && dateOfBirth.compareTo(temp.getDateOfBirth()) != 0) {
+                    tempPeople.remove(temp);
+                } else if(nationalInsurance != null && !nationalInsurance.isEmpty() && nationalInsurance.equals(temp.getNI())) {
+                    tempPeople.remove(temp);
+                } else if (maritalStatusCode != null && !maritalStatusCode.isEmpty() && this.maritalStatusExists(maritalStatusCode) && !maritalStatusCode.equals(temp.getMaritalStatus().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && this.ethnicOriginExists(ethnicOriginCode) && !ethnicOriginCode.equals(temp.getEthnicOrigin().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (languageCode != null && !languageCode.isEmpty() && this.languageExists(languageCode) && !languageCode.equals(temp.getLanguage().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (nationalityCode != null && !nationalityCode.isEmpty() && this.nationalityExists(nationalityCode) && !nationalityCode.equals(temp.getNationality().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (sexualityCode != null && !sexualityCode.isEmpty() && this.sexualityExists(sexualityCode) && !sexualityCode.equals(temp.getSexuality().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (religionCode != null && !religionCode.isEmpty() && this.religionExists(religionCode) && !religionCode.equals(temp.getReligion().getCode())) {
+                    tempPeople.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempPeople.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempPeople.remove(temp);
+                }
+            }
+            return tempPeople;
+        }
+        return null;
+    }
+    
+    public List<Address> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) {
+        List<Address> tempAddresses = this.getAddresses();
+        if(!tempAddresses.isEmpty()) {
+            for(Address temp : tempAddresses) {
+                if(buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
+                    tempAddresses.remove(temp);
+                } else if(buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
+                    tempAddresses.remove(temp);
+                } else if(subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
+                    tempAddresses.remove(temp);
+                } else if(subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
+                    tempAddresses.remove(temp);
+                } else if(streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
+                    tempAddresses.remove(temp);
+                } else if(street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
+                    tempAddresses.remove(temp);
+                } else if(area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
+                    tempAddresses.remove(temp);
+                } else if(town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
+                    tempAddresses.remove(temp);
+                } else if(country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
+                    tempAddresses.remove(temp);
+                } else if(postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode())) {
+                    tempAddresses.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempAddresses.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempAddresses.remove(temp);
+                }
+            }
+            return tempAddresses;
+        }
+        return null;
+    }
+    
+    public List<Application> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) {
+        List<Application> tempApplications = (List<Application>) applications.values();
+        if(!tempApplications.isEmpty()) {
+            for(Application temp : tempApplications) {
+                if(corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
+                    tempApplications.remove(temp);
+                } else if(appStartDate != null && appStartDate.compareTo(temp.getAppStartDate()) != 0) {
+                    tempApplications.remove(temp);
+                } else if (endDate != null && endDate.compareTo(temp.getAppEndDate()) != 0) {
+                    tempApplications.remove(temp);
+                } else if (statusCode != null && !statusCode.isEmpty() && !statusCode.equals(temp.getAppStatusCode())) {
+                    tempApplications.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempApplications.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempApplications.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempApplications.remove(temp);
+                }
+            }
+            return tempApplications;
+        }
+        return null;
+    }
+    
+    public List<Application> getPeopleApplications(List<Person> tempPeople) {
+        List<Application> tempApplications = this.getApplications();
+        if(!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
+            boolean cont = true;
+            for(Application temp : tempApplications) {
+                int i = 0;
+                while(cont && i < tempPeople.size()) {
+                    Person tempPerson = tempPeople.get(i);
+                    if(temp.isHouseholdMember(tempPerson.getPersonRef())) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont == false) {
+                    tempApplications.remove(temp);
+                }
+            }
+            return tempApplications;
+        }
+        return null;
+    }
+
+    public List<Application> getAddressApplications(List<Address> tempAddresses) {
+        List<Application> tempApplications = this.getApplications();
+        if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
+            boolean cont = true;
+            for (Application temp : tempApplications) {
+                List<AddressUsage> appAddresses = temp.getApplicationAddressess();
+                if (appAddresses.isEmpty()) {
+                    cont = false;
+                } else {
+                    int i = 0;
+                    while (cont && i < tempAddresses.size()) {
+                        Address tempAddress = tempAddresses.get(i);
+                        int ind = 0;
+                        while (cont && ind < appAddresses.size()) {
+                            AddressUsage appAddress = appAddresses.get(ind);
+                            if (tempAddress.getAddressRef() == appAddress.getAddress().getAddressRef()) {
+                                cont = false;
+                            }
+                            ind++;
+                        }
+                        i++;
+                    }
+                    if (cont == false) {
+                        tempApplications.remove(temp);
+                    }
+                }
+            }
+            return tempApplications;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<Tenancy> tempTenancies = this.getTenancies();
+        if (!tempTenancies.isEmpty()) {
+            for(Tenancy temp : tempTenancies) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
+                    tempTenancies.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempTenancies.remove(temp);
+                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                    tempTenancies.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                    tempTenancies.remove(temp);
+                } else if(length != null && length != temp.getLength()) {
+                    tempTenancies.remove(temp);
+                } else if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+                    tempTenancies.remove(temp);
+                } else if (appRef != null && this.applicationExists(appRef) && appRef != temp.getApplication().getApplicationRef()) {
+                    tempTenancies.remove(temp);
+                } else if (tenTypeCode != null && !tenTypeCode.isEmpty() && this.tenancyTypeExists(tenTypeCode) && !tenTypeCode.equals(temp.getTenType().getCode())) {
+                    tempTenancies.remove(temp);
+                } else if(accountRef != null && this.rentAccountExists(accountRef) && accountRef != temp.getAccountRef()) {
+                    tempTenancies.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempTenancies.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempTenancies.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempTenancies.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getApplicationTenancies(List<Application> tempApplications) {
+        List<Tenancy> tempTenancies = this.getTenancies();
+        if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
+            boolean cont = true;
+            for(Tenancy temp : tempTenancies) {
+                int i = 0;
+                while(cont && i < tempApplications.size()) {
+                    Application tempApp = tempApplications.get(i);
+                    if(temp.getApplication().getApplicationRef() != tempApp.getApplicationRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont == false) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getApplcationTenancies(int appRef) {
+        List<Tenancy> tempTenancies = this.getTenancies();
+        if (this.applicationExists(appRef) && !tempTenancies.isEmpty()) {
+            Application tempApp = this.getApplication(appRef);
+            for (Tenancy temp : tempTenancies) {
+                if (temp.getApplication().getApplicationRef() != tempApp.getApplicationRef()) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getPropertyTenancies(List<Property> tempProperties) {
+        List<Tenancy> tempTenancies = this.getTenancies();
+        if(!tempProperties.isEmpty()) {
+            boolean cont = true;
+            for(Tenancy temp : tempTenancies) {
+                int i = 0;
+                while(cont && i < tempProperties.size()) {
+                    Property tempProperty = tempProperties.get(i);
+                    if(temp.getProperty().getPropRef() != tempProperty.getPropRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont == false) {
+                    tempTenancies.remove(temp);
+                }
+            }
+        }
+        return tempTenancies;
+    }
+    
+    public List<Tenancy> getPropertyTenancies(int propRef) {
+        List<Tenancy> tempTenancies = this.getTenancies();
+        if (this.applicationExists(propRef) && !tempTenancies.isEmpty()) {
+            Property tempApp = this.getProperty(propRef);
+            for (Tenancy temp : tempTenancies) {
+                if (temp.getProperty().getPropRef() != tempApp.getPropRef()) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Lease> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<Lease> tempLeases = this.getLeases();
+        if (!tempLeases.isEmpty()) {
+            for(Lease temp : tempLeases) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
+                    tempLeases.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempLeases.remove(temp);
+                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                    tempLeases.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                    tempLeases.remove(temp);
+                }  else if(length != null && length != temp.getLength()) {
+                    tempLeases.remove(temp);
+                } else if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+                    tempLeases.remove(temp);
+                } else if (management != null && management != temp.isFullManagement()) {
+                    tempLeases.remove(temp);
+                } else if (expenditure != null && expenditure != temp.getExpenditure()) {
+                    tempLeases.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempLeases.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempLeases.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempLeases.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempLeases.remove(temp);
+                }
+            }
+        }
+        return tempLeases;
+    }
+    
+    public List<Contract> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<Contract> tempContracts = this.getContracts();
+        if (!tempContracts.isEmpty()) {
+            for(Contract temp : tempContracts) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
+                    tempContracts.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempContracts.remove(temp);
+                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                    tempContracts.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                    tempContracts.remove(temp);
+                }  else if(length != null && length != temp.getLength()) {
+                    tempContracts.remove(temp);
+                } else if (employeeRef != null && this.employeeExists(employeeRef) && employeeRef != temp.getEmployee().getEmployeeRef()) {
+                    tempContracts.remove(temp);
+                } else if (jobRoleCode != null && this.jobRoleExists(jobRoleCode) && jobRoleCode.equals(temp.getJobRole().getJobRoleCode())) {
+                    tempContracts.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempContracts.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempContracts.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempContracts.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempContracts.remove(temp);
+                }
+            }
+        }
+        return tempContracts;
+    }
+    
+    public List<RentAccount> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<RentAccount> tempRentAccounts = this.getRentAccounts();
+        if (!tempRentAccounts.isEmpty()) {
+            for(RentAccount temp : tempRentAccounts) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
+                    tempRentAccounts.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempRentAccounts.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                    tempRentAccounts.remove(temp);
+                } else if(balance != null && balance != temp.getBalance()) {
+                    tempRentAccounts.remove(temp);
+                } else if (rent != null && rent != temp.getRent()) {
+                    tempRentAccounts.remove(temp);
+                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getTenancyRef()) {
+                    tempRentAccounts.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempRentAccounts.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempRentAccounts.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempRentAccounts.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempRentAccounts.remove(temp);
+                }
+            }
+        }
+        return tempRentAccounts;
+    }
+    
+    public List<LeaseAccount> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<LeaseAccount> tempLeaseAccounts = this.getLeaseAccounts();
+        if (!tempLeaseAccounts.isEmpty()) {
+            for(LeaseAccount temp : tempLeaseAccounts) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
+                    tempLeaseAccounts.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempLeaseAccounts.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                    tempLeaseAccounts.remove(temp);
+                } else if(balance != null && balance != temp.getBalance()) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (expenditure != null && expenditure != temp.getExpenditure()) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getLeaseRef()) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempLeaseAccounts.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempLeaseAccounts.remove(temp);
+                }
+            }
+        }
+        return tempLeaseAccounts;
+    }
+    
+    public List<EmployeeAccount> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
+        List<EmployeeAccount> tempEmployeeAccounts = this.getEmployeeAccounts();
+        if (!tempEmployeeAccounts.isEmpty()) {
+            for(EmployeeAccount temp : tempEmployeeAccounts) {
+                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if(balance != null && balance != temp.getBalance()) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (salary != null && salary != temp.getSalary()) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getContractRef()) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempEmployeeAccounts.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempEmployeeAccounts.remove(temp);
+                }
+            }
+        }
+        return tempEmployeeAccounts;
+    }
+    
+    public List<Office> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) {
+        List<Office> tempOffices = (List<Office>) offices.values();
+        if(!tempOffices.isEmpty()) {
+            for(Office temp : tempOffices) {
+                if(addrRef != null && addrRef == temp.getAddress().getAddressRef()) {
+                    tempOffices.remove(temp);
+                } else if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                    tempOffices.remove(temp);
+                } else if (current != null && current != temp.isCurrent()) {
+                    tempOffices.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempOffices.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempOffices.remove(temp);
+                }
+            }
+        }
+        return tempOffices;
+    }
 }

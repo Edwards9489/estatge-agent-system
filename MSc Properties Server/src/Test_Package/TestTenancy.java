@@ -51,7 +51,7 @@ public class TestTenancy {
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
         Element element = new ElementImpl("TEST", "test", "DEDWARDS", new Date());
         PersonInterface person = new Person(1, element, "Dwayne", "Leroy", "Edwards", new Date(), "JL 81 61 90 C", element, 
-                                            element, element, element, element, element, element, null, null, "DEDWARDS", new Date());
+                                            element, element, element, element, element, element, null, "DEDWARDS", new Date());
         LandlordInterface landlord = new Landlord(1, person, "DEDWARDS", new Date());
         InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
         ArrayList<LandlordInterface> landlords = new ArrayList();
@@ -60,10 +60,10 @@ public class TestTenancy {
         AddressUsageInterface addressUsage = new AddressUsage(1, address, new Date(), "DEDWARDS", new Date());
         
         ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
-        PropertyInterface prop = new Property(1, address, true, new Date(), element, element, "DEDWARDS", new Date());
+        PropertyInterface prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
         ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", new Date(), "DEDWARDS");
         prop.setLandlords(landlords, modTest);
-        TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, "DEDWARDS", new Date(), prop, application, element, "NEWOFFICE");
+        TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, prop, application, element, "NEWOFFICE", "DEDWARDS", new Date());
         
         System.out.println(test1.toString());
         System.out.println(test1.getAgreementRef());

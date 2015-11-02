@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server_application.Database;
-import server_application.ElementImpl;
 import server_application.ModifiedBy;
 
 /**
@@ -38,14 +37,8 @@ public class TestDatabase {
         }
         
         ModifiedByInterface modTest = new ModifiedBy("DEDWARDS", new Date(), "Amended Title Description");
-        System.out.println(title.toString());
         title.updateElement("MR - Amended", true, modTest);
         
-        try {
-            db.createModifiedBy("titleModifications", modTest, title.getCode());
-        } catch (SQLException ex) {
-            Logger.getLogger(TestDatabase.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         System.out.println("\n*******************************\n");
         System.out.println(title.getModifiedBy());

@@ -44,7 +44,7 @@ public class TestInvolvedParty {
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
         AddressUsage addressUsage = new AddressUsage(1, address, date, "DEDWARDS", new Date());
         
-        PersonInterface person = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, contacts, addressUsage, "DEDWARDS", new Date());
+        PersonInterface person = new Person(1, test, "Dwayne", "Leroy", "Edwards", dob, "JL 81 61 90 C", test, test, test, test, test, test, test, addressUsage, "DEDWARDS", new Date());
         
         Date start = new Date();
         start.setMonth(3);

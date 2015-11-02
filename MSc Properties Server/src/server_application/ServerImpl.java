@@ -112,6 +112,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         System.out.println("Server started");
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE PERSON ELEMENTS     ////////
+    
     public int createTitle(String code, String description, String createdBy) throws RemoteException, SQLException {
         if(!this.database.titleExists(code)) {
             Element title = new ElementImpl(code, description, createdBy, new Date());
@@ -272,6 +274,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE PROPERTY ELEMENTS     ////////
+    
     public int createPropertyType(String code, String description, String createdBy) throws RemoteException, SQLException {
         if(!this.database.propTypeExists(code)) {
             Element type = new ElementImpl(code, description, createdBy, new Date());
@@ -332,6 +336,74 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE CONTACT ELEMENTS     ////////
+    
+    public int createContactType(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.contactTypeExists(code)) {
+            Element contactType = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createContactType(contactType);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateContactType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+        if(!this.database.contactTypeExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Contact Type", new Date(), modifiedBy);
+            Element contactType = this.database.getContactType(code);
+            contactType.updateElement(description, current, modified);
+            this.database.updateContactType(contactType.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE END REASONS     ////////
+    
+    public int createEndReason(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.endReasonExists(code)) {
+            Element endReason = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createEndReason(endReason);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateEndReason(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+        if(!this.database.endReasonExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated End Reason", new Date(), modifiedBy);
+            Element endReason = this.database.getEndReason(code);
+            endReason.updateElement(description, current, modified);
+            this.database.updateEndReason(endReason.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE RELATIONSHIPS     ////////
+    
+    public int createRelationship(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.relationshipExists(code)) {
+            Element relationship = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createRelationship(relationship);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateRelationship(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+        if(!this.database.relationshipExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Relationship", new Date(), modifiedBy);
+            Element relationship = this.database.getRelationship(code);
+            relationship.updateElement(description, current, modified);
+            this.database.updateRelationship(relationship.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE ADDRESSES     ////////
+    
     public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
             String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
         Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, new Date());
@@ -350,6 +422,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHOD TO CREATE ADDRESS USAGE     ////////
+    
     private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.addressExists(addrRef)) {
             AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, createdBy, new Date());
@@ -357,6 +431,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return null;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A PERSON     ////////
     
     public int createPerson(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException, SQLException {
@@ -390,6 +466,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE A PERSON CONTACT     ////////
+    
     public int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException {
         if (this.database.personExists(pRef) && this.database.contactTypeExists(contactTypeCode)) {
             if (this.database.getContactType(contactTypeCode).isCurrent()) {
@@ -416,6 +494,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE PERSON ADDRESS USAGES     ////////
+    
     public int createPersonAddressUsage(int personRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.personExists(personRef)) {
             AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
@@ -434,6 +514,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A OFFICE     ////////
     
     public int createOffice(String officeCode, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if (!this.database.officeExists(officeCode) && this.database.addressExists(addrRef)) {
@@ -454,6 +536,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A OFFICE CONTACT     ////////
     
     public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException {
         if (this.database.officeExists(oCode) && this.database.contactTypeExists(contactTypeCode)) {
@@ -481,6 +565,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE A INVOLVED PARTY     ////////
+    
     private int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.applicationExists(aRef) && this.database.personExists(pRef) && this.database.relationshipExists(relationshipCode) && this.database.getRelationship(relationshipCode).isCurrent()) {
             InvolvedParty invParty = new InvolvedParty(invPartyRef++, aRef, this.database.getPerson(pRef), joint, main, start, this.database.getRelationship(relationshipCode), createdBy, new Date());
@@ -500,6 +586,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A APPLICATION     ////////
     
     public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException, SQLException {
         if(this.database.addressExists(addrRef) && this.database.relationshipExists(relationshipCode)) {
@@ -524,6 +612,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO AMEND AN APPLICATION HOUSEHOLD     ////////
     
     public int addInvolvedParty(int appRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException, SQLException {
         if(database.applicationExists(appRef) && database.personExists(pRef) && this.database.relationshipExists(relationshipCode)) {
@@ -571,6 +661,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHOD TO SET AN APPLICATION TENANCY     ////////
+    
     public int setApplicationTenancy (int appRef, int tenancyRef, String createdBy) throws RemoteException, SQLException {
         if(database.applicationExists(appRef) && database.tenancyExists(tenancyRef)) {
             Application application = database.getApplication(appRef);
@@ -584,6 +676,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO AMEND AN APPLICATIONS INTEREST IN PROPERTIES     ////////
     
     public int addInterestedProperty(int appRef, int propRef, String createdBy) throws RemoteException, SQLException {
         if(database.propertyExists(propRef) && database.applicationExists(appRef)) {
@@ -605,6 +699,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE APPLICATION ADDRESS USAGES     ////////
+    
     public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(this.database.applicationExists(applicationRef) && this.database.addressExists(addressRef)) {
             AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
@@ -624,8 +720,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE AND DELETE EMPLOYEES     ////////
+    
     public int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException, SQLException {
-        if(this.database.personExists(pRef) && !this.database.userExists(username)) {
+        if(this.database.personExists(pRef) && !this.database.employeeExists(this.database.getPerson(pRef)) && !this.database.userExists(username)) {
             Employee employee = new Employee(employeeRef++, this.database.getPerson(pRef), username, password, createdBy, new Date());
             this.database.createEmployee(employee);
             this.database.createUser(employee.getUser());
@@ -634,17 +732,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    
-    
+    //////     METHODS TO CREATE AND DELETE LANDLORD     ////////
     
     public int createLandlord(int pRef, String createdBy) throws RemoteException, SQLException {
-        if(this.database.personExists(pRef)) {
+        if(this.database.personExists(pRef) && !this.database.landlordExists(this.database.getPerson(pRef))) {
             Landlord landlord = new Landlord(landlordRef++, this.database.getPerson(pRef), createdBy, new Date());
             this.database.createLandlord(landlord);
             return landlord.getLandlordRef();
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A PROPERTY     ////////
     
     public int createProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String createdBy) throws RemoteException, SQLException {
         if(!this.database.propertyExists(pRef) && this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
@@ -676,6 +775,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLES     ////////
+    
     public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
             boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy) throws RemoteException, SQLException {
         if(!this.database.jobRoleExists(code)) {
@@ -691,7 +792,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(this.database.jobRoleExists(code)) {
             JobRole jobRole = this.database.getJobRole(code);
             jobRole.updateJobRole(jobTitle, jobDescription, salary, read, read, write, update, employeeRead, employeeWrite, employeeUpdate, new ModifiedBy("Updated Job Role", new Date(), modifiedBy));
-            List<Contract> contracts = this.database.getContracts(null, jobRoleCode, null, etc);
+            List<Contract> contracts = this.database.getContracts(null, null, null, null, null, null, null, code, null, null, null, null, null);
             for(Contract contract : contracts) {
                 EmployeeAccount account = this.database.getEmployeeAccount(contract.getAccountRef());
                 account.setSalary(salary);
@@ -738,6 +839,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE JOB REQUIREMENTS     ////////
+    
     public int createJobRequirement(String code, String description, String createdBy) throws RemoteException, SQLException {
         if(!this.database.jobRequirementExists(code)) {
             Element requirement = new ElementImpl(code, description, createdBy, new Date());
@@ -757,6 +860,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE JOB BENEFITS     ////////
+    
     public int createJobBenefit(String code, String description, String createdBy) throws RemoteException, SQLException {
         if(!this.database.jobBenefitExists(code)) {
             Element benefit = new ElementImpl(code, description, createdBy, new Date());
@@ -775,6 +880,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A TENANCY     ////////
     
     public int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.propertyExists(pRef) && this.database.applicationExists(aRef) && this.database.tenancyTypeExists(tenTypeCode) && this.database.officeExists(officeCode)) {
@@ -798,6 +905,30 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE TENANCY TYPES     ////////
+    
+    public int createTenancyType(String code, String description, String createdBy) throws RemoteException, SQLException {
+        if(!this.database.tenancyTypeExists(code)) {
+            Element tenancyType = new ElementImpl(code, description, createdBy, new Date());
+            this.database.createContactType(tenancyType);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateTenancyType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+        if(!this.database.tenancyTypeExists(code)) {
+            ModifiedByInterface modified = new ModifiedBy("Updated Tenancy Type", new Date(), modifiedBy);
+            Element tenancyType = this.database.getTenancyType(code);
+            tenancyType.updateElement(description, current, modified);
+            this.database.updateTenancyType(tenancyType.getCode());
+            return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE A LEASE     ////////
     
     public int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.propertyExists(pRef) && this.database.officeExists(officeCode)) {
@@ -848,6 +979,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE A CONTRACT     ////////
+    
     public int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.employeeExists(eRef) && this.database.jobRoleExists(jobRoleCode) && this.database.officeExists(officeCode)) {
             Contract contract = new Contract(contractRef++, employeeAccRef, startDate, length, this.database.getEmployee(eRef), this.database.getJobRole(jobRoleCode), officeCode, createdBy, new Date());
@@ -869,6 +1002,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO UPDATE ACCOUNTS     ////////
     
     private int updateRentAccount(int rRef, String name, Date startDate, double rent, String modifiedBy) throws SQLException, RemoteException {
         if(this.database.rentAccountExists(rRef)) {
@@ -901,6 +1036,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    //////     METHODS TO DELETE ACCOUNTS     ////////
+    
+    // WRITE DELETE METHODS
+    
+    //////     METHODS TO CREATE ACCOUNT TRANSACTIONS     ////////    
 
     public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
         if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
@@ -932,6 +1073,90 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO RETURN PERSON ELEMENT LISTS     ////////
+    
+    public List<Element> getTitles() {
+        return this.database.getTitles();
+    }
+    
+    public List<Element> getGenders() {
+        return this.database.getGenders();
+    }
+    
+    public List<Element> getMaritalStatuses() {
+        return this.database.getMaritalStatuses();
+    }
+    
+    public List<Element> getEthnicOrigins() {
+        return this.database.getEthnicOrigins();
+    }
+    
+    public List<Element> getLanguages() {
+        return this.database.getLanguages();
+    }
+    
+    public List<Element> getNationalities() {
+        return this.database.getNationalities();
+    }
+    
+    public List<Element> getSexualities() {
+        return this.database.getSexualities();
+    }
+    
+    public List<Element> getReligions() {
+        return this.database.getReligions();
+    }
+    
+    //////     METHODS TO RETURN PROPERTY ELEMENT LISTS     ////////
+    
+    public List<Element> getPropertyTypes() {
+        return this.database.getPropertyTypes();
+    }
+    
+    public List<Element> getPropertySubTypes() {
+        return this.database.getPropertySubTypes();
+    }
+    
+    public List<Element> getPropElements() {
+        return this.database.getPropElements();
+    }
+    
+    //////     METHODS TO RETURN CONTACT TYPES LIST     ////////
+    
+    public List<Element> getContactTypes() {
+        return this.database.getContactTypes();
+    }
+    
+    //////     METHODS TO RETURN END REASONS LIST     ////////
+    
+    public List<Element> getEndReasons() {
+        return this.database.getEndReasons();
+    }
+    
+    //////     METHODS TO RETURN RELATIONSHIPS LIST     ////////
+    
+    public List<Element> getRelationships() {
+        return this.database.getRelationships();
+    }
+    
+    //////     METHODS TO RETURN JOB ROLE ELEMENT LISTS     ////////
+    
+    public List<Element> getJobBenefits() {
+        return this.database.getJobBenefits();
+    }
+    
+    public List<Element> getJobRequirements() {
+        return this.database.getJobRequirements();
+    }
+    
+    //////     METHODS TO RETURN TENANCY TYPES LIST     ////////
+    
+    public List<Element> getTenancyTypes() {
+        return this.database.getTenancyTypes();
+    }
+    
+    
+    ////// MOVE THE SEARCH METHODS INTO SERVER
     
     
     //add a client to the users list

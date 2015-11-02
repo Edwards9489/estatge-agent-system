@@ -72,30 +72,31 @@ public class TestAccount {
         TransactionInterface tran8 = new Transaction(8, test1.getAccRef(), 3, 2, 1000.00, false, new Date(), "JBLOOGS", new Date());
         TransactionInterface tran9 = new Transaction(9, test1.getAccRef(), 3, 2, 500.00, true, new Date(), "DEDWARDS", new Date());
         
-        test1.createTransaction(tran1);
+        
+        test1.createTransaction(tran1, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());
         
-        test1.createTransaction(tran2);
-        test1.createTransaction(tran3);
+        test1.createTransaction(tran2, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
+        test1.createTransaction(tran3, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());
         
-        test1.createTransaction(tran4);
-        test1.createTransaction(tran5);
-        test1.createTransaction(tran6);
+        test1.createTransaction(tran4, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
+        test1.createTransaction(tran5, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
+        test1.createTransaction(tran6, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());        
         
-        test1.createTransaction(tran7);
+        test1.createTransaction(tran7, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());    
         
-        test1.createTransaction(tran8);
+        test1.createTransaction(tran8, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());    
@@ -117,7 +118,7 @@ public class TestAccount {
         System.out.println(test1.getEndDate());
         System.out.println(test1.isCurrent());
         
-        test1.createTransaction(tran9);
+        test1.createTransaction(tran9, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));
         
         System.out.println("\n" + test1.getBalance());
         System.out.println(test1.isNegativeInd());

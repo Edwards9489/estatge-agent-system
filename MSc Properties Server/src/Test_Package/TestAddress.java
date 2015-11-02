@@ -23,6 +23,11 @@ public class TestAddress {
         
         System.out.println("****** Testing Accessor Methods ******\n");
         
+        String hello = "hello";
+        String hello2 = "HELLO";
+        String hello3 = hello.toUpperCase();
+        boolean test = hello3.equals(hello2);
+        System.out.println(test);
         System.out.println(test1.getAddressRef());
         System.out.println(test1.getBuildingNumber());
         System.out.println(test1.getBuildingName());

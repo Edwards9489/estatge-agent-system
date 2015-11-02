@@ -94,6 +94,14 @@ public class Employee implements EmployeeInterface {
         return person;
     }
     
+    public boolean isCurrent() {
+        if(contracts.isEmpty()) {
+            return false;
+        } else {
+            return this.getContract().isCurrent();
+        }
+    }
+    
     /**
      * @return the person
      */
