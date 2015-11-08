@@ -6,7 +6,9 @@
 package Test_Package;
 
 import interfaces.ModifiedByInterface;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import server_application.Address;
 import server_application.ModifiedBy;
 
@@ -95,5 +97,33 @@ public class TestAddress {
         test1.updateAddress("12", "Kestrel House", temp, "Brook Crescent", temp, "Hertford Road", "Enfield", "London", "England", "EN3 4EN", modTest6);
         
         System.out.println(test1);
+        
+        
+        
+        
+        
+        
+        
+        List<String> strings = new ArrayList();
+        strings.add("TEST1");
+        strings.add("TEST2");
+        strings.add("TEST3");
+        strings.add("TEST4");
+        strings.add("TEST5");
+        strings.add("TEST6");
+        
+        System.out.println(strings);
+        
+        List<String> copy = strings;
+        System.out.println("XXXXXXXXXXXXXXXXXXXX");
+        System.out.println(copy);
+        
+        strings.remove(1);
+        strings.remove(3);
+        
+        System.out.println(strings);
+        System.out.println("XXXXXXXXXXXXXXXXXXXX");
+        System.out.println(copy);
+        
     }
 }

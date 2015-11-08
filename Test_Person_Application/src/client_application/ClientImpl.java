@@ -29,6 +29,10 @@ public class ClientImpl implements Client{
 
     /**
      * @param args the command line arguments
+     * @throws java.rmi.RemoteException
+     * @throws java.net.UnknownHostException
+     * @throws java.net.MalformedURLException
+     * @throws java.rmi.NotBoundException
      */
     public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException, NotBoundException {
         
