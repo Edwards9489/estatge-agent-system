@@ -11,4 +11,15 @@ package interfaces;
  */
 public interface User {
     boolean isUser(String username, String password);
+    int getEmployeeRef();
+    String getUsername();
+    String getPassword();
+    String getOfficeCode();
+    boolean getPasswordReset();
+    boolean getRead();
+    boolean getWrite();
+    boolean getUpdate();
+    boolean getEmployeeRead();
+    boolean getEmployeeWrite();
+    boolean getEmployeeUpdate();
 }

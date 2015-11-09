@@ -42,7 +42,7 @@ public class Employee implements EmployeeInterface {
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
-        this.user = new UserImpl(employeeRef, username, password);
+        this.user = new UserImpl(employeeRef, username, password, null);
     }
     
     
@@ -54,12 +54,17 @@ public class Employee implements EmployeeInterface {
      */
     private void setOfficeCode(String officeCode) {
         this.officeCode = officeCode;
+        this.user.setOfficeCode(officeCode);
     }
     
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
+    }
+    
+    public void updatePassword(String password) {
+        user.setPassword(password);
     }
     
     public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) {

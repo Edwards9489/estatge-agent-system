@@ -22,7 +22,7 @@ public class TestDatabase {
     public static void main(String[] args) {
         System.out.println("Running database test");
         
-        Database db = new Database();
+        Database db = new Database(null, null, null, null, null);
         
         Element title = db.getTitle("MR");
         if(title != null) {

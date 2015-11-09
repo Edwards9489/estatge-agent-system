@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_application;
+package client_gui;
 
+import client_application.ClientImpl;
+import interfaces.ContractInterface;
+import interfaces.LeaseInterface;
+import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,7 +24,7 @@ public class HomeForm extends JFrame {
 
     private JLabel title;
     private ButtonPanel buttonPanel;
-    private ListsPanel listsPanel;
+    private ListPanel listsPanel;
     private ClientImpl client = null;
 
     public HomeForm() {
@@ -29,10 +33,8 @@ public class HomeForm extends JFrame {
         title = new JLabel("MSc Properties");
         Font font = title.getFont();
         title.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 10));
-        title.setPreferredSize(new Dimension(600, 10));
         setLayout(new BorderLayout());
         buttonPanel = new ButtonPanel();
-        listsPanel = new ListsPanel();
 
         buttonPanel.setButtonListener(new StringListener() {
             @Override
@@ -70,21 +72,33 @@ public class HomeForm extends JFrame {
                 }
             }
         });
-
-//			listsPanel.setListsPanelListener(new ListListener() {
-//				pulic void listEventOccured(ListEvent ev) {
-//				/// CODE for list Panel
-//			}})
+        
+        
+        
+        //listsPanel.setData(client.getTenanciesEnding(client.getOfficeCode()));
+        
+        listsPanel.setTableListener(new TableListener() {
+            @Override
+            public void rowSelected(Object agreement) {
+                if(agreement instanceof TenancyInterface) {
+                    TenancyInterface tenancy = (TenancyInterface) agreement;
+//                    TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
+//                    tenancyForm.setClient(client);
+//                    tenancyForm.setTenancy(tenancy);
+                }
+            }
+        });
+        
         setJMenuBar(createMenuBar());
         
         add(title, BorderLayout.NORTH);
-        add(new SystemConfigHome(), BorderLayout.WEST);
+        add(buttonPanel, BorderLayout.WEST);
         add(listsPanel, BorderLayout.CENTER);
 
         setMinimumSize(new Dimension(500, 700));
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+        pack();
     }
 
     public void setClient(ClientImpl model) {

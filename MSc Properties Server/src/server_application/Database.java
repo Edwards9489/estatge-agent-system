@@ -97,7 +97,7 @@ public class Database {
     
     ///   CONSTRUCTORS ///
 
-    public Database() {
+    public Database(String environment, String addr, String username, String password, Integer port) {
         this.offices = new HashMap<>();
 
         this.people = new HashMap<>();
@@ -158,7 +158,7 @@ public class Database {
         
         
         try {
-            this.connect();
+            this.connect(environment, addr, username, password, port);
         } catch (Exception ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -170,7 +170,7 @@ public class Database {
         }
     }
 
-    private void connect() throws Exception {
+    private void connect(String env, String address, String user, String passw, int port) throws Exception {
         if (this.con != null) {
             return;
         }
@@ -179,10 +179,21 @@ public class Database {
         } catch (ClassNotFoundException ex) {
             throw new Exception("Driver not found");
         }
+        
+        if(env == null) {
+            env = "LIVE";
+        } else if(address == null) {
+            address = "localhost";
+        } else if(user == null) {
+            user = "root";
+        } else if(passw == null) {
+            passw = "Toxic9489!999";
+        }
+        
 
-        String url = "jdbc:mysql://localhost:3306/msc_properties";
-        // jdbc: database type : localhost because it is on my machine : 3306 for port 3306 : mydb for database name
-        this.con = DriverManager.getConnection(url, "root", "Toxic9489!999");
+        String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env;
+        // jdbc: database type : localhost because it is on my machine : 3306 for port 3306 : msc_properties(+ enviornment) for database name
+        this.con = DriverManager.getConnection(url, user, passw);
 
         /**
          * To add a library to the project (MySQL Library) : 1. Right-mouse

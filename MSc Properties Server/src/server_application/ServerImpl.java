@@ -34,7 +34,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private final HashMap<String,Client> users;
     
     // The database for the server
-    private final Database database;
+    private Database database;
     
     // List of reference counters
     private int personRef; // when I add the start up from Database content need to amend this to be initialised in the Consturctior from the highest ref
@@ -58,37 +58,37 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     ///   CONSTRUCTORS ///
     
-    public ServerImpl() throws RemoteException {
+    public ServerImpl(String environment, String addr, String username, String password, int port) throws RemoteException {
         super();
         this.users = new HashMap<>();
-        this.database = new Database();
+        //this.database = new Database(environment, addr, username, password, port);
         
-        this.personRef = this.database.countPeople() + 1;
-        this.invPartyRef = this.database.countInvolvedParties() + 1;
-        this.landlordRef = this.database.countLandords() + 1;
-        this.employeeRef = this.database.countEmployees() + 1;
-        this.appRef = this.database.countApplications() + 1;
-        this.propRef = this.database.countProperties() + 1;
-        this.tenRef = this.database.countTenancies() + 1;
-        this.leaseRef = this.database.countLeases() + 1;
-        this.contractRef = this.database.countContracts() + 1;
-        this.rentAccRef = this.database.countRentAccounts() + 1;
-        this.leaseAccRef = this.database.countLeaseAccounts() + 1;
-        this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
-        this.addressRef = this.database.countAddresses() + 1;
-        this.transactionRef = this.database.countTransactions() + 1;
-        this.addressUsageRef = this.database.countAddressUsages() + 1;
-        this.contactRef = this.database.countContacts() + 1;
-        try {
-            this.propertyElementRef = this.database.getPropElementCount() + 1;
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        this.personRef = this.database.countPeople() + 1;
+//        this.invPartyRef = this.database.countInvolvedParties() + 1;
+//        this.landlordRef = this.database.countLandords() + 1;
+//        this.employeeRef = this.database.countEmployees() + 1;
+//        this.appRef = this.database.countApplications() + 1;
+//        this.propRef = this.database.countProperties() + 1;
+//        this.tenRef = this.database.countTenancies() + 1;
+//        this.leaseRef = this.database.countLeases() + 1;
+//        this.contractRef = this.database.countContracts() + 1;
+//        this.rentAccRef = this.database.countRentAccounts() + 1;
+//        this.leaseAccRef = this.database.countLeaseAccounts() + 1;
+//        this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
+//        this.addressRef = this.database.countAddresses() + 1;
+//        this.transactionRef = this.database.countTransactions() + 1;
+//        this.addressUsageRef = this.database.countAddressUsages() + 1;
+//        this.contactRef = this.database.countContacts() + 1;
+//        try {
+//            this.propertyElementRef = this.database.getPropElementCount() + 1;
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        try {
+//            this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
+//        } catch (SQLException ex) {
+//            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
     
     /**
@@ -100,16 +100,36 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException {
         // TODO code application logic here
         // start a registry on this machine
+        ServerImpl server = (ServerImpl) createServer(new String[]{"LIVE", "127.0.0.1", "root", "Toxic9489!999", "3306"});
+    }
+    
+    public static Server createServer(String[] args) throws RemoteException, UnknownHostException, MalformedURLException {
         RegistryLoader.Load();
-        String myName = "Server";
+        String environment = "LIVE";
+        String addr = "127.0.0.1";
+        String username = null;
+        String password = null;
+        Integer port = null;
         String myIP = java.net.InetAddress.getLocalHost().getHostAddress();
+        if(args.length == 5) {
+            environment = args[0];
+            addr = args[1];
+            username = args[2];
+            password = args[3];
+            port = Integer.parseInt(args[4]);
+        }
+        String myName = "Server" + environment;
         String myURL = "rmi://" + myIP + "/" + myName;
+        
         // register RMI object
-        ServerImpl serv = new ServerImpl();
+        ServerImpl serv = new ServerImpl(environment, addr, username, password, port);
         Server serverStub = (Server) serv;
+        
         //NB rebind will replace any stub with the given name 'Server'
+        System.out.println(myName);
         Naming.rebind(myName, serverStub);
         System.out.println("Server started");
+        return serverStub;
     }
     
     //////     METHODS TO CREATE, UPDATE AND DELETE PERSON ELEMENTS     ////////
@@ -1175,5 +1195,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public boolean isAlive() throws RemoteException {
         return true;
+    }
+    
+    @Override
+    public boolean isUser(String username, String password) throws RemoteException {
+        String temp = username.toUpperCase();
+        if(!this.database.userExists(temp)) {
+            return false;
+        }
+        UserImpl user = this.database.getUser(username);
+        return user.isUser(temp, password);
     }
 }

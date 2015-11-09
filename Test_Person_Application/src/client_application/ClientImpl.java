@@ -7,6 +7,7 @@ package client_application;
 import interfaces.Client;
 import interfaces.RMISecurityPolicyLoader;
 import interfaces.Server;
+import interfaces.User;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
@@ -23,6 +24,7 @@ public class ClientImpl implements Client{
     
     String name;
     Server server = null;
+    User user = null;
     
     public ClientImpl() {
     }
@@ -46,28 +48,30 @@ public class ClientImpl implements Client{
 
         ClientImpl c = new ClientImpl();
         //if the command line has at least one argument, the first one is the name
-        if (args.length > 0) {
-            c.setName(args[0]);
-        } else {
-            c.setName("bob");
-        }
-        if (args.length > 1) {//we have the address of the server!
-            c.registerWithServer(args[1]);
+        if (args.length == 5) {
+            c.registerWithServer(args[1], args[0]);
         } else {//we are on the same machine as the server
-            c.registerWithServer(null);
+            c.registerWithServer(null, null);
         }
+        
         return c;
     }
     
-    public void registerWithServer(String host) throws RemoteException, NotBoundException {
+    public void registerWithServer(String host, String environment) throws RemoteException, NotBoundException {
         if (host == null) {
             host = "127.0.0.1";
         }
+        if (environment == null) {
+            environment = "ServerLIVE";
+        } else {
+            environment = "Server" + environment;
+        }
+        System.out.println("Environment: " + environment);
         System.out.println("Trying host : " + host);
         //get the registry
         Registry registry = LocateRegistry.getRegistry(host);
         //get the server stub from the registry
-        server = (Server) registry.lookup("Server");
+        server = (Server) registry.lookup(environment);
         //register the chatter with the server
         server.register(getStub());
         System.out.println("Server found!");
@@ -95,5 +99,23 @@ public class ClientImpl implements Client{
     @Override
     public boolean isAlive() throws RemoteException {
         return true;
+    }
+    
+    private void setUser(User usr) {
+        if(user == null) {
+            user = usr;
+        }
+    }
+    
+    public String getOfficeCode() {
+        return user.getOfficeCode();
+    }
+    
+    public String getUsername() {
+        return user.getUsername();
+    }
+    
+    public boolean isUser(String username, String password) {
+        return server.isUser(username, password);
     }
 }

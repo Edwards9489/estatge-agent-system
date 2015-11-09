@@ -3,17 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Test_Package;
-
-import client_gui.HomeForm;
+package client_gui;
 
 /**
  *
  * @author Dwayne
  */
-public class Test {
-    public static void main(String[] args) {
-        HomeForm home = new HomeForm();
-        home.setVisible(true);
-    }
+public interface StringListener {
+    public void textOmitted(String text);
 }

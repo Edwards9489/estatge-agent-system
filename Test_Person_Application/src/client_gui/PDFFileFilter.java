@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_application;
+package client_gui;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
