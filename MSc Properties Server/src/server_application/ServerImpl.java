@@ -56,6 +56,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int propertyElementRef;
     private int jobBenefitRef;
     
+    private TaskGenerator scheduler;
+    
     ///   CONSTRUCTORS ///
     
     public ServerImpl(String environment, String addr, String username, String password, int port) throws RemoteException {
@@ -89,6 +91,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
 //        }
+        
+        scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24 * 7); // SET FOR A WEEK
     }
     
     /**
@@ -987,7 +991,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     
     
-    public int endLeaseLandlord(int lRef, int landRef, String modifiedBy) throws SQLException, RemoteException {
+    public int endLeaseLandlord(int lRef, int landRef, String modifiedBy) throws RemoteException, SQLException {
         if(this.database.leaseExists(lRef) && this.database.landlordExists(landRef)) {
             Lease lease = this.database.getLease(lRef);
             if(lease.isAlreadyLandlord(lRef)) {
@@ -1003,10 +1007,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.employeeExists(eRef) && this.database.jobRoleExists(jobRoleCode) && this.database.officeExists(officeCode)) {
-            Contract contract = new Contract(contractRef++, employeeAccRef, startDate, length, this.database.getEmployee(eRef), this.database.getJobRole(jobRoleCode), officeCode, createdBy, new Date());
+            Employee employee = this.database.getEmployee(eRef);
+            JobRole jobRole = this.database.getJobRole(jobRoleCode);
+            UserImpl user = employee.getUser();
+            user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate());
+            Contract contract = new Contract(contractRef++, employeeAccRef, startDate, length, employee, jobRole, officeCode, createdBy, new Date());
             EmployeeAccount employeeAcc = new EmployeeAccount(employeeAccRef++, contract, createdBy, new Date());
             this.database.createContract(contract);
             this.database.createEmployeeAccount(employeeAcc);
+            this.database.updateUser(user.getUsername());
             return contract.getAgreementRef();
         }
         return 0;

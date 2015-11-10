@@ -7,6 +7,7 @@ package Test_Package;
 
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Level;
@@ -19,7 +20,7 @@ import server_application.ModifiedBy;
  * @author Dwayne
  */
 public class TestDatabase {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException {
         System.out.println("Running database test");
         
         Database db = new Database(null, null, null, null, null);

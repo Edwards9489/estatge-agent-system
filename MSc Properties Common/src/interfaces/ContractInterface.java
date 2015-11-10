@@ -13,5 +13,5 @@ public interface ContractInterface extends AgreementInterface {
     EmployeeInterface getEmployee();
     int getEmployeeRef();
     JobRoleInterface getJobRole();
-    String getJobRoleRef();
+    String getJobRoleCode();
 }

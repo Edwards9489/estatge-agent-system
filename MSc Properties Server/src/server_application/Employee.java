@@ -10,6 +10,7 @@ import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.PersonInterface;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class Employee implements EmployeeInterface {
     ///   CONSTRUCTORS ///
     
     
-    public Employee(int employeeRef, PersonInterface person, String username, String password, String createdBy, Date createdDate) {
+    public Employee(int employeeRef, PersonInterface person, String username, String password, String createdBy, Date createdDate) throws RemoteException {
         this.employeeRef = employeeRef;
         this.person = person;
         this.contracts = new ArrayList();

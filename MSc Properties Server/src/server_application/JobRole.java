@@ -359,4 +359,28 @@ public class JobRole implements JobRoleInterface {
     public boolean isEmployeeUpdate() {
         return employeeUpdate;
     }
+    
+    public boolean getRead() {
+        return read;
+    }
+    
+    public boolean getWrite() {
+        return write;
+    }
+    
+    public boolean getUpdate() {
+        return update;
+    }
+    
+    public boolean getEmployeeRead() {
+        return employeeRead;
+    }
+    
+    public boolean getEmployeeWrite() {
+        return employeeWrite;
+    }
+    
+    public boolean getEmployeeUpdate() {
+        return employeeWrite;
+    }
 }

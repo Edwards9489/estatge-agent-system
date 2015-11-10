@@ -7,7 +7,9 @@ package server_application;
 
 import interfaces.AddressInterface;
 import interfaces.Element;
+import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -97,7 +99,7 @@ public class Database {
     
     ///   CONSTRUCTORS ///
 
-    public Database(String environment, String addr, String username, String password, Integer port) {
+    public Database(String environment, String addr, String username, String password, Integer port) throws RemoteException {
         this.offices = new HashMap<>();
 
         this.people = new HashMap<>();
@@ -213,7 +215,7 @@ public class Database {
         }
     }
     
-    private void load() throws SQLException {
+    private void load() throws SQLException, RemoteException {
         if (this.con != null) {
             try {
                 
@@ -711,7 +713,7 @@ public class Database {
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
-            String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, applicationRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, appRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
@@ -729,7 +731,7 @@ public class Database {
     public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException {
         if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
             AddressUsage address = this.getAddressUsage(addressRef);
-            String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and applicationRef=?";
+            String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and appRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setInt(col++, address.getAddress().getAddressRef());
@@ -745,7 +747,7 @@ public class Database {
     }
     
     private void loadApplicationAddresses(int reference) throws SQLException {
-        String sql = "select addressUsageRef, addressRef, applicationRef, startDate, endDate, createdBy, createdDate from applicationAddresses order by addressUsageRef";
+        String sql = "select addressUsageRef, addressRef, appRef, startDate, endDate, createdBy, createdDate from applicationAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -1885,7 +1887,7 @@ public class Database {
     public void createApplication(Application application) throws SQLException {
         if(!this.applicationExists(application.getApplicationRef())) {
             this.applications.put(application.getApplicationRef(), application);
-            String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatusCode, "
+            String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatus, "
                     + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -1906,7 +1908,7 @@ public class Database {
         if(this.applicationExists(appRef)) {
             Application application = this.getApplication(appRef);
             String updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
-                    + "appStatusCode=?, tenancyRef=? where appRef=?";
+                    + "appStatus=?, tenancyRef=? where appRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, application.getAppCorrName());
@@ -1923,7 +1925,7 @@ public class Database {
     
     private void loadApplications() throws SQLException {
         this.applications.clear();
-        String sql = "select appRef, appCorrName, appStartDate, appEndDate, appStatusCode, "
+        String sql = "select appRef, appCorrName, appStartDate, appEndDate, appStatus, "
                     + "tenancyRef, createdBy, createdDate from applications order by appRef";
         
         try (Statement selectStat = con.createStatement()) {
@@ -1935,12 +1937,12 @@ public class Database {
                 String appCorrName = results.getString("appCorrName");
                 Date appStartDate = results.getDate("appStartDate");
                 Date appEndDate = results.getDate("appEndDate");
-                String appStatusCode = results.getString("appStatusCode");
+                String appStatus = results.getString("appStatus");
                 int tenancyRef = results.getInt("tenancyRef");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
-                Application temp = new Application(appRef, appCorrName, appStartDate, appStatusCode, createdBy, createdDate);
+                Application temp = new Application(appRef, appCorrName, appStartDate, appStatus, createdBy, createdDate);
                 
                 if(appEndDate != null) {
                     temp.setEndDate(appEndDate, null);
@@ -2116,7 +2118,7 @@ public class Database {
                     Date createdDate = results.getDate("createdDate");
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
                     landlords.put(temp.getLandlordRef(), temp);
-                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("PropertyElementValueModifications", temp.getLandlordRef()));
+                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("propertyElementValueModifications", temp.getLandlordRef()));
                 }
             }
         }
@@ -2600,7 +2602,7 @@ public class Database {
         }
     }
 
-    private void loadEmployees() throws SQLException {
+    private void loadEmployees() throws SQLException, RemoteException {
         this.employees.clear();
         String sql = "select employeeRef, personRef, officeCode, createdBy, createdDate from employees order by employeeRef";
         String sql1 = "select count(employeeRef) as count from users where employeeRef=?";
@@ -2716,14 +2718,16 @@ public class Database {
 
     private void loadTenancies() throws SQLException {
         this.tenancies.clear();
-        String sql = "select tenancyRef, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
+        String sql = "select tenancyRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
                 + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate from tenancies order by tenancyRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
             while (results.next()) {
                 int tenancyRef = results.getInt("tenancyRef");
+                String name = results.getString("name");
                 Date startDate = results.getDate("startDate");
+                Date expectedEndDate = results.getDate("expectedEndDate");
                 Date actualEndDate = results.getDate("actualEndDate");
                 int length = results.getInt("length");
                 int accountRef = results.getInt("accountRef");
@@ -2860,7 +2864,7 @@ public class Database {
 
     private void loadLeases() throws SQLException {
         this.leases.clear();
-        String sql = "select leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
+        String sql = "select leaseRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
                 + "propRef, fullManagement, expenditure, createdBy, createdDate from leases order by leaseRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -2869,6 +2873,7 @@ public class Database {
                 int leaseRef = results.getInt("leaseRef");
                 String name = results.getString("name");
                 Date startDate = results.getDate("startDate");
+                Date expectedEndDate = results.getDate("expectedEndDate");
                 Date actualEndDate = results.getDate("actualEndDate");
                 int length = results.getInt("length");
                 int accountRef = results.getInt("accountRef");
@@ -3068,6 +3073,7 @@ public class Database {
 
             while (results.next()) {
                 int contractRef = results.getInt("contractRef");
+                String name = results.getString("name");
                 Date startDate = results.getDate("startDate");
                 Date actualEndDate = results.getDate("actualEndDate");
                 int length = results.getInt("length");
@@ -3087,6 +3093,9 @@ public class Database {
                                 temp.setActualEndDate(actualEndDate, null);
                             }
                             this.contracts.put(temp.getAgreementRef(), temp);
+                            employee.createContract(temp, null);
+                            UserImpl user = employee.getUser();
+                            user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate());
                             this.createContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
                         }
                     }
@@ -3411,7 +3420,7 @@ public class Database {
     public void createTransaction(String from, Transaction transaction) throws SQLException {
         if(!this.transactionExists(transaction.getTransactionRef())) {
             transactions.put(transaction.getTransactionRef(), transaction);
-            String insertSql = "insert into transactions (transactionRef, accountRef, fromRef, toRef, amount, "
+            String insertSql = "insert into " + from + " (transactionRef, accountRef, fromRef, toRef, amount, "
                     + "isDebit, transactionDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -3433,7 +3442,7 @@ public class Database {
     private void loadTransactions(String from, Account account) throws SQLException {
         this.transactions.clear();
         String sql = "select transactionRef, accountRef, fromRef, toRef, amount, "
-                    + "isDebit, transactionDate, createdBy, createdDate from ? where accountRef=? order by transactionRef";
+                    + "isDebit, transactionDate, createdBy, createdDate ? where accountRef=? order by transactionRef";
         try (PreparedStatement selectStat = con.prepareStatement(sql)) {
             selectStat.setString(1, from);
             selectStat.setInt(2, account.getAccRef());
@@ -4028,18 +4037,18 @@ public class Database {
     public List<Application> getPeopleApplications(List<Person> tempPeople) {
         List<Application> tempApplications = new ArrayList();
         Collections.copy(this.getApplications(), tempApplications);
-        if(!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
-            boolean cont = true;
-            for(Application temp : tempApplications) {
+        if (!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
+            for (Application temp : tempApplications) {
+                boolean cont = true;
                 int i = 0;
-                while(cont && i < tempPeople.size()) {
+                while (cont && i < tempPeople.size()) {
                     Person tempPerson = tempPeople.get(i);
-                    if(temp.isHouseholdMember(tempPerson.getPersonRef())) {
+                    if (temp.isHouseholdMember(tempPerson.getPersonRef())) {
                         cont = false;
                     }
                     i++;
                 }
-                if(cont == false) {
+                if (cont) {
                     tempApplications.remove(temp);
                 }
             }
@@ -4052,8 +4061,8 @@ public class Database {
         List<Application> tempApplications = new ArrayList();
         Collections.copy(this.getApplications(), tempApplications);
         if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
-            boolean cont = true;
             for (Application temp : tempApplications) {
+                boolean cont = true;
                 List<AddressUsage> appAddresses = temp.getApplicationAddressess();
                 if (appAddresses.isEmpty()) {
                     cont = false;
@@ -4071,9 +4080,9 @@ public class Database {
                         }
                         i++;
                     }
-                    if (cont == false) {
-                        tempApplications.remove(temp);
-                    }
+                }
+                if (cont) {
+                    tempApplications.remove(temp);
                 }
             }
             return tempApplications;
@@ -4086,7 +4095,7 @@ public class Database {
         Collections.copy(this.getApplications(), tempApplications);
         if (name != null && !name.isEmpty() && !tempApplications.isEmpty()) {
             for (Application tempApp : tempApplications) {
-                if (name.equals(tempApp.getAppCorrName())) {
+                if (!name.equals(tempApp.getAppCorrName())) {
                     tempApplications.remove(tempApp);
                 }
             }
@@ -4147,17 +4156,17 @@ public class Database {
         List<Tenancy> tempTenancies = new ArrayList();
         Collections.copy(this.getTenancies(), tempTenancies);
         if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
-            boolean cont = true;
             for(Tenancy temp : tempTenancies) {
+                boolean cont = true;
                 int i = 0;
                 while(cont && i < tempApplications.size()) {
                     Application tempApp = tempApplications.get(i);
-                    if(temp.getApplication().getApplicationRef() != tempApp.getApplicationRef()) {
+                    if(temp.getApplication().getApplicationRef() == tempApp.getApplicationRef()) {
                         cont = false;
                     }
                     i++;
                 }
-                if(cont == false) {
+                if(cont) {
                     tempTenancies.remove(temp);
                 }
             }
@@ -4185,31 +4194,60 @@ public class Database {
         List<Tenancy> tempTenancies = new ArrayList();
         Collections.copy(this.getTenancies(), tempTenancies);
         if(!tempProperties.isEmpty()) {
-            boolean cont = true;
             for(Tenancy temp : tempTenancies) {
+                boolean cont = true;
                 int i = 0;
                 while(cont && i < tempProperties.size()) {
                     Property tempProperty = tempProperties.get(i);
-                    if(temp.getProperty().getPropRef() != tempProperty.getPropRef()) {
+                    if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
                         cont = false;
                     }
                     i++;
                 }
-                if(cont == false) {
+                if(cont) {
                     tempTenancies.remove(temp);
                 }
             }
+            return tempTenancies;
         }
-        return tempTenancies;
+        return null;
     }
     
     public List<Tenancy> getPropertyTenancies(int propRef) {
         List<Tenancy> tempTenancies = new ArrayList();
         Collections.copy(this.getTenancies(), tempTenancies);
-        if (this.applicationExists(propRef) && !tempTenancies.isEmpty()) {
+        if (this.propertyExists(propRef) && !tempTenancies.isEmpty()) {
             Property tempApp = this.getProperty(propRef);
             for (Tenancy temp : tempTenancies) {
                 if (temp.getProperty().getPropRef() != tempApp.getPropRef()) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getNameTenancies(String name) {
+        List<Tenancy> tempTenancies = new ArrayList();
+        Collections.copy(this.getTenancies(), tempTenancies);
+        if(!tempTenancies.isEmpty()) {
+            for(Tenancy temp : tempTenancies) {
+                if(!name.equals(temp.getAgreementName())) {
+                    tempTenancies.remove(temp);
+                }
+            }
+            return tempTenancies;
+        }
+        return null;
+    }
+    
+    public List<Tenancy> getOfficeTenancies(String office) {
+        List<Tenancy> tempTenancies = new ArrayList();
+        Collections.copy(this.getTenancies(), tempTenancies);
+        if(this.officeExists(office) && !tempTenancies.isEmpty()) {
+            for(Tenancy temp : tempTenancies) {
+                if(!office.equals(temp.getOfficeCode())) {
                     tempTenancies.remove(temp);
                 }
             }
@@ -4249,8 +4287,128 @@ public class Database {
                     tempLeases.remove(temp);
                 }
             }
+            return tempLeases;
         }
-        return tempLeases;
+        return null;
+    }
+    
+    public List<Lease> getPropertyLeases(List<Property> tempProperties) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if(!tempProperties.isEmpty() && !tempLeases.isEmpty()) {
+            for(Lease temp : tempLeases) {
+                boolean cont = true;
+                int i = 0;
+                while(cont && i < tempProperties.size()) {
+                    Property tempProperty = tempProperties.get(i);
+                    if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
+    }
+    
+    public List<Lease> getPropertyLeases(int propRef) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if (this.propertyExists(propRef) && !tempLeases.isEmpty()) {
+            Property tempProperty = this.getProperty(propRef);
+            for (Lease temp : tempLeases) {
+                if (temp.getProperty().getPropRef() != tempProperty.getPropRef()) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
+    }
+    
+    public List<Lease> getNameLeases(String name) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if(!tempLeases.isEmpty()) {
+            for(Lease temp : tempLeases) {
+                if(!name.equals(temp.getAgreementName())) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
+    }
+    
+    public List<Lease> getOfficeLeases(String office) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if(this.officeExists(office) && !tempLeases.isEmpty()) {
+            for(Lease temp : tempLeases) {
+                if(!office.equals(temp.getOfficeCode())) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
+    }
+
+    public List<Lease> getLandlordLeases(int landlordRef) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if (this.landlordExists(landlordRef) && !tempLeases.isEmpty()) {
+            for (Lease temp : tempLeases) {
+                List<LandlordInterface> tempLandlords = temp.getLandlords();
+                boolean cont = true;
+                int i = 0;
+                while (cont && i < tempLandlords.size()) {
+                    LandlordInterface tempLandlord = tempLandlords.get(i);
+                    if (tempLandlord.getLandlordRef() == landlordRef) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if (cont) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
+    }
+
+    public List<Lease> getLandlordLeases(List<Landlord> tempLandlords) {
+        List<Lease> tempLeases = new ArrayList();
+        Collections.copy(this.getLeases(), tempLeases);
+        if (!tempLandlords.isEmpty() && !tempLeases.isEmpty()) {
+            for (Lease temp : tempLeases) {
+                List<LandlordInterface> leaseLandlords = temp.getLandlords();
+                boolean cont = true;
+                int i = 0;
+                int ind = 0;
+                while (cont && i < leaseLandlords.size()) {
+                    LandlordInterface tempLeaseLandlord = leaseLandlords.get(i);
+                    while (cont && ind < tempLandlords.size()) {
+                        Landlord tempLandlord = tempLandlords.get(ind);
+                        if (tempLandlord.getLandlordRef() == tempLeaseLandlord.getLandlordRef()) {
+                            cont = false;
+                        }
+                        ind++;
+                    }
+                    i++;
+                }
+                if (cont) {
+                    tempLeases.remove(temp);
+                }
+            }
+            return tempLeases;
+        }
+        return null;
     }
     
     public List<Contract> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
@@ -4279,6 +4437,82 @@ public class Database {
                 } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                     tempContracts.remove(temp);
                 } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempContracts.remove(temp);
+                }
+            }
+        }
+        return tempContracts;
+    }
+    
+    public List<Contract> getNameContracts(String name) {
+        List<Contract> tempContracts = new ArrayList();
+        Collections.copy(this.getContracts(), tempContracts);
+        if(!tempContracts.isEmpty()) {
+            for(Contract temp : tempContracts) {
+                if(!name.equals(temp.getAgreementName())) {
+                    tempContracts.remove(temp);
+                }
+            }
+        }
+        return tempContracts;
+    }
+    
+    public List<Contract> getOfficeContracts(String office) {
+        List<Contract> tempContracts = new ArrayList();
+        Collections.copy(this.getContracts(), tempContracts);
+        if(this.officeExists(office) && !tempContracts.isEmpty()) {
+            for(Contract temp : tempContracts) {
+                if(!office.equals(temp.getOfficeCode())) {
+                    tempContracts.remove(temp);
+                }
+            }
+        }
+        return tempContracts;
+    }
+    
+    public List<Contract> getEmployeeContracts(int ref) {
+        List<Contract> tempContracts = new ArrayList();
+        Collections.copy(this.getContracts(), tempContracts);
+        if (this.employeeExists(ref) && !tempContracts.isEmpty()) {
+            for (Contract temp : tempContracts) {
+                if (temp.getEmployeeRef() != ref) {
+                    tempContracts.remove(temp);
+                }
+            }
+            return tempContracts;
+        }
+        return null;
+    }
+    
+    public List<Contract> getJobRoleContracts(String code) {
+        List<Contract> tempContracts = new ArrayList();
+        Collections.copy(this.getContracts(), tempContracts);
+        if (this.jobRoleExists(code) && !tempContracts.isEmpty()) {
+            for (Contract temp : tempContracts) {
+                if (!code.equals(temp.getJobRole().getJobRoleCode())) {
+                    tempContracts.remove(temp);
+                }
+            }
+            return tempContracts;
+        }
+        return null;
+    }
+    
+    public List<Contract> getJobRoleContracts(List<JobRole> tempJobRoles) {
+        List<Contract> tempContracts = new ArrayList();
+        Collections.copy(this.getContracts(), tempContracts);
+        if(!tempJobRoles.isEmpty()) {
+            for(Contract temp : tempContracts) {
+                boolean cont = true;
+                int i = 0;
+                while(cont && i < tempJobRoles.size()) {
+                    JobRole tempJobRole = tempJobRoles.get(i);
+                    if(tempJobRole.getJobRoleCode().equals(temp.getJobRoleCode())) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont) {
                     tempContracts.remove(temp);
                 }
             }
@@ -4317,6 +4551,64 @@ public class Database {
         return tempRentAccounts;
     }
     
+    public List<RentAccount> getNameRentAcc(String name) {
+        List<RentAccount> tempRentAcc = new ArrayList();
+        Collections.copy(this.getRentAccounts(), tempRentAcc);
+        if(!tempRentAcc.isEmpty()) {
+            for(RentAccount temp : tempRentAcc) {
+                if(!name.equals(temp.getAccName())) {
+                    tempRentAcc.remove(temp);
+                }
+            }
+        }
+        return tempRentAcc;
+    }
+    
+    public List<RentAccount> getOfficeRentAcc(String office) {
+        List<RentAccount> tempRentAcc = new ArrayList();
+        Collections.copy(this.getRentAccounts(), tempRentAcc);
+        if(this.officeExists(office) && !tempRentAcc.isEmpty()) {
+            for(RentAccount temp : tempRentAcc) {
+                if(!office.equals(temp.getOfficeCode())) {
+                    tempRentAcc.remove(temp);
+                }
+            }
+        }
+        return tempRentAcc;
+    }
+    
+    public List<RentAccount> getTenanciesRentAccounts(List<Tenancy> tempTenancies) {
+        List<RentAccount> tempRentAccounts = new ArrayList();
+        Collections.copy(this.getRentAccounts(), tempRentAccounts);
+        if(!tempTenancies.isEmpty()) {
+            for(RentAccount temp : tempRentAccounts) {
+                boolean cont = true;
+                int i = 0;
+                while(cont && i < tempTenancies.size()) {
+                    Tenancy tempTenancy = tempTenancies.get(i);
+                    if(tempTenancy.getAgreementRef() == temp.getTenancyRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont) {
+                    tempRentAccounts.remove(temp);
+                }
+            }
+        }
+        return tempRentAccounts;
+    }
+    
+    public RentAccount getTenancyRentAcc(int ref) {
+        if (this.tenancyExists(ref)) {
+            Tenancy temp = this.getTenancy(ref);
+            if(this.rentAccountExists(temp.getAccountRef())) {
+                return this.getRentAccount(temp.getAccountRef());
+            }
+        }
+        return null;
+    }
+    
     public List<LeaseAccount> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
         List<LeaseAccount> tempLeaseAccounts = new ArrayList();
         Collections.copy(this.getLeaseAccounts(), tempLeaseAccounts);
@@ -4346,6 +4638,64 @@ public class Database {
             }
         }
         return tempLeaseAccounts;
+    }
+    
+    public List<LeaseAccount> getNameLeaseAcc(String name) {
+        List<LeaseAccount> tempLeaseAcc = new ArrayList();
+        Collections.copy(this.getLeaseAccounts(), tempLeaseAcc);
+        if(!tempLeaseAcc.isEmpty()) {
+            for(LeaseAccount temp : tempLeaseAcc) {
+                if(!name.equals(temp.getAccName())) {
+                    tempLeaseAcc.remove(temp);
+                }
+            }
+        }
+        return tempLeaseAcc;
+    }
+    
+    public List<LeaseAccount> getOfficeLeaseAcc(String office) {
+        List<LeaseAccount> tempLeaseAcc = new ArrayList();
+        Collections.copy(this.getLeaseAccounts(), tempLeaseAcc);
+        if(this.officeExists(office) && !tempLeaseAcc.isEmpty()) {
+            for(LeaseAccount temp : tempLeaseAcc) {
+                if(!office.equals(temp.getOfficeCode())) {
+                    tempLeaseAcc.remove(temp);
+                }
+            }
+        }
+        return tempLeaseAcc;
+    }
+    
+    public List<LeaseAccount> getLeasesLeaseAccounts(List<Lease> tempTenancies) {
+        List<LeaseAccount> tempLeaseAccounts = new ArrayList();
+        Collections.copy(this.getLeaseAccounts(), tempLeaseAccounts);
+        if(!tempTenancies.isEmpty()) {
+            for(LeaseAccount temp : tempLeaseAccounts) {
+                boolean cont = true;
+                int i = 0;
+                while(cont && i < tempTenancies.size()) {
+                    Lease tempLease = tempTenancies.get(i);
+                    if(tempLease.getAgreementRef() == temp.getLeaseRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont) {
+                    tempLeaseAccounts.remove(temp);
+                }
+            }
+        }
+        return tempLeaseAccounts;
+    }
+    
+    public LeaseAccount getLeaseLeaseAcc(int ref) {
+        if (this.leaseExists(ref)) {
+            Lease temp = this.getLease(ref);
+            if(this.rentAccountExists(temp.getAccountRef())) {
+                return this.getLeaseAccount(temp.getAccountRef());
+            }
+        }
+        return null;
     }
     
     public List<EmployeeAccount> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
@@ -4379,8 +4729,66 @@ public class Database {
         return tempEmployeeAccounts;
     }
     
+    public List<EmployeeAccount> getNameEmployeeAcc(String name) {
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList();
+        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAcc);
+        if(!tempEmployeeAcc.isEmpty()) {
+            for(EmployeeAccount temp : tempEmployeeAcc) {
+                if(!name.equals(temp.getAccName())) {
+                    tempEmployeeAcc.remove(temp);
+                }
+            }
+        }
+        return tempEmployeeAcc;
+    }
+    
+    public List<EmployeeAccount> getOfficeEmployeeAcc(String office) {
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList();
+        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAcc);
+        if(this.officeExists(office) && !tempEmployeeAcc.isEmpty()) {
+            for(EmployeeAccount temp : tempEmployeeAcc) {
+                if(!office.equals(temp.getOfficeCode())) {
+                    tempEmployeeAcc.remove(temp);
+                }
+            }
+        }
+        return tempEmployeeAcc;
+    }
+    
+    public List<EmployeeAccount> getContractsEmployeeAccounts(List<Contract> tempTenancies) {
+        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList();
+        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAccounts);
+        if(!tempTenancies.isEmpty()) {
+            for(EmployeeAccount temp : tempEmployeeAccounts) {
+                boolean cont = true;
+                int i = 0;
+                while(cont && i < tempTenancies.size()) {
+                    Contract tempContract = tempTenancies.get(i);
+                    if(tempContract.getAgreementRef() == temp.getContractRef()) {
+                        cont = false;
+                    }
+                    i++;
+                }
+                if(cont) {
+                    tempEmployeeAccounts.remove(temp);
+                }
+            }
+        }
+        return tempEmployeeAccounts;
+    }
+    
+    public EmployeeAccount getContractEmployeeAcc(int ref) {
+        if (this.contractExists(ref)) {
+            Contract temp = this.getContract(ref);
+            if(this.employeeAccountExists(temp.getAccountRef())) {
+                return this.getEmployeeAccount(temp.getAccountRef());
+            }
+        }
+        return null;
+    }
+    
     public List<Office> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) {
-        List<Office> tempOffices = (List<Office>) new ArrayList();
+        List<Office> tempOffices = new ArrayList();
         Collections.copy(this.getOffices(), tempOffices);
         if(!tempOffices.isEmpty()) {
             for(Office temp : tempOffices) {

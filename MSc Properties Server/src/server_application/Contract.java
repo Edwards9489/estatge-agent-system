@@ -57,7 +57,7 @@ public class Contract extends Agreement implements ContractInterface {
     }
     
     @Override
-    public String getJobRoleRef() {
+    public String getJobRoleCode() {
         return getJobRole().getJobRoleCode();
     }
 }
