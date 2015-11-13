@@ -24,11 +24,10 @@ public interface AccountInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    List getDebitTransactions();
-    List getCreditTransactions();
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy);
+    List<TransactionInterface> getDebitTransactions();
+    List<TransactionInterface> getCreditTransactions();
+    List<TransactionInterface> getDateOrderedTransactions();
 }

@@ -20,9 +20,9 @@ public interface EmployeeInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     ContractInterface getContract();
-    List getContracts();
+    List<ContractInterface> getContracts();
 }

@@ -10,7 +10,6 @@ import interfaces.AddressUsageInterface;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.PersonInterface;
-import interfaces.PropertyInterface;
 import interfaces.LandlordInterface;
 import interfaces.TenancyInterface;
 import interfaces.ApplicationInterface;
@@ -60,7 +59,7 @@ public class TestTenancy {
         AddressUsageInterface addressUsage = new AddressUsage(1, address, new Date(), "DEDWARDS", new Date());
         
         ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
-        PropertyInterface prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
+        Property prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
         ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", new Date(), "DEDWARDS");
         prop.setLandlords(landlords, modTest);
         TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, prop, application, element, "NEWOFFICE", "DEDWARDS", new Date());

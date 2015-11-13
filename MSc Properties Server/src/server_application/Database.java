@@ -6,9 +6,12 @@
 package server_application;
 
 import interfaces.AddressInterface;
+import interfaces.AddressUsageInterface;
 import interfaces.Element;
+import interfaces.JobRoleBenefitInterface;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.PropertyElementInterface;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -38,67 +41,76 @@ public class Database {
     private Connection con;
 
     // List of business data
-    private final HashMap<String, Office> offices;
+    private final Map<String, Office> offices;
 
-    private final HashMap<Integer, Person> people;
+    private final Map<Integer, Person> people;
 
-    private final HashMap<Integer, InvolvedParty> involvedParties;
-    private final HashMap<Integer, Landlord> landlords;
-    private final HashMap<Integer, Employee> employees;
+    private final Map<Integer, InvolvedParty> involvedParties;
+    private final Map<Integer, Landlord> landlords;
+    private final Map<Integer, Employee> employees;
 
-    private final HashMap<Integer, Application> applications;
-    private final HashMap<Integer, Property> properties;
+    private final Map<Integer, Application> applications;
+    private final Map<Integer, Property> properties;
 
-    private final HashMap<Integer, Tenancy> tenancies;
-    private final HashMap<Integer, Lease> leases;
-    private final HashMap<Integer, Contract> contracts;
+    private final Map<Integer, Tenancy> tenancies;
+    private final Map<Integer, Lease> leases;
+    private final Map<Integer, Contract> contracts;
 
-    private final HashMap<Integer, RentAccount> rentAccounts;
-    private final HashMap<Integer, LeaseAccount> leaseAccounts;
-    private final HashMap<Integer, EmployeeAccount> employeeAccounts;
+    private final Map<Integer, RentAccount> rentAccounts;
+    private final Map<Integer, LeaseAccount> leaseAccounts;
+    private final Map<Integer, EmployeeAccount> employeeAccounts;
 
     // List of People details
-    private final HashMap<String, Element> titles;
-    private final HashMap<String, Element> genders;
-    private final HashMap<String, Element> maritalStatuses;
-    private final HashMap<String, Element> ethnicOrigins;
-    private final HashMap<String, Element> languages;
-    private final HashMap<String, Element> nationalities;
-    private final HashMap<String, Element> sexualities;
-    private final HashMap<String, Element> religions;
+    private final Map<String, Element> titles;
+    private final Map<String, Element> genders;
+    private final Map<String, Element> maritalStatuses;
+    private final Map<String, Element> ethnicOrigins;
+    private final Map<String, Element> languages;
+    private final Map<String, Element> nationalities;
+    private final Map<String, Element> sexualities;
+    private final Map<String, Element> religions;
     
     //List of Contact details
-    private final HashMap<String, Element> contactTypes;
+    private final Map<String, Element> contactTypes;
 
     // List of Involved Party details
-    private final HashMap<String, Element> endReasons;
-    private final HashMap<String, Element> relationships;
+    private final Map<String, Element> endReasons;
+    private final Map<String, Element> relationships;
     
     // List of Tenancy details
-    private final HashMap<String, Element> tenancyTypes;
+    private final Map<String, Element> tenancyTypes;
 
     // List of contract details
-    private final HashMap<String, JobRole> jobRoles;
-    private final HashMap<String, Element> jobBenefits;
-    private final HashMap<String, Element> jobRequirements;
-    private final HashMap<Integer, JobRoleBenefit> jobRoleBenefits;
+    private final Map<String, JobRole> jobRoles;
+    private final Map<String, Element> jobBenefits;
+    private final Map<String, Element> jobRequirements;
+    private final Map<Integer, JobRoleBenefit> jobRoleBenefits;
 
     // Lists of Property details
-    private final HashMap<Integer, Address> addresses;
-    private final HashMap<String, Element> propertyTypes; // House, Flat, Bungalow
-    private final HashMap<String, Element> propertySubTypes; // Terraced, Semi-detached
-    private final HashMap<String, Element> propertyElements;
+    private final Map<Integer, Address> addresses;
+    private final Map<String, Element> propertyTypes; // House, Flat, Bungalow
+    private final Map<String, Element> propertySubTypes; // Terraced, Semi-detached
+    private final Map<String, Element> propertyElements;
     
     // List of Account Transactions
-    private final HashMap<Integer, Transaction> transactions;
+    private final Map<Integer, Transaction> transactions;
     
-    private final HashMap<Integer, AddressUsage> addressUsages;
-    private final HashMap<Integer, Contact> contacts;
-    private final HashMap<String, UserImpl> users;
+    private final Map<Integer, AddressUsage> addressUsages;
+    private final Map<Integer, Contact> contacts;
+    private final Map<String, UserImpl> users;
     
     
     ///   CONSTRUCTORS ///
-
+    
+    /**
+     * Constructor for objects of class Database
+     * @param environment
+     * @param addr
+     * @param username
+     * @param password
+     * @param port
+     * @throws RemoteException 
+     */
     public Database(String environment, String addr, String username, String password, Integer port) throws RemoteException {
         this.offices = new HashMap<>();
 
@@ -171,7 +183,16 @@ public class Database {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    /**
+     * 
+     * @param env
+     * @param address
+     * @param user
+     * @param passw
+     * @param port
+     * @throws Exception 
+     */
     private void connect(String env, String address, String user, String passw, int port) throws Exception {
         if (this.con != null) {
             return;
@@ -204,7 +225,9 @@ public class Database {
          * on the Add button
          */
     }
-
+    /**
+     * 
+     */
     public void disconnect() {
         if (this.con != null) {
             try {
@@ -215,6 +238,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void load() throws SQLException, RemoteException {
         if (this.con != null) {
             try {
@@ -276,6 +304,13 @@ public class Database {
         //Add all load methods here
     }
     
+    /**
+     * 
+     * @param from
+     * @param element
+     * @throws SQLException 
+     */
+    
     private void createElement(String from, Element element) throws SQLException {
         
         String insertSql = "insert into " + from + " (code, description, current, createdBy, createdDate) values (?, ?, ?, ?, ?)";
@@ -291,6 +326,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param element
+     * @throws SQLException 
+     */
     private void updateElement(String from, Element element) throws SQLException {
         // use the from String as the from table and the element to update the actual element
         String updateSql = "update " + from + " set description=?, current=? where code=?";
@@ -304,6 +345,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @return
+     * @throws SQLException 
+     */
     private List<ElementImpl> loadElements(String from) throws SQLException {
         String sql = "select code, description, createdBy, createdDate from " + from + " order by createdDate";
         List<ElementImpl> elements = new ArrayList<>();
@@ -326,6 +373,13 @@ public class Database {
         return elements;
     }
     
+    /**
+     * 
+     * @param from
+     * @param modifiedBy
+     * @param ref
+     * @throws SQLException 
+     */
     private void createModifiedBy(String from, ModifiedByInterface modifiedBy, int ref) throws SQLException {
         if(modifiedBy != null) {
             String insertSql = "insert into " + from + " (ref, modifiedBy, modifiedByDate, description) values (?, ?, ?, ?)";
@@ -341,9 +395,16 @@ public class Database {
         }
     }
     
-    private HashMap<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException {
+    /**
+     * 
+     * @param from
+     * @param reference
+     * @return
+     * @throws SQLException 
+     */
+    private Map<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException {
         String sql = "select ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
-        HashMap<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
+        Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
@@ -363,6 +424,13 @@ public class Database {
         return modifiedByMap;
     }
     
+    /**
+     * 
+     * @param from
+     * @param modifiedBy
+     * @param code
+     * @throws SQLException 
+     */
     private void createModifiedBy(String from, ModifiedByInterface modifiedBy, String code) throws SQLException {
         if(modifiedBy != null) {
             String insertSql = "insert into " + from + " (code, modifiedBy, modifiedDate, description) values (?, ?, ?, ?)";
@@ -378,9 +446,16 @@ public class Database {
         }
     }
     
-    private HashMap<String, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
+    /**
+     * 
+     * @param from
+     * @param uniqueCode
+     * @return
+     * @throws SQLException 
+     */
+    private Map<String, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
         String sql = "select code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
-        HashMap<String, ModifiedByInterface> modifiedByMap = new HashMap<>();
+        Map<String, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
@@ -400,7 +475,12 @@ public class Database {
         return modifiedByMap;
     }
     
-    private void createElementMods(Element element, HashMap<String, ModifiedByInterface> loadedMods) {
+    /**
+     * 
+     * @param element
+     * @param loadedMods 
+     */
+    private void createElementMods(Element element, Map<String, ModifiedByInterface> loadedMods) {
         if (element != null && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -416,6 +496,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param conType
+     * @throws SQLException 
+     */
     public void createContactType(Element conType) throws SQLException {
         if(!this.contactTypeExists(conType.getCode())) {
             this.contactTypes.put(conType.getCode(), conType);
@@ -423,6 +508,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactTypeCode
+     * @throws SQLException 
+     */
     public void updateContactType(String contactTypeCode) throws SQLException {
         if(this.contactTypeExists(contactTypeCode)) {
             Element contactType = this.getContactType(contactTypeCode);
@@ -431,6 +521,10 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException 
+     */
     private void loadContactTypes() throws SQLException {
         this.contactTypes.clear();
         List<ElementImpl> loadedContactTypes;
@@ -445,6 +539,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getContactType(String code) {
         if(this.contactTypeExists(code)) {
             return this.contactTypes.get(code);
@@ -452,6 +551,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param contact
+     * @param personRef
+     * @throws SQLException 
+     */
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
             contacts.put(contact.getContactRef(), contact);
@@ -471,6 +576,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactRef
+     * @param personRef
+     * @throws SQLException 
+     */
     public void updatePersonContact(int contactRef, int personRef) throws SQLException {
         if(this.contactExists(contactRef) && this.personExists(personRef)) {
             Contact contact = this.getContact(contactRef);
@@ -490,6 +601,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param reference
+     * @throws SQLException 
+     */
     private void loadPersonContacts(int reference) throws SQLException {
         String sql = "select contactRef, personRef, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from personContacts order by contactRef";
         try (Statement selectStat = con.createStatement()) {
@@ -520,7 +636,13 @@ public class Database {
         }
     }
     
-    private void createPersonContactMods(int contactRef, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    /**
+     * 
+     * @param contactRef
+     * @param personRef
+     * @param loadedMods 
+     */
+    private void createPersonContactMods(int contactRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
             Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -536,7 +658,12 @@ public class Database {
             }
         }
     }
-    
+    /**
+     * 
+     * @param contact
+     * @param officeCode
+     * @throws SQLException 
+     */
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.officeExists(officeCode)) {
             contacts.put(contact.getContactRef(), contact);
@@ -556,6 +683,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactRef
+     * @param officeCode
+     * @throws SQLException 
+     */
     public void updateOfficeContact(int contactRef, String officeCode) throws SQLException {
         if(this.contactExists(contactRef) && this.officeExists(officeCode)) {
             Contact contact = this.getContact(contactRef);
@@ -575,6 +708,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @throws SQLException 
+     */
     private void loadOfficeContacts(String code) throws SQLException {
         String sql = "select contactRef, officeCode, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from officeContacts order by contactRef";
         try (Statement selectStat = con.createStatement()) {
@@ -605,7 +743,13 @@ public class Database {
         }
     }
     
-    private void createOfficeContactMods(int contactRef, String code, HashMap<String, ModifiedByInterface> loadedMods) {
+    /**
+     * 
+     * @param contactRef
+     * @param code
+     * @param loadedMods 
+     */
+    private void createOfficeContactMods(int contactRef, String code, Map<String, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.officeExists(code) && !loadedMods.isEmpty()) {
             Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -622,6 +766,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param address
+     * @param personRef
+     * @throws SQLException 
+     */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
         if(address != null && this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
@@ -640,6 +790,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @param personRef
+     * @throws SQLException 
+     */
     public void updatePersonAddressUsage(int addressRef, int personRef) throws SQLException {
         if(this.addressUsageExists(addressRef) && this.personExists(personRef)) {
             AddressUsage address = this.getAddressUsage(addressRef);
@@ -658,6 +814,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param reference
+     * @throws SQLException 
+     */
     private void loadPersonAddresses(int reference) throws SQLException {
         String sql = "select addressUsageRef, addressRef, personRef, startDate, endDate, createdBy, createdDate from personAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
@@ -693,7 +854,13 @@ public class Database {
         }
     }
     
-    private void createPersonAddressMods(int addressRef, int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    /**
+     * 
+     * @param addressRef
+     * @param personRef
+     * @param loadedMods 
+     */
+    private void createPersonAddressMods(int addressRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
             AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -710,6 +877,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param address
+     * @param appRef
+     * @throws SQLException 
+     */
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
@@ -728,6 +901,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @param appRef
+     * @throws SQLException 
+     */
     public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException {
         if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
             AddressUsage address = this.getAddressUsage(addressRef);
@@ -746,6 +925,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param reference
+     * @throws SQLException 
+     */
     private void loadApplicationAddresses(int reference) throws SQLException {
         String sql = "select addressUsageRef, addressRef, appRef, startDate, endDate, createdBy, createdDate from applicationAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
@@ -781,7 +965,13 @@ public class Database {
         }
     }
     
-    private void createApplicationAddressMods(int addressRef, int applicationRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    /**
+     * 
+     * @param addressRef
+     * @param applicationRef
+     * @param loadedMods 
+     */
+    private void createApplicationAddressMods(int addressRef, int applicationRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
             AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -798,6 +988,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param title
+     * @throws SQLException 
+     */
     public void createTitle(Element title) throws SQLException {
         if(!this.titleExists(title.getCode())) {
             this.titles.put(title.getCode(), title);
@@ -805,6 +1000,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param titleCode
+     * @throws SQLException 
+     */
     public void updateTitle(String titleCode) throws SQLException {
         if(this.titleExists(titleCode)) {
             Element title = this.getTitle(titleCode);
@@ -813,6 +1013,10 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException 
+     */
     private void loadTitles() throws SQLException {
         this.titles.clear();
         List<ElementImpl> loadedTitles;
@@ -827,6 +1031,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getTitle(String code) {
         if(this.titleExists(code)) {
             return this.titles.get(code);
@@ -834,6 +1043,11 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param gender
+     * @throws SQLException 
+     */
     public void createGender(Element gender) throws SQLException {
         if(!this.genderExists(gender.getCode())) {
             this.genders.put(gender.getCode(), gender);
@@ -841,6 +1055,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param genderCode
+     * @throws SQLException 
+     */
     public void updateGender(String genderCode) throws SQLException {
         if(this.genderExists(genderCode)) {
             Element gender = this.getGender(genderCode);
@@ -849,6 +1068,10 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException 
+     */
     private void loadGenders() throws SQLException {
         this.genders.clear();
         List<ElementImpl> loadedGenders;
@@ -863,6 +1086,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getGender(String code) {
         if(this.genderExists(code)) {
             return this.genders.get(code);
@@ -870,6 +1098,11 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param status
+     * @throws SQLException 
+     */
     public void createMaritalStatus(Element status) throws SQLException {
         if(!this.maritalStatusExists(status.getCode())) {
             maritalStatuses.put(status.getCode(), status);
@@ -1166,7 +1399,7 @@ public class Database {
         }
     }
     
-    private void createAddressMods(int addressRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    private void createAddressMods(int addressRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressExists(addressRef) && !loadedMods.isEmpty()) {
             Address address = this.getAddress(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1279,7 +1512,7 @@ public class Database {
         }
     }
     
-    private void createPropertyMods(int propRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createPropertyMods(int propRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propertyExists(propRef) && !loadadMods.isEmpty()) {
             Property property = this.getProperty(propRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -1374,15 +1607,15 @@ public class Database {
         return null;
     }
     
-    private void createPropertyElementValues(int propertyRef, List<PropertyElement> propertyElements) throws SQLException {
+    private void createPropertyElementValues(int propertyRef, List<PropertyElementInterface> propertyElements) throws SQLException {
         if (!propertyElements.isEmpty() && this.propertyExists(propertyRef)) {
-            for (PropertyElement temp : propertyElements) {
+            for (PropertyElementInterface temp : propertyElements) {
                 this.createPropertyElementValue(propertyRef, temp);
             }
         }
     }
     
-    public void createPropertyElementValue(int propertyRef, PropertyElement propertyElement) throws SQLException {
+    public void createPropertyElementValue(int propertyRef, PropertyElementInterface propertyElement) throws SQLException {
         if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode())) {
             String insertSql = "";
             if (propertyElement.isCharge()) {
@@ -1472,7 +1705,7 @@ public class Database {
         }
     }
     
-    private void createPropElementMods(PropertyElement element, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createPropElementMods(PropertyElement element, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -1668,7 +1901,7 @@ public class Database {
         }
     }
     
-    private void createPeopleMods(int personRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    private void createPeopleMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.personExists(personRef) && !loadedMods.isEmpty()) {
             Person person = this.getPerson(personRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1787,7 +2020,7 @@ public class Database {
         }
     }
     
-    private void createInvolvedPartyMods(int invPartyRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    private void createInvolvedPartyMods(int invPartyRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.invPartyExists(invPartyRef) && !loadedMods.isEmpty()) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1962,7 +2195,7 @@ public class Database {
         }
     }
     
-    private void createApplicationMods(int appRef, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    private void createApplicationMods(int appRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.applicationExists(appRef) && !loadedMods.isEmpty()) {
             Application application = this.getApplication(appRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2124,7 +2357,7 @@ public class Database {
         }
     }
     
-    private void createLandlordMods(int landlordRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createLandlordMods(int landlordRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.landlordExists(landlordRef) && !loadadMods.isEmpty()) {
             Landlord landlord = this.getLandlord(landlordRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -2212,7 +2445,7 @@ public class Database {
         }
     }
     
-    private void createOfficeMods(String officeCode, HashMap<String, ModifiedByInterface> loadedMods) {
+    private void createOfficeMods(String officeCode, Map<String, ModifiedByInterface> loadedMods) {
         if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2270,12 +2503,12 @@ public class Database {
                 int col = 1;
                 updateStat.setString(col++, jobRole.getJobTitle());
                 updateStat.setString(col++, jobRole.getJobDescription());
-                updateStat.setBoolean(col++, jobRole.isRead());
-                updateStat.setBoolean(col++, jobRole.isWrite());
-                updateStat.setBoolean(col++, jobRole.isUpdate());
-                updateStat.setBoolean(col++, jobRole.isEmployeeRead());
-                updateStat.setBoolean(col++, jobRole.isEmployeeWrite());
-                updateStat.setBoolean(col++, jobRole.isEmployeeUpdate());
+                updateStat.setBoolean(col++, jobRole.getRead());
+                updateStat.setBoolean(col++, jobRole.getWrite());
+                updateStat.setBoolean(col++, jobRole.getUpdate());
+                updateStat.setBoolean(col++, jobRole.getEmployeeRead());
+                updateStat.setBoolean(col++, jobRole.getEmployeeWrite());
+                updateStat.setBoolean(col++, jobRole.getEmployeeUpdate());
                 updateStat.setString(col++, jobRole.getJobRoleCode());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -2319,7 +2552,7 @@ public class Database {
         }
     }
     
-    private void createJobRoleMods(String jobRoleCode, HashMap<String, ModifiedByInterface> loadedMods) {
+    private void createJobRoleMods(String jobRoleCode, Map<String, ModifiedByInterface> loadedMods) {
         if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2385,9 +2618,10 @@ public class Database {
     }
     
     // IS THE PRIVATE METHOD USED TO STORE JOB BENEFITS IN BULK WHEN A JOB ROLE IS CREATED
-    private void createJobRoleBenefits(String code, List<JobRoleBenefit> benefits) throws SQLException {
+    private void createJobRoleBenefits(String code, List<JobRoleBenefitInterface> benefits) throws SQLException {
         if (!benefits.isEmpty() && this.jobRoleExists(code)) {
-            for (JobRoleBenefit temp : benefits) {
+            for (JobRoleBenefitInterface benefit : benefits) {
+                JobRoleBenefit temp = (JobRoleBenefit) benefit;
                 this.createJobRoleBenefit(code, temp);
             }
         }
@@ -2483,7 +2717,7 @@ public class Database {
         }
     }
     
-    private void createBenefitMods(JobRoleBenefit benefit, HashMap<Integer, ModifiedByInterface> loadedMods) {
+    private void createBenefitMods(JobRoleBenefit benefit, Map<Integer, ModifiedByInterface> loadedMods) {
         if (benefit != null && this.jobBenefitExists(benefit.getBenefit().getCode()) && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -2643,7 +2877,7 @@ public class Database {
         }
     }
     
-    private void createEmployeeMods(int employeeRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createEmployeeMods(int employeeRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.employeeExists(employeeRef) && !loadadMods.isEmpty()) {
             Employee employee = this.getEmployee(employeeRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -2758,7 +2992,7 @@ public class Database {
         }
     }
     
-    private void createTenancyMods(int tenancyRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createTenancyMods(int tenancyRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.tenancyExists(tenancyRef) && !loadadMods.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -2900,7 +3134,7 @@ public class Database {
         }
     }
     
-    private void createLeaseMods(int leaseRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createLeaseMods(int leaseRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseExists(leaseRef) && !loadadMods.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -3104,7 +3338,7 @@ public class Database {
         }
     }
     
-    private void createContractMods(int contractRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createContractMods(int contractRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(contractRef) && !loadadMods.isEmpty()) {
             Contract contract = this.getContract(contractRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -3201,7 +3435,7 @@ public class Database {
         }
     }
     
-    private void createRentAccMods(int rentAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createRentAccMods(int rentAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.rentAccountExists(rentAccRef) && !loadadMods.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -3298,7 +3532,7 @@ public class Database {
         }
     }
     
-    private void createLeaseAccMods(int leaseAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createLeaseAccMods(int leaseAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseAccountExists(leaseAccRef) && !loadadMods.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -3394,7 +3628,7 @@ public class Database {
         }
     }
     
-    private void createEmployeeAccMods(int employeeAccRef, HashMap<Integer, ModifiedByInterface> loadadMods) {
+    private void createEmployeeAccMods(int employeeAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(employeeAccRef) && !loadadMods.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -4043,7 +4277,7 @@ public class Database {
                 int i = 0;
                 while (cont && i < tempPeople.size()) {
                     Person tempPerson = tempPeople.get(i);
-                    if (temp.isHouseholdMember(tempPerson.getPersonRef())) {
+                    if (temp.isPersonHouseholdMember(tempPerson.getPersonRef())) {
                         cont = false;
                     }
                     i++;
@@ -4063,7 +4297,7 @@ public class Database {
         if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
             for (Application temp : tempApplications) {
                 boolean cont = true;
-                List<AddressUsage> appAddresses = temp.getApplicationAddressess();
+                List<AddressUsageInterface> appAddresses = temp.getApplicationAddressess();
                 if (appAddresses.isEmpty()) {
                     cont = false;
                 } else {
@@ -4072,7 +4306,7 @@ public class Database {
                         Address tempAddress = tempAddresses.get(i);
                         int ind = 0;
                         while (cont && ind < appAddresses.size()) {
-                            AddressUsage appAddress = appAddresses.get(ind);
+                            AddressUsage appAddress = (AddressUsage) appAddresses.get(ind);
                             if (tempAddress.getAddressRef() == appAddress.getAddress().getAddressRef()) {
                                 cont = false;
                             }

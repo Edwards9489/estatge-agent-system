@@ -10,7 +10,6 @@ package interfaces;
  * @author Dwayne
  */
 public interface EmployeeAccountInterface extends AccountInterface {
-    void setSalary(double salary);
     ContractInterface getContract();
     int getContractRef();
     double getSalary();

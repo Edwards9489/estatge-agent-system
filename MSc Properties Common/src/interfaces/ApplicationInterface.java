@@ -19,18 +19,16 @@ public interface ApplicationInterface {
     Date getAppEndDate();
     String getAppStatusCode();
     String getCurrentApplicationAddressString();
-    List getApplicationAddressess();
+    List<AddressUsageInterface> getApplicationAddressess();
     boolean isAppInterestedFlag();
-    List getHousehold();
-    List getPropertiesInterestedIn();
+    List<InvolvedPartyInterface> getHousehold();
+    List<PropertyInterface> getPropertiesInterestedIn();
     int getTenancyRef();
     boolean isCurrent();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void updateApplication(String name, Date startDate, ModifiedByInterface modifiedBy);
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
 }

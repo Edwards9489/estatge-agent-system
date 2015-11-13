@@ -14,26 +14,22 @@ import java.util.List;
  * @author Dwayne
  */
 public interface PropertyInterface {
-    void setLandlords(List<LandlordInterface> landlord, ModifiedByInterface modifiedBy);
-    void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy);
-    void setPropStatus(String propStatus, ModifiedByInterface modifiedBy);
-    void updateProperty(AddressInterface address, Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy);
     int getPropRef();
     AddressInterface getAddress();
-    List getLandlords();
+    List<LandlordInterface> getLandlords();
     Date getAcquiredDate();
     Date getLeaseEndDate();
     Element getPropType();
     Element getPropSubType();
     String getPropStatus();
-    List getPropertyElements();
+    List<PropertyElementInterface> getPropertyElements();
     boolean isCurrent();
     double getRent();
     double getCharges();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

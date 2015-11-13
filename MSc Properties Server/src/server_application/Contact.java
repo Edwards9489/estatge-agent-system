@@ -28,6 +28,15 @@ public class Contact implements ContactInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Contact
+     * @param ref
+     * @param type
+     * @param value
+     * @param date
+     * @param createdBy
+     * @param createdDate
+     */
     public Contact(int ref, Element type, String value, Date date, String createdBy, Date createdDate) {
         this.contactRef = ref;
         contactType = type;
@@ -63,6 +72,9 @@ public class Contact implements ContactInterface {
         this.startDate = startDate;
     }
     
+    /**
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
@@ -73,7 +85,6 @@ public class Contact implements ContactInterface {
      * @param endDate the endDate to set
      * @param modifiedBy
      */
-    @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.startDate)) {
             this.endDate = endDate;
@@ -81,7 +92,12 @@ public class Contact implements ContactInterface {
         }
     }
     
-    @Override
+    /**
+     * @param contactType
+     * @param contactValue
+     * @param startDate
+     * @param modifiedBy
+     */
     public void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
         this.setContactType(contactType);
         this.setContactValue(contactValue);
@@ -93,26 +109,32 @@ public class Contact implements ContactInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    /**
+     * @return contactRef
+     */
     @Override
     public int getContactRef() {
         return this.contactRef;
     }
     
     /**
-     * @return the contactType
+     * @return contactType
      */
     @Override
     public Element getContactType() {
         return contactType;
     }
     
+    /**
+     * @return contactType description
+     */
     @Override
     public String getContactTypeDescription() {
         return contactType.getDescription();
     }
 
     /**
-     * @return the contactValue
+     * @return contactValue
      */
     @Override
     public String getContactValue() {
@@ -120,7 +142,7 @@ public class Contact implements ContactInterface {
     }
 
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -128,7 +150,7 @@ public class Contact implements ContactInterface {
     }
 
     /**
-     * @return the endDate
+     * @return endDate
      */
     @Override
     public Date getEndDate() {
@@ -136,7 +158,7 @@ public class Contact implements ContactInterface {
     }
     
     /**
-     * @return the current
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
      */
     @Override
     public boolean isCurrent() {
@@ -148,6 +170,9 @@ public class Contact implements ContactInterface {
         }
     }
     
+    /**
+     * @return the name of the last user to modify the Contact
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -156,6 +181,9 @@ public class Contact implements ContactInterface {
         return null;
     }
     
+    /**
+     * @return the last date the Contact was modified
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -164,11 +192,17 @@ public class Contact implements ContactInterface {
         return null;
     }
     
+    /**
+     * @return the list of modifiedBy objects for the Contact
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return the last modifiedBy object for the Contact
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -178,7 +212,7 @@ public class Contact implements ContactInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -186,10 +220,18 @@ public class Contact implements ContactInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return createdDate;
+    }
+    /**
+     * 
+     * @return String representation of Contact
+     */
+    @Override
+    public String toString() {
+        return "AMEND toString()";
     }
 }

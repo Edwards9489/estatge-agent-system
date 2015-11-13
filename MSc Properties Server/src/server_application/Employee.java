@@ -35,7 +35,16 @@ public class Employee implements EmployeeInterface {
     
     ///   CONSTRUCTORS ///
     
-    
+    /**
+     * Constructor for objects of class Employee
+     * @param employeeRef
+     * @param person
+     * @param username
+     * @param password
+     * @param createdBy
+     * @param createdDate
+     * @throws RemoteException 
+     */
     public Employee(int employeeRef, PersonInterface person, String username, String password, String createdBy, Date createdDate) throws RemoteException {
         this.employeeRef = employeeRef;
         this.person = person;
@@ -58,19 +67,32 @@ public class Employee implements EmployeeInterface {
         this.user.setOfficeCode(officeCode);
     }
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
+    /**
+     * 
+     * @param password 
+     */
     public void updatePassword(String password) {
         user.setPassword(password);
     }
     
+    /**
+     * 
+     * @param contract
+     * @param modifiedBy 
+     */
     public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) {
         if(!contracts.isEmpty()) {
-            AgreementInterface temp = contracts.get(contracts.size()-1);
+            Agreement temp = (Agreement) contracts.get(contracts.size()-1);
             if(temp.isCurrent()) {
                 temp.setActualEndDate(contract.getStartDate(), modifiedBy);
             }
@@ -85,7 +107,7 @@ public class Employee implements EmployeeInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the employeeRef
+     * @return employeeRef
      */
     @Override
     public int getEmployeeRef() {
@@ -93,13 +115,17 @@ public class Employee implements EmployeeInterface {
     }
 
     /**
-     * @return the person
+     * @return person
      */
     @Override
     public PersonInterface getPerson() {
         return person;
     }
     
+    /**
+     * 
+     * @return true if contracts.isEmpty() == false || getContract.isCurrent()
+     */
     public boolean isCurrent() {
         if(contracts.isEmpty()) {
             return false;
@@ -109,25 +135,33 @@ public class Employee implements EmployeeInterface {
     }
     
     /**
-     * @return the person
+     * @return ref of person
      */
     @Override
     public int getPersonRef() {
         return person.getPersonRef();
     }
     
+    /**
+     * 
+     * @return user
+     */
     public UserImpl getUser() {
         return this.user;
     }
 
     /**
-     * @return the officeCode
+     * @return officeCode
      */
     @Override
     public String getOfficeCode() {
         return officeCode;
     }
     
+    /**
+     * 
+     * @return the name of the last user to modify the Employee
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -136,6 +170,10 @@ public class Employee implements EmployeeInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the date of the last modification for the Employee
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -144,11 +182,19 @@ public class Employee implements EmployeeInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the Employee
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifiedBy object for the Employee
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -158,7 +204,7 @@ public class Employee implements EmployeeInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -166,7 +212,7 @@ public class Employee implements EmployeeInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
@@ -174,7 +220,7 @@ public class Employee implements EmployeeInterface {
     }
     
     /**
-     * @return the current contracts
+     * @return most recent contract
      */
     @Override
     public ContractInterface getContract() {
@@ -182,7 +228,7 @@ public class Employee implements EmployeeInterface {
     }
     
     /**
-     * @return the addresses
+     * @return contracts
      */
     @Override
     public List<ContractInterface> getContracts() {

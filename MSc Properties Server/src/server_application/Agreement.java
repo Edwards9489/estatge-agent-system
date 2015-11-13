@@ -35,6 +35,17 @@ public class Agreement implements AgreementInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Agreement
+     * @param agreementRef
+     * @param agreementName
+     * @param startDate
+     * @param length
+     * @param accountRef
+     * @param createdBy
+     * @param createdDate
+     * @param officeCode 
+     */
     public Agreement(int agreementRef, String agreementName, Date startDate, int length, int accountRef, String createdBy, Date createdDate, String officeCode) {
         this.agreementRef = agreementRef;
         this.agreementName = agreementName;
@@ -53,21 +64,21 @@ public class Agreement implements AgreementInterface {
     ///   MUTATOR METHODS   ///
     
     /**
-     * @param startDate the startDate to set
+     * @param name
      */
     private void setAgreementName(String name) {
         this.agreementName = name;
     }
     
     /**
-     * @param startDate the startDate to set
+     * @param startDate
      */
     private void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     /**
-     * @param expectedEndDate the expectedEndDate to set
+     * @param expectedEndDate
      */
     private void setExpectedEndDate(Date expectedEndDate) {
         if(expectedEndDate.after(this.startDate)) {
@@ -76,7 +87,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @param length the length to set
+     * @param length
      */
     private void setLength(int length) {
         if(length > 0) {
@@ -85,6 +96,9 @@ public class Agreement implements AgreementInterface {
         }
     }
     
+    /**
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
@@ -92,10 +106,9 @@ public class Agreement implements AgreementInterface {
     }
     
     /**
-     * @param actualEndDate the actualEndDate to set
+     * @param actualEndDate
      * @param modifiedBy
      */
-    @Override
     public void setActualEndDate(Date actualEndDate, ModifiedByInterface modifiedBy) {
         if(actualEndDate.after(this.startDate)) {
             this.actualEndDate = actualEndDate;
@@ -103,7 +116,12 @@ public class Agreement implements AgreementInterface {
         }
     }
     
-    @Override
+    /**
+     * @param name
+     * @param startDate
+     * @param length
+     * @param modifiedBy
+     */
     public void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy) {
         if(this.isCurrent()) {
             this.setAgreementName(name);
@@ -117,18 +135,24 @@ public class Agreement implements AgreementInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    /**
+     * @return startDate + length (in months)
+     */
     private Date calculateExpectedEndDate() {
         Calendar cal = DateConversion.dateToCalendar(this.startDate);
         cal.add(Calendar.MONTH, this.length);
         return cal.getTime();
     }
     
+    /**
+     * @return actualEndDate == null
+     */
     private boolean isEndDateNull() {
         return this.actualEndDate == null;
     }
 
     /**
-     * @return the agreementRef
+     * @return agreementRef
      */
     @Override
     public int getAgreementRef() {
@@ -136,7 +160,7 @@ public class Agreement implements AgreementInterface {
     }
     
     /**
-     * @return the agreementName
+     * @return agreementName
      */
     @Override
     public String getAgreementName() {
@@ -144,7 +168,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -152,7 +176,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the expectedEndDate
+     * @return expectedEndDate
      */
     @Override
     public Date getExpectedEndDate() {
@@ -160,7 +184,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the actualEndDate
+     * @return actualEndDate
      */
     @Override
     public Date getActualEndDate() {
@@ -168,7 +192,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the length
+     * @return length
      */
     @Override
     public int getLength() {
@@ -176,7 +200,7 @@ public class Agreement implements AgreementInterface {
     }
     
     /**
-     * @return the length
+     * @return accountRef
      */
     @Override
     public int getAccountRef() {
@@ -184,13 +208,16 @@ public class Agreement implements AgreementInterface {
     }
     
     /**
-     * @return the length
+     * @return officeCode
      */
     @Override
     public String getOfficeCode() {
         return officeCode;
     }
     
+    /**
+     * @return true if actualEndDate == null || (actualEndDate != null) && actualEndDate > TODAY)
+     */
     @Override
     public boolean isCurrent() {
         if(this.isEndDateNull()) {
@@ -201,6 +228,9 @@ public class Agreement implements AgreementInterface {
         }
     }
     
+    /**
+     * @return the name of the last user to modify the Agreement
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -209,6 +239,9 @@ public class Agreement implements AgreementInterface {
         return null;
     }
     
+    /**
+     * @return the date the of the last modification to the Agreement
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -217,11 +250,17 @@ public class Agreement implements AgreementInterface {
         return null;
     }
     
+    /**
+     * @return the list of modifiedBy objects for the Agreement
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return the last modifiedBy object for the Agreement
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -231,7 +270,7 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -239,13 +278,16 @@ public class Agreement implements AgreementInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return createdDate;
     }
     
+    /**
+     * @return String representation of the Agreement
+     */
     @Override
     public String toString() {
         String temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +

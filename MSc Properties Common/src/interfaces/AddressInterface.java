@@ -27,11 +27,8 @@ public interface AddressInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     String printAddress();
-    void updateAddress(String buildingNumber, String buildingName, String subStreetNumber,
-            String subStreet, String streetNumber, String street, String area,
-            String town, String country, String postcode, ModifiedByInterface modifiedBy);
 }

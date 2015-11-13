@@ -24,10 +24,8 @@ public interface AgreementInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isCurrent();
-    void setActualEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy);
 }

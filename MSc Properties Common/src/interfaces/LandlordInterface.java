@@ -16,11 +16,11 @@ public interface LandlordInterface {
     int getLandlordRef();
     PersonInterface getPerson();
     int getPersonRef();
-    List getLeases();
+    List<LeaseInterface> getLeases();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

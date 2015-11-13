@@ -13,8 +13,7 @@ import java.util.List;
  * @author Dwayne
  */
 public interface LeaseInterface extends AgreementInterface {
-    void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy);
-    List getLandlords();
+    List<LandlordInterface> getLandlords();
     PropertyInterface getProperty();
     int getPropertyRef();
     boolean isFullManagement();

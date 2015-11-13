@@ -10,7 +10,6 @@ package interfaces;
  * @author Dwayne
  */
 public interface RentAccountInterface extends AccountInterface {
-    void setRent(double rent);
     double getRent();
     TenancyInterface getTenancy();
     int getTenancyRef();

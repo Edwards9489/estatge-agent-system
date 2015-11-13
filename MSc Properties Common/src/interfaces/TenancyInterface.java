@@ -10,9 +10,6 @@ package interfaces;
  * @author Dwayne
  */
 public interface TenancyInterface extends AgreementInterface {
-    void setRent(double rent);
-    void setCharges(double charges);
-    void setTenType(Element tenType, ModifiedByInterface modifiedBy);
     PropertyInterface getProperty();
     ApplicationInterface getApplication();
     Element getTenType();

@@ -10,7 +10,6 @@ package interfaces;
  * @author Dwayne
  */
 public interface LeaseAccountInterface {
-    void setExpenditure(double expenditure);
     LeaseInterface getLease();
     int getLeaseRef();
     double getExpenditure();

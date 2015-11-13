@@ -73,53 +73,98 @@ public class Address implements AddressInterface {
     
     ///   MUTATOR METHODS   ///
     
+    /**
+     * @param number
+     */
     private void setBuildingNumber(String number) {
         buildingNumber = number;
     }
     
+    /**
+     * @param name
+     */
     private void setBuildingName(String name) {
         buildingName = name;
     }
     
+    /**
+     * @param number
+     */
     private void setSubStreetNumber(String number) {
         subStreetNumber = number;
     }
     
+    /**
+     * @param street
+     */
     private void setSubStreet(String street) {
         subStreet = street;
     }
     
+    /**
+     * @param number
+     */
     private void setStreetNumber(String number) {
         streetNumber = number;
     }
     
+    /**
+     * @param street
+     */
     private void setStreet(String street) {
         this.street = street;
     }
     
+    /**
+     * @param area
+     */
     private void setArea(String area) {
         this.area = area;
     }
     
+    /**
+     * @param town
+     */
     private void setTown(String town) {
         this.town = town;
     }
     
+    /**
+     * @param country
+     */
     private void setCountry(String country) {
         this.country = country;
     }
     
+    /**
+     * @param postcode
+     */
     private void setPostcode(String postcode) {
         this.postcode = postcode;
     }
     
+    /**
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
-    @Override
+    /**
+     * @param buildingNumber
+     * @param buildingName
+     * @param subStreetNumber
+     * @param subStreet
+     * @param streetNumber
+     * @param street
+     * @param area
+     * @param town
+     * @param country
+     * @param postcode
+     * @param modifiedBy
+     */
     public void updateAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
             String town, String country, String postcode, ModifiedByInterface modifiedBy) {
@@ -148,44 +193,71 @@ public class Address implements AddressInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    /**
+     * @return buildingNumber.isEmpty()
+     */
     private boolean isBuildingNumberNull() {
         return buildingNumber.isEmpty();
     }
-
+    
+    /**
+     * @return buildingName.isEmpty()
+     */
     private boolean isBuildingNameNull() {
         return buildingName.isEmpty();
     }
-
+    
+    /**
+     * @return subStreetNumber.isEmpty()
+     */
     private boolean isSubStreetNumberNull() {
         return subStreetNumber.isEmpty();
     }
-
+    
+    /**
+     * @return subStreet.isEmpty()
+     */
     private boolean isSubStreetNull() {
         return subStreet.isEmpty();
     }
-
+    
+    /**
+     * @return streetNumber.isEmpty()
+     */
     private boolean isStreetNumberNull() {
         return streetNumber.isEmpty();
     }
 
+    /**
+     * @return street.isEmpty()
+     */
     private boolean isStreetNull() {
         return street.isEmpty();
     }
 
+    /**
+     * @return area.isEmpty()
+     */
     private boolean isAreaNull() {
         return area.isEmpty();
     }
 
+    /**
+     * @return town.isEmpty()
+     */
     private boolean isTownNull() {
         return town.isEmpty();
     }
 
+    /**
+     * @return country.isEmpty()
+     */
     private boolean isCountryNull() {
         return country.isEmpty();
     }
 
     /**
-     * @return the addressRef
+     * @return addressRef
      */
     @Override
     public int getAddressRef() {
@@ -193,7 +265,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the buildingNumber
+     * @return buildingNumber
      */
     @Override
     public String getBuildingNumber() {
@@ -201,7 +273,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the buildingName
+     * @return buildingName
      */
     @Override
     public String getBuildingName() {
@@ -209,7 +281,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the subStreetNumber
+     * @return subStreetNumber
      */
     @Override
     public String getSubStreetNumber() {
@@ -217,7 +289,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the subStreet
+     * @return subStreet
      */
     @Override
     public String getSubStreet() {
@@ -225,7 +297,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the streetNumber
+     * @return streetNumber
      */
     @Override
     public String getStreetNumber() {
@@ -233,7 +305,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the street
+     * @return street
      */
     @Override
     public String getStreet() {
@@ -241,7 +313,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the area
+     * @return area
      */
     @Override
     public String getArea() {
@@ -249,7 +321,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the town
+     * @return town
      */
     @Override
     public String getTown() {
@@ -257,7 +329,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the country
+     * @return country
      */
     @Override
     public String getCountry() {
@@ -265,13 +337,16 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the postcode
+     * @return postcode
      */
     @Override
     public String getPostcode() {
         return postcode;
     }
     
+    /**
+     * @return the name of the last user to modify the Address
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -280,6 +355,9 @@ public class Address implements AddressInterface {
         return null;
     }
     
+    /**
+     * @return the date the last time the Address was modified
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -288,11 +366,17 @@ public class Address implements AddressInterface {
         return null;
     }
     
+    /**
+     * @return a list of modifiedBy objects for the Address
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return get the last modifiedBy object for the Address
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -302,7 +386,7 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -310,13 +394,16 @@ public class Address implements AddressInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return createdDate;
     }
     
+    /**
+     * @return String representation of the Address as one line
+     */
     @Override
     public String printAddress()
     {
@@ -357,6 +444,9 @@ public class Address implements AddressInterface {
         return temp;
     }
     
+    /**
+     * @return String representation of the Address
+     */
     @Override
     public String toString() {
         String temp = "\n\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +

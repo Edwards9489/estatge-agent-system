@@ -1,0 +1,14 @@
+Things to do - 13.11.15
+
+ - Create all ServerImpl methods (including reporting methods)
+ - Update Server interface to include all public methods (except process Transactions method)
+ - Create all ClientImpl methods (look at Server and create all methods)
+ - Update the catching of Exceptions
+		- throws in class header when just going to pass back up to calling method i.e ServerImpl when ClientImpl is invoking getTitles()
+		- catch Exception in try catch block when it is the invoking class i.e ServerImpl when invoking database.load()
+ - Implement list of File's for classes
+ - Implement Note class
+ - Implement list of Note in classes or field of note for element classes
+ - Carry out Unit Testing
+ - Carry out System Testing
+ - Create GUI

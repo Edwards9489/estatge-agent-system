@@ -30,7 +30,16 @@ public class Account implements AccountInterface {
     private final List<TransactionInterface> creditTransactions;
     
     ///   CONSTRUCTORS ///
-
+    
+    /**
+     * Constructor for objects of class Account
+     * @param accRef
+     * @param accName
+     * @param officeCode
+     * @param createdBy
+     * @param startDate
+     * @param createdDate
+     */
     public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy, Date createdDate) {
         this.accRef = accRef;
         this.accName = accName;
@@ -48,13 +57,13 @@ public class Account implements AccountInterface {
     ///   MUTATOR METHODS   ///
 
     /**
-     * @param balance the balance to set
+     * @param balance
      */
     public void setBalance(double balance) {
         this.balance = balance;
     }
     /**
-     * @param startDate the startDate to set
+     * @param startDate
      */
     private void setStartDate(Date startDate) {
         this.startDate = startDate;
@@ -67,6 +76,9 @@ public class Account implements AccountInterface {
         this.accName = accName;
     }
     
+    /**
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
@@ -74,10 +86,9 @@ public class Account implements AccountInterface {
     }
     
     /**
-     * @param endDate the endDate to set
+     * @param endDate
      * @param modifiedBy
      */
-    @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.startDate)) {
             this.endDate = endDate;
@@ -86,7 +97,11 @@ public class Account implements AccountInterface {
         
     }
     
-    @Override
+    /**
+     * @param startDate
+     * @param accName
+     * @param modifiedBy
+     */
     public void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy) {
         if (this.isCurrent()) {
             this.setStartDate(startDate);
@@ -95,7 +110,11 @@ public class Account implements AccountInterface {
         }
 
     }
-
+    
+    /**
+     * @param transaction
+     * @param modifiedBy
+     */
     public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) {
         if (this.isCurrent()) {
             if (transaction.isDebit()) {
@@ -114,7 +133,7 @@ public class Account implements AccountInterface {
     ///   ACCESSOR METHODS   ///
      
      /**
-     * @return the accRef
+     * @return accRef
      */
     @Override
     public int getAccRef() {
@@ -122,7 +141,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the accountName
+     * @return accName
      */
     @Override
     public String getAccName() {
@@ -130,7 +149,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -138,7 +157,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the endDate
+     * @return endDate
      */
     @Override
     public Date getEndDate() {
@@ -146,7 +165,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the balance
+     * @return balance
      */
     @Override
     public double getBalance() {
@@ -154,18 +173,24 @@ public class Account implements AccountInterface {
     }
     
     /**
-     * @return the officeCode
+     * @return officeCode
      */
     @Override
     public String getOfficeCode() {
         return this.officeCode;
     }
     
+    /**
+     * @return true if the account balance < 0
+     */
     @Override
     public boolean isNegativeInd() {
         return this.balance < 0;
     }
     
+    /**
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     */
     @Override
     public boolean isCurrent() {
         if(this.endDate == null) {
@@ -176,6 +201,9 @@ public class Account implements AccountInterface {
         }
     }
     
+    /**
+     * @return the name of the last user to modify the account
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -184,6 +212,9 @@ public class Account implements AccountInterface {
         return null;
     }
     
+    /**
+     * @return the last date the account was modified
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -192,11 +223,17 @@ public class Account implements AccountInterface {
         return null;
     }
     
+    /**
+     * @return the list of modifiedBy objects
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return the last modifiedBy object for the account
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -206,7 +243,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -214,7 +251,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
@@ -222,7 +259,7 @@ public class Account implements AccountInterface {
     }
 
     /**
-     * @return the debitTransactions
+     * @return debitTransactions
      */
     @Override
     public List<TransactionInterface> getDebitTransactions() {
@@ -230,13 +267,53 @@ public class Account implements AccountInterface {
     }
     
     /**
-     * @return the creditTransactions
+     * @return creditTransactions
      */
     @Override
     public List<TransactionInterface> getCreditTransactions() {
         return Collections.unmodifiableList(this.creditTransactions);
     }
     
+    /**
+     * @return a list of date ordered transactions
+     */
+    @Override
+    public List<TransactionInterface> getDateOrderedTransactions() {
+        // Code to return an ordered List of Transactions
+        List<TransactionInterface> transactions = new ArrayList();
+        List<TransactionInterface> debits = this.getDebitTransactions();
+        List<TransactionInterface> credits = this.getDebitTransactions();
+        int i = 0;
+        int ind = 0;
+        
+        if (!debits.isEmpty() && !credits.isEmpty()) {
+            while (i < debits.size()) {
+                TransactionInterface debit = debits.get(i);
+                while (i < debits.size()) {
+                    TransactionInterface credit = credits.get(ind);
+                    if (debit.getTransactionDate().before(credit.getTransactionDate())) {
+                        transactions.add(debit);
+                        i++;
+                    } else {
+                        transactions.add(credit);
+                        ind++;
+                    }
+                }
+            }
+            return transactions;
+        } else if(!debits.isEmpty() && credits.isEmpty()) {
+            transactions = debits;
+            return transactions;
+        } else if(debits.isEmpty() && !credits.isEmpty()) {
+            transactions = credits;
+            return transactions;
+        }
+        return transactions;
+    }
+    
+    /**
+     * @return String representation of Account
+     */
     @Override
     public String toString() {
         String temp = "\n\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +

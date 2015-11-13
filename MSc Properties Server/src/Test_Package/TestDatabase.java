@@ -5,7 +5,6 @@
  */
 package Test_Package;
 
-import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -13,6 +12,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server_application.Database;
+import server_application.ElementImpl;
 import server_application.ModifiedBy;
 
 /**
@@ -25,7 +25,7 @@ public class TestDatabase {
         
         Database db = new Database(null, null, null, null, null);
         
-        Element title = db.getTitle("MR");
+        ElementImpl title = (ElementImpl) db.getTitle("MR");
         if(title != null) {
             System.out.println(title.toString());
         }
@@ -38,11 +38,12 @@ public class TestDatabase {
         }
         
         ModifiedByInterface modTest = new ModifiedBy("DEDWARDS", new Date(), "Amended Title Description");
-        title.updateElement("MR - Amended", true, modTest);
+        if(title!=null) {
+            title.updateElement("MR - Amended", true, modTest);
+            System.out.println("\n*******************************\n");
+            System.out.println(title.getModifiedBy());
+        }
         
-        
-        System.out.println("\n*******************************\n");
-        System.out.println(title.getModifiedBy());
         db.disconnect();
     }
 }

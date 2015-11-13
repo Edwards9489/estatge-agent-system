@@ -10,7 +10,7 @@ import interfaces.EmployeeAccountInterface;
 import java.util.Date;
 
 /**
- *
+ * 
  * @author Dwayne
  */
 public class EmployeeAccount extends Account implements EmployeeAccountInterface {
@@ -22,6 +22,13 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class EmployeeAccount
+     * @param employeeAccRef
+     * @param contract
+     * @param createdBy
+     * @param createdDate 
+     */
     public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy, Date createdDate) {
         super(employeeAccRef, contract.getAgreementName(), contract.getOfficeCode(), contract.getStartDate(), createdBy, createdDate);
         this.contract = contract;
@@ -32,7 +39,10 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     
     ///   MUTATOR METHODS   ///
     
-    @Override
+    /**
+     * 
+     * @param salary 
+     */
     public void setSalary(double salary) {
         this.salary = salary;
     }
@@ -40,18 +50,26 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     ///   ACCESSOR METHODS   ///
 
     /**
-     * @return the contract
+     * @return contract
      */
     @Override
     public ContractInterface getContract() {
         return contract;
     }
     
+    /**
+     * 
+     * @return ref of contract
+     */
     @Override
     public int getContractRef() {
         return contract.getAgreementRef();
     }
     
+    /**
+     * 
+     * @return salary
+     */
     @Override
     public double getSalary() {
         return this.salary;

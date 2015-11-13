@@ -150,7 +150,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateTitle(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.titleExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Title", new Date(), modifiedBy);
-            Element title = this.database.getTitle(code);
+            ElementImpl title = (ElementImpl) this.database.getTitle(code);
             title.updateElement(description, current, modified);
             this.database.updateTitle(title.getCode());
             return 1;
@@ -170,7 +170,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateGender(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.genderExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Gender", new Date(), modifiedBy);
-            Element gender = this.database.getGender(code);
+            ElementImpl gender = (ElementImpl) this.database.getGender(code);
             gender.updateElement(description, current, modified);
             this.database.updateGender(gender.getCode());
             return 1;
@@ -190,7 +190,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateMaritalStatus(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.maritalStatusExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Marital Status", new Date(), modifiedBy);
-            Element status = this.database.getMaritalStatus(code);
+            ElementImpl status = (ElementImpl) this.database.getMaritalStatus(code);
             status.updateElement(description, current, modified);
             this.database.updateMaritalStatus(status.getCode());
             return 1;
@@ -210,7 +210,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateEthnicOrigin(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.ethnicOriginExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Ethnic Origin", new Date(), modifiedBy);
-            Element origin = this.database.getEthnicOrigin(code);
+            ElementImpl origin = (ElementImpl) this.database.getEthnicOrigin(code);
             origin.updateElement(description, current, modified);
             this.database.updateEthnicOrigin(origin.getCode());
             return 1;
@@ -230,7 +230,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateLanguage(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.languageExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Language", new Date(), modifiedBy);
-            Element language = this.database.getLanguage(code);
+            ElementImpl language = (ElementImpl) this.database.getLanguage(code);
             language.updateElement(description, current, modified);
             this.database.updateLanguage(language.getCode());
             return 1;
@@ -250,7 +250,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateNationality(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.nationalityExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Nationality", new Date(), modifiedBy);
-            Element nationality = this.database.getNationality(code);
+            ElementImpl nationality = (ElementImpl) this.database.getNationality(code);
             nationality.updateElement(description, current, modified);
             this.database.updateNationality(nationality.getCode());
             return 1;
@@ -270,7 +270,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateSexuality(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.sexualityExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Sexuality", new Date(), modifiedBy);
-            Element sexuality = this.database.getSexuality(code);
+            ElementImpl sexuality = (ElementImpl) this.database.getSexuality(code);
             sexuality.updateElement(description, current, modified);
             this.database.updateSexuality(sexuality.getCode());
             return 1;
@@ -290,7 +290,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateReligion(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.religionExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Religion", new Date(), modifiedBy);
-            Element religion = this.database.getReligion(code);
+            ElementImpl religion = (ElementImpl) this.database.getReligion(code);
             religion.updateElement(description, current, modified);
             this.database.updateReligion(religion.getCode());
             return 1;
@@ -312,7 +312,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updatePropertyType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Type", new Date(), modifiedBy);
-            Element propType = this.database.getPropertyType(code);
+            ElementImpl propType = (ElementImpl) this.database.getPropertyType(code);
             propType.updateElement(description, current, modified);
             this.database.updatePropertyType(propType.getCode());
             return 1;
@@ -332,7 +332,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updatePropertySubType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propSubTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Sub Type", new Date(), modifiedBy);
-            Element propType = this.database.getPropertySubType(code);
+            ElementImpl propType = (ElementImpl) this.database.getPropertySubType(code);
             propType.updateElement(description, current, modified);
             this.database.updatePropertySubType(propType.getCode());
             return 1;
@@ -352,7 +352,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updatePropertyElement(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propElementExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Element", new Date(), modifiedBy);
-            Element propElement = this.database.getPropElement(code);
+            ElementImpl propElement = (ElementImpl) this.database.getPropElement(code);
             propElement.updateElement(description, current, modified);
             this.database.updatePropertyElement(propElement.getCode());
             return 1;
@@ -374,7 +374,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateContactType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.contactTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Contact Type", new Date(), modifiedBy);
-            Element contactType = this.database.getContactType(code);
+            ElementImpl contactType = (ElementImpl) this.database.getContactType(code);
             contactType.updateElement(description, current, modified);
             this.database.updateContactType(contactType.getCode());
             return 1;
@@ -396,7 +396,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateEndReason(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.endReasonExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated End Reason", new Date(), modifiedBy);
-            Element endReason = this.database.getEndReason(code);
+            ElementImpl endReason = (ElementImpl) this.database.getEndReason(code);
             endReason.updateElement(description, current, modified);
             this.database.updateEndReason(endReason.getCode());
             return 1;
@@ -418,7 +418,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateRelationship(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.relationshipExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Relationship", new Date(), modifiedBy);
-            Element relationship = this.database.getRelationship(code);
+            ElementImpl relationship = (ElementImpl) this.database.getRelationship(code);
             relationship.updateElement(description, current, modified);
             this.database.updateRelationship(relationship.getCode());
             return 1;
@@ -642,7 +642,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int addInvolvedParty(int appRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException, SQLException {
         if(database.applicationExists(appRef) && database.personExists(pRef) && this.database.relationshipExists(relationshipCode)) {
             Application application = database.getApplication(appRef);
-            if(application.isHouseholdMember(pRef)) {
+            if(application.isPersonHouseholdMember(pRef)) {
                 int iRef = this.createInvolvedParty(appRef, pRef, false, joint, start, relationshipCode, createdBy);
                 if(iRef >=1) {
                     application.addInvolvedParty(this.database.getInvolvedParty(iRef), new ModifiedBy("Added Involved Party", new Date(), createdBy));
@@ -656,9 +656,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int changeMainApp(int aRef, int iRef, Date end, String endReasonCode, String createdBy) throws RemoteException, SQLException {
         if(database.applicationExists(aRef) && this.database.invPartyExists(iRef) && this.database.endReasonExists(endReasonCode) && this.database.getEndReason(endReasonCode).isCurrent()) {
             Application application = database.getApplication(aRef);
-            InvolvedParty mainApp = application.getMainApp();
+            InvolvedParty mainApp = (InvolvedParty) application.getMainApp();
             InvolvedParty party = this.database.getInvolvedParty(iRef);
-            if(application.isHouseholdMember(party.getPersonRef())) {
+            if(application.isPersonHouseholdMember(party.getPersonRef())) {
                 if(!party.isMainInd() && party.isOver18()) {
                     application.changeMainApp(party.getInvolvedPartyRef(), end, this.database.getEndReason(endReasonCode), new ModifiedBy("Changed Main Applicant", new Date(), createdBy));
                 }
@@ -674,7 +674,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(database.applicationExists(appRef) && this.database.invPartyExists(invPartyRef) && this.database.endReasonExists(endReasonCode) && this.database.getEndReason(endReasonCode).isCurrent()) {
             Application application = this.database.getApplication(appRef);
             InvolvedParty party = this.database.getInvolvedParty(invPartyRef);
-            if(application.isHouseholdMember(party.getPersonRef())) {
+            if(application.isPersonHouseholdMember(party.getPersonRef())) {
                 if(!party.isCurrent()) {
                     application.endInvolvedParty(party.getInvolvedPartyRef(), end, this.database.getEndReason(endReasonCode), new ModifiedBy("Ended Involved Party", new Date(), createdBy));
                     this.database.updateInvolvedParty(party.getInvolvedPartyRef());
@@ -876,7 +876,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int updateJobRequirement(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.jobRequirementExists(code)) {
-            Element requirement = this.database.getJobRequirement(code);
+            ElementImpl requirement = (ElementImpl) this.database.getJobRequirement(code);
             requirement.updateElement(description, current, new ModifiedBy("Updated Requirement", new Date(), modifiedBy));
             this.database.updateJobRequirement(requirement.getCode());
             return 1;
@@ -897,7 +897,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int updateJobBenefit(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.jobBenefitExists(code)) {
-            Element benefit = this.database.getJobBenefit(code);
+            ElementImpl benefit = (ElementImpl) this.database.getJobBenefit(code);
             benefit.updateElement(description, current, new ModifiedBy("Updated Benefit", new Date(), modifiedBy));
             this.database.updateJobBenefit(benefit.getCode());
             return 1;
@@ -944,7 +944,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateTenancyType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.tenancyTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Tenancy Type", new Date(), modifiedBy);
-            Element tenancyType = this.database.getTenancyType(code);
+            ElementImpl tenancyType = (ElementImpl) this.database.getTenancyType(code);
             tenancyType.updateElement(description, current, modified);
             this.database.updateTenancyType(tenancyType.getCode());
             return 1;

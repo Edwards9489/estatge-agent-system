@@ -21,9 +21,7 @@ public interface AddressUsageInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void updateAddress(AddressInterface address, Date startDate, ModifiedByInterface modifiedBy);
 }

@@ -13,14 +13,13 @@ import java.util.List;
  * @author Dwayne
  */
 public interface Element {
-    void updateElement(String description, boolean current, ModifiedByInterface modifiedBy);
     String getCode();
     String getDescription();
     boolean isCurrent();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

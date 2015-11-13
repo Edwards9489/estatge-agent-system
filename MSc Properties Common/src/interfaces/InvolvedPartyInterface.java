@@ -28,9 +28,7 @@ public interface InvolvedPartyInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String createdBy();
     Date createdDate();
-    void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy);
-    void updateInvolvedParty(boolean joint, Date start, Element relationhip, ModifiedByInterface modifiedBy);
 }

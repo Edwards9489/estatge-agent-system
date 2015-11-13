@@ -13,8 +13,6 @@ import java.util.List;
  * @author Dwayne
  */
 public interface ContactInterface {
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
-    void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy);
     int getContactRef();
     Element getContactType();
     String getContactTypeDescription();
@@ -25,7 +23,7 @@ public interface ContactInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

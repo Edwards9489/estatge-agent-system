@@ -13,8 +13,6 @@ import java.util.List;
  * @author Dwayne
  */
 public interface JobRoleBenefitInterface {
-    void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, Date startDate, ModifiedByInterface modifiedBy);
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
     int getBenefitRef();
     Element getBenefit();
     String getBenefitCode();
@@ -26,7 +24,7 @@ public interface JobRoleBenefitInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isSalaryBenefit();

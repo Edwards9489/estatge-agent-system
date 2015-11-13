@@ -32,11 +32,7 @@ public interface PersonInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
-    void createContact(ContactInterface contact, ModifiedByInterface modifiedBy);
-    void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy);
-    void updatePerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-            Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ModifiedByInterface modifiedBy);
 }

@@ -13,8 +13,7 @@ import java.util.List;
  * @author Dwayne
  */
 public interface PropertyElementInterface {
-    void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge, ModifiedByInterface modifiedBy);
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
+    int getPropertyElementRef();
     Element getElement();
     String getElementCode();
     String getStringValue();
@@ -27,7 +26,7 @@ public interface PropertyElementInterface {
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

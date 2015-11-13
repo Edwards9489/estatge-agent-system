@@ -22,6 +22,18 @@ public class Contract extends Agreement implements ContractInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Contract
+     * @param contractRef
+     * @param accountRef
+     * @param startDate
+     * @param length
+     * @param employee
+     * @param jobRole
+     * @param officeCode
+     * @param createdBy
+     * @param createdDate 
+     */
     public Contract(int contractRef, int accountRef, Date startDate, int length, EmployeeInterface employee, JobRoleInterface jobRole, String officeCode, String createdBy, Date createdDate) {
         super(contractRef, employee.getPerson().getName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.employee = employee;
@@ -36,28 +48,40 @@ public class Contract extends Agreement implements ContractInterface {
     ///   ACCESSOR METHODS   ///
 
     /**
-     * @return the employee
+     * @return employee
      */
     @Override
     public EmployeeInterface getEmployee() {
         return employee;
     }
     
+    /**
+     * 
+     * @return ref of employee
+     */
     @Override
     public int getEmployeeRef() {
         return getEmployee().getEmployeeRef();
     }
     
     /**
-     * @return the jobRole
+     * @return jobRole
      */
     @Override
     public JobRoleInterface getJobRole() {
         return jobRole;
     }
     
+    /**
+     * @return code of jobRole
+     */
     @Override
     public String getJobRoleCode() {
         return getJobRole().getJobRoleCode();
+    }
+    
+    @Override
+    public String toString() {
+        return "AMEND toString()";
     }
 }

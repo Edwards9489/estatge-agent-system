@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package server_application;
+import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
@@ -24,8 +25,8 @@ public class Application implements ApplicationInterface {
     private Date appStartDate;
     private Date appEndDate;
     private String appStatusCode; //indicates the status of the app, e.g. NEW, INTR, HSED, CLSD, DTE (due to end)
-    private final List<InvolvedParty> household;
-    private final List<AddressUsage> appAddresses;
+    private final List<InvolvedPartyInterface> household;
+    private final List<AddressUsageInterface> appAddresses;
     private final List<PropertyInterface> propertiesInterestedIn;
     private final List<ModifiedByInterface> modifiedBy;
     private int tenancyRef;
@@ -34,7 +35,15 @@ public class Application implements ApplicationInterface {
     private final Date createdDate;
     
     
-    
+    /**
+     * Constructor for objects of class Application
+     * @param appRef
+     * @param corrName
+     * @param appStartDate
+     * @param statusCode
+     * @param createdBy
+     * @param createdDate 
+     */
     public Application(int appRef, String corrName, Date appStartDate, String statusCode, String createdBy, Date createdDate) {
         this.appRef = appRef;
         this.appCorrName = corrName;
@@ -49,7 +58,7 @@ public class Application implements ApplicationInterface {
     }
     
     /**
-     * Constructor for objects of class Person
+     * Constructor for objects of class Application
      * @param appRef
      * @param appStartDate
      * @param address
@@ -68,20 +77,32 @@ public class Application implements ApplicationInterface {
     
     ///   MUTATOR METHODS   ///
     
+    /**
+     * @param name
+     */
     private void setCorrespondenceName(String name) {
         this.appCorrName = name;
     }
     
+    /**
+     * @param startDate
+     */
     private void setStartDate(Date startDate) {
         this.appStartDate = startDate;
     }
     
+    /**
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
+    /**
+     * @param modifiedBy
+     */
     private void clearInterestedProperties(ModifiedByInterface modifiedBy) {
         if(!this.propertiesInterestedIn.isEmpty()) {
             this.propertiesInterestedIn.clear();
@@ -89,7 +110,11 @@ public class Application implements ApplicationInterface {
         }
     }
     
-    @Override
+    /**
+     * @param name
+     * @param startDate
+     * @param modifiedBy
+     */
     public void updateApplication(String name, Date startDate, ModifiedByInterface modifiedBy) {
         if(isCurrent()) {
             this.setCorrespondenceName(name);
@@ -98,7 +123,10 @@ public class Application implements ApplicationInterface {
         }
     }
     
-    @Override
+    /**
+     * @param endDate
+     * @param modifiedBy
+     */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.appStartDate)) {
             this.appEndDate = endDate;
@@ -106,24 +134,37 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    /**
+     * @param code
+     */
     public void setAppStatusCode(String code) {
         this.appStatusCode = code;
     }
     
+    /**
+     * @param address
+     * @param modifiedBy
+     */
     private void setHouseholdAddress(AddressUsage address, ModifiedByInterface modifiedBy) {
         if(!household.isEmpty()) {
-            for(InvolvedParty invParty : household) {
+            for(InvolvedPartyInterface invParty : household) {
                 if(invParty.isCurrent()) {
-                    invParty.getPerson().createAddress(address, modifiedBy);
+                    Person temp = (Person) invParty.getPerson();
+                    temp.createAddress(address, modifiedBy);
                 }
             }
         }
     }
     
+    /**
+     * @param address
+     * @param modifiedBy
+     */
     public void setAppAddress(AddressUsage address, ModifiedByInterface modifiedBy) {
         if(!this.appAddresses.isEmpty()) {
-            for(AddressUsage temp : this.appAddresses) {
-                if(temp.isCurrent()) {
+            for(AddressUsageInterface addressUsage : this.appAddresses) {
+                if(addressUsage.isCurrent()) {
+                    AddressUsage temp = (AddressUsage) addressUsage;
                     temp.setEndDate(address.getStartDate(), modifiedBy);
                 }
             }
@@ -133,31 +174,47 @@ public class Application implements ApplicationInterface {
         this.modifiedBy(modifiedBy);
     }
     
+    /**
+     * @param party
+     * @param modifiedBy
+     */
     public void addInvolvedParty(InvolvedParty party, ModifiedByInterface modifiedBy) {
-        if(!this.isHouseholdMember(party.getPersonRef())) {
+        if(!this.isPersonHouseholdMember(party.getPersonRef())) {
             this.household.add(this.getHousehold().size(), party);
             this.modifiedBy(modifiedBy);
         }
     }
     
+    /**
+     * @param invPartyRef
+     * @param end
+     * @param endReason
+     * @param modifiedBy
+     */
     public void changeMainApp(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
         if(this.isHouseholdMember(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd()) {
             if(this.getInvolvedParty(invPartyRef).isOver18()) {
                 if(this.getMainApp() != null) {
-                    InvolvedParty party = this.getInvolvedParty(invPartyRef);
-                    party.updateInvolvedParty(party.isJointInd(), party.getStartDate(), this.getMainApp().getRelationship(), modifiedBy);
-                    this.getMainApp().endInvolvedParty(end, endReason, modifiedBy);
-                    InvolvedParty main = (InvolvedParty) this.getMainApp();
-                    main.setMainInd();
+                    InvolvedParty party = (InvolvedParty) this.getInvolvedParty(invPartyRef);
+                    party.updateInvolvedParty(true, party.getStartDate(), this.getMainApp().getRelationship(), modifiedBy);
+                    InvolvedParty mainApp = (InvolvedParty) this.getMainApp();
+                    mainApp.endInvolvedParty(end, endReason, modifiedBy);
+                    mainApp.setMainInd();
                     party.setMainInd();
                 }
             }
         }
     }
     
+    /**
+     * @param invPartyRef
+     * @param end
+     * @param endReason
+     * @param modifiedBy
+     */
     public void endInvolvedParty(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
         if(this.isHouseholdMember(invPartyRef)) {
-            InvolvedParty party = this.getInvolvedParty(invPartyRef);
+            InvolvedParty party = (InvolvedParty) this.getInvolvedParty(invPartyRef);
             if(!party.isCurrent()) {
                 if(!party.isMainInd()) {
                     party.endInvolvedParty(end, endReason, modifiedBy);
@@ -167,14 +224,24 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    /**
+     * @param tenancyRef
+     * @param modifiedBy
+     * @return copy of propertiesInterestedIn
+     */
     public List<PropertyInterface> setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) {
         this.tenancyRef = tenancyRef;
-        List<PropertyInterface> properties = this.getPropertiesInterestedIn();
+        List<PropertyInterface> properties = new ArrayList();
+        Collections.copy(properties, this.getPropertiesInterestedIn());
         this.clearInterestedProperties(modifiedBy);
         this.modifiedBy(modifiedBy);
         return properties;
     }
     
+    /**
+     * @param property
+     * @param modifiedBy
+     */
     public void addInterestedProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
         if(!this.isInterestedProperty(property)) {
             this.getPropertiesInterestedIn().add(this.getHousehold().size(), property);
@@ -182,6 +249,10 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    /**
+     * @param property
+     * @param modifiedBy
+     */
     public void endInterestInProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
         if(this.isInterestedProperty(property)) {
             this.getPropertiesInterestedIn().remove(property);
@@ -193,7 +264,11 @@ public class Application implements ApplicationInterface {
     
     /// ACCESSOR METHODS   ///
     
-    public boolean isHouseholdMember(int personRef) {
+    /**
+     * @param personRef
+     * @return true if household contains a current InvolvedParty instance with a person ref ==  personRef
+     */
+    public boolean isPersonHouseholdMember(int personRef) {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface invParty : this.household) {
                 if(invParty.isCurrent()) {
@@ -206,10 +281,29 @@ public class Application implements ApplicationInterface {
         return false;
     }
     
-    public InvolvedParty getInvolvedParty(int invPartyRef) {
+    /**
+     * @param invPartyRef
+     * @return true if household contains a current InvolvedParty instance with a ref ==  invPartyRef
+     */
+    public boolean isHouseholdMember(int invPartyRef) {
+        if(!this.household.isEmpty()) {
+            for(InvolvedPartyInterface invParty : this.household) {
+                if(invParty.isCurrent() && invParty.getInvolvedPartyRef() == invPartyRef) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * @param invPartyRef
+     * @return InvolvedParty instance from household with ref == invPartyRef
+     */
+    public InvolvedPartyInterface getInvolvedParty(int invPartyRef) {
         if(!this.household.isEmpty() && this.isHouseholdMember(invPartyRef)) {
-            for(InvolvedParty party : this.household) {
-                if(party.getInvolvedPartyRef() == invPartyRef) {
+            for(InvolvedPartyInterface party : this.household) {
+                if(party.getPersonRef() == invPartyRef) {
                     return party;
                 }
             }
@@ -217,9 +311,12 @@ public class Application implements ApplicationInterface {
         return null;
     }
     
-    public InvolvedParty getMainApp() {
+    /**
+     * @return InvolvedParty from households with mainInd == true && current == true
+     */
+    public InvolvedPartyInterface getMainApp() {
         if(!this.household.isEmpty()) {
-            for(InvolvedParty party : this.household) {
+            for(InvolvedPartyInterface party : this.household) {
                 if(party.isMainInd() && party.isCurrent()) {
                     return party;
                 }
@@ -228,6 +325,10 @@ public class Application implements ApplicationInterface {
         return null;
     }
     
+    /**
+     * @param property
+     * @return true if propertiesInterestedIn contains property
+     */
     private boolean isInterestedProperty(PropertyInterface property) {
         if(!this.propertiesInterestedIn.isEmpty()) {
             for(PropertyInterface prop : this.propertiesInterestedIn) {
@@ -239,10 +340,17 @@ public class Application implements ApplicationInterface {
         return false;
     }
     
+    /**
+     * @return true if appEndDate == null
+     */
     private boolean isAppEndDateNull() {
         return this.appEndDate == null;
     }
     
+    
+    /**
+     * @return appRef
+     */
     @Override
     public int getApplicationRef() {
         return this.appRef;
@@ -273,13 +381,16 @@ public class Application implements ApplicationInterface {
     }
     
     /**
-     * @return the appStartDate
+     * @return the appEndDate
      */
     @Override
     public Date getAppEndDate() {
         return this.appEndDate;
     }
     
+    /**
+     * @return String of current Address
+     */
     @Override
     public String getCurrentApplicationAddressString() {
         if(!this.appAddresses.isEmpty()) {
@@ -289,15 +400,15 @@ public class Application implements ApplicationInterface {
     }
     
     /**
-     * @return the appAddresses
+     * @return appAddresses
      */
     @Override
-    public List<AddressUsage> getApplicationAddressess() {
-        return Collections.unmodifiableList(this.appAddresses);
+    public List<AddressUsageInterface> getApplicationAddressess() {
+        return Collections.unmodifiableList((List<AddressUsageInterface>) this.appAddresses);
     }
 
     /**
-     * @return the appInterestedFlag
+     * @return propertiesInterestedIn.isEmpty() == false
      */
     @Override
     public boolean isAppInterestedFlag() {
@@ -305,15 +416,15 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return the household
+     * @return household
      */
     @Override
-    public List<InvolvedParty> getHousehold() {
+    public List<InvolvedPartyInterface> getHousehold() {
         return Collections.unmodifiableList(this.household);
     }
 
     /**
-     * @return the propertiesIntrestedIn
+     * @return propertiesIntrestedIn
      */
     @Override
     public List<PropertyInterface> getPropertiesInterestedIn() {
@@ -321,13 +432,16 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return the tenancy
+     * @return tenancyRef
      */
     @Override
     public int getTenancyRef() {
         return this.tenancyRef;
     }
-    
+
+    /**
+     * @return true if appEndDate == null || (appEndDate != null && appEndDate > TODAY)
+     */
     @Override
     public boolean isCurrent() {
         if(this.isAppEndDateNull()) {
@@ -338,6 +452,9 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    /**
+     * @return the name of the last user to modify the Application
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -346,6 +463,9 @@ public class Application implements ApplicationInterface {
         return null;
     }
     
+    /**
+     * @return the last date the Application was modified
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -354,11 +474,17 @@ public class Application implements ApplicationInterface {
         return null;
     }
     
+    /**
+     * @return the list of modifiedBy object for the Application
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return the last modifiedBy object for the Application
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -368,7 +494,7 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -376,13 +502,16 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return this.createdDate;
     }
     
+    /**
+     * @return String representation of the Application
+     */
     @Override
     public String toString() {
         String temp = "\nApplication Ref: " + this.getApplicationRef() + "\nApplication Correspondence Name: " + this.getAppCorrName() +

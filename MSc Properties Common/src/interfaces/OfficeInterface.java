@@ -13,19 +13,16 @@ import java.util.List;
  * @author Dwayne
  */
 public interface OfficeInterface {
-    void setStartDate(Date startDate, ModifiedByInterface modifiedBy);
-    void setEndDate(Date endDate, ModifiedByInterface modifiedBy);
     String getOfficeCode();
     AddressInterface getAddress();
     Date getStartDate();
     Date getEndDate();
-    List getContacts();
+    List<ContactInterface> getContacts();
     boolean isCurrent();
-    boolean canCloseOffice();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
-    List getModifiedBy();
+    List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
 }

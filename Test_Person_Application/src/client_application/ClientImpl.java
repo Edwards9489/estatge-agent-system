@@ -115,7 +115,7 @@ public class ClientImpl implements Client{
         return user.getUsername();
     }
     
-    public boolean isUser(String username, String password) {
+    public boolean isUser(String username, String password) throws RemoteException {
         return server.isUser(username, password);
     }
 }

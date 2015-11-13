@@ -32,6 +32,14 @@ public class AddressUsage implements AddressUsageInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class AddressUsage
+     * @param ref
+     * @param address
+     * @param startDate
+     * @param createdBy
+     * @param createdDate 
+     */
     public AddressUsage(int ref, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
         this.addressUsageRef = ref;
         this.address = address;
@@ -47,14 +55,14 @@ public class AddressUsage implements AddressUsageInterface {
     
 
     /**
-     * @param address the address to set
+     * @param address
      */
     private void setAddress(AddressInterface address) {
         this.address = address;
     }
         
     /**
-     * @param startDate the startDate to set
+     * @param startDate
      */
     private void setStartDate(Date startDate) {
         this.startDate = startDate;
@@ -67,18 +75,20 @@ public class AddressUsage implements AddressUsageInterface {
     }
     
     /**
-     * @param endDate the endDate to set
+     * @param endDate
      * @param modifiedBy
      */
-    @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
     }
-    
-    @Override
+    /**
+     * @param address
+     * @param startDate
+     * @param modifiedBy
+     */
     public void updateAddress(AddressInterface address, Date startDate, ModifiedByInterface modifiedBy) {
         if(this.isCurrent()) {
             this.setAddress(address);
@@ -90,13 +100,16 @@ public class AddressUsage implements AddressUsageInterface {
     
     
     ///   ACCESSOR METHODS   ///
-
+    
+    /**
+     * @return addressUsageRef
+     */
     public int getAddressUsageRef() {
         return this.addressUsageRef;
     }
     
     /**
-     * @return a string representation of the address
+     * @return a string representation address
      */
     @Override
     public String getAddressString() {
@@ -104,7 +117,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
     
     /**
-     * @return the address
+     * @return address
      */
     @Override
     public AddressInterface getAddress() {
@@ -112,7 +125,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
 
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -120,7 +133,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
 
     /**
-     * @return the endDate
+     * @return endDate
      */
     @Override
     public Date getEndDate() {
@@ -128,7 +141,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
 
     /**
-     * @return the current
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
      */
     @Override
     public boolean isCurrent() {
@@ -140,6 +153,9 @@ public class AddressUsage implements AddressUsageInterface {
         }
     }
     
+    /**
+     * @return the name of the user that last modified the AddressUsage
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -148,6 +164,9 @@ public class AddressUsage implements AddressUsageInterface {
         return null;
     }
     
+    /**
+     * @return the last date the AddressUsage was modified
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -156,11 +175,17 @@ public class AddressUsage implements AddressUsageInterface {
         return null;
     }
     
+    /**
+     * @return the list of modifiedBy objects for the AddressUsage
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * @return the last modifiedBy object for the AddressUsage
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -170,7 +195,7 @@ public class AddressUsage implements AddressUsageInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -178,13 +203,16 @@ public class AddressUsage implements AddressUsageInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return this.createdDate;
     }
     
+    /**
+     * @return String representation of the AddressUsage
+     */
     @Override
     public String toString() {
         String temp = "\n\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
