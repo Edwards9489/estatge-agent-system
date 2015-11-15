@@ -35,4 +35,7 @@ public interface PersonInterface {
     List<ModifiedByInterface> getModifiedBy();
     String getCreatedBy();
     Date getCreatedDate();
+    List<ContactInterface> getContacts();
+    List<AddressUsageInterface> getAddresses();
+    AddressUsageInterface getLastAddress();
 }

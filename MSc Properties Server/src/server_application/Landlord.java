@@ -31,6 +31,13 @@ public class Landlord implements LandlordInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Landlord
+     * @param landlordRef
+     * @param person
+     * @param createdBy
+     * @param createdDate 
+     */
     public Landlord(int landlordRef, PersonInterface person, String createdBy, Date createdDate) {
         this.landlordRef = landlordRef;
         this.person = person;
@@ -44,12 +51,21 @@ public class Landlord implements LandlordInterface {
     
     ///   MUTATOR METHODS   ///
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
+    /**
+     * 
+     * @param lease
+     * @param modifiedBy 
+     */
     public void createLease(LeaseInterface lease, ModifiedByInterface modifiedBy) {
         if (!leases.contains(lease)) {
             leases.add(lease);
@@ -62,7 +78,7 @@ public class Landlord implements LandlordInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the landlordRef
+     * @return landlordRef
      */
     @Override
     public int getLandlordRef() {
@@ -70,26 +86,34 @@ public class Landlord implements LandlordInterface {
     }
 
     /**
-     * @return the person
+     * @return person
      */
     @Override
     public PersonInterface getPerson() {
         return person;
     }
     
+    /**
+     * 
+     * @return ref of person
+     */
     @Override
     public int getPersonRef() {
         return person.getPersonRef();
     }
     
     /**
-     * @return the addressUsages
+     * @return leases
      */
     @Override
     public List<LeaseInterface> getLeases() {
         return Collections.unmodifiableList(leases);
     }
     
+    /**
+     * 
+     * @return the name of the last user that modified the Landlord
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -98,6 +122,10 @@ public class Landlord implements LandlordInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the last date a user modified the Landlord
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -106,11 +134,19 @@ public class Landlord implements LandlordInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the Landlord
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifiedBy object for the Landlord
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -120,7 +156,7 @@ public class Landlord implements LandlordInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -128,7 +164,7 @@ public class Landlord implements LandlordInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {

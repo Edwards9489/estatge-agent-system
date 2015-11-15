@@ -214,7 +214,7 @@ public class Database {
         }
         
 
-        String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env;
+        String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env + "2";
         // jdbc: database type : localhost because it is on my machine : 3306 for port 3306 : msc_properties(+ enviornment) for database name
         this.con = DriverManager.getConnection(url, user, passw);
 
@@ -313,7 +313,7 @@ public class Database {
     
     private void createElement(String from, Element element) throws SQLException {
         
-        String insertSql = "insert into " + from + " (code, description, current, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+        String insertSql = "insert into " + from + " (code, description, cur, createdBy, createdDate) values (?, ?, ?, ?, ?)";
         try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
             int col = 1;
             insertStat.setString(col++, element.getCode());
@@ -334,7 +334,7 @@ public class Database {
      */
     private void updateElement(String from, Element element) throws SQLException {
         // use the from String as the from table and the element to update the actual element
-        String updateSql = "update " + from + " set description=?, current=? where code=?";
+        String updateSql = "update " + from + " set description=?, cur=? where code=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, element.getDescription());
@@ -352,7 +352,7 @@ public class Database {
      * @throws SQLException 
      */
     private List<ElementImpl> loadElements(String from) throws SQLException {
-        String sql = "select code, description, createdBy, createdDate from " + from + " order by createdDate";
+        String sql = "select code, description, cur, createdBy, createdDate from " + from + " order by createdDate";
         List<ElementImpl> elements = new ArrayList<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -360,7 +360,7 @@ public class Database {
             while(results.next()) {
                 String code = results.getString("code");
                 String description = results.getString("description");
-                boolean current = results.getBoolean("current");
+                boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
@@ -382,7 +382,7 @@ public class Database {
      */
     private void createModifiedBy(String from, ModifiedByInterface modifiedBy, int ref) throws SQLException {
         if(modifiedBy != null) {
-            String insertSql = "insert into " + from + " (ref, modifiedBy, modifiedByDate, description) values (?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (ref, modifiedBy, modifiedDate, description) values (?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, ref);
@@ -597,7 +597,7 @@ public class Database {
             updateStat.executeUpdate();
             updateStat.close();
         }
-        this.createModifiedBy("personContactModifications", contact.getLastModification(), personRef);
+        this.createModifiedBy("personContactModifications", contact.getLastModification(), contact.getContactRef());
         }
     }
     
@@ -629,7 +629,8 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createPersonContactMods(temp.getContactRef(), reference, this.loadModMap("personContactModifications", person.getPersonRef()));
+                        person.createContact(temp, null);
+                        this.createPersonContactMods(temp.getContactRef(), reference, this.loadModMap("personContactModifications", temp.getContactRef()));
                     }
                 }
             }
@@ -704,7 +705,7 @@ public class Database {
             updateStat.executeUpdate();
             updateStat.close();
         }
-        this.createModifiedBy("officeContactModifications", contact.getLastModification(), officeCode);
+        this.createModifiedBy("officeContactModifications", contact.getLastModification(), contact.getContactRef());
         }
     }
     
@@ -736,7 +737,8 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createOfficeContactMods(temp.getContactRef(), code, this.loadModMap("officeContactModifications", office.getOfficeCode()));
+                        office.createContact(temp, null);
+                        this.createOfficeContactMods(temp.getContactRef(), code, this.loadModMap("officeContactModifications", temp.getContactRef()));
                     }
                 }
             }
@@ -749,7 +751,7 @@ public class Database {
      * @param code
      * @param loadedMods 
      */
-    private void createOfficeContactMods(int contactRef, String code, Map<String, ModifiedByInterface> loadedMods) {
+    private void createOfficeContactMods(int contactRef, String code, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.officeExists(code) && !loadedMods.isEmpty()) {
             Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -773,9 +775,9 @@ public class Database {
      * @throws SQLException 
      */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
-        if(address != null && this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
+        if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
-            String insertSql = "insert into personAddressess (addressUsageRef, addressRef, personRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
@@ -847,7 +849,8 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createPersonAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("personAddressesModifications", person.getPersonRef()));
+                        person.createAddress(temp, null);
+                        this.createPersonAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("personAddressModifications", temp.getAddressUsageRef()));
                     }
                 }
             }
@@ -958,7 +961,8 @@ public class Database {
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
-                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressesModifications", application.getApplicationRef()));
+                        application.setAppAddress(temp, null);
+                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressesModifications", temp.getAddressUsageRef()));
                     }
                 }
             }
@@ -980,7 +984,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 if(address.getAddressUsageRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
-                    AddressUsage tempAddress = (AddressUsage) address;
+                    AddressUsage tempAddress = address;
                     tempAddress.modifiedBy(tempMod);
                 }
                 it.remove(); // avoids a ConcurrentModificationException
@@ -1619,9 +1623,9 @@ public class Database {
         if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode())) {
             String insertSql = "";
             if (propertyElement.isCharge()) {
-                insertSql = "insert into propertyElementValues (propertyElementRef, propertyRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             } else if (!propertyElement.isCharge()) {
-                insertSql = "insert into propertyElementValues (propertyElementRef, propertyRef, elementCode, stringValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, stringValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             }
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -1647,9 +1651,9 @@ public class Database {
         if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode())) {
             String updateSql = "";
             if (propertyElement.isCharge()) {
-                updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=? where propertyElementRef=? and propertyRef=? and elementCode=?";
+                updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=? where propertyElementRef=? and propRef=? and elementCode=?";
             } else if (!propertyElement.isCharge()) {
-                updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=? where propertyElementRef=? and propertyRef=? and elementCode=?";
+                updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=? where propertyElementRef=? and propRef=? and elementCode=?";
             }
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -1673,13 +1677,13 @@ public class Database {
     private void loadPropertyElementValues(int propRef) throws SQLException {
         if (this.propertyExists(propRef)) {
             Property property = this.getProperty(propRef);
-            String sql = "select propertyElementRef, propertyRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
+            String sql = "select propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
 
                 while (results.next()) {
                     int propertyElementRef = results.getInt("propertyElementRef");
-                    int propertyRef = results.getInt("propertyRef");
+                    int propertyRef = results.getInt("propRef");
                     if (this.propertyExists(propRef) && propertyRef == propRef) {
                         String elementCode = results.getString("elementCode");
                         Element element;
@@ -1791,7 +1795,7 @@ public class Database {
             Person person = this.getPerson(personRef);
             String updateSql = "update people set titleCode=?, forename=?, middleNames=?, surname=?, dateOfBirth=?, nationalInsurance=?, "
                     + "genderCode=?, maritalStatusCode=?, ethnicOriginCode=?, languageCode=?, nationalityCode=?, sexualityCode=?, "
-                    + "religionCode=?, where personRef=?";
+                    + "religionCode=? where personRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, person.getTitle().getCode());
@@ -1854,7 +1858,7 @@ public class Database {
                 }
                 
                 Element ethnicOrigin;
-                if(this.ethnicOriginExists(results.getString("ethnicOriginCodec"))) {
+                if(this.ethnicOriginExists(results.getString("ethnicOriginCode"))) {
                     ethnicOrigin = this.getEthnicOrigin(results.getString("ethnicOriginCode"));
                 } else {
                     ethnicOrigin = this.getEthnicOrigin(results.getString("ethnicOriginCode")); // Create ERROR Code
@@ -1894,7 +1898,7 @@ public class Database {
                 Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, createdBy, createdDate);
                 
                 this.people.put(temp.getPersonRef(), temp);
-                this.createPeopleMods(temp.getPersonRef(), this.loadModMap("peopleModifications", temp.getPersonRef()));
+                this.createPeopleMods(temp.getPersonRef(), this.loadModMap("personModifications", temp.getPersonRef()));
                 this.loadPersonContacts(temp.getPersonRef());
                 this.loadPersonAddresses(temp.getPersonRef());
             }
@@ -1949,7 +1953,7 @@ public class Database {
         if (this.invPartyExists(invPartyRef)) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             String updateSql = "update involvedParties set jointApplicantInd=?, mainApplicantInd=?, startDate=?, "
-                    + "endDate=?, endReasonCode=?, relationshipCode=?, where involvedPartyRef=?";
+                    + "endDate=?, endReasonCode=?, relationshipCode=? where involvedPartyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setBoolean(col++, invParty.isJointInd());
@@ -2233,23 +2237,21 @@ public class Database {
                 int count = checkResult.getInt("count");
                 int col = 1;
                 if (count < 1) {
-                    String insertSql = "insert into propertyInterest (appRef, propRef, current) values (?, ?, ?)";
+                    String insertSql = "insert into propertyInterest (appRef, propRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
                 
                     System.out.println("Inserting property " + propRef + " for appliction " + appRef);
                     insertStat.setInt(col++, appRef);
                     insertStat.setInt(col++, propRef);
                     insertStat.setBoolean(col++, true);
-                    System.out.println(insertStat);
                     insertStat.executeUpdate();
                     insertStat.close();
                 } else if (count >= 1) {
-                    String updateSql = "update propertyInterest set current=? where appRef=? and propRef=?";
+                    String updateSql = "update propertyInterest set cur=? where appRef=? and propRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     
                     System.out.println("Updating appliction " + appRef + " : Inserting property " + propRef + " for appliction " + appRef);
                     updateStat.setBoolean(col++, true);
-                    System.out.println(updateStat);
                     updateStat.executeUpdate();
                     updateStat.close();
                     if(count > 1) {
@@ -2264,7 +2266,7 @@ public class Database {
     private void loadPropertiesInterestedIn(int appRef) throws SQLException {
         if (this.applicationExists(appRef)) {
             Application application = this.getApplication(appRef);
-            String sql = "select propRef from propertyInterest where appRef=? and current=?";
+            String sql = "select propRef from propertyInterest where appRef=? and cur=?";
             try (PreparedStatement selectStat = con.prepareStatement(sql)) {
                 selectStat.setInt(1, appRef);
                 selectStat.setBoolean(2, true);
@@ -2294,10 +2296,9 @@ public class Database {
                 int count = checkResult.getInt("count");
                 int col = 1;
                 if(count >= 1) {
-                    String updateSql = "update propertyInterest set current=? where appRef=? and propRef=?";
+                    String updateSql = "update propertyInterest set cur=? where appRef=? and propRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     updateStat.setBoolean(col++, false);
-                    System.out.println(updateStat);
                     updateStat.executeUpdate();
                     if (count == 1) {
                         System.out.println("Updating appliction " + appRef + " : Ending property " + propRef + " for appliction " + appRef);
@@ -2305,13 +2306,12 @@ public class Database {
                         System.out.println("ERROR IN DATABASE - Updating appliction " + appRef + " : Ending property " + propRef + " for appliction " + appRef);
                     }
                 } else if (count == 0) {
-                    String insertSql = "insert into propertyInterest (appRef, propRef, current) values (?, ?, ?)";
+                    String insertSql = "insert into propertyInterest (appRef, propRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
                     System.out.println("ERROR IN DATABASE - Creating not current record for appliction " + appRef + " : Inserting property " + propRef + " for appliction " + appRef);
                     insertStat.setInt(col++, appRef);
                     insertStat.setInt(col++, propRef);
                     insertStat.setBoolean(col++, false);
-                    System.out.println(insertStat);
                     insertStat.executeUpdate();
                     insertStat.close();
                 }
@@ -2351,7 +2351,7 @@ public class Database {
                     Date createdDate = results.getDate("createdDate");
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
                     landlords.put(temp.getLandlordRef(), temp);
-                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("propertyElementValueModifications", temp.getLandlordRef()));
+                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("landlordModifications", temp.getLandlordRef()));
                 }
             }
         }
@@ -2400,7 +2400,7 @@ public class Database {
     public void updateOffice(String officeCode) throws SQLException {
         if(this.officeExists(officeCode)) {
             Office office = this.getOffice(officeCode);
-            String updateSql = "update Offices set addressRef=?, startDate=?, endDate=?, where officeCode=?";
+            String updateSql = "update Offices set addressRef=?, startDate=?, endDate=? where officeCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setInt(col++, office.getAddress().getAddressRef());
@@ -2439,7 +2439,7 @@ public class Database {
                 }
                 
                 this.offices.put(temp.getOfficeCode(), temp);
-                this.createOfficeMods(temp.getOfficeCode(), this.loadModMap("addressModifications", temp.getOfficeCode()));
+                this.createOfficeMods(temp.getOfficeCode(), this.loadModMap("officeModifications", temp.getOfficeCode()));
                 this.loadOfficeContacts(temp.getOfficeCode());
             }
         }
@@ -2473,8 +2473,8 @@ public class Database {
         if(!this.jobRoleExists(jobRole.getJobRoleCode())) {
             jobRoles.put(jobRole.getJobRoleCode(), jobRole);
             String insertSql = "insert into jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
-                    + "current, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, "
-                    + "createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "cur, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate, "
+                    + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, jobRole.getJobRoleCode());
@@ -2483,6 +2483,12 @@ public class Database {
                 insertStat.setBoolean(col++, jobRole.isFullTime());
                 insertStat.setDouble(col++, jobRole.getSalary());
                 insertStat.setBoolean(col++, jobRole.isCurrent());
+                insertStat.setBoolean(col++, jobRole.getRead());
+                insertStat.setBoolean(col++, jobRole.getWrite());
+                insertStat.setBoolean(col++, jobRole.getUpdate());
+                insertStat.setBoolean(col++, jobRole.getEmployeeRead());
+                insertStat.setBoolean(col++, jobRole.getEmployeeWrite());
+                insertStat.setBoolean(col++, jobRole.getEmployeeUpdate());
                 insertStat.setString(col++, jobRole.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(jobRole.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -2496,13 +2502,15 @@ public class Database {
     public void updateJobRole(String jobRoleCode) throws SQLException {
         if (this.jobRoleExists(jobRoleCode)) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
-            String updateSql = "update jobRole set jobTitle=?, jobDescription=? salary=?, current=?, "
-                    + "read=?, write=?, update=?, employeeRead=?, employeeWrite=?, "
-                    + "employeeUpdate=?, where jobRoleCode=?";
+            String updateSql = "update jobRoles set jobTitle=?, jobDescription=?, salary=?, cur=?, "
+                    + "otherRead=?, otherWrite=?, otherUpdate=?, employeeRead=?, employeeWrite=?, "
+                    + "employeeUpdate=? where jobRoleCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, jobRole.getJobTitle());
                 updateStat.setString(col++, jobRole.getJobDescription());
+                updateStat.setDouble(col++, jobRole.getSalary());
+                updateStat.setBoolean(col++, jobRole.isCurrent());
                 updateStat.setBoolean(col++, jobRole.getRead());
                 updateStat.setBoolean(col++, jobRole.getWrite());
                 updateStat.setBoolean(col++, jobRole.getUpdate());
@@ -2519,9 +2527,9 @@ public class Database {
     
     private void loadJobRoles() throws SQLException {
         this.jobRoles.clear();
-        String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
-                    + "current, read, write, update, employeeRead, employeeWrite, employeeUpdate, "
-                    + "createdBy, createdDate from jobRoles order by createdDate";
+        String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, "
+                    + "otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, "
+                    + "employeeUpdate, createdBy, createdDate from jobroles order by createdDate";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -2530,14 +2538,14 @@ public class Database {
                 String jobTitle = results.getString("jobTitle");
                 String jobDescription = results.getString("jobDescription");
                 boolean fullTime = results.getBoolean("fullTime");
-                boolean read = results.getBoolean("read");
-                boolean write = results.getBoolean("write");
-                boolean update = results.getBoolean("update");
+                boolean read = results.getBoolean("otherRead");
+                boolean write = results.getBoolean("otherWrite");
+                boolean update = results.getBoolean("otherUpdate");
                 boolean employeeRead = results.getBoolean("employeeRead");
                 boolean employeeWrite = results.getBoolean("employeeWrite");
                 boolean employeeUpdate = results.getBoolean("employeeUpdate");
                 double salary = results.getDouble("salary");
-                boolean current = results.getBoolean("current");
+                boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
@@ -2600,7 +2608,7 @@ public class Database {
     private void loadJobRoleRequirements(String code) throws SQLException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = this.getJobRole(code);
-            String sql = "select jobRoleCode, requirementCode from jobRoleRequirements order by createdDate";
+            String sql = "select jobRoleCode, requirementCode from jobRoleRequirements";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
 
@@ -2628,7 +2636,7 @@ public class Database {
     }
     
     public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException {
-        if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode())) {
+        if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode()) && !this.jobRoleBenefitExists(benefit.getBenefitRef())) {
             this.jobRoleBenefits.put(benefit.getBenefitRef(), benefit);
             String insertSql = "";
             if (benefit.isSalaryBenefit()) {
@@ -2694,7 +2702,7 @@ public class Database {
                 while (results.next()) {
                     String jobRoleCode = results.getString("jobRoleCode");
                     if (jobRoleCode.equals(code)) {
-                        int jobBenefitRef = results.getInt("requirementCode");
+                        int jobBenefitRef = results.getInt("jobBenefitRef");
                         String benefitCode = results.getString("benefitCode");
                         if(this.jobBenefitExists(benefitCode)) {
                             Date startDate = results.getDate("startDate");
@@ -3170,23 +3178,21 @@ public class Database {
                 int count = checkResult.getInt("count");
                 int col = 1;
                 if (count < 1) {
-                    String insertSql = "insert into leaseLandlord (landlordRef, leaseRef, current) values (?, ?, ?)";
+                    String insertSql = "insert into leaseLandlord (landlordRef, leaseRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
                 
                     System.out.println("Inserting landlord " + landlordRef + " for lease " + leaseRef);
                     insertStat.setInt(col++, landlordRef);
                     insertStat.setInt(col++, leaseRef);
                     insertStat.setBoolean(col++, true);
-                    System.out.println(insertStat);
                     insertStat.executeUpdate();
                     insertStat.close();
                 } else if (count >= 1) {
-                    String updateSql = "update leaseLandlord set current=? where landlordRef=? and leaseRef=?";
+                    String updateSql = "update leaseLandlord set cur=? where landlordRef=? and leaseRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     
                     System.out.println("Updating landlord " + landlordRef + " : Inserting landlord " + landlordRef + " for lease " + leaseRef);
                     updateStat.setBoolean(col++, true);
-                    System.out.println(updateStat);
                     updateStat.executeUpdate();
                     updateStat.close();
                     if(count > 1) {
@@ -3199,14 +3205,14 @@ public class Database {
     }
     
     private void loadLeaseLandlords(int ref) throws SQLException {
-        String sql = "select landlordRef, leaseRef, current from leaseLandlords order by leaseRef";
+        String sql = "select landlordRef, leaseRef, cur from leaseLandlord order by leaseRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
             while (results.next()) {
                 int leaseRef = results.getInt("leaseRef");
                 int landlordRef = results.getInt("landlordRef");
-                boolean current = results.getBoolean("current");
+                boolean current = results.getBoolean("cur");
                 if(leaseRef == ref && this.leaseExists(leaseRef) && this.landlordExists(landlordRef) && current) {
                     Lease lease = this.getLease(leaseRef);
                     lease.addLandlord(this.getLandlord(landlordRef), null);
@@ -3228,10 +3234,9 @@ public class Database {
                 int count = checkResult.getInt("count");
                 int col = 1;
                 if (count > 1) {
-                    String updateSql = "update leaseLandlord set current=? where landlordRef=? and leaseRef=?";
+                    String updateSql = "update leaseLandlord set cur=? where landlordRef=? and leaseRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     updateStat.setBoolean(col++, false);
-                    System.out.println(updateStat);
                     updateStat.executeUpdate();
                     if (count == 1) {
                         System.out.println("Updating landlord " + landlordRef + " : Inserting landlord " + landlordRef + " for lease " + leaseRef);
@@ -3239,13 +3244,12 @@ public class Database {
                         System.out.println("ERROR IN DATABASE - MORE THAN ONE ENTRY FOR LANDLORD " + landlordRef + " - LEASE" + leaseRef);
                     }
                 } else if (count == 0) {
-                    String insertSql = "insert into leaseLandlord (landlordRef, leaseRef, current) values (?, ?, ?)";
+                    String insertSql = "insert into leaseLandlord (landlordRef, leaseRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
                     System.out.println("ERROR IN DATABASE - Creating not current record for landlord " + landlordRef + " : Inserting landlord " + landlordRef + " for lease " + leaseRef);
                     insertStat.setInt(col++, landlordRef);
                     insertStat.setInt(col++, leaseRef);
                     insertStat.setBoolean(col++, false);
-                    System.out.println(insertStat);
                     insertStat.executeUpdate();
                     insertStat.close();
                 }
@@ -3282,7 +3286,7 @@ public class Database {
         if(this.contractExists(contractRef)) {
             Contract contract = this.getContract(contractRef);
             String updateSql = "update contracts set name=?, startDate=?, expectedEndDate=?, "
-                    + "actualEndDate=?, length=?, where contractRef=?";
+                    + "actualEndDate=?, length=? where contractRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, contract.getAgreementName());
@@ -3580,7 +3584,7 @@ public class Database {
         if(this.employeeAccountExists(employeeAccRef)) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             String updateSql = "update employeeAccounts set name=?, startDate=?, endDate=?, "
-                    + "balance=?, salary=?, where employeeAccRef=?";
+                    + "balance=?, salary=? where employeeAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, employeeAcc.getAccName());
@@ -3726,8 +3730,8 @@ public class Database {
     public void createUser(UserImpl user) throws SQLException {
         if(!this.userExists(user.getUsername())) {
             users.put(user.getUsername(), user);
-            String insertSql = "insert into users (employeeRef, username, password, read, write, update, "
-                    + "employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
+                    + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, user.getEmployeeRef());
@@ -3748,7 +3752,7 @@ public class Database {
     public void updateUser(String username) throws SQLException {
         if(this.userExists(username)) {
             UserImpl user = this.getUser(username);
-            String updateSql = "update users set password=?, read=?, write=?, update=?, "
+            String updateSql = "update users set password=?, otherRead=?, otherWrite=?, otherUpdate=?, "
                     + "employeeRead=?, employeeWrite=?, employeeUpdate=? where username=? and employeeRef=?";
             try(PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -4017,150 +4021,152 @@ public class Database {
         String selectSql = "select count(propertyElementRef) as count from propertyElementValues";
         try(Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
-            int checkSum = results.getInt("count");
+            results.next();
+            int checkSum = results.getInt(1);
             return checkSum;
         }
     }
     
     public int getJobBenefitCount() throws SQLException {
-        String selectSql = "select count (jobBenefitRef) from jobRoleBenefits";
+        String selectSql = "select count(jobBenefitRef) as count from jobRoleBenefits";
         try(Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
-            int checkSum = results.getInt("count");
+            results.next();
+            int checkSum = results.getInt(1);
             return checkSum;
         }
     }
     
     public List<Office> getOffices() {
-        return Collections.unmodifiableList((List<Office>) offices.values());
+        return Collections.unmodifiableList(new ArrayList<>(offices.values()));
     }
     
     public List<Address> getAddresses() {
-        return Collections.unmodifiableList((List<Address>) addresses.values());
+        return Collections.unmodifiableList(new ArrayList<>(addresses.values()));
     }
     
     public List<Person> getPeople() {
-        return Collections.unmodifiableList((List<Person>) people.values());
+        return Collections.unmodifiableList(new ArrayList<>(people.values()));
     }
     
     public List<InvolvedParty> getInvolvedParties() {
-        return Collections.unmodifiableList((List<InvolvedParty>) involvedParties.values());
+        return Collections.unmodifiableList(new ArrayList<>(involvedParties.values()));
     }
     
     public List<Landlord> getLandlords() {
-        return Collections.unmodifiableList((List<Landlord>) landlords.values());
+        return Collections.unmodifiableList(new ArrayList<>(landlords.values()));
     }
     
     public List<Employee> getEmployees() {
-        return Collections.unmodifiableList((List<Employee>) employees.values());
+        return Collections.unmodifiableList(new ArrayList<>(employees.values()));
     }
     
     public List<Application> getApplications() {
-        return Collections.unmodifiableList((List<Application>) applications.values());
+        return Collections.unmodifiableList(new ArrayList<>(applications.values()));
     }
     
     public List<Property> getProperties() {
-        return Collections.unmodifiableList((List<Property>) properties.values());
+        return Collections.unmodifiableList(new ArrayList<>(properties.values()));
     }
     
     public List<Tenancy> getTenancies() {
-        return Collections.unmodifiableList((List<Tenancy>) tenancies.values());
+        return Collections.unmodifiableList(new ArrayList<>(tenancies.values()));
     }
     
     public List<Lease> getLeases() {
-        return Collections.unmodifiableList((List<Lease>) leases.values());
+        return Collections.unmodifiableList(new ArrayList<>(leases.values()));
     }
     
     public List<Contract> getContracts() {
-        return Collections.unmodifiableList((List<Contract>) contracts.values());
+        return Collections.unmodifiableList(new ArrayList<>(contracts.values()));
     }
     
     public List<RentAccount> getRentAccounts() {
-        return Collections.unmodifiableList((List<RentAccount>) rentAccounts.values());
+        return Collections.unmodifiableList(new ArrayList<>(rentAccounts.values()));
     }
     
     public List<LeaseAccount> getLeaseAccounts() {
-        return Collections.unmodifiableList((List<LeaseAccount>) leaseAccounts.values());
+        return Collections.unmodifiableList(new ArrayList<>(leaseAccounts.values()));
     }
     
     public List<EmployeeAccount> getEmployeeAccounts() {
-        return Collections.unmodifiableList((List<EmployeeAccount>) employeeAccounts.values());
+        return Collections.unmodifiableList(new ArrayList<>(employeeAccounts.values()));
     }
     
     public List<Element> getTitles() {
-        return Collections.unmodifiableList((List<Element>) titles.values());
+        return Collections.unmodifiableList(new ArrayList<>(titles.values()));
     }
     
     public List<Element> getGenders() {
-        return Collections.unmodifiableList((List<Element>) genders.values());
+        return Collections.unmodifiableList(new ArrayList<>(genders.values()));
     }
     
     public List<Element> getMaritalStatuses() {
-        return Collections.unmodifiableList((List<Element>) maritalStatuses.values());
+        return Collections.unmodifiableList(new ArrayList<>(maritalStatuses.values()));
     }
     
     public List<Element> getEthnicOrigins() {
-        return Collections.unmodifiableList((List<Element>) ethnicOrigins.values());
+        return Collections.unmodifiableList(new ArrayList<>(ethnicOrigins.values()));
     }
     
     public List<Element> getLanguages() {
-        return Collections.unmodifiableList((List<Element>) languages.values());
+        return Collections.unmodifiableList(new ArrayList<>(languages.values()));
     }
     
     public List<Element> getNationalities() {
-        return Collections.unmodifiableList((List<Element>) nationalities.values());
+        return Collections.unmodifiableList(new ArrayList<>(nationalities.values()));
     }
     
     public List<Element> getSexualities() {
-        return Collections.unmodifiableList((List<Element>) sexualities.values());
+        return Collections.unmodifiableList(new ArrayList<>(sexualities.values()));
     }
     
     public List<Element> getReligions() {
-        return Collections.unmodifiableList((List<Element>) religions.values());
+        return Collections.unmodifiableList(new ArrayList<>(religions.values()));
     }
     
     public List<Element> getPropertyTypes() {
-        return Collections.unmodifiableList((List<Element>) propertyTypes.values());
+        return Collections.unmodifiableList(new ArrayList<>(propertyTypes.values()));
     }
     
     public List<Element> getPropertySubTypes() {
-        return Collections.unmodifiableList((List<Element>) propertySubTypes.values());
+        return Collections.unmodifiableList(new ArrayList<>(propertySubTypes.values()));
     }
     
     public List<Element> getPropElements() {
-        return Collections.unmodifiableList((List<Element>) propertyElements.values());
+        return Collections.unmodifiableList(new ArrayList<>(propertyElements.values()));
     }
     
     public List<Element> getContactTypes() {
-        return Collections.unmodifiableList((List<Element>) contactTypes.values());
+        return Collections.unmodifiableList(new ArrayList<>(contactTypes.values()));
     }
     
     public List<Element> getEndReasons() {
-        return Collections.unmodifiableList((List<Element>) endReasons.values());
+        return Collections.unmodifiableList(new ArrayList<>(endReasons.values()));
     }
     
     public List<JobRole> getJobRoles() {
-        return Collections.unmodifiableList((List<JobRole>) jobRoles.values());
+        return Collections.unmodifiableList(new ArrayList<>(jobRoles.values()));
     }
     
     public List<Element> getRelationships() {
-        return Collections.unmodifiableList((List<Element>) relationships.values());
+        return Collections.unmodifiableList(new ArrayList<>(relationships.values()));
     }
     
     public List<Element> getJobBenefits() {
-        return Collections.unmodifiableList((List<Element>) jobBenefits.values());
+        return Collections.unmodifiableList(new ArrayList<>(jobBenefits.values()));
     }
     
     public List<Element> getJobRequirements() {
-        return Collections.unmodifiableList((List<Element>) jobRequirements.values());
+        return Collections.unmodifiableList(new ArrayList<>(jobRequirements.values()));
     }
     
     public List<Element> getTenancyTypes() {
-        return Collections.unmodifiableList((List<Element>) tenancyTypes.values());
+        return Collections.unmodifiableList(new ArrayList<>(tenancyTypes.values()));
     }
     
     public List<Transaction> getTransactions() {
-        return Collections.unmodifiableList((List<Transaction>) transactions.values());
+        return Collections.unmodifiableList(new ArrayList<>(transactions.values()));
     }
     
     public List<Person> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,

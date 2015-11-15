@@ -27,6 +27,19 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Tenancy
+     * @param tenRef
+     * @param startDate
+     * @param length
+     * @param accountRef
+     * @param property
+     * @param application
+     * @param tenType
+     * @param officeCode
+     * @param createdBy
+     * @param createdDate 
+     */
     public Tenancy(int tenRef, Date startDate, int length, int accountRef, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode, String createdBy, Date createdDate) {
         super(tenRef, application.getAppCorrName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.property = property;
@@ -41,27 +54,24 @@ public class Tenancy extends Agreement implements TenancyInterface {
     ///   MUTATOR METHODS   ///
     
     /**
-     * @param tenType the tenType to set
+     * @param tenType
      * @param modifiedBy
      */
-    @Override
     public void setTenType(Element tenType, ModifiedByInterface modifiedBy) {
         this.tenType = tenType;
         this.modifiedBy(modifiedBy);
     }
 
     /**
-     * @param rent the rent to set
+     * @param rent
      */
-    @Override
     public void setRent(double rent) {
         this.rent = rent;
     }
 
     /**
-     * @param charges the charges to set
+     * @param charges
      */
-    @Override
     public void setCharges(double charges) {
         this.charges = charges;
     }
@@ -71,7 +81,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
     ///   ACCESSOR METHODS   ///
 
     /**
-     * @return the property
+     * @return property
      */
     @Override
     public PropertyInterface getProperty() {
@@ -79,7 +89,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
     }
     
     /**
-     * @return the application
+     * @return application
      */
     @Override
     public ApplicationInterface getApplication() {
@@ -87,7 +97,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
     }
 
     /**
-     * @return the tenType
+     * @return tenType
      */
     @Override
     public Element getTenType() {
@@ -95,7 +105,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
     }
 
     /**
-     * @return the rent
+     * @return rent
      */
     @Override
     public double getRent() {
@@ -103,13 +113,17 @@ public class Tenancy extends Agreement implements TenancyInterface {
     }
 
     /**
-     * @return the charges
+     * @return charges
      */
     @Override
     public double getCharges() {
         return charges;
     }
     
+    /**
+     * 
+     * @return rent + charges
+     */
     @Override
     public double getExpectedRevenue() {
         return rent + charges;

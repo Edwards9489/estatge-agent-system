@@ -35,6 +35,17 @@ public class PropertyElement implements PropertyElementInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class PropertyElement
+     * @param propElementRef
+     * @param element
+     * @param startDate
+     * @param charge
+     * @param stringValue
+     * @param doubleValue
+     * @param createdBy
+     * @param createdDate 
+     */
     public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy, Date createdDate) {
         this.propertyElementRef = propElementRef;
         this. element = element;
@@ -56,37 +67,52 @@ public class PropertyElement implements PropertyElementInterface {
     ///   MUTATOR METHODS   ///
 
     /**
-     * @param value the value to set
+     * @param value
      */
     private void setStringValue(String value) {
         this.stringValue = value;
     }
 
     /**
-     * @param value the value to set
+     * @param value
      */
     private void setDoubleValue(double value) {
         this.doubleValue = value;
     }
     
+    /**
+     * 
+     * @param charge 
+     */
     private void setCharge(boolean charge) {
         this.charge = charge;
     }
 
     /**
-     * @param startDate the startDate to set
+     * @param startDate
      */
     private void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
-    @Override
+    /**
+     * 
+     * @param startDate
+     * @param stringValue
+     * @param doubleValue
+     * @param charge
+     * @param modifiedBy 
+     */
     public void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge, ModifiedByInterface modifiedBy) {
         if(charge) {
             setDoubleValue(doubleValue);
@@ -103,7 +129,6 @@ public class PropertyElement implements PropertyElementInterface {
      * @param endDate the endDate to set
      * @param modifiedBy
      */
-    @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.startDate)) {
             this.endDate = endDate;
@@ -115,24 +140,33 @@ public class PropertyElement implements PropertyElementInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    /**
+     * 
+     * @return propertyElementRef
+     */
     public int getPropertyElementRef() {
         return this.propertyElementRef;
     }
+    
     /**
-     * @return the element
+     * @return element
      */
     @Override
     public Element getElement() {
         return element;
     }
     
+    /**
+     * 
+     * @return code for element
+     */
     @Override
     public String getElementCode() {
         return element.getCode();
     }
 
     /**
-     * @return the value
+     * @return stringValue
      */
     @Override
     public String getStringValue() {
@@ -140,7 +174,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
     
     /**
-     * @return the value
+     * @return doubleValue
      */
     @Override
     public double getDoubleValue() {
@@ -148,7 +182,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
 
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -156,7 +190,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
 
     /**
-     * @return the endDate
+     * @return endDate
      */
     @Override
     public Date getEndDate() {
@@ -164,7 +198,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
 
     /**
-     * @return the current
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
      */
     @Override
     public boolean isCurrent() {
@@ -172,23 +206,32 @@ public class PropertyElement implements PropertyElementInterface {
             return true;
         }
         else {
-            return endDate.before(new Date());
+            return endDate.after(new Date());
         }
     }
 
     /**
-     * @return the charge
+     * @return charge
      */
     @Override
     public boolean isCharge() {
         return charge;
     }
     
+    /**
+     * 
+     * @param code
+     * @return true if this.code == code
+     */
     @Override
     public boolean isElementCode(String code) {
         return code.equals(element.getCode());
     }
     
+    /**
+     * 
+     * @return the name of the last user who modified the PropertyElement
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -197,6 +240,10 @@ public class PropertyElement implements PropertyElementInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the last date a user modified the PropertyElement
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -205,11 +252,19 @@ public class PropertyElement implements PropertyElementInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the PropertyElement
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last mdodifiedBy object for the PropertyElement
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -219,7 +274,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -227,7 +282,7 @@ public class PropertyElement implements PropertyElementInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {

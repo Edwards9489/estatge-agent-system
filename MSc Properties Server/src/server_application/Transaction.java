@@ -28,6 +28,18 @@ public class Transaction implements TransactionInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Transaction
+     * @param transactionRef
+     * @param accountRef
+     * @param fromRef
+     * @param toRef
+     * @param amount
+     * @param debit
+     * @param transactionDate
+     * @param createdBy
+     * @param createdDate 
+     */
     public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy, Date createdDate) {
         this.transactionRef = transactionRef;
         this.accountRef = accountRef;
@@ -49,7 +61,7 @@ public class Transaction implements TransactionInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the transactionRef
+     * @return transactionRef
      */
     @Override
     public int getTransactionRef() {
@@ -57,7 +69,7 @@ public class Transaction implements TransactionInterface {
     }
     
     /**
-     * @return the accountRef
+     * @return accountRef
      */
     @Override
     public int getAccountRef() {
@@ -65,7 +77,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the fromRef
+     * @return fromRef
      */
     @Override
     public int getFromRef() {
@@ -73,7 +85,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the toRef
+     * @return toRef
      */
     @Override
     public int getToRef() {
@@ -81,7 +93,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the amount
+     * @return amount
      */
     @Override
     public double getAmount() {
@@ -89,7 +101,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the transactionDate
+     * @return transactionDate
      */
     @Override
     public Date getTransactionDate() {
@@ -97,7 +109,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -105,7 +117,7 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
@@ -113,13 +125,17 @@ public class Transaction implements TransactionInterface {
     }
 
     /**
-     * @return the debit
+     * @return debit
      */
     @Override
     public boolean isDebit() {
         return debit;
     }
     
+    /**
+     * 
+     * @return String representation of the Transaction
+     */
     @Override
     public String toString() {
         String temp = "\nAccount Ref: " + this.getAccountRef() + "\nFrom Ref: " + this.getFromRef() +

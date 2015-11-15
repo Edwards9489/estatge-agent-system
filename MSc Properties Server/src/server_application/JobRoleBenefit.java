@@ -33,6 +33,17 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     
     ///   CONSTRUCTORS   ///
     
+    /**
+     * Constructor for objects of class JobRoleBenefit
+     * @param ref
+     * @param benefit
+     * @param startDate
+     * @param salaryBenefit
+     * @param stringValue
+     * @param doubleValue
+     * @param createdBy
+     * @param createdDate 
+     */
     public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy, Date createdDate) {
         this.jobRoleBenefitRef = ref;
         this.benefit = benefit;
@@ -54,40 +65,51 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     ///   MUTATOR METHODS   ///
 
     /**
-     * @param stringValue the stringValue to set
+     * @param stringValue
      */
     private void setStringValue(String stringValue) {
         this.stringValue = stringValue;
     }
 
     /**
-     * @param doubleValue the doubleValue to set
+     * @param doubleValue
      */
     private void setDoubleValue(double doubleValue) {
         this.doubleValue = doubleValue;
     }
 
     /**
-     * @param startDate the startDate to set
+     * @param startDate
      */
     private void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     /**
-     * @param salaryBenefit the salaryBenefit to set
+     * @param salaryBenefit
      */
     private void setSalaryBenefit(boolean salaryBenefit) {
         this.salaryBenefit = salaryBenefit;
     }
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
-    @Override
+    /**
+     * 
+     * @param stringValue
+     * @param doubleValue
+     * @param salaryBenefit
+     * @param startDate
+     * @param modifiedBy 
+     */
     public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, Date startDate, ModifiedByInterface modifiedBy) {
         setSalaryBenefit(salaryBenefit);
         if(salaryBenefit) {
@@ -104,7 +126,6 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      * @param endDate the endDate to set
      * @param modifiedBy
      */
-    @Override
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if(endDate.after(this.startDate)) {
             this.endDate = endDate;
@@ -117,7 +138,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the benefitRef
+     * @return benefitRef
      */
     @Override
     public int getBenefitRef() {
@@ -125,20 +146,24 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
     
     /**
-     * @return the benefit
+     * @return benefit
      */
     @Override
     public Element getBenefit() {
         return this.benefit;
     }
     
+    /**
+     * 
+     * @return the code of benefit
+     */
     @Override
     public String getBenefitCode() {
         return this.getBenefit().getCode();
     }
 
     /**
-     * @return the stringValue
+     * @return stringValue
      */
     @Override
     public String getStringValue() {
@@ -146,7 +171,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
-     * @return the doubleValue
+     * @return doubleValue
      */
     @Override
     public double getDoubleValue() {
@@ -154,7 +179,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
     
     /**
-     * @return the startDate
+     * @return startDate
      */
     @Override
     public Date getStartDate() {
@@ -162,13 +187,17 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
-     * @return the endDate
+     * @return endDate
      */
     @Override
     public Date getEndDate() {
         return endDate;
     }
     
+    /**
+     * 
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     */
     @Override
     public boolean isCurrent() {
         if(endDate == null) {
@@ -179,6 +208,10 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         }
     }
     
+    /**
+     * 
+     * @return the name of the last user to modify the JobRoleBenefit
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -187,6 +220,10 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the last date a user modified the JobRoleBenefit
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -195,11 +232,19 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the JobRoleBenefit
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifiedBy object for the JobRoleBenefit
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -209,7 +254,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -217,7 +262,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
@@ -225,7 +270,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     }
 
     /**
-     * @return the salaryBenefit
+     * @return salaryBenefit
      */
     @Override
     public boolean isSalaryBenefit() {

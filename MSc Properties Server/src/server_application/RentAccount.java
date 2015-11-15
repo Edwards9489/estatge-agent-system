@@ -21,6 +21,13 @@ public class RentAccount extends Account implements RentAccountInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class RentAccount
+     * @param rentAccRef
+     * @param tenancy
+     * @param createdBy
+     * @param createdDate 
+     */
     public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy, Date createdDate) {
         super(rentAccRef, tenancy.getAgreementName(), tenancy.getOfficeCode(), tenancy.getStartDate(), createdBy, createdDate);
         this.tenancy = tenancy;
@@ -33,9 +40,8 @@ public class RentAccount extends Account implements RentAccountInterface {
     ///   MUTATOR METHODS   ///
     
     /**
-     * @param rent the rent to set
+     * @param rent
      */
-    @Override
     public void setRent(double rent) {
         this.rent = rent;
     }
@@ -45,7 +51,7 @@ public class RentAccount extends Account implements RentAccountInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the rent
+     * @return rent
      */
     @Override
     public double getRent() {
@@ -53,13 +59,17 @@ public class RentAccount extends Account implements RentAccountInterface {
     }
 
     /**
-     * @return the tenancy
+     * @return tenancy
      */
     @Override
     public TenancyInterface getTenancy() {
         return tenancy;
     }
     
+    /**
+     * 
+     * @return ref of tenancy
+     */
     @Override
     public int getTenancyRef() {
         return tenancy.getAgreementRef();

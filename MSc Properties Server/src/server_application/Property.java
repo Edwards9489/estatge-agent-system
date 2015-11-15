@@ -9,6 +9,7 @@ import interfaces.AddressInterface;
 import interfaces.Element;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.PropertyElementInterface;
 import interfaces.PropertyInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,13 +32,23 @@ public class Property implements PropertyInterface {
     private Element propType;
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
-    private final List<PropertyElement> propertyElements;
+    private final List<PropertyElementInterface> propertyElements;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Property
+     * @param propRef
+     * @param address
+     * @param acquiredDate
+     * @param propType
+     * @param propSubType
+     * @param createdBy
+     * @param createdDate 
+     */
     public Property(int propRef, AddressInterface address, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) {
         // initialise instance variables
         this.propRef = propRef;
@@ -58,33 +69,37 @@ public class Property implements PropertyInterface {
     ///   MUTATOR METHODS   ///
     
     /**
-     * @param acquiredDate the acquiredDate to set
+     * @param address
      */
     private void setAddress(AddressInterface address) {
         this.address = address;
     }
     
     /**
-     * @param acquiredDate the acquiredDate to set
+     * @param acquiredDate
      */
     private void setAcquiredDate(Date acquiredDate) {
         this.acquiredDate = acquiredDate;
     }
 
     /**
-     * @param propType the propType to set
+     * @param propType
      */
     private void setPropType(Element propType) {
         this.propType = propType;
     }
 
     /**
-     * @param propSubType the propSubType to set
+     * @param propSubType=
      */
     private void setPropSubType(Element propSubType) {
         this.propSubType = propSubType;
     }
     
+    /**
+     * 
+     * @param modifiedBy
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
@@ -92,36 +107,40 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @param landlords the landlords to set
+     * @param landlords
      * @param modifiedBy
      */
-    @Override
     public void setLandlords(List<LandlordInterface> landlords, ModifiedByInterface modifiedBy) {
         this.landlords = landlords;
         this.modifiedBy(modifiedBy);
     }
 
     /**
-     * @param leaseEndDate the leaseEndDate to set
+     * @param leaseEndDate
      * @param modifiedBy
      */
-    @Override
     public void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy) {
         this.leaseEndDate = leaseEndDate;
         this.modifiedBy(modifiedBy);
     }
 
     /**
-     * @param propStatus the propStatus to set
+     * @param propStatus
      * @param modifiedBy
      */
-    @Override
     public void setPropStatus(String propStatus, ModifiedByInterface modifiedBy) {
         this.propStatus = propStatus;
         this.modifiedBy(modifiedBy);
     }
     
-    @Override
+    /**
+     * 
+     * @param address
+     * @param acquiredDate
+     * @param propType
+     * @param propSubType
+     * @param modifiedBy 
+     */
     public void updateProperty(AddressInterface address, Date acquiredDate, Element propType, Element propSubType, ModifiedByInterface modifiedBy) {
         this.setAddress(address);
         this.setAcquiredDate(acquiredDate);
@@ -130,6 +149,11 @@ public class Property implements PropertyInterface {
         this.modifiedBy(modifiedBy);
     }
     
+    /**
+     * 
+     * @param element
+     * @param modifiedBy 
+     */
     public void createPropertyElement(PropertyElement element, ModifiedByInterface modifiedBy) {
         if(!this.hasPropElement(element.getElementCode())) {
             this.propertyElements.add(element);
@@ -142,7 +166,7 @@ public class Property implements PropertyInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the propRef
+     * @return propRef
      */
     @Override
     public int getPropRef() {
@@ -150,7 +174,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the address
+     * @return address
      */
     @Override
     public AddressInterface getAddress() {
@@ -158,7 +182,7 @@ public class Property implements PropertyInterface {
     }
     
     /**
-     * @return the landlord
+     * @return landlords
      */
     @Override
     public List<LandlordInterface> getLandlords() {
@@ -166,7 +190,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the acquiredDate
+     * @return acquiredDate
      */
     @Override
     public Date getAcquiredDate() {
@@ -174,7 +198,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the leaseEndDate
+     * @return leaseEndDate
      */
     @Override
     public Date getLeaseEndDate() {
@@ -182,7 +206,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the propType
+     * @return propType
      */
     @Override
     public Element getPropType() {
@@ -190,7 +214,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the propSubType
+     * @return propSubType
      */
     @Override
     public Element getPropSubType() {
@@ -198,7 +222,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the propStatus
+     * @return propStatus
      */
     @Override
     public String getPropStatus() {
@@ -206,18 +230,21 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the propertyElements
+     * @return propertyElements
      */
     @Override
-    public List<PropertyElement> getPropertyElements() {
+    public List<PropertyElementInterface> getPropertyElements() {
         return Collections.unmodifiableList(propertyElements);
     }
     
-    
-    
+    /**
+     * 
+     * @param code
+     * @return true if propertyElements contains PropertyElement with code == code and current
+     */
     public boolean hasPropElement(String code) {
         if(!propertyElements.isEmpty()) {
-            for(PropertyElement element : propertyElements) {
+            for(PropertyElementInterface element : propertyElements) {
                 if(element.isCurrent() && code.equals(element.getElementCode())) {
                     return true;
                 }
@@ -226,6 +253,10 @@ public class Property implements PropertyInterface {
         return false;
     }
     
+    /**
+     * 
+     * @return true if leaseEndDate == null || (leaseEndDate != null && leaseEndDate > TODAY)
+     */
     @Override
     public boolean isCurrent() {
         if(leaseEndDate == null) {
@@ -236,11 +267,15 @@ public class Property implements PropertyInterface {
         }
     }
     
+    /**
+     * 
+     * @return value assigned to RENT element from propertyElements
+     */
     @Override
     public double getRent() {
         double rent = -1;
         if (!propertyElements.isEmpty()) {
-            for (PropertyElement temp : propertyElements) {
+            for (PropertyElementInterface temp : propertyElements) {
                 if (temp.isCurrent() && temp.isElementCode("RENT")) {
                     rent = temp.getDoubleValue();
                 }
@@ -249,12 +284,16 @@ public class Property implements PropertyInterface {
         return rent;
     }
     
+    /**
+     * 
+     * @return sum of values assigned to charge elements from propertyElements
+     */
     @Override
     public double getCharges() {
         double charges = -1;
         if(!propertyElements.isEmpty()) {
-            for (PropertyElement temp : propertyElements) {
-                if(temp.isCurrent() && temp.isCharge()) {
+            for (PropertyElementInterface temp : propertyElements) {
+                if(temp.isCurrent() && temp.isCharge() && !temp.isElementCode("RENT")) {
                     charges = temp.getDoubleValue();
                 }
             }
@@ -262,6 +301,10 @@ public class Property implements PropertyInterface {
         return charges;
     }
     
+    /**
+     * 
+     * @return the name of the last user who modified the Property
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -270,6 +313,10 @@ public class Property implements PropertyInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the last date a user modified the Property
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -278,11 +325,19 @@ public class Property implements PropertyInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the Property
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifedBy object for the Property
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -292,7 +347,7 @@ public class Property implements PropertyInterface {
     }
     
     /**
-     * @return the createdBy
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -300,7 +355,7 @@ public class Property implements PropertyInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {

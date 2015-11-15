@@ -63,35 +63,34 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public ServerImpl(String environment, String addr, String username, String password, int port) throws RemoteException {
         super();
         this.users = new HashMap<>();
-        //this.database = new Database(environment, addr, username, password, port);
+        this.database = new Database(environment, addr, username, password, port);
         
-//        this.personRef = this.database.countPeople() + 1;
-//        this.invPartyRef = this.database.countInvolvedParties() + 1;
-//        this.landlordRef = this.database.countLandords() + 1;
-//        this.employeeRef = this.database.countEmployees() + 1;
-//        this.appRef = this.database.countApplications() + 1;
-//        this.propRef = this.database.countProperties() + 1;
-//        this.tenRef = this.database.countTenancies() + 1;
-//        this.leaseRef = this.database.countLeases() + 1;
-//        this.contractRef = this.database.countContracts() + 1;
-//        this.rentAccRef = this.database.countRentAccounts() + 1;
-//        this.leaseAccRef = this.database.countLeaseAccounts() + 1;
-//        this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
-//        this.addressRef = this.database.countAddresses() + 1;
-//        this.transactionRef = this.database.countTransactions() + 1;
-//        this.addressUsageRef = this.database.countAddressUsages() + 1;
-//        this.contactRef = this.database.countContacts() + 1;
-//        try {
-//            this.propertyElementRef = this.database.getPropElementCount() + 1;
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        try {
-//            this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
-//        } catch (SQLException ex) {
-//            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
+        this.personRef = this.database.countPeople() + 1;
+        this.invPartyRef = this.database.countInvolvedParties() + 1;
+        this.landlordRef = this.database.countLandords() + 1;
+        this.employeeRef = this.database.countEmployees() + 1;
+        this.appRef = this.database.countApplications() + 1;
+        this.propRef = this.database.countProperties() + 1;
+        this.tenRef = this.database.countTenancies() + 1;
+        this.leaseRef = this.database.countLeases() + 1;
+        this.contractRef = this.database.countContracts() + 1;
+        this.rentAccRef = this.database.countRentAccounts() + 1;
+        this.leaseAccRef = this.database.countLeaseAccounts() + 1;
+        this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
+        this.addressRef = this.database.countAddresses() + 1;
+        this.transactionRef = this.database.countTransactions() + 1;
+        this.addressUsageRef = this.database.countAddressUsages() + 1;
+        this.contactRef = this.database.countContacts() + 1;
+        try {
+            this.propertyElementRef = this.database.getPropElementCount() + 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24 * 7); // SET FOR A WEEK
     }
     
@@ -843,7 +842,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy) throws RemoteException, SQLException {
         if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefit)) {
             JobRole jobRole = this.database.getJobRole(jobRoleCode);
-            if(!jobRole.hasBenefit(benefit)) {
+            if(!jobRole.hasCurrentBenefit(benefit)) {
                 JobRoleBenefit jobBenefit = new JobRoleBenefit(jobBenefitRef++, this.database.getJobBenefit(benefit), startDate, salaryBenefit, stringValue, doubleValue, createdBy, new Date());
                 jobRole.createJobBenefit(jobBenefit, new ModifiedBy("Created Job Role Benefit", new Date(), createdBy));
                 this.database.createJobRoleBenefit(jobRoleCode, jobBenefit);

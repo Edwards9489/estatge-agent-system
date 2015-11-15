@@ -33,6 +33,14 @@ public class Office implements OfficeInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class Office
+     * @param officeCode
+     * @param address
+     * @param startDate
+     * @param createdBy
+     * @param createdDate 
+     */
     public Office(String officeCode, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
         this.officeCode = officeCode;
         this.address = address;
@@ -46,25 +54,45 @@ public class Office implements OfficeInterface {
     
     ///   MUTATOR METHODS   ///
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
-    @Override
+    /**
+     * 
+     * @param contact
+     * @param modifiedBy 
+     */
+    public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
+        this.contacts.add(contact);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    /**
+     * 
+     * @param startDate
+     * @param modifiedBy 
+     */
     public void setStartDate(Date startDate, ModifiedByInterface modifiedBy) {
         this.startDate = startDate;
         this.modifiedBy(modifiedBy);
     }
     
-    @Override
+    /**
+     * 
+     * @param endDate
+     * @param modifiedBy 
+     */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(this.canCloseOffice()) {
-            if(endDate.after(this.startDate)) {
-                this.endDate = endDate;
-                this.modifiedBy(modifiedBy);
-            }
+        if (endDate.after(this.startDate)) {
+            this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -73,7 +101,7 @@ public class Office implements OfficeInterface {
     ///   ACCESSOR METHODS   ///
 
     /**
-     * @return the officeCode
+     * @return officeCode
      */
     @Override
     public String getOfficeCode() {
@@ -81,40 +109,43 @@ public class Office implements OfficeInterface {
     }
 
     /**
-     * @return the address
+     * @return address
      */
     @Override
     public AddressInterface getAddress() {
         return address;
     }
     
+    /**
+     * 
+     * @return startDate
+     */
     @Override
     public Date getStartDate() {
         return startDate;
     }
     
+    /**
+     * 
+     * @return endDate
+     */
     @Override
     public Date getEndDate() {
         return endDate;
     }
 
     /**
-     * @return the contacts
+     * @return contacts
      */
     @Override
     public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(contacts);
     }
     
-    @Override
-    public boolean isCurrent() {
-        if(endDate != null) {
-            return endDate.before(new Date());
-        }
-        return false;
-    }
-    
     public boolean hasContact(int contactRef) {
+        if(contacts.isEmpty()) {
+            return false;
+        }
         for(ContactInterface contact : contacts) {
             if(contact.getContactRef() == contactRef) {
                 return true;
@@ -123,30 +154,18 @@ public class Office implements OfficeInterface {
         return false;
     }
     
+    /**
+     * 
+     * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     */
     @Override
-    public boolean canCloseOffice() {
-//        if(agreements.isEmpty()) {
-//            return true;
-//        }
-//        else if(!agreements.isEmpty()) {
-//            for(AgreementInterface temp : agreements.values()) {
-//                if(temp.isCurrent()) {
-//                    return false;
-//                }
-//            }
-//        }
-//        
-//        if(accounts.isEmpty()) {
-//            return false;
-//        }
-//        else if(!accounts.isEmpty()) {
-//            for(AccountInterface temp : accounts.values()) {
-//                if(temp.isCurrent()) {
-//                    return false;
-//                }
-//            }
-//        }
-        return true;
+    public boolean isCurrent() {
+        if(this.endDate == null) {
+            return true;
+        }
+        else {
+            return this.endDate.after(new Date());
+        }
     }
     
     @Override
@@ -157,6 +176,10 @@ public class Office implements OfficeInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the date a user last modified the Office
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -165,11 +188,19 @@ public class Office implements OfficeInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the Office
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifiedBy object for the Office
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -178,11 +209,19 @@ public class Office implements OfficeInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return createdBy
+     */
     @Override
     public String getCreatedBy() {
         return createdBy;
     }
     
+    /**
+     * 
+     * @return createdDate
+     */
     @Override
     public Date getCreatedDate() {
         return createdDate;

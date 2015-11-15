@@ -29,6 +29,19 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * 
+     * @param leaseRef
+     * @param startDate
+     * @param length
+     * @param accountRef
+     * @param property
+     * @param management
+     * @param expenditure
+     * @param officeCode
+     * @param createdBy
+     * @param createdDate 
+     */
     public Lease(int leaseRef, Date startDate, int length, int accountRef, Property property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) {
         super(leaseRef, property.getAddress().toString(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.landlords = new ArrayList();
@@ -41,19 +54,30 @@ public class Lease extends Agreement implements LeaseInterface {
     
     ///   MUTATOR METHODS   ///
 
-    @Override
+    /**
+     * 
+     * @param landlord
+     * @param modifiedBy 
+     */
     public void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy) {
         if(!isAlreadyLandlord(landlord.getLandlordRef())) {
             landlords.add(landlord);
-            property.setLandlords(landlords, modifiedBy);
+            Property temp = (Property) this.getProperty();
+            temp.setLandlords(landlords, modifiedBy);
             this.modifiedBy(modifiedBy);
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param modifiedBy 
+     */
     public void endLandlord(int landlordRef, ModifiedByInterface modifiedBy) {
         if(isAlreadyLandlord(landlordRef)) {
             landlords.remove(landlordRef);
-            property.setLandlords(landlords, modifiedBy);
+            Property temp = (Property) this.getProperty();
+            temp.setLandlords(landlords, modifiedBy);
             this.modifiedBy(modifiedBy);
         }
     }
@@ -63,7 +87,7 @@ public class Lease extends Agreement implements LeaseInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the landlords
+     * @return landlords
      */
     @Override
     public List<LandlordInterface> getLandlords() {
@@ -71,7 +95,7 @@ public class Lease extends Agreement implements LeaseInterface {
     }
 
     /**
-     * @return the property
+     * @return property
      */
     @Override
     public PropertyInterface getProperty() {
@@ -79,7 +103,7 @@ public class Lease extends Agreement implements LeaseInterface {
     }
     
     /**
-     * @return the property ref
+     * @return ref of property
      */
     @Override
     public int getPropertyRef() {
@@ -87,13 +111,18 @@ public class Lease extends Agreement implements LeaseInterface {
     }
 
     /**
-     * @return the fullManagement
+     * @return fullManagement
      */
     @Override
     public boolean isFullManagement() {
         return fullManagement;
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @return true if landlords contain a landlord with ref == landlordRef
+     */
     @Override
     public boolean isAlreadyLandlord(int landlordRef) {
         boolean answer = false;
@@ -108,7 +137,7 @@ public class Lease extends Agreement implements LeaseInterface {
     }
 
     /**
-     * @return the expenditure
+     * @return expenditure
      */
     @Override
     public double getExpenditure() {

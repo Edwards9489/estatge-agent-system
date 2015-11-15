@@ -21,6 +21,12 @@ public class ModifiedBy implements ModifiedByInterface {
     
     ///   CONSTRUCTORS ///
     
+    /**
+     * Constructor for objects of class ModifiedBy
+     * @param modifiedBy
+     * @param modifedDate
+     * @param description 
+     */
     public ModifiedBy(String modifiedBy, Date modifedDate, String description) {
         this.modifiedBy = modifiedBy;
         this.modifiedDate = modifedDate;
@@ -36,7 +42,7 @@ public class ModifiedBy implements ModifiedByInterface {
     ///   ACCESSOR METHODS   ///
     
     /**
-     * @return the modifiedBy
+     * @return modifiedBy
      */
     @Override
     public String getModifiedBy() {
@@ -44,7 +50,7 @@ public class ModifiedBy implements ModifiedByInterface {
     }
 
     /**
-     * @return the modifiedDate
+     * @return modifiedDate
      */
     @Override
     public Date getModifiedDate() {
@@ -52,13 +58,17 @@ public class ModifiedBy implements ModifiedByInterface {
     }
     
     /**
-     * @return the description
+     * @return description
      */
     @Override
     public String getDescription() {
         return description;
     }
     
+    /**
+     * 
+     * @return String representation of ModifiedBy
+     */
     @Override
     public String toString() {
         return modifiedBy + " " + description + " on " + modifiedDate;

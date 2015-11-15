@@ -55,7 +55,6 @@ public class Person implements PersonInterface {
      * @param nationality
      * @param sexuality
      * @param religion
-     * @param contacts
      * @param address
      * @param createdBy
      * @param createdDate
@@ -78,7 +77,9 @@ public class Person implements PersonInterface {
         this.setReligion(religion);
         this.contacts = new ArrayList();
         this.addresses = new ArrayList();
-        this.addresses.add(address);
+        if(address != null) {
+            this.addresses.add(address);
+        }
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -88,74 +89,142 @@ public class Person implements PersonInterface {
     
     ///   MUTATOR METHODS   ///
     
+    /**
+     * 
+     * @param title 
+     */
     private void setTitle(Element title) {
         this.title = title;
     }
     
+    /**
+     * 
+     * @param forename 
+     */
     private void setForename(String forename) {
         this.forename = forename;
     }
     
+    /**
+     * 
+     * @param middleNames 
+     */
     private void setMiddleNames(String middleNames) {
         this.middleNames = middleNames;
     }
     
+    /**
+     * 
+     * @param surname 
+     */
     private void setSurname(String surname) {
         this.surname = surname;
     }
     
+    /**
+     * 
+     * @param dateOfBirth 
+     */
     private void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
     
+    /**
+     * 
+     * @param nationalInsurance 
+     */
     private void setNationalInsurance(String nationalInsurance) {
         this.nationalInsurance = nationalInsurance;
     }
     
+    /**
+     * 
+     * @param gender 
+     */
     private void setGender(Element gender) {
         this.gender = gender;
     }
     
+    /**
+     * 
+     * @param maritalStatus 
+     */
     private void setMaritalStatus(Element maritalStatus) {
         this.maritalStatus = maritalStatus;
     }
     
+    /**
+     * 
+     * @param ethnicOrigin 
+     */
     private void setEthnicOrigin(Element ethnicOrigin) {
         this.ethnicOrigin = ethnicOrigin;
     }
     
+    /**
+     * 
+     * @param language 
+     */
     private void setLanguage(Element language) {
         this.language = language;
     }
     
+    /**
+     * 
+     * @param nationality 
+     */
     private void setNationality(Element nationality) {
         this.nationality = nationality;
     }
     
+    /**
+     * 
+     * @param sexuality 
+     */
     private void setSexuality(Element sexuality) {
         this.sexuality = sexuality;
     }
     
+    /**
+     * 
+     * @param religion 
+     */
     private void setReligion(Element religion) {
         this.religion = religion;
     }
     
+    /**
+     * 
+     * @param modifiedBy 
+     */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
         }
     }
     
-    @Override
+    /**
+     * 
+     * @param contact
+     * @param modifiedBy 
+     */
     public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
         this.contacts.add(contact);
         this.modifiedBy(modifiedBy);
     }
     
+    /**
+     * 
+     * @param contact
+     * @param contactType
+     * @param contactValue
+     * @param startDate
+     * @param modifiedBy 
+     */
     public void updateContact(ContactInterface contact, Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
         if(this.contacts.isEmpty()) {
             if(this.contacts.contains(contact)) {
-                ContactInterface temp = this.contacts.get(this.contacts.indexOf(contact));
+                Contact temp = (Contact) this.contacts.get(this.contacts.indexOf(contact));
                 if(temp.isCurrent()) {
                     temp.updateContact(contactType, contactValue, startDate, modifiedBy);
                     this.modifiedBy(modifiedBy);
@@ -164,11 +233,16 @@ public class Person implements PersonInterface {
         }
     }
     
-    @Override
+    /**
+     * 
+     * @param address
+     * @param modifiedBy 
+     */
     public void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
         if(!this.addresses.isEmpty()) {
-            for(AddressUsageInterface temp : this.addresses) {
-                if(temp.isCurrent()) {
+            for(AddressUsageInterface addressUsage : this.addresses) {
+                if(addressUsage.isCurrent()) {
+                    AddressUsage temp = (AddressUsage) addressUsage;
                     temp.setEndDate(address.getStartDate(), modifiedBy);
                     this.modifiedBy(modifiedBy);
                 }
@@ -177,7 +251,23 @@ public class Person implements PersonInterface {
         this.addresses.add(address);
     }
     
-    @Override
+    /**
+     * 
+     * @param title
+     * @param forename
+     * @param middleNames
+     * @param surname
+     * @param dateOfBirth
+     * @param nationalInsurance
+     * @param gender
+     * @param maritalStatus
+     * @param ethnicOrigin
+     * @param language
+     * @param nationality
+     * @param sexuality
+     * @param religion
+     * @param modifiedBy 
+     */
     public void updatePerson(Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
             Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, ModifiedByInterface modifiedBy) {
         this.setTitle(title);
@@ -200,31 +290,55 @@ public class Person implements PersonInterface {
     
     ///   ACCESSOR METHODS   ///
     
+    /**
+     * 
+     * @return personRef
+     */
     @Override
     public int getPersonRef() {
         return this.personRef;
     }
     
+    /**
+     * 
+     * @return title
+     */
     @Override
     public Element getTitle() {
         return this.title;
     }
     
+    /**
+     * 
+     * @return forename
+     */
     @Override
     public String getForename() {
         return this.forename;
     }
     
+    /**
+     * 
+     * @return middleNames
+     */
     @Override
     public String getMiddleNames() {
         return this.middleNames;
     }
     
+    /**
+     * 
+     * @return surname
+     */
     @Override
     public String getSurname() {
         return this.surname;
     }
     
+    /**
+     * 
+     * @return String representation of Person full name
+     */
     @Override
     public String getName() {
         String temp = this.title.getDescription();
@@ -240,21 +354,37 @@ public class Person implements PersonInterface {
         return temp;
     }
     
+    /**
+     * 
+     * @return dateOfBirth
+     */
     @Override
     public Date getDateOfBirth() {
         return this.dateOfBirth;
     }
     
+    /**
+     * 
+     * @return nationalInsurance
+     */
     @Override
     public String getNI() {
         return this.nationalInsurance;
     }
     
+    /**
+     * 
+     * @return gender
+     */
     @Override
     public Element getGender() {
         return this.gender;
     }
     
+    /**
+     * 
+     * @return true if number of years between dateOfBirth and TODAY >= 18
+     */
     @Override
     public boolean isOver18() {
         Calendar dob = DateConversion.dateToCalendar(this.dateOfBirth);
@@ -267,36 +397,64 @@ public class Person implements PersonInterface {
         return years >= 18;
     }
     
+    /**
+     * 
+     * @return maritalStatus 
+     */
     @Override
     public Element getMaritalStatus() {
         return this.maritalStatus;
     }
     
+    /**
+     * 
+     * @return ethnicOrigin
+     */
     @Override
     public Element getEthnicOrigin() {
         return this.ethnicOrigin;
     }
     
+    /**
+     * 
+     * @return language
+     */
     @Override
     public Element getLanguage() {
         return this.language;
     }
     
+    /**
+     * 
+     * @return nationality
+     */
     @Override
     public Element getNationality() {
         return this.nationality;
     }
     
+    /**
+     * 
+     * @return sexuality
+     */
     @Override
     public Element getSexuality() {
         return this.sexuality;
     }
     
+    /**
+     * 
+     * @return religion
+     */
     @Override
     public Element getReligion() {
         return this.religion;
     }
     
+    /**
+     * 
+     * @return the name of the last user who modified the Person
+     */
     @Override
     public String getLastModifiedBy() {
         if(!this.modifiedBy.isEmpty()) {
@@ -305,6 +463,10 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the date the last user modified the Person
+     */
     @Override
     public Date getLastModifiedDate() {
         if(!this.modifiedBy.isEmpty()) {
@@ -313,11 +475,19 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    /**
+     * 
+     * @return the list of modifiedBy objects for the Person
+     */
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
+    /**
+     * 
+     * @return the last modifiedBy object for the Person
+     */
     @Override
     public ModifiedByInterface getLastModification() {
         if(!this.modifiedBy.isEmpty()) {
@@ -326,6 +496,11 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    /**
+     * 
+     * @param contactRef
+     * @return true if contacts contains a Contact with ref == contactRef
+     */
     public boolean hasContact(int contactRef) {
         for(ContactInterface contact : contacts) {
             if(contact.getContactRef() == contactRef) {
@@ -335,12 +510,35 @@ public class Person implements PersonInterface {
         return false;
     }
     
+    /**
+     * 
+     * @return contacts
+     */
+    @Override
     public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(this.contacts);
     }
     
     /**
-     * @return the createdBy
+     * 
+     * @return contacts
+     */
+    @Override
+    public List<AddressUsageInterface> getAddresses() {
+        return Collections.unmodifiableList(this.addresses);
+    }
+    
+    /**
+     * 
+     * @return contacts
+     */
+    @Override
+    public AddressUsageInterface getLastAddress() {
+        return addresses.get(addresses.size() - 1);
+    }
+    
+    /**
+     * @return createdBy
      */
     @Override
     public String getCreatedBy() {
@@ -348,13 +546,17 @@ public class Person implements PersonInterface {
     }
 
     /**
-     * @return the createdDate
+     * @return createdDate
      */
     @Override
     public Date getCreatedDate() {
         return this.createdDate;
     }
     
+    /**
+     * 
+     * @return String representation of the Person
+     */
     @Override
     public String toString() {
         String temp = "\n\nPerson Ref: " + this.personRef + "\nName: " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
