@@ -264,6 +264,11 @@ public class InvolvedParty implements InvolvedPartyInterface {
         }
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * 
      * @return true if person.isOver18() == true

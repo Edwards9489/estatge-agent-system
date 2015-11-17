@@ -21,6 +21,7 @@ public interface AccountInterface {
     String getOfficeCode();
     boolean isNegativeInd();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

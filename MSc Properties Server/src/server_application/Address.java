@@ -344,6 +344,11 @@ public class Address implements AddressInterface {
         return postcode;
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * @return the name of the last user to modify the Address
      */

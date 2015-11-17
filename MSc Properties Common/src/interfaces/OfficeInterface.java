@@ -17,8 +17,11 @@ public interface OfficeInterface {
     AddressInterface getAddress();
     Date getStartDate();
     Date getEndDate();
+    List<AgreementInterface> getAgreements();
+    List<AccountInterface> getAccounts();
     List<ContactInterface> getContacts();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

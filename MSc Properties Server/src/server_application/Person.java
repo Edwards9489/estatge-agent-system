@@ -213,22 +213,11 @@ public class Person implements PersonInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    /**
-     * 
-     * @param contact
-     * @param contactType
-     * @param contactValue
-     * @param startDate
-     * @param modifiedBy 
-     */
-    public void updateContact(ContactInterface contact, Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
+    public void deleteContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
         if(this.contacts.isEmpty()) {
             if(this.contacts.contains(contact)) {
-                Contact temp = (Contact) this.contacts.get(this.contacts.indexOf(contact));
-                if(temp.isCurrent()) {
-                    temp.updateContact(contactType, contactValue, startDate, modifiedBy);
-                    this.modifiedBy(modifiedBy);
-                }
+                this.contacts.remove(contact);
+                this.modifiedBy(modifiedBy);
             }
         }
     }
@@ -249,6 +238,15 @@ public class Person implements PersonInterface {
             }
         }
         this.addresses.add(address);
+    }
+    
+    public void deleteAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
+        if(this.addresses.isEmpty()) {
+            if(this.addresses.contains(address)) {
+                this.addresses.remove(address);
+                this.modifiedBy(modifiedBy);
+            }
+        }
     }
     
     /**
@@ -455,7 +453,7 @@ public class Person implements PersonInterface {
      * @return current AddressUsage
      */
     @Override
-    public AddressUsageInterface getCurrenttAddress() {
+    public AddressUsageInterface getCurrentAddress() {
         if(!this.addresses.isEmpty()) {
             return this.addresses.get(this.addresses.size()-1);
         }
@@ -479,6 +477,11 @@ public class Person implements PersonInterface {
     @Override
     public List<AddressUsageInterface> getApplicationAddressess() {
         return Collections.unmodifiableList((List<AddressUsageInterface>) this.addresses);
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

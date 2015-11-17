@@ -23,6 +23,7 @@ public interface PropertyElementInterface {
     boolean isCurrent();
     boolean isCharge();
     boolean isElementCode(String code);
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

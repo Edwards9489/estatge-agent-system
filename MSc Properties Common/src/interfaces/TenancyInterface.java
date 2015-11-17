@@ -10,7 +10,9 @@ package interfaces;
  * @author Dwayne
  */
 public interface TenancyInterface extends AgreementInterface {
+    int getPropertyRef();
     PropertyInterface getProperty();
+    int getApplicationRef();
     ApplicationInterface getApplication();
     Element getTenType();
     double getRent();

@@ -86,7 +86,7 @@ public class Contact implements ContactInterface {
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate.after(this.startDate)) {
+        if(endDate == null || endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -168,6 +168,11 @@ public class Contact implements ContactInterface {
         else {
             return endDate.before(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

@@ -13,11 +13,13 @@ import java.util.List;
  * @author Dwayne
  */
 public interface AddressUsageInterface {
+    int getAddressUsageRef();
     String getAddressString();
     AddressInterface getAddress();
     Date getStartDate();
     Date getEndDate();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

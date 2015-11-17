@@ -17,6 +17,7 @@ public interface EmployeeInterface {
     PersonInterface getPerson();
     int getPersonRef();
     String getOfficeCode();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

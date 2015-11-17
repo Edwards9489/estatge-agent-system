@@ -5,7 +5,9 @@
  */
 package server_application;
 
+import interfaces.AccountInterface;
 import interfaces.AddressInterface;
+import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.OfficeInterface;
@@ -26,6 +28,8 @@ public class Office implements OfficeInterface {
     private final AddressInterface address;
     private Date startDate;
     private Date endDate;
+    private final List<AgreementInterface> agreements;
+    private final List<AccountInterface> accounts;
     private final List<ContactInterface> contacts;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
@@ -45,6 +49,8 @@ public class Office implements OfficeInterface {
         this.officeCode = officeCode;
         this.address = address;
         this.startDate = startDate;
+        this.agreements = new ArrayList();
+        this.accounts = new ArrayList();
         this.contacts = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
@@ -91,7 +97,7 @@ public class Office implements OfficeInterface {
      * @param modifiedBy 
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if (endDate.after(this.startDate)) {
+        if (endDate == null || this.canCloseOffice() && endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -139,6 +145,22 @@ public class Office implements OfficeInterface {
      * @return contacts
      */
     @Override
+    public List<AgreementInterface> getAgreements() {
+        return Collections.unmodifiableList(agreements);
+    }
+
+    /**
+     * @return contacts
+     */
+    @Override
+    public List<AccountInterface> getAccounts() {
+        return Collections.unmodifiableList(accounts);
+    }
+
+    /**
+     * @return contacts
+     */
+    @Override
     public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(contacts);
     }
@@ -155,6 +177,30 @@ public class Office implements OfficeInterface {
         return false;
     }
     
+    public boolean canCloseOffice() {
+        if (agreements.isEmpty() && accounts.isEmpty()) {
+            for (AgreementInterface agreement : agreements) {
+                if(agreement.isCurrent()) {
+                    return false;
+                }
+            }
+            for (AccountInterface account : accounts) {
+                if(account.isCurrent()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public boolean hasAgreements() {
+        return !agreements.isEmpty();
+    }
+    
+    public boolean hasAccounts() {
+        return !accounts.isEmpty();
+    }
+    
     /**
      * 
      * @return true if endDate == null || (endDate != null && endDate > TODAY)
@@ -167,6 +213,11 @@ public class Office implements OfficeInterface {
         else {
             return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     @Override

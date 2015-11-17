@@ -21,6 +21,7 @@ public interface JobRoleInterface {
     double getSalary();
     boolean isCurrent();
     List<JobRoleBenefitInterface> getBenefits();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

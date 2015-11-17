@@ -90,7 +90,7 @@ public class Account implements AccountInterface {
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate.after(this.startDate)) {
+        if(endDate == null || endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -199,6 +199,11 @@ public class Account implements AccountInterface {
         else {
             return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

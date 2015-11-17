@@ -16,6 +16,7 @@ public interface Element {
     String getCode();
     String getDescription();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

@@ -125,15 +125,14 @@ public class Lease extends Agreement implements LeaseInterface {
      */
     @Override
     public boolean isAlreadyLandlord(int landlordRef) {
-        boolean answer = false;
         if (!landlords.isEmpty()) {
             for (LandlordInterface temp : landlords) {
                 if (temp.getLandlordRef() == landlordRef) {
-                    answer = true;
+                    return true;
                 }
             }
         }
-        return answer;
+        return false;
     }
 
     /**

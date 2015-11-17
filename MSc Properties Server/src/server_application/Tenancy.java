@@ -79,13 +79,29 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     
     ///   ACCESSOR METHODS   ///
-
+    
+    /**
+     * @return ref of property
+     */
+    @Override
+    public int getPropertyRef() {
+        return property.getPropRef();
+    }
+            
     /**
      * @return property
      */
     @Override
     public PropertyInterface getProperty() {
         return property;
+    }
+    
+    /**
+     * @return ref of application
+     */
+    @Override
+    public int getApplicationRef() {
+        return application.getApplicationRef();
     }
     
     /**

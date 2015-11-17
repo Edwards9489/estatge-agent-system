@@ -163,8 +163,12 @@ public class Property implements PropertyInterface {
         }
     }
     
-    public void endPropertyElement(int ref, ModifiedByInterface modifiedBy) {
-        
+    public void endPropertyElement(int ref, Date endDate, ModifiedByInterface modifiedBy) {
+        if(this.hasPropElement(ref)) {
+            PropertyElement propElement = (PropertyElement) propertyElements.get(ref);
+            propElement.setEndDate(endDate, modifiedBy);
+            this.modifiedBy(modifiedBy);
+        }
     }
 
     
@@ -246,6 +250,22 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @param code
+     * @return true if propertyElements contains PropertyElement with code == code
+     */
+    public boolean hasPropElement(String code) {
+        if(!propertyElements.isEmpty()) {
+            for(PropertyElementInterface element : propertyElements.values()) {
+                if(code.equals(element.getElementCode())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * 
+     * @param code
      * @return true if propertyElements contains PropertyElement with code == code and current
      */
     public boolean hasCurrentPropElement(String code) {
@@ -321,6 +341,11 @@ public class Property implements PropertyInterface {
             }
         }
         return charges;
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

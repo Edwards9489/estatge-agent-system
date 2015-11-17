@@ -110,6 +110,11 @@ public class Landlord implements LandlordInterface {
         return Collections.unmodifiableList(leases);
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * 
      * @return the name of the last user that modified the Landlord

@@ -8,6 +8,7 @@ package server_application;
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
 import interfaces.Element;
+import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleBenefitInterface;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
@@ -312,7 +313,6 @@ public class Database {
      */
     
     private void createElement(String from, Element element) throws SQLException {
-        
         String insertSql = "insert into " + from + " (code, description, cur, createdBy, createdDate) values (?, ?, ?, ?, ?)";
         try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
             int col = 1;
@@ -342,6 +342,13 @@ public class Database {
             updateStat.setString(col++, element.getCode());
             updateStat.executeUpdate();
             updateStat.close();
+        }
+    }
+    
+    private void deleteElement(String from, String code) throws SQLException {
+        String deleteSql = "delete from " + from + " where code=" + code;
+        try (Statement deleteStat = this.con.createStatement()) {
+            deleteStat.executeUpdate(deleteSql);
         }
     }
     
@@ -461,7 +468,7 @@ public class Database {
             
             while(results.next()) {
                 String code = results.getString("code");
-                if (code.equals(uniqueCode)) {
+                if (uniqueCode.equals(code)) {
                     String modifiedBy = results.getString("modifiedBy");
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
@@ -502,7 +509,7 @@ public class Database {
      * @throws SQLException 
      */
     public void createContactType(Element conType) throws SQLException {
-        if(!this.contactTypeExists(conType.getCode())) {
+        if(conType != null && !this.contactTypeExists(conType.getCode())) {
             this.contactTypes.put(conType.getCode(), conType);
             this.createElement("contactTypes", conType);
         }
@@ -521,6 +528,25 @@ public class Database {
         }
     }
     
+    public void deleteContactType(String contactTypeCode) throws SQLException {
+        if (this.contactTypeExists(contactTypeCode) && this.canDeleteContactType(contactTypeCode)) {
+            this.deleteElement("contactTypes", contactTypeCode);
+            this.contactTypes.remove(contactTypeCode);
+        }
+    }
+    
+    public boolean canDeleteContactType(String contactTypeCode) {
+        if (this.contactTypeExists(contactTypeCode) && !this.getContactType(contactTypeCode).hasBeenModified()) {
+            for (Contact contact : this.getContacts()) {
+                if (contactTypeCode.equals(contact.getContactType().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * 
      * @throws SQLException 
@@ -531,10 +557,8 @@ public class Database {
         loadedContactTypes = this.loadElements("contactTypes");
         if (!loadedContactTypes.isEmpty()) {
             for (Element temp : loadedContactTypes) {
-                if (temp instanceof Element) {
-                    this.contactTypes.put(temp.getCode(), temp);
-                    this.createElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
-                }
+                this.contactTypes.put(temp.getCode(), temp);
+                this.createElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
             }
         }
     }
@@ -598,6 +622,17 @@ public class Database {
             updateStat.close();
         }
         this.createModifiedBy("personContactModifications", contact.getLastModification(), contact.getContactRef());
+        }
+    }
+    
+    public void deletePersonContact(int contactRef, int personRef) throws SQLException {
+        if (this.contactExists(contactRef) && this.personExists(personRef) && this.getPerson(personRef).hasContact(contactRef) && this.canDeleteContact(contactRef)) {
+            String deleteSql = "delete from personContacts where contactRef=" + contactRef + " and personRef=" + personRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.contacts.remove(contactRef);
+                }
+            }
         }
     }
     
@@ -709,6 +744,17 @@ public class Database {
         }
     }
     
+    public void deleteOfficeContact(int contactRef, String code) throws SQLException {
+        if (this.contactExists(contactRef) && this.officeExists(code) && this.getOffice(code).hasContact(contactRef) && this.canDeleteContact(contactRef)) {
+            String deleteSql = "delete from officeContacts where contactRef=" + contactRef + " and officeCode=" + code;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.contacts.remove(contactRef);
+                }
+            }
+        }
+    }
+    
     /**
      * 
      * @param code
@@ -768,6 +814,10 @@ public class Database {
         }
     }
     
+    public boolean canDeleteContact(int contactRef) {
+        return (this.contactExists(contactRef) && !this.getContact(contactRef).hasBeenModified());
+    }
+    
     /**
      * 
      * @param address
@@ -813,6 +863,17 @@ public class Database {
             updateStat.close();
         }
         this.createModifiedBy("personAddressModifications", address.getLastModification(), address.getAddressUsageRef());
+        }
+    }
+    
+    public void deletePersonAddressUsage(int personRef, int addrRef) throws SQLException {
+        if (this.addressUsageExists(addrRef) && this.personExists(personRef) && this.getPerson(personRef).getCurrentAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
+            String deleteSql = "delete from personAddresses where addressUsageRef=" + addrRef + " and personRef=" + personRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.addressUsages.remove(addrRef);
+                }
+            }
         }
     }
     
@@ -928,6 +989,17 @@ public class Database {
         }
     }
     
+    public void deleteApplicationAddressUsage(int addrRef, int appRef) throws SQLException {
+        if (this.addressUsageExists(addrRef) && this.applicationExists(appRef) && this.getApplication(appRef).getCurrentApplicationAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
+            String deleteSql = "delete from applicationAddresses where addressUsageRef=" + addrRef + " and appRef=" + appRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.addressUsages.remove(addrRef);
+                }
+            }
+        }
+    }
+    
     /**
      * 
      * @param reference
@@ -992,6 +1064,10 @@ public class Database {
         }
     }
     
+    public boolean canDeleteAddressUsage(int addressRef) {
+        return (this.addressUsageExists(addressRef) && !this.getAddressUsage(addressRef).hasBeenModified());
+    }
+    
     /**
      * 
      * @param title
@@ -1015,6 +1091,25 @@ public class Database {
             this.updateElement("titles", title);
             this.createModifiedBy("titleModifications", title.getLastModification(), title.getCode());
         }
+    }
+    
+    public void deleteTitle(String titleCode) throws SQLException {
+        if(this.titleExists(titleCode) && this.canDeleteTitle(titleCode)) {
+            this.deleteElement("titles", titleCode);
+            this.titles.remove(titleCode);
+        }
+    }
+    
+    public boolean canDeleteTitle(String titleCode) {
+        if(this.titleExists(titleCode) && !this.getTitle(titleCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(titleCode.equals(person.getTitle().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -1072,6 +1167,25 @@ public class Database {
         }
     }
     
+    public void deleteGender(String genderCode) throws SQLException {
+        if(this.genderExists(genderCode) && this.canDeleteGender(genderCode)) {
+            this.deleteElement("genders", genderCode);
+            this.genders.remove(genderCode);
+        }
+    }
+    
+    public boolean canDeleteGender(String genderCode) {
+        if(this.genderExists(genderCode) && !this.getGender(genderCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(genderCode.equals(person.getGender().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * 
      * @throws SQLException 
@@ -1122,6 +1236,25 @@ public class Database {
         }
     }
     
+    public void deleteMaritalStatus(String statusCode) throws SQLException {
+        if(this.maritalStatusExists(statusCode) && this.canDeleteMaritalStatus(statusCode)) {
+            this.deleteElement("maritalStatuses", statusCode);
+            this.maritalStatuses.remove(statusCode);
+        }
+    }
+    
+    public boolean canDeleteMaritalStatus(String statusCode) {
+        if(this.maritalStatusExists(statusCode) && !this.getMaritalStatus(statusCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(statusCode.equals(person.getMaritalStatus().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadMaritalStatuses() throws SQLException {
         this.maritalStatuses.clear();
         List<ElementImpl> loadedStatuses;
@@ -1156,6 +1289,25 @@ public class Database {
             this.updateElement("ethnicOrigins", origin);
             this.createModifiedBy("ethnicOriginModifications", origin.getLastModification(), origin.getCode());
         }
+    }
+    
+    public void deleteEthnicOrigin(String originCode) throws SQLException {
+        if(this.ethnicOriginExists(originCode) && this.canDeleteEthnicOrigin(originCode)) {
+            this.deleteElement("ethnicOrigins", originCode);
+            this.ethnicOrigins.remove(originCode);
+        }
+    }
+    
+    public boolean canDeleteEthnicOrigin(String originCode) {
+        if(this.ethnicOriginExists(originCode) && !this.getEthnicOrigin(originCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(originCode.equals(person.getEthnicOrigin().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadEthnicOrigins() throws SQLException {
@@ -1194,6 +1346,25 @@ public class Database {
         }
     }
     
+    public void deleteLanguage(String languageCode) throws SQLException {
+        if(this.languageExists(languageCode) && this.canDeleteLanguage(languageCode)) {
+            this.deleteElement("languages", languageCode);
+            this.languages.remove(languageCode);
+        }
+    }
+    
+    public boolean canDeleteLanguage(String languageCode) {
+        if(this.languageExists(languageCode) && !this.getLanguage(languageCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(languageCode.equals(person.getLanguage().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadLanguages() throws SQLException {
         this.languages.clear();
         List<ElementImpl> loadedLanguages;
@@ -1228,6 +1399,25 @@ public class Database {
             this.updateElement("nationalities", nationality);
             this.createModifiedBy("nationalityModifications", nationality.getLastModification(), nationality.getCode());
         }
+    }
+    
+    public void deleteNationality(String nationalityCode) throws SQLException {
+        if(this.nationalityExists(nationalityCode) && this.canDeleteNationality(nationalityCode)) {
+            this.deleteElement("nationalitys", nationalityCode);
+            this.nationalities.remove(nationalityCode);
+        }
+    }
+    
+    public boolean canDeleteNationality(String nationalityCode) {
+        if(this.nationalityExists(nationalityCode) && !this.getNationality(nationalityCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(nationalityCode.equals(person.getNationality().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadNationalties() throws SQLException {
@@ -1266,6 +1456,25 @@ public class Database {
         }
     }
     
+    public void deleteSexuality(String sexualityCode) throws SQLException {
+        if(this.sexualityExists(sexualityCode) && this.canDeleteSexuality(sexualityCode)) {
+            this.deleteElement("sexualitys", sexualityCode);
+            this.sexualities.remove(sexualityCode);
+        }
+    }
+    
+    public boolean canDeleteSexuality(String sexualityCode) {
+        if(this.sexualityExists(sexualityCode) && !this.getSexuality(sexualityCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(sexualityCode.equals(person.getSexuality().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadSexualities() throws SQLException {
         this.sexualities.clear();
         List<ElementImpl> loadedSexualities;
@@ -1300,6 +1509,25 @@ public class Database {
             this.updateElement("religions", religion);
             this.createModifiedBy("religionModifications", religion.getLastModification(), religion.getCode());
         }
+    }
+    
+    public void deleteReligion(String religionCode) throws SQLException {
+        if(this.religionExists(religionCode) && this.canDeleteReligion(religionCode)) {
+            this.deleteElement("religions", religionCode);
+            this.religions.remove(religionCode);
+        }
+    }
+    
+    public boolean canDeleteReligion(String religionCode) {
+        if(this.religionExists(religionCode) && !this.getReligion(religionCode).hasBeenModified()) {
+            for(Person person : this.getPeople()) {
+                if(religionCode.equals(person.getReligion().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadReligions() throws SQLException {
@@ -1372,6 +1600,29 @@ public class Database {
             }
             this.createModifiedBy("addressModifications", address.getLastModification(), address.getAddressRef());
         }
+    }
+    
+    public void deleteAddress(int addrRef) throws SQLException {
+        if (this.addressExists(addrRef) && this.canDeleteAddress(addrRef)) {
+            String deleteSql = "delete from Addresses where addressRef=" + addrRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.addresses.remove(addrRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteAddress(int addressRef) {
+        if (this.addressExists(addressRef) && !this.getAddress(addressRef).hasBeenModified()) {
+            for(AddressUsage address : this.getAddressUsages()) {
+                if(address.getAddress().getAddressRef() == addressRef) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadAddresses() throws SQLException {
@@ -1471,6 +1722,34 @@ public class Database {
         }
     }
     
+    public void deleteProperty(int propRef) throws SQLException {
+        if (this.propertyExists(propRef) && this.canDeleteProperty(propRef)) {
+            String deleteSql = "delete from Properties where propRef=" + propRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.properties.remove(propRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteProperty(int propRef) {
+        if (this.propertyExists(propRef) && !this.getProperty(propRef).hasBeenModified()) {
+            for(Lease lease : this.getLeases()) {
+                if(lease.getPropertyRef() == propRef) {
+                    return false;
+                }
+            }
+            for(Tenancy tenancy : this.getTenancies()) {
+                if(tenancy.getPropertyRef() == propRef) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadProperties() throws SQLException {
         String sql = "select propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
                     + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propertyRef";
@@ -1554,6 +1833,25 @@ public class Database {
         }
     }
     
+    public void deletePropertyType(String typeCode) throws SQLException {
+        if(this.propTypeExists(typeCode) && this.canDeletePropertyType(typeCode)) {
+            this.deleteElement("propertyTypes", typeCode);
+            this.propertyTypes.remove(typeCode);
+        }
+    }
+    
+    public boolean canDeletePropertyType(String typeCode) {
+        if(this.propTypeExists(typeCode) && !this.getPropertyType(typeCode).hasBeenModified()) {
+            for(Property property : this.getProperties()) {
+                if(typeCode.equals(property.getPropType().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadPropertyTypes() throws SQLException {
         this.propertyTypes.clear();
         List<ElementImpl> loadedPropTypes;
@@ -1588,6 +1886,25 @@ public class Database {
             this.updateElement("propertySubTypes", type);
             this.createModifiedBy("propertySubTypeModifications", type.getLastModification(), type.getCode());
         }
+    }
+    
+    public void deletePropertySubType(String typeCode) throws SQLException {
+        if(this.propSubTypeExists(typeCode) && this.canDeletePropertySubType(typeCode)) {
+            this.deleteElement("propertySubTypes", typeCode);
+            this.propertySubTypes.remove(typeCode);
+        }
+    }
+    
+    public boolean canDeletePropertySubType(String typeCode) {
+        if(this.propSubTypeExists(typeCode) && !this.getPropertySubType(typeCode).hasBeenModified()) {
+            for(Property property : this.getProperties()) {
+                if(typeCode.equals(property.getPropSubType().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadPropertySubTypes() throws SQLException {
@@ -1675,6 +1992,19 @@ public class Database {
             this.createModifiedBy("propertyElementValueModifications", propertyElement.getLastModification(), propertyElement.getPropertyElementRef()); // 
         }
     }
+    
+    public void deletePropertyElementValue(int propElementRef, int propRef) throws SQLException {
+        if (this.propertyExists(propRef) && this.getProperty(propRef).hasPropElement(propElementRef) && this.canDeletePropertyElementValue(propElementRef, propRef)) {
+            String deleteSql = "delete from PropertyElementValues where propertyElementRef=" + propElementRef + "propRef=" + propRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                deleteStat.executeUpdate(deleteSql);
+            }
+        }
+    }
+    
+    public boolean canDeletePropertyElementValue(int propElementRef, int propRef) {
+        return this.propertyExists(propRef) && !this.getProperty(propRef).getPropElement(propElementRef).hasBeenModified();
+    }
 
     private void loadPropertyElementValues(int propRef) throws SQLException {
         if (this.propertyExists(propRef)) {
@@ -1740,6 +2070,25 @@ public class Database {
         }
     }
     
+    public void deletePropertyElement(String elementCode) throws SQLException {
+        if(this.propElementExists(elementCode) && this.canDeletePropertyElement(elementCode)) {
+            this.deleteElement("propertyElements", elementCode);
+            this.propertyElements.remove(elementCode);
+        }
+    }
+    
+    public boolean canDeletePropertyElement(String elementCode) {
+        if(this.propElementExists(elementCode) && !this.getPropElement(elementCode).hasBeenModified()) {
+            for(Property property : this.getProperties()) {
+                if(property.hasPropElement(elementCode)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadPropertyElements() throws SQLException {
         this.propertyElements.clear();
         List<ElementImpl> loadedPropertyElements;
@@ -1777,7 +2126,7 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(person.getDateOfBirth()));
                 insertStat.setString(col++, person.getNI());
                 insertStat.setString(col++, person.getGender().getCode());
-                insertStat.setString(col++, person.getMaritalStatus().getCode());
+                insertStat.setString(col++, person.getNationality().getCode());
                 insertStat.setString(col++, person.getEthnicOrigin().getCode());
                 insertStat.setString(col++, person.getLanguage().getCode());
                 insertStat.setString(col++, person.getNationality().getCode());
@@ -1818,6 +2167,21 @@ public class Database {
             }
             this.createModifiedBy("personModifications", person.getLastModification(), person.getPersonRef());
         }
+    }
+    
+    public void deletePerson(int personRef) throws SQLException {
+        if (this.personExists(personRef) && this.canDeletePerson(personRef)) {
+            String deleteSql = "delete from people where personRef=" + personRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.people.remove(personRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeletePerson(int personRef) {
+        return this.propertyExists(personRef) && !this.getPerson(personRef).hasBeenModified() && !this.personInvPartyExists(personRef) && !this.personEmployeeExists(personRef) && !this.personLandlordExists(personRef);
     }
     
     private void loadPeople() throws SQLException {
@@ -1977,6 +2341,21 @@ public class Database {
         }
     }
     
+    public void deleteInvolvedParty(int invPartyRef) throws SQLException {
+        if (this.personExists(invPartyRef) && this.canDeleteInvolvedParty(invPartyRef)) {
+            String deleteSql = "delete from people where personRef=" + invPartyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.people.remove(invPartyRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteInvolvedParty(int invPartyRef) {
+        return (this.invPartyExists(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd() && !this.getInvolvedParty(invPartyRef).hasBeenModified());
+    }
+    
     private void loadInvolvedParties(int reference) throws SQLException {
         this.involvedParties.clear();
         String sql = "select invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
@@ -2071,6 +2450,25 @@ public class Database {
         }
     }
     
+    public void deleteEndReason(String endReason) throws SQLException {
+        if(this.endReasonExists(endReason) && this.canDeleteEndReason(endReason)) {
+            this.deleteElement("endReasons", endReason);
+            endReasons.remove(endReason);
+        }
+    }
+    
+    public boolean canDeleteEndReason(String endReason) {
+        if(this.endReasonExists(endReason) && !this.getEndReason(endReason).hasBeenModified()) {
+            for(InvolvedParty invParty : this.getInvolvedParties()) {
+                if(invParty.getEndReason() != null && endReason.equals(invParty.getEndReason().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadEndReasons() throws SQLException {
         this.endReasons.clear();
         List<ElementImpl> loadedEndReasons;
@@ -2105,6 +2503,25 @@ public class Database {
             this.updateElement("relationships", relationship);
             this.createModifiedBy("relationshipModifications", relationship.getLastModification(), relationship.getCode());
         }
+    }
+    
+    public void deleteRelationship(String relationship) throws SQLException {
+        if(this.relationshipExists(relationship) && this.canDeleteRelationship(relationship)) {
+            this.deleteElement("relationships", relationship);
+            relationships.remove(relationship);
+        }
+    }
+    
+    public boolean canDeleteRelationship(String relationship) {
+        if(this.relationshipExists(relationship) && !this.getRelationship(relationship).hasBeenModified()) {
+            for(InvolvedParty invParty : this.getInvolvedParties()) {
+                if(relationship.equals(invParty.getRelationship().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadRelationships() throws SQLException {
@@ -2166,6 +2583,39 @@ public class Database {
             }
             this.createModifiedBy("applicationModifications", application.getLastModification(), application.getApplicationRef());
         }
+    }
+    
+    public void deleteApplication(int appRef) throws SQLException {
+        if (this.applicationExists(appRef) && this.canDeleteApplication(appRef)) {
+            String deleteSql = "delete from applications where appRef=" + appRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.applications.remove(appRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteApplication(int appRef) {
+        if (this.applicationExists(appRef) && this.getApplication(appRef).hasBeenModified()) {
+            for(InvolvedPartyInterface invParty : this.getApplication(appRef).getHousehold()) {
+                if(invParty.hasBeenModified()) {
+                    return false;
+                }
+            }
+            for(AddressUsageInterface address : this.getApplication(appRef).getApplicationAddressess()) {
+                if(address.hasBeenModified()) {
+                    return false;
+                }
+            }
+            for(Tenancy tenancy : this.getTenancies()) {
+                if(tenancy.getApplicationRef() == appRef) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadApplications() throws SQLException {
@@ -2343,6 +2793,29 @@ public class Database {
             }
         }
     }
+    
+    public void deleteLandlord(int landlordRef) throws SQLException {
+        if (this.landlordExists(landlordRef) && this.canDeleteApplication(landlordRef)) {
+            String deleteSql = "delete from landlords where landlordRef=" + landlordRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.landlords.remove(landlordRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteLandlord(int landlordRef) {
+        if (this.landlordExists(landlordRef) && this.getLandlord(landlordRef).hasBeenModified()) {
+            for(Lease lease : this.getLeases()) {
+                if(lease.isAlreadyLandlord(landlordRef)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     private void loadLandlords() throws SQLException {
         this.landlords.clear();
@@ -2422,6 +2895,21 @@ public class Database {
         }
     }
     
+    public void deleteOffice(String officeCode) throws SQLException {
+        if (this.officeExists(officeCode) && this.canDeleteOffice(officeCode)) {
+            String deleteSql = "delete from offices where officeCode=" + officeCode;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.offices.remove(officeCode);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteOffice(String officeCode) {
+        return this.officeExists(officeCode) && this.getOffice(officeCode).hasBeenModified() && !this.getOffice(officeCode).hasAgreements();
+    }
+    
     private void loadOffices() throws SQLException {
         this.offices.clear();
         String sql = "select officeCode, addressRef, startDate, endDate, createdBy, createdDate from offices order by createdDate";
@@ -2460,7 +2948,7 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(temp.getKey().equals(office.getOfficeCode())) {
+                if(office.getOfficeCode().equals(temp.getKey())) {
                     tempMod = (ModifiedByInterface) temp.getValue();
                     Office tempOffice = (Office) office;
                     tempOffice.modifiedBy(tempMod);
@@ -2533,6 +3021,28 @@ public class Database {
         }
     }
     
+    public void deleteJobRole(String jobRoleCode) throws SQLException {
+        if (this.jobRoleExists(jobRoleCode) && this.canDeleteJobRole(jobRoleCode)) {
+            String deleteSql = "delete from jobRoles where jobRoleCode=" + jobRoleCode;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.jobRoles.remove(jobRoleCode);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteJobRole(String jobRoleCode) {
+        if (this.jobRoleExists(jobRoleCode) && this.getJobRole(jobRoleCode).hasBeenModified()) {
+            for (Contract contract : this.getContracts()) {
+                if (jobRoleCode.equals(contract.getJobRoleCode())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
     private void loadJobRoles() throws SQLException {
         this.jobRoles.clear();
         String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, "
@@ -2575,7 +3085,7 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(temp.getKey().equals(jobRole.getJobRoleCode())) {
+                if(jobRole.getJobRoleCode().equals(temp.getKey())) {
                     tempMod = (ModifiedByInterface) temp.getValue();
                     jobRole.modifiedBy(tempMod);
                 }
@@ -2613,6 +3123,15 @@ public class Database {
         }
     }
     
+    public void deleteJobRoleRequirement(String requirementCode, String jobRoleCode) throws SQLException {
+        if (this.jobRoleExists(jobRoleCode) && this.jobRequirementExists(requirementCode)) {
+            String deleteSql = "delete from jobRoleRequirements where requirementCode=" + requirementCode + "and jobRoleCode=" + jobRoleCode;
+            try(Statement deleteStat = this.con.createStatement()) {
+                deleteStat.executeUpdate(deleteSql);
+            }
+        }
+    }
+    
     private void loadJobRoleRequirements(String code) throws SQLException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = this.getJobRole(code);
@@ -2622,7 +3141,7 @@ public class Database {
 
                 while (results.next()) {
                     String jobRoleCode = results.getString("jobRoleCode");
-                    if (jobRoleCode.equals(code));
+                    if (code.equals(jobRoleCode));
                     {
                         String requirementCode = results.getString("requirementCode");
                         Element temp = this.getJobRequirement(requirementCode);
@@ -2677,9 +3196,9 @@ public class Database {
             JobRoleBenefit benefit = this.getJobRoleBenefit(benefitRef);
             String updateSql = "";
             if (benefit.isSalaryBenefit()) {
-                updateSql = "update jobRoleBenefits set doubleValue=?, startDate=?, endDate=? where jobBenefitRef=? and jobRoleCode=? and benefitCode=?";
+                updateSql = "update jobRoleBenefits set benefitCode=?, doubleValue=?, startDate=?, endDate=? where jobBenefitRef=? and jobRoleCode=?";
             } else if (!benefit.isSalaryBenefit()) {
-                updateSql = "update jobRoleBenefits set stringValue=?, startDate, endDate=? where jobBenefitRef=? and jobRoleCode=? and benefitCode=?";
+                updateSql = "update jobRoleBenefits set benefitCode=?, stringValue=?, startDate, endDate=? where jobBenefitRef=? and jobRoleCode=?";
             }
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -2700,6 +3219,17 @@ public class Database {
         }
     }
     
+    public void deleteJobRoleBenefit(int benefitRef, String jobRoleCode) throws SQLException {
+        if (this.jobRoleExists(jobRoleCode) && this.jobRoleBenefitExists(benefitRef) && this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
+            String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef + "and jobRoleCode=" + jobRoleCode;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    jobRoleBenefits.remove(benefitRef);
+                }
+            }
+        }
+    }
+    
     private void loadJobRoleBenefits(String code) throws SQLException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = this.getJobRole(code);
@@ -2709,7 +3239,7 @@ public class Database {
                 
                 while (results.next()) {
                     String jobRoleCode = results.getString("jobRoleCode");
-                    if (jobRoleCode.equals(code)) {
+                    if (code.equals(jobRoleCode)) {
                         int jobBenefitRef = results.getInt("jobBenefitRef");
                         String benefitCode = results.getString("benefitCode");
                         if(this.jobBenefitExists(benefitCode)) {
@@ -2739,7 +3269,7 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(temp.getKey().equals(benefit.getBenefitRef())) {
+                if((Integer) temp.getKey() == benefit.getBenefitRef()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
                     benefit.modifiedBy(tempMod);
                 }
@@ -2761,6 +3291,27 @@ public class Database {
             this.updateElement("jobRequirements", requirement);
             this.createModifiedBy("jobRequirementModifications", requirement.getLastModification(), requirement.getCode());
         }
+    }
+    
+    public void deleteJobRequirement(String requirementCode) throws SQLException {
+        if(this.jobRequirementExists(requirementCode) && this.canDeleteJobRequirement(requirementCode)) {
+            this.deleteElement("jobRequirements", requirementCode);
+            jobRequirements.remove(requirementCode);
+        }
+    }
+    
+    public boolean canDeleteJobRequirement(String requirementCode) {
+        if(this.jobRequirementExists(requirementCode) && !this.getJobRequirement(requirementCode).hasBeenModified()) {
+            for(JobRole jobRole : this.getJobRoles()) {
+                for(Element requirement : jobRole.getJobRequirements()) {
+                    if(requirementCode.equals(requirement.getCode())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadJobRequirements() throws SQLException {
@@ -2797,6 +3348,25 @@ public class Database {
             this.updateElement("jobBenefits", benefit);
             this.createModifiedBy("jobBenefitModifications", benefit.getLastModification(), benefit.getCode());
         }
+    }
+    
+    public void deleteJobBenefit(String benefitCode) throws SQLException {
+        if(this.jobBenefitExists(benefitCode) && this.canDeleteJobBenefit(benefitCode)) {
+            this.deleteElement("jobBenefits", benefitCode);
+            jobBenefits.remove(benefitCode);
+        }
+    }
+    
+    public boolean canDeleteJobBenefit(String benefitCode) {
+        if (this.jobBenefitExists(benefitCode) && !this.getJobBenefit(benefitCode).hasBeenModified()) {
+            for (JobRoleBenefit benefit : this.getJobRoleBenefits()) {
+                if (benefitCode.equals(benefit.getBenefitCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     
     private void loadJobBenefits() throws SQLException {
@@ -2851,6 +3421,30 @@ public class Database {
             this.createModifiedBy("employeeModifications", employee.getLastModification(), employee.getEmployeeRef());
         }
     }
+    
+    public void deleteEmployee(int employeeRef) throws SQLException {
+        if(this.employeeExists(employeeRef) && this.canDeleteEmployee(employeeRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + employeeRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    this.deleteUser(employeeRef, this.getUser(employeeRef).getUsername());
+                    employees.remove(employeeRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteEmployee(int employeeRef) {
+        if (this.employeeExists(employeeRef) && !this.getEmployee(employeeRef).hasBeenModified()) {
+            for (Contract contract : this.getContracts()) {
+                if (contract.getEmployeeRef() == employeeRef) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     private void loadEmployees() throws SQLException, RemoteException {
         this.employees.clear();
@@ -2866,7 +3460,7 @@ public class Database {
                 if (this.personExists(personRef)) {
                     Person person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
-                    if (officeCode == null || (officeCode != null && this.officeExists(officeCode))) {
+                    if ((officeCode == null || this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
                         try (PreparedStatement selectStat1 = con.prepareStatement(sql1)) {
@@ -2966,6 +3560,21 @@ public class Database {
             this.createModifiedBy("tenancyModifications", tenancy.getLastModification(), tenancy.getAgreementRef());
         }
     }
+    
+    public void deleteTenancy(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteTenancy(int employeeRef) {
+        return this.getTenancy(employeeRef).hasBeenModified() && this.getRentAccount(this.getTenancy(employeeRef).getAccountRef()).hasBeenModified();
+    }
 
     private void loadTenancies() throws SQLException {
         this.tenancies.clear();
@@ -3047,6 +3656,25 @@ public class Database {
         }
     }
     
+    public void deleteTenancyType(String tenTypeCode) throws SQLException {
+        if(this.tenancyTypeExists(tenTypeCode) && this.canDeleteTitle(tenTypeCode)) {
+            this.deleteElement("tenancyTypes", tenTypeCode);
+            this.titles.remove(tenTypeCode);
+        }
+    }
+    
+    public boolean canDeleteTenancyType(String tenTypeCode) {
+        if(this.tenancyTypeExists(tenTypeCode) && !this.getTenancyType(tenTypeCode).hasBeenModified()) {
+            for(Tenancy tenancy : this.getTenancies()) {
+                if(tenTypeCode.equals(tenancy.getTenType().getCode())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
     private void loadTenancyTypes() throws SQLException {
         this.tenancyTypes.clear();
         List<ElementImpl> loadedTenancyTypes;
@@ -3111,6 +3739,21 @@ public class Database {
             }
             this.createModifiedBy("leaseModifications", lease.getLastModification(), lease.getAgreementRef());
         }
+    }
+    
+    public void deleteLease(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteLease(int employeeRef) {
+        return this.getTenancy(employeeRef).hasBeenModified() && this.getRentAccount(this.getTenancy(employeeRef).getAccountRef()).hasBeenModified();
     }
 
     private void loadLeases() throws SQLException {
@@ -3311,6 +3954,21 @@ public class Database {
         }
     }
     
+    public void deleteContract(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteContract(int employeeRef) {
+        return this.getTenancy(employeeRef).hasBeenModified() && this.getRentAccount(this.getTenancy(employeeRef).getAccountRef()).hasBeenModified();
+    }
+    
     private void loadContracts() throws SQLException {
         this.contracts.clear();
        String sql = "select contractRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
@@ -3392,6 +4050,17 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(rentAcc.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
+            }
+        }
+    }
+    
+    public void deleteRentAccount(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
             }
         }
     }
@@ -3512,6 +4181,17 @@ public class Database {
             this.createModifiedBy("leaseAccountModifications", leaseAcc.getLastModification(), leaseAcc.getAccRef());
         }
     }
+    
+    public void deleteLeaseAccount(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
 
     private void loadLeaseAccounts() throws SQLException {
         this.leaseAccounts.clear();
@@ -3609,6 +4289,17 @@ public class Database {
         }
     }
     
+    public void deleteEmployeeAccount(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
+    
     private void loadEmployeeAccounts() throws SQLException {
         this.employeeAccounts.clear();
        String sql = "select employeeAccRef, name, startDate, endDate, balance, officeCode, "
@@ -3686,6 +4377,17 @@ public class Database {
         }
     }
     
+    public void deleteTransaction(int tenancyRef) throws SQLException {
+        if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
+            String deleteSql = "delete from employees where employeeRef=" + tenancyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    employees.remove(tenancyRef);g
+                }
+            }
+        }
+    }
+    
     private void loadTransactions(String from, Account account) throws SQLException {
         this.transactions.clear();
         String sql = "select transactionRef, accountRef, fromRef, toRef, amount, "
@@ -3712,27 +4414,6 @@ public class Database {
                 }
             }
         }
-    }
-    
-    public JobRoleBenefit getJobRoleBenefit(int benRef) {
-        if(this.jobRoleBenefitExists(benRef)) {
-            return jobRoleBenefits.get(benRef);
-        }
-        return null;
-    }
-    
-    public Contact getContact(int contactRef) {
-        if(this.contactExists(contactRef)) {
-            return contacts.get(contactRef);
-        }
-        return null;
-    }
-    
-    public AddressUsage getAddressUsage(int addressUsageRef) {
-        if(this.addressUsageExists(addressUsageRef)) {
-            return this.addressUsages.get(addressUsageRef);
-        }
-        return null;
     }
     
     public void createUser(UserImpl user) throws SQLException {
@@ -3781,9 +4462,48 @@ public class Database {
         }
     }
     
+    private void deleteUser(int employeeRef, String username) throws SQLException {
+        if(this.userExists(username) && this.getUser(username).getEmployeeRef() == employeeRef) {
+            String deleteSql = "delete from users where employeeRef=" + employeeRef + " and username=" + username;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if(deleteStat.executeUpdate(deleteSql) >=1) {
+                    users.remove(username);
+                }
+            }
+        }
+    }
+    
+    public JobRoleBenefit getJobRoleBenefit(int benRef) {
+        if(this.jobRoleBenefitExists(benRef)) {
+            return jobRoleBenefits.get(benRef);
+        }
+        return null;
+    }
+    
+    public Contact getContact(int contactRef) {
+        if(this.contactExists(contactRef)) {
+            return contacts.get(contactRef);
+        }
+        return null;
+    }
+    
+    public AddressUsage getAddressUsage(int addressUsageRef) {
+        if(this.addressUsageExists(addressUsageRef)) {
+            return this.addressUsages.get(addressUsageRef);
+        }
+        return null;
+    }
+    
     public UserImpl getUser(String username) {
         if(this.userExists(username)) {
             return this.users.get(username);
+        }
+        return null;
+    }
+    
+    public UserImpl getUser(int employeeRef) {
+        for (User user : this.getUsers()) {
+            
         }
         return null;
     }
@@ -3844,9 +4564,9 @@ public class Database {
         return this.involvedParties.containsKey(invPartyRef);
     }
     
-    public boolean invPartyExists(Person person) {
+    public boolean personInvPartyExists(int personRef) {
         for(InvolvedParty invParties : involvedParties.values()) {
-            if(invParties.getPersonRef() == person.getPersonRef()) {
+            if(invParties.getPersonRef() == personRef) {
                 return true;
             }
         }
@@ -3877,9 +4597,9 @@ public class Database {
         return this.landlords.containsKey(landlordRef);
     }
     
-    public boolean landlordExists(Person person) {
+    public boolean personLandlordExists(int personRef) {
         for(Landlord landlord : landlords.values()) {
-            if(landlord.getPersonRef() == person.getPersonRef()) {
+            if(landlord.getPersonRef() == personRef) {
                 return true;
             }
         }
@@ -3910,9 +4630,9 @@ public class Database {
         return this.employees.containsKey(employeeRef);
     }
     
-    public boolean employeeExists(Person person) {
+    public boolean personEmployeeExists(int personRef) {
         for(Employee employee : employees.values()) {
-            if(employee.getPersonRef() == person.getPersonRef()) {
+            if(employee.getPersonRef() == personRef) {
                 return true;
             }
         }
@@ -4179,9 +4899,25 @@ public class Database {
         return Collections.unmodifiableList(new ArrayList<>(transactions.values()));
     }
     
+    public List<JobRoleBenefit> getJobRoleBenefits() {
+        return Collections.unmodifiableList(new ArrayList<>(jobRoleBenefits.values()));
+    }
+    
+    public List<Contact> getContacts() {
+        return Collections.unmodifiableList(new ArrayList<>(contacts.values()));
+    }
+    
+    public List<AddressUsage> getAddressUsages() {
+        return Collections.unmodifiableList(new ArrayList<>(addressUsages.values()));
+    }
+    
+    private List<UserImpl> getUsers() {
+        return Collections.unmodifiableList(new ArrayList<>(users.values()));
+    }
+    
     public List<Person> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) {
-        List<Person> tempPeople = new ArrayList(this.getPeople());
+        List<Person> tempPeople = new ArrayList<>(this.getPeople());
         if(!tempPeople.isEmpty()) {
             for(Person temp : tempPeople) {
                 if(titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
@@ -4222,7 +4958,7 @@ public class Database {
     public List<Address> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) {
-        List<Address> tempAddresses = new ArrayList(this.getAddresses());
+        List<Address> tempAddresses = new ArrayList<>(this.getAddresses());
         if(!tempAddresses.isEmpty()) {
             for(Address temp : tempAddresses) {
                 if(buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
@@ -4257,7 +4993,7 @@ public class Database {
     }
     
     public List<Application> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) {
-        List<Application> tempApplications = new ArrayList(this.getApplications());
+        List<Application> tempApplications = new ArrayList<>(this.getApplications());
         if(!tempApplications.isEmpty()) {
             for(Application temp : tempApplications) {
                 if(corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
@@ -4282,7 +5018,7 @@ public class Database {
     }
     
     public List<Application> getPeopleApplications(List<Person> tempPeople) {
-        List<Application> tempApplications = new ArrayList(this.getApplications());
+        List<Application> tempApplications = new ArrayList<>(this.getApplications());
         if (!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
             for (Application temp : tempApplications) {
                 boolean cont = true;
@@ -4304,7 +5040,7 @@ public class Database {
     }
 
     public List<Application> getAddressApplications(List<Address> tempAddresses) {
-        List<Application> tempApplications = new ArrayList(this.getApplications());
+        List<Application> tempApplications = new ArrayList<>(this.getApplications());
         if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
             for (Application temp : tempApplications) {
                 boolean cont = true;
@@ -4336,7 +5072,7 @@ public class Database {
     }
 
     public List<Application> getCorrNameApplcations(String name) {
-        List<Application> tempApplications = new ArrayList(this.getApplications());
+        List<Application> tempApplications = new ArrayList<>(this.getApplications());
         if (name != null && !name.isEmpty() && !tempApplications.isEmpty()) {
             for (Application tempApp : tempApplications) {
                 if (!name.equals(tempApp.getAppCorrName())) {
@@ -4359,7 +5095,7 @@ public class Database {
     }
     
     public List<Tenancy> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if (!tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4396,7 +5132,7 @@ public class Database {
     }
     
     public List<Tenancy> getApplicationTenancies(List<Application> tempApplications) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 boolean cont = true;
@@ -4418,7 +5154,7 @@ public class Database {
     }
     
     public List<Tenancy> getApplcationTenancies(int appRef) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if (this.applicationExists(appRef) && !tempTenancies.isEmpty()) {
             Application tempApp = this.getApplication(appRef);
             for (Tenancy temp : tempTenancies) {
@@ -4432,7 +5168,7 @@ public class Database {
     }
     
     public List<Tenancy> getPropertyTenancies(List<Property> tempProperties) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempProperties.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 boolean cont = true;
@@ -4454,7 +5190,7 @@ public class Database {
     }
     
     public List<Tenancy> getPropertyTenancies(int propRef) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if (this.propertyExists(propRef) && !tempTenancies.isEmpty()) {
             Property tempApp = this.getProperty(propRef);
             for (Tenancy temp : tempTenancies) {
@@ -4468,7 +5204,7 @@ public class Database {
     }
     
     public List<Tenancy> getNameTenancies(String name) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4481,7 +5217,7 @@ public class Database {
     }
     
     public List<Tenancy> getOfficeTenancies(String office) {
-        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
+        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
         if(this.officeExists(office) && !tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4494,7 +5230,7 @@ public class Database {
     }
     
     public List<Lease> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if (!tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4529,7 +5265,7 @@ public class Database {
     }
     
     public List<Lease> getPropertyLeases(List<Property> tempProperties) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if(!tempProperties.isEmpty() && !tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 boolean cont = true;
@@ -4551,7 +5287,7 @@ public class Database {
     }
     
     public List<Lease> getPropertyLeases(int propRef) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if (this.propertyExists(propRef) && !tempLeases.isEmpty()) {
             Property tempProperty = this.getProperty(propRef);
             for (Lease temp : tempLeases) {
@@ -4565,7 +5301,7 @@ public class Database {
     }
     
     public List<Lease> getNameLeases(String name) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if(!tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4578,7 +5314,7 @@ public class Database {
     }
     
     public List<Lease> getOfficeLeases(String office) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if(this.officeExists(office) && !tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4591,7 +5327,7 @@ public class Database {
     }
 
     public List<Lease> getLandlordLeases(int landlordRef) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if (this.landlordExists(landlordRef) && !tempLeases.isEmpty()) {
             for (Lease temp : tempLeases) {
                 List<LandlordInterface> tempLandlords = temp.getLandlords();
@@ -4614,7 +5350,7 @@ public class Database {
     }
 
     public List<Lease> getLandlordLeases(List<Landlord> tempLandlords) {
-        List<Lease> tempLeases = new ArrayList(this.getLeases());
+        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
         if (!tempLandlords.isEmpty() && !tempLeases.isEmpty()) {
             for (Lease temp : tempLeases) {
                 List<LandlordInterface> leaseLandlords = temp.getLandlords();
@@ -4642,7 +5378,7 @@ public class Database {
     }
     
     public List<Contract> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if (!tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4674,7 +5410,7 @@ public class Database {
     }
     
     public List<Contract> getNameContracts(String name) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if(!tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4686,7 +5422,7 @@ public class Database {
     }
     
     public List<Contract> getOfficeContracts(String office) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if(this.officeExists(office) && !tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4698,7 +5434,7 @@ public class Database {
     }
     
     public List<Contract> getEmployeeContracts(int ref) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if (this.employeeExists(ref) && !tempContracts.isEmpty()) {
             for (Contract temp : tempContracts) {
                 if (temp.getEmployeeRef() != ref) {
@@ -4711,7 +5447,7 @@ public class Database {
     }
     
     public List<Contract> getJobRoleContracts(String code) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if (this.jobRoleExists(code) && !tempContracts.isEmpty()) {
             for (Contract temp : tempContracts) {
                 if (!code.equals(temp.getJobRole().getJobRoleCode())) {
@@ -4724,7 +5460,7 @@ public class Database {
     }
     
     public List<Contract> getJobRoleContracts(List<JobRole> tempJobRoles) {
-        List<Contract> tempContracts = new ArrayList(this.getContracts());
+        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
         if(!tempJobRoles.isEmpty()) {
             for(Contract temp : tempContracts) {
                 boolean cont = true;
@@ -4745,7 +5481,7 @@ public class Database {
     }
     
     public List<RentAccount> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<RentAccount> tempRentAccounts = new ArrayList(this.getRentAccounts());
+        List<RentAccount> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
         if (!tempRentAccounts.isEmpty()) {
             for(RentAccount temp : tempRentAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4775,7 +5511,7 @@ public class Database {
     }
     
     public List<RentAccount> getNameRentAcc(String name) {
-        List<RentAccount> tempRentAcc = new ArrayList(this.getRentAccounts());
+        List<RentAccount> tempRentAcc = new ArrayList<>(this.getRentAccounts());
         if(!tempRentAcc.isEmpty()) {
             for(RentAccount temp : tempRentAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4787,7 +5523,7 @@ public class Database {
     }
     
     public List<RentAccount> getOfficeRentAcc(String office) {
-        List<RentAccount> tempRentAcc = new ArrayList(this.getRentAccounts());
+        List<RentAccount> tempRentAcc = new ArrayList<>(this.getRentAccounts());
         if(this.officeExists(office) && !tempRentAcc.isEmpty()) {
             for(RentAccount temp : tempRentAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4799,7 +5535,7 @@ public class Database {
     }
     
     public List<RentAccount> getTenanciesRentAccounts(List<Tenancy> tempTenancies) {
-        List<RentAccount> tempRentAccounts = new ArrayList(this.getRentAccounts());
+        List<RentAccount> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
         if(!tempTenancies.isEmpty()) {
             for(RentAccount temp : tempRentAccounts) {
                 boolean cont = true;
@@ -4830,7 +5566,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList(this.getLeaseAccounts());
+        List<LeaseAccount> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
         if (!tempLeaseAccounts.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4860,7 +5596,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getNameLeaseAcc(String name) {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList(this.getLeaseAccounts());
+        List<LeaseAccount> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
         if(!tempLeaseAcc.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4872,7 +5608,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getOfficeLeaseAcc(String office) {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList(this.getLeaseAccounts());
+        List<LeaseAccount> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
         if(this.officeExists(office) && !tempLeaseAcc.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4884,7 +5620,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getLeasesLeaseAccounts(List<Lease> tempTenancies) {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList(this.getLeaseAccounts());
+        List<LeaseAccount> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
         if(!tempTenancies.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAccounts) {
                 boolean cont = true;
@@ -4915,7 +5651,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList(this.getEmployeeAccounts());
+        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
         if (!tempEmployeeAccounts.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4945,7 +5681,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getNameEmployeeAcc(String name) {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList(this.getEmployeeAccounts());
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
         if(!tempEmployeeAcc.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4957,7 +5693,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getOfficeEmployeeAcc(String office) {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList(this.getEmployeeAccounts());
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
         if(this.officeExists(office) && !tempEmployeeAcc.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4969,7 +5705,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getContractsEmployeeAccounts(List<Contract> tempTenancies) {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList(this.getEmployeeAccounts());
+        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
         if(!tempTenancies.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAccounts) {
                 boolean cont = true;
@@ -5000,7 +5736,7 @@ public class Database {
     }
     
     public List<Office> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) {
-        List<Office> tempOffices = new ArrayList(this.getOffices());
+        List<Office> tempOffices = new ArrayList<>(this.getOffices());
         if(!tempOffices.isEmpty()) {
             for(Office temp : tempOffices) {
                 if(addrRef != null && addrRef == temp.getAddress().getAddressRef()) {

@@ -329,6 +329,11 @@ public class JobRole implements JobRoleInterface {
         return Collections.unmodifiableList(new ArrayList<>(this.benefits.values()));
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * 
      * @return the name of the last user to modify the JobRole

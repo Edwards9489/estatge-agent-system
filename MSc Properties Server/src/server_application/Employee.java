@@ -135,6 +135,11 @@ public class Employee implements EmployeeInterface {
         }
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * @return ref of person
      */

@@ -21,6 +21,7 @@ public interface AgreementInterface {
     int getLength();
     String getOfficeCode();
     int getAccountRef();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

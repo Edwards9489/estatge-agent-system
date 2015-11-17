@@ -26,6 +26,7 @@ public interface PropertyInterface {
     boolean isCurrent();
     double getRent();
     double getCharges();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

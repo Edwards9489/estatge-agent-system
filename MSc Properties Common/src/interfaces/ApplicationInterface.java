@@ -18,7 +18,7 @@ public interface ApplicationInterface {
     Date getAppStartDate();
     Date getAppEndDate();
     String getAppStatusCode();
-    AddressUsageInterface getCurrenttApplicationAddress();
+    AddressUsageInterface getCurrentApplicationAddress();
     String getCurrentApplicationAddressString();
     List<AddressUsageInterface> getApplicationAddressess();
     boolean isAppInterestedFlag();
@@ -26,6 +26,7 @@ public interface ApplicationInterface {
     List<PropertyInterface> getPropertiesInterestedIn();
     int getTenancyRef();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

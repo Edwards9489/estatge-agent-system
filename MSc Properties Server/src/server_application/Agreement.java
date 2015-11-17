@@ -110,7 +110,7 @@ public class Agreement implements AgreementInterface {
      * @param modifiedBy
      */
     public void setActualEndDate(Date actualEndDate, ModifiedByInterface modifiedBy) {
-        if(actualEndDate.after(this.startDate)) {
+        if(actualEndDate == null || actualEndDate.after(this.startDate)) {
             this.actualEndDate = actualEndDate;
             this.modifiedBy(modifiedBy);
         }
@@ -226,6 +226,11 @@ public class Agreement implements AgreementInterface {
         else {
             return actualEndDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

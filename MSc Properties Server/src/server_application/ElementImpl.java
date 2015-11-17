@@ -118,6 +118,11 @@ public class ElementImpl implements Element {
         return this.current;
     }
     
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
+    }
+    
     /**
      * 
      * @return the name of the last user to modify the ElementImpl

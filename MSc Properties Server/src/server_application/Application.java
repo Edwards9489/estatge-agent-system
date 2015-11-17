@@ -128,7 +128,7 @@ public class Application implements ApplicationInterface {
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate.after(this.appStartDate)) {
+        if(endDate == null || endDate.after(this.appStartDate)) {
             this.appEndDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -391,7 +391,7 @@ public class Application implements ApplicationInterface {
      * @return current AddressUsage
      */
     @Override
-    public AddressUsageInterface getCurrenttApplicationAddress() {
+    public AddressUsageInterface getCurrentApplicationAddress() {
         if(!this.appAddresses.isEmpty()) {
             return this.appAddresses.get(this.appAddresses.size()-1);
         }
@@ -460,6 +460,11 @@ public class Application implements ApplicationInterface {
         else {
             return this.getAppEndDate().after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

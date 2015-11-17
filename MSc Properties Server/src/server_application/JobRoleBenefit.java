@@ -127,7 +127,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate.after(this.startDate)) {
+        if(endDate == null || endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -206,6 +206,11 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else {
             return endDate.before(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

@@ -130,7 +130,7 @@ public class PropertyElement implements PropertyElementInterface {
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate.after(this.startDate)) {
+        if(endDate == null || endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
@@ -227,6 +227,11 @@ public class PropertyElement implements PropertyElementInterface {
     @Override
     public boolean isElementCode(String code) {
         return code.equals(element.getCode());
+    }
+    
+    @Override
+    public boolean hasBeenModified() {
+        return !this.modifiedBy.isEmpty();
     }
     
     /**

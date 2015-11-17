@@ -20,6 +20,7 @@ public interface ContactInterface {
     Date getStartDate();
     Date getEndDate();
     boolean isCurrent();
+    boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
