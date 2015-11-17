@@ -37,15 +37,15 @@ public class TestTenancy {
         System.out.println("********************Running Tenancy Test********************");
         
         // Person - int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-        //              Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, String createdBy
+        //              Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, String getCreatedBy
         
-        // Tenancy - int tenRef, Date startDate, int length, String createdBy, PropertyInterface property, Application application, Element tenType
+        // Tenancy - int tenRef, Date startDate, int length, String getCreatedBy, PropertyInterface property, Application application, Element tenType
         
         // Property - int propRef, Address address, ArrayList<Landlord> landlords, boolean management, Date acquiredDate, Element propType, Element propSubType
         
-        // Lanlord - int landlordRef, Person person, String createdBy
+        // Lanlord - int landlordRef, Person person, String getCreatedBy
         
-        // Application - int appRef, String corrName, Date startDate, ArrayList<InvolvedPartyInterface> household, AddressUsageInterface address, String createdBy
+        // Application - int appRef, String corrName, Date startDate, ArrayList<InvolvedPartyInterface> household, AddressUsageInterface address, String getCreatedBy
         
         AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
         Element element = new ElementImpl("TEST", "test", "DEDWARDS", new Date());

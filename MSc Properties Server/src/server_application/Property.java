@@ -14,7 +14,9 @@ import interfaces.PropertyInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,7 +34,7 @@ public class Property implements PropertyInterface {
     private Element propType;
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
-    private final List<PropertyElementInterface> propertyElements;
+    private final Map<Integer, PropertyElementInterface> propertyElements;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -58,7 +60,7 @@ public class Property implements PropertyInterface {
         this.propType = propType;
         this.propSubType = propSubType;
         this.propStatus = "NEW";
-        propertyElements = new ArrayList();
+        propertyElements = new HashMap<>();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -155,10 +157,14 @@ public class Property implements PropertyInterface {
      * @param modifiedBy 
      */
     public void createPropertyElement(PropertyElement element, ModifiedByInterface modifiedBy) {
-        if(!this.hasPropElement(element.getElementCode())) {
-            this.propertyElements.add(element);
+        if(!this.hasCurrentPropElement(element.getElementCode())) {
+            this.propertyElements.put(element.getPropertyElementRef(), element);
             this.modifiedBy(modifiedBy);
         }
+    }
+    
+    public void endPropertyElement(int ref, ModifiedByInterface modifiedBy) {
+        
     }
 
     
@@ -234,7 +240,7 @@ public class Property implements PropertyInterface {
      */
     @Override
     public List<PropertyElementInterface> getPropertyElements() {
-        return Collections.unmodifiableList(propertyElements);
+        return Collections.unmodifiableList(new ArrayList(propertyElements.values()));
     }
     
     /**
@@ -242,15 +248,31 @@ public class Property implements PropertyInterface {
      * @param code
      * @return true if propertyElements contains PropertyElement with code == code and current
      */
-    public boolean hasPropElement(String code) {
+    public boolean hasCurrentPropElement(String code) {
         if(!propertyElements.isEmpty()) {
-            for(PropertyElementInterface element : propertyElements) {
+            for(PropertyElementInterface element : propertyElements.values()) {
                 if(element.isCurrent() && code.equals(element.getElementCode())) {
                     return true;
                 }
             }
         }
         return false;
+    }
+    
+    /**
+     * 
+     * @param ref
+     * @return true if propertyElements contains PropertyElement with ref == ref
+     */
+    public boolean hasPropElement(int ref) {
+        return propertyElements.containsKey(ref);
+    }
+    
+    public PropertyElementInterface getPropElement(int ref) {
+        if(this.hasPropElement(ref)) {
+            return this.propertyElements.get(ref);
+        }
+        return null;
     }
     
     /**
@@ -275,7 +297,7 @@ public class Property implements PropertyInterface {
     public double getRent() {
         double rent = -1;
         if (!propertyElements.isEmpty()) {
-            for (PropertyElementInterface temp : propertyElements) {
+            for (PropertyElementInterface temp : propertyElements.values()) {
                 if (temp.isCurrent() && temp.isElementCode("RENT")) {
                     rent = temp.getDoubleValue();
                 }
@@ -292,7 +314,7 @@ public class Property implements PropertyInterface {
     public double getCharges() {
         double charges = -1;
         if(!propertyElements.isEmpty()) {
-            for (PropertyElementInterface temp : propertyElements) {
+            for (PropertyElementInterface temp : propertyElements.values()) {
                 if(temp.isCurrent() && temp.isCharge() && !temp.isElementCode("RENT")) {
                     charges = temp.getDoubleValue();
                 }

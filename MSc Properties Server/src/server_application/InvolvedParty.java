@@ -323,7 +323,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
      * @return createdBy
      */
     @Override
-    public String createdBy() {
+    public String getCreatedBy() {
         return this.createdBy;
     }
     
@@ -332,7 +332,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
      * @return createdDate
      */
     @Override
-    public Date createdDate() {
+    public Date getCreatedDate() {
         return this.createdDate;
     }
     /**

@@ -46,7 +46,7 @@ public class PropertyElement implements PropertyElementInterface {
      * @param createdBy
      * @param createdDate 
      */
-    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy, Date createdDate) {
+    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, String createdBy, Date createdDate) {
         this.propertyElementRef = propElementRef;
         this. element = element;
         this.startDate = startDate;
@@ -113,7 +113,7 @@ public class PropertyElement implements PropertyElementInterface {
      * @param charge
      * @param modifiedBy 
      */
-    public void updatePropertyElement(Date startDate, String stringValue, double doubleValue, boolean charge, ModifiedByInterface modifiedBy) {
+    public void updatePropertyElement(Date startDate, String stringValue, Double doubleValue, boolean charge, ModifiedByInterface modifiedBy) {
         if(charge) {
             setDoubleValue(doubleValue);
         }
@@ -144,6 +144,7 @@ public class PropertyElement implements PropertyElementInterface {
      * 
      * @return propertyElementRef
      */
+    @Override
     public int getPropertyElementRef() {
         return this.propertyElementRef;
     }
@@ -287,5 +288,10 @@ public class PropertyElement implements PropertyElementInterface {
     @Override
     public Date getCreatedDate() {
         return createdDate;
+    }
+    
+    @Override
+    public String toString() {
+        return "AMEND TO STRING METHOD";
     }
 }

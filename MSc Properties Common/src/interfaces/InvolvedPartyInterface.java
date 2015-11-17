@@ -29,6 +29,6 @@ public interface InvolvedPartyInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
-    String createdBy();
-    Date createdDate();
+    String getCreatedBy();
+    Date getCreatedDate();
 }

@@ -5,7 +5,6 @@
  */
 package server_application;
 
-import interfaces.AgreementInterface;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
 import interfaces.ModifiedByInterface;
@@ -80,9 +79,11 @@ public class Employee implements EmployeeInterface {
     /**
      * 
      * @param password 
+     * @param modifiedBy 
      */
-    public void updatePassword(String password) {
+    public void updatePassword(String password, ModifiedByInterface modifiedBy) {
         user.setPassword(password);
+        this.modifiedBy(modifiedBy);
     }
     
     /**

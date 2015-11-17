@@ -180,7 +180,7 @@ public class Application implements ApplicationInterface {
      */
     public void addInvolvedParty(InvolvedParty party, ModifiedByInterface modifiedBy) {
         if(!this.isPersonHouseholdMember(party.getPersonRef())) {
-            this.household.add(this.getHousehold().size(), party);
+            this.household.add(party);
             this.modifiedBy(modifiedBy);
         }
     }
@@ -231,8 +231,7 @@ public class Application implements ApplicationInterface {
      */
     public List<PropertyInterface> setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) {
         this.tenancyRef = tenancyRef;
-        List<PropertyInterface> properties = new ArrayList();
-        Collections.copy(properties, this.getPropertiesInterestedIn());
+        List<PropertyInterface> properties = new ArrayList(this.getPropertiesInterestedIn());
         this.clearInterestedProperties(modifiedBy);
         this.modifiedBy(modifiedBy);
         return properties;
@@ -244,7 +243,7 @@ public class Application implements ApplicationInterface {
      */
     public void addInterestedProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
         if(!this.isInterestedProperty(property)) {
-            this.getPropertiesInterestedIn().add(this.getHousehold().size(), property);
+            this.propertiesInterestedIn.add(property);
             this.modifiedBy(modifiedBy);
         }
     }
@@ -255,7 +254,7 @@ public class Application implements ApplicationInterface {
      */
     public void endInterestInProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
         if(this.isInterestedProperty(property)) {
-            this.getPropertiesInterestedIn().remove(property);
+            this.propertiesInterestedIn.remove(property);
             this.modifiedBy(modifiedBy);
         }
     }
@@ -389,6 +388,17 @@ public class Application implements ApplicationInterface {
     }
     
     /**
+     * @return current AddressUsage
+     */
+    @Override
+    public AddressUsageInterface getCurrenttApplicationAddress() {
+        if(!this.appAddresses.isEmpty()) {
+            return this.appAddresses.get(this.appAddresses.size()-1);
+        }
+        return null;
+    }
+    
+    /**
      * @return String of current Address
      */
     @Override
@@ -494,7 +504,7 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return createdBy
+     * @return getCreatedBy
      */
     @Override
     public String getCreatedBy() {
@@ -502,7 +512,7 @@ public class Application implements ApplicationInterface {
     }
 
     /**
-     * @return createdDate
+     * @return getCreatedDate
      */
     @Override
     public Date getCreatedDate() {

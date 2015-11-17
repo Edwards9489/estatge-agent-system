@@ -29,6 +29,9 @@ public interface PersonInterface {
     Element getNationality();
     Element getSexuality();
     Element getReligion();
+    AddressUsageInterface getCurrenttAddress();
+    String getCurrentAddressString();
+    List<AddressUsageInterface> getApplicationAddressess();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

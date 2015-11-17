@@ -889,7 +889,7 @@ public class Database {
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
-            String insertSql = "insert into applicationAddressess (addressUsageRef, addressRef, appRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into applicationAddresses (addressUsageRef, addressRef, appRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
@@ -949,7 +949,7 @@ public class Database {
                     } else {
                         address = this.getAddress(results.getInt("addressRef")); // CREATE ERROR ADDRESS
                     }
-                    int applicationRef = results.getInt("applicationRef");
+                    int applicationRef = results.getInt("appRef");
                     if (reference == applicationRef) {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
@@ -962,7 +962,7 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         application.setAppAddress(temp, null);
-                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressesModifications", temp.getAddressUsageRef()));
+                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressModifications", temp.getAddressUsageRef()));
                     }
                 }
             }
@@ -1507,8 +1507,8 @@ public class Database {
                 Date createdDate = results.getDate("createdDate");
                 
                 Property temp = new Property(propertyRef, address, acquiredDate, propType, propSubType, createdBy, createdDate);
-                this.loadPropertyElementValues(temp.getPropRef());
                 this.properties.put(temp.getPropRef(), temp);
+                this.loadPropertyElementValues(temp.getPropRef());
                 this.createPropertyMods(temp.getPropRef(), this.loadModMap("propertyModifications", temp.getPropRef()));
                 temp.setLeaseEndDate(leaseEndDate, null);
                 temp.setPropStatus(propStatus, null);
@@ -1620,7 +1620,7 @@ public class Database {
     }
     
     public void createPropertyElementValue(int propertyRef, PropertyElementInterface propertyElement) throws SQLException {
-        if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode())) {
+        if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
             String insertSql = "";
             if (propertyElement.isCharge()) {
                 insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -1644,6 +1644,8 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            Property property = this.getProperty(propertyRef);
+            this.createModifiedBy("propertyModifications", property.getLastModification(), property.getPropRef());
         }
     }
     
@@ -1677,10 +1679,9 @@ public class Database {
     private void loadPropertyElementValues(int propRef) throws SQLException {
         if (this.propertyExists(propRef)) {
             Property property = this.getProperty(propRef);
-            String sql = "select propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
+            String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
-
                 while (results.next()) {
                     int propertyElementRef = results.getInt("propertyElementRef");
                     int propertyRef = results.getInt("propRef");
@@ -1943,6 +1944,8 @@ public class Database {
                 insertStat.setBoolean(col++, invParty.isMainInd());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getStartDate()));
                 insertStat.setString(col++, invParty.getRelationship().getCode());
+                insertStat.setString(col++, invParty.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
             }
@@ -1953,14 +1956,18 @@ public class Database {
         if (this.invPartyExists(invPartyRef)) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             String updateSql = "update involvedParties set jointApplicantInd=?, mainApplicantInd=?, startDate=?, "
-                    + "endDate=?, endReasonCode=?, relationshipCode=? where involvedPartyRef=?";
+                    + "endDate=?, endReasonCode=?, relationshipCode=? where invPartyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setBoolean(col++, invParty.isJointInd());
                 updateStat.setBoolean(col++, invParty.isMainInd());
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getStartDate()));
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getEndDate()));
-                updateStat.setString(col++, invParty.getEndReason().getCode());
+                if(invParty.getEndReason() != null) {
+                    updateStat.setString(col++, invParty.getEndReason().getCode());
+                } else {
+                    updateStat.setString(col++, null);
+                }
                 updateStat.setString(col++, invParty.getRelationship().getCode());
                 updateStat.setInt(col++, invParty.getInvolvedPartyRef());
                 updateStat.executeUpdate();
@@ -1972,7 +1979,7 @@ public class Database {
     
     private void loadInvolvedParties(int reference) throws SQLException {
         this.involvedParties.clear();
-        String sql = "select invPartyRef, appRef, personRef jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
+        String sql = "select invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
                 + "relationshipCode, createdBy, createdDate from involvedParties order by invPartyRef";
 
         try (Statement selectInvStat = con.createStatement()) {
@@ -2125,7 +2132,7 @@ public class Database {
         if(!this.applicationExists(application.getApplicationRef())) {
             this.applications.put(application.getApplicationRef(), application);
             String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatus, "
-                    + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, application.getApplicationRef());
@@ -2153,6 +2160,7 @@ public class Database {
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppEndDate()));
                 updateStat.setString(col++, application.getAppStatusCode());
                 updateStat.setInt(col++, application.getTenancyRef());
+                updateStat.setInt(col++, application.getApplicationRef());
                 updateStat.executeUpdate();
                 updateStat.close();
             }
@@ -2271,7 +2279,7 @@ public class Database {
                 selectStat.setInt(1, appRef);
                 selectStat.setBoolean(2, true);
 
-                ResultSet results = selectStat.executeQuery(sql);
+                ResultSet results = selectStat.executeQuery();
 
                 while (results.next()) {
                     int propRef = results.getInt("propRef");
@@ -2287,16 +2295,16 @@ public class Database {
     public void endPropertyInterest(int appRef, int propRef) throws SQLException {
         if(this.applicationExists(appRef) && this.propertyExists(propRef)) {
             
-            String checkSql = "select count(appRef) as count from propertyInterest where appRef=? and propRef=?";
+            String checkSql = "select count(appRef) as count from propertyInterest where appRef=" + appRef + " and propRef=" + propRef;
             PreparedStatement insertStat;
             PreparedStatement updateStat;
-            try (PreparedStatement checkStat = con.prepareStatement(checkSql)) {
-                ResultSet checkResult = checkStat.executeQuery();
+            try (Statement checkStat = con.createStatement()) {
+                ResultSet checkResult = checkStat.executeQuery(checkSql);
                 checkResult.next();
                 int count = checkResult.getInt("count");
                 int col = 1;
                 if(count >= 1) {
-                    String updateSql = "update propertyInterest set cur=? where appRef=? and propRef=?";
+                    String updateSql = "update propertyInterest set cur=? where appRef=" + appRef + " and propRef=" + propRef;
                     updateStat = con.prepareStatement(updateSql);
                     updateStat.setBoolean(col++, false);
                     updateStat.executeUpdate();
@@ -2323,7 +2331,7 @@ public class Database {
     public void createLandlord(Landlord landlord) throws SQLException {
         if(!this.landlordExists(landlord.getLandlordRef())) {
             landlords.put(landlord.getLandlordRef(), landlord);
-            String insertSql = "insert into landlords (landlordRef, personRef, createdBy, createdDate) values (?, ?, ?, ?,)";
+            String insertSql = "insert into landlords (landlordRef, personRef, createdBy, createdDate) values (?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, landlord.getLandlordRef());
@@ -2815,7 +2823,7 @@ public class Database {
     public void createEmployee(Employee employee) throws SQLException {
         if (!this.employeeExists(employee.getEmployeeRef())) {
             employees.put(employee.getEmployeeRef(), employee);
-            String insertSql = "insert into employees (employeeRef, personRef, officeCode, createdBy, createdDate) values (?, ?, ?, ?,)";
+            String insertSql = "insert into employees (employeeRef, personRef, officeCode, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, employee.getEmployeeRef());
@@ -2858,7 +2866,7 @@ public class Database {
                 if (this.personExists(personRef)) {
                     Person person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
-                    if (this.officeExists(officeCode)) {
+                    if (officeCode == null || (officeCode != null && this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
                         try (PreparedStatement selectStat1 = con.prepareStatement(sql1)) {
@@ -2870,6 +2878,7 @@ public class Database {
                                 try (PreparedStatement selectStat2 = con.prepareStatement(sql2)) {
                                 selectStat2.setInt(1, employeeRef);
                                 ResultSet results2 = selectStat2.executeQuery();
+                                results2.next();
                                 String username = results2.getString("username");
                                 String password =  results2.getString("password");
                                 Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
@@ -3680,12 +3689,11 @@ public class Database {
     private void loadTransactions(String from, Account account) throws SQLException {
         this.transactions.clear();
         String sql = "select transactionRef, accountRef, fromRef, toRef, amount, "
-                    + "isDebit, transactionDate, createdBy, createdDate ? where accountRef=? order by transactionRef";
+                    + "isDebit, transactionDate, createdBy, createdDate from " + from + " where accountRef=? order by transactionRef";
         try (PreparedStatement selectStat = con.prepareStatement(sql)) {
-            selectStat.setString(1, from);
-            selectStat.setInt(2, account.getAccRef());
+            selectStat.setInt(1, account.getAccRef());
             
-            ResultSet results = selectStat.executeQuery(sql);
+            ResultSet results = selectStat.executeQuery();
 
             while (results.next()) {
                 int transactionRef = results.getInt("transactionRef");
@@ -3728,7 +3736,7 @@ public class Database {
     }
     
     public void createUser(UserImpl user) throws SQLException {
-        if(!this.userExists(user.getUsername())) {
+        if(!this.userExists(user.getUsername()) && this.employeeExists(user.getEmployeeRef())) {
             users.put(user.getUsername(), user);
             String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
                     + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -3768,6 +3776,8 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
+            Employee employee = this.getEmployee(user.getEmployeeRef());
+            this.createModifiedBy("employeeModifications", employee.getLastModification(), employee.getEmployeeRef());
         }
     }
     
@@ -4171,8 +4181,7 @@ public class Database {
     
     public List<Person> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) {
-        List<Person> tempPeople = new ArrayList();
-        Collections.copy(this.getPeople(), tempPeople);
+        List<Person> tempPeople = new ArrayList(this.getPeople());
         if(!tempPeople.isEmpty()) {
             for(Person temp : tempPeople) {
                 if(titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
@@ -4213,8 +4222,7 @@ public class Database {
     public List<Address> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) {
-        List<Address> tempAddresses = new ArrayList();
-        Collections.copy(this.getAddresses(), tempAddresses);
+        List<Address> tempAddresses = new ArrayList(this.getAddresses());
         if(!tempAddresses.isEmpty()) {
             for(Address temp : tempAddresses) {
                 if(buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
@@ -4249,8 +4257,7 @@ public class Database {
     }
     
     public List<Application> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) {
-        List<Application> tempApplications = new ArrayList();
-        Collections.copy(this.getApplications(), tempApplications);
+        List<Application> tempApplications = new ArrayList(this.getApplications());
         if(!tempApplications.isEmpty()) {
             for(Application temp : tempApplications) {
                 if(corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
@@ -4275,8 +4282,7 @@ public class Database {
     }
     
     public List<Application> getPeopleApplications(List<Person> tempPeople) {
-        List<Application> tempApplications = new ArrayList();
-        Collections.copy(this.getApplications(), tempApplications);
+        List<Application> tempApplications = new ArrayList(this.getApplications());
         if (!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
             for (Application temp : tempApplications) {
                 boolean cont = true;
@@ -4298,8 +4304,7 @@ public class Database {
     }
 
     public List<Application> getAddressApplications(List<Address> tempAddresses) {
-        List<Application> tempApplications = new ArrayList();
-        Collections.copy(this.getApplications(), tempApplications);
+        List<Application> tempApplications = new ArrayList(this.getApplications());
         if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
             for (Application temp : tempApplications) {
                 boolean cont = true;
@@ -4331,8 +4336,7 @@ public class Database {
     }
 
     public List<Application> getCorrNameApplcations(String name) {
-        List<Application> tempApplications = new ArrayList();
-        Collections.copy(this.getApplications(), tempApplications);
+        List<Application> tempApplications = new ArrayList(this.getApplications());
         if (name != null && !name.isEmpty() && !tempApplications.isEmpty()) {
             for (Application tempApp : tempApplications) {
                 if (!name.equals(tempApp.getAppCorrName())) {
@@ -4355,8 +4359,7 @@ public class Database {
     }
     
     public List<Tenancy> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if (!tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4393,8 +4396,7 @@ public class Database {
     }
     
     public List<Tenancy> getApplicationTenancies(List<Application> tempApplications) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 boolean cont = true;
@@ -4416,8 +4418,7 @@ public class Database {
     }
     
     public List<Tenancy> getApplcationTenancies(int appRef) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if (this.applicationExists(appRef) && !tempTenancies.isEmpty()) {
             Application tempApp = this.getApplication(appRef);
             for (Tenancy temp : tempTenancies) {
@@ -4431,8 +4432,7 @@ public class Database {
     }
     
     public List<Tenancy> getPropertyTenancies(List<Property> tempProperties) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if(!tempProperties.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 boolean cont = true;
@@ -4454,8 +4454,7 @@ public class Database {
     }
     
     public List<Tenancy> getPropertyTenancies(int propRef) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if (this.propertyExists(propRef) && !tempTenancies.isEmpty()) {
             Property tempApp = this.getProperty(propRef);
             for (Tenancy temp : tempTenancies) {
@@ -4469,8 +4468,7 @@ public class Database {
     }
     
     public List<Tenancy> getNameTenancies(String name) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if(!tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4483,8 +4481,7 @@ public class Database {
     }
     
     public List<Tenancy> getOfficeTenancies(String office) {
-        List<Tenancy> tempTenancies = new ArrayList();
-        Collections.copy(this.getTenancies(), tempTenancies);
+        List<Tenancy> tempTenancies = new ArrayList(this.getTenancies());
         if(this.officeExists(office) && !tempTenancies.isEmpty()) {
             for(Tenancy temp : tempTenancies) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4497,8 +4494,7 @@ public class Database {
     }
     
     public List<Lease> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if (!tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4533,8 +4529,7 @@ public class Database {
     }
     
     public List<Lease> getPropertyLeases(List<Property> tempProperties) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if(!tempProperties.isEmpty() && !tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 boolean cont = true;
@@ -4556,8 +4551,7 @@ public class Database {
     }
     
     public List<Lease> getPropertyLeases(int propRef) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if (this.propertyExists(propRef) && !tempLeases.isEmpty()) {
             Property tempProperty = this.getProperty(propRef);
             for (Lease temp : tempLeases) {
@@ -4571,8 +4565,7 @@ public class Database {
     }
     
     public List<Lease> getNameLeases(String name) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if(!tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4585,8 +4578,7 @@ public class Database {
     }
     
     public List<Lease> getOfficeLeases(String office) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if(this.officeExists(office) && !tempLeases.isEmpty()) {
             for(Lease temp : tempLeases) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4599,8 +4591,7 @@ public class Database {
     }
 
     public List<Lease> getLandlordLeases(int landlordRef) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if (this.landlordExists(landlordRef) && !tempLeases.isEmpty()) {
             for (Lease temp : tempLeases) {
                 List<LandlordInterface> tempLandlords = temp.getLandlords();
@@ -4623,8 +4614,7 @@ public class Database {
     }
 
     public List<Lease> getLandlordLeases(List<Landlord> tempLandlords) {
-        List<Lease> tempLeases = new ArrayList();
-        Collections.copy(this.getLeases(), tempLeases);
+        List<Lease> tempLeases = new ArrayList(this.getLeases());
         if (!tempLandlords.isEmpty() && !tempLeases.isEmpty()) {
             for (Lease temp : tempLeases) {
                 List<LandlordInterface> leaseLandlords = temp.getLandlords();
@@ -4652,8 +4642,7 @@ public class Database {
     }
     
     public List<Contract> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if (!tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
@@ -4685,8 +4674,7 @@ public class Database {
     }
     
     public List<Contract> getNameContracts(String name) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if(!tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(!name.equals(temp.getAgreementName())) {
@@ -4698,8 +4686,7 @@ public class Database {
     }
     
     public List<Contract> getOfficeContracts(String office) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if(this.officeExists(office) && !tempContracts.isEmpty()) {
             for(Contract temp : tempContracts) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4711,8 +4698,7 @@ public class Database {
     }
     
     public List<Contract> getEmployeeContracts(int ref) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if (this.employeeExists(ref) && !tempContracts.isEmpty()) {
             for (Contract temp : tempContracts) {
                 if (temp.getEmployeeRef() != ref) {
@@ -4725,8 +4711,7 @@ public class Database {
     }
     
     public List<Contract> getJobRoleContracts(String code) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if (this.jobRoleExists(code) && !tempContracts.isEmpty()) {
             for (Contract temp : tempContracts) {
                 if (!code.equals(temp.getJobRole().getJobRoleCode())) {
@@ -4739,8 +4724,7 @@ public class Database {
     }
     
     public List<Contract> getJobRoleContracts(List<JobRole> tempJobRoles) {
-        List<Contract> tempContracts = new ArrayList();
-        Collections.copy(this.getContracts(), tempContracts);
+        List<Contract> tempContracts = new ArrayList(this.getContracts());
         if(!tempJobRoles.isEmpty()) {
             for(Contract temp : tempContracts) {
                 boolean cont = true;
@@ -4761,8 +4745,7 @@ public class Database {
     }
     
     public List<RentAccount> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<RentAccount> tempRentAccounts = new ArrayList();
-        Collections.copy(this.getRentAccounts(), tempRentAccounts);
+        List<RentAccount> tempRentAccounts = new ArrayList(this.getRentAccounts());
         if (!tempRentAccounts.isEmpty()) {
             for(RentAccount temp : tempRentAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4792,8 +4775,7 @@ public class Database {
     }
     
     public List<RentAccount> getNameRentAcc(String name) {
-        List<RentAccount> tempRentAcc = new ArrayList();
-        Collections.copy(this.getRentAccounts(), tempRentAcc);
+        List<RentAccount> tempRentAcc = new ArrayList(this.getRentAccounts());
         if(!tempRentAcc.isEmpty()) {
             for(RentAccount temp : tempRentAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4805,8 +4787,7 @@ public class Database {
     }
     
     public List<RentAccount> getOfficeRentAcc(String office) {
-        List<RentAccount> tempRentAcc = new ArrayList();
-        Collections.copy(this.getRentAccounts(), tempRentAcc);
+        List<RentAccount> tempRentAcc = new ArrayList(this.getRentAccounts());
         if(this.officeExists(office) && !tempRentAcc.isEmpty()) {
             for(RentAccount temp : tempRentAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4818,8 +4799,7 @@ public class Database {
     }
     
     public List<RentAccount> getTenanciesRentAccounts(List<Tenancy> tempTenancies) {
-        List<RentAccount> tempRentAccounts = new ArrayList();
-        Collections.copy(this.getRentAccounts(), tempRentAccounts);
+        List<RentAccount> tempRentAccounts = new ArrayList(this.getRentAccounts());
         if(!tempTenancies.isEmpty()) {
             for(RentAccount temp : tempRentAccounts) {
                 boolean cont = true;
@@ -4850,8 +4830,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList();
-        Collections.copy(this.getLeaseAccounts(), tempLeaseAccounts);
+        List<LeaseAccount> tempLeaseAccounts = new ArrayList(this.getLeaseAccounts());
         if (!tempLeaseAccounts.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4881,8 +4860,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getNameLeaseAcc(String name) {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList();
-        Collections.copy(this.getLeaseAccounts(), tempLeaseAcc);
+        List<LeaseAccount> tempLeaseAcc = new ArrayList(this.getLeaseAccounts());
         if(!tempLeaseAcc.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4894,8 +4872,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getOfficeLeaseAcc(String office) {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList();
-        Collections.copy(this.getLeaseAccounts(), tempLeaseAcc);
+        List<LeaseAccount> tempLeaseAcc = new ArrayList(this.getLeaseAccounts());
         if(this.officeExists(office) && !tempLeaseAcc.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4907,8 +4884,7 @@ public class Database {
     }
     
     public List<LeaseAccount> getLeasesLeaseAccounts(List<Lease> tempTenancies) {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList();
-        Collections.copy(this.getLeaseAccounts(), tempLeaseAccounts);
+        List<LeaseAccount> tempLeaseAccounts = new ArrayList(this.getLeaseAccounts());
         if(!tempTenancies.isEmpty()) {
             for(LeaseAccount temp : tempLeaseAccounts) {
                 boolean cont = true;
@@ -4939,8 +4915,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList();
-        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAccounts);
+        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList(this.getEmployeeAccounts());
         if (!tempEmployeeAccounts.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
@@ -4970,8 +4945,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getNameEmployeeAcc(String name) {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList();
-        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAcc);
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList(this.getEmployeeAccounts());
         if(!tempEmployeeAcc.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAcc) {
                 if(!name.equals(temp.getAccName())) {
@@ -4983,8 +4957,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getOfficeEmployeeAcc(String office) {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList();
-        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAcc);
+        List<EmployeeAccount> tempEmployeeAcc = new ArrayList(this.getEmployeeAccounts());
         if(this.officeExists(office) && !tempEmployeeAcc.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
@@ -4996,8 +4969,7 @@ public class Database {
     }
     
     public List<EmployeeAccount> getContractsEmployeeAccounts(List<Contract> tempTenancies) {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList();
-        Collections.copy(this.getEmployeeAccounts(), tempEmployeeAccounts);
+        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList(this.getEmployeeAccounts());
         if(!tempTenancies.isEmpty()) {
             for(EmployeeAccount temp : tempEmployeeAccounts) {
                 boolean cont = true;
@@ -5028,8 +5000,7 @@ public class Database {
     }
     
     public List<Office> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) {
-        List<Office> tempOffices = new ArrayList();
-        Collections.copy(this.getOffices(), tempOffices);
+        List<Office> tempOffices = new ArrayList(this.getOffices());
         if(!tempOffices.isEmpty()) {
             for(Office temp : tempOffices) {
                 if(addrRef != null && addrRef == temp.getAddress().getAddressRef()) {

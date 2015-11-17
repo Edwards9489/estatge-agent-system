@@ -151,12 +151,7 @@ public class JobRole implements JobRoleInterface {
      * @param current
      */
     public void setCurrent(boolean current) {
-        if (current) {
-            this.current = current;
-        } else if (!current) {
-            // ENSURE NO CURRENT EMPLOYEE HAS JOBROLE
-            this.current = current;
-        }
+        this.current = current;
     }
     
     public void modifiedBy(ModifiedByInterface modifiedBy) {

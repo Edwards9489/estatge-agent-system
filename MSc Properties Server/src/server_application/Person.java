@@ -452,6 +452,36 @@ public class Person implements PersonInterface {
     }
     
     /**
+     * @return current AddressUsage
+     */
+    @Override
+    public AddressUsageInterface getCurrenttAddress() {
+        if(!this.addresses.isEmpty()) {
+            return this.addresses.get(this.addresses.size()-1);
+        }
+        return null;
+    }
+    
+    /**
+     * @return String of current Address
+     */
+    @Override
+    public String getCurrentAddressString() {
+        if(!this.addresses.isEmpty()) {
+            return this.addresses.get(this.addresses.size()-1).getAddressString();
+        }
+        return null;
+    }
+    
+    /**
+     * @return appAddresses
+     */
+    @Override
+    public List<AddressUsageInterface> getApplicationAddressess() {
+        return Collections.unmodifiableList((List<AddressUsageInterface>) this.addresses);
+    }
+    
+    /**
      * 
      * @return the name of the last user who modified the Person
      */

@@ -26,7 +26,7 @@ public class Office implements OfficeInterface {
     private final AddressInterface address;
     private Date startDate;
     private Date endDate;
-    private List<ContactInterface> contacts;
+    private final List<ContactInterface> contacts;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -45,6 +45,7 @@ public class Office implements OfficeInterface {
         this.officeCode = officeCode;
         this.address = address;
         this.startDate = startDate;
+        this.contacts = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;

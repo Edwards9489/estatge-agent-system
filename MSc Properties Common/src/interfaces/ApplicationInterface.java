@@ -18,6 +18,7 @@ public interface ApplicationInterface {
     Date getAppStartDate();
     Date getAppEndDate();
     String getAppStatusCode();
+    AddressUsageInterface getCurrenttApplicationAddress();
     String getCurrentApplicationAddressString();
     List<AddressUsageInterface> getApplicationAddressess();
     boolean isAppInterestedFlag();
