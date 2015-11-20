@@ -25,6 +25,9 @@ public interface InvolvedPartyInterface {
     boolean isMainInd();
     boolean isCurrent();
     boolean isOver18();
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();

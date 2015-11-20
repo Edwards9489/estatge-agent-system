@@ -5,7 +5,6 @@
  */
 package interfaces;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +30,9 @@ public interface PropertyInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     String getCreatedBy();
     Date getCreatedDate();
 }

@@ -3,6 +3,7 @@ package server_application;
 
 import interfaces.AccountInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.TransactionInterface;
 import java.util.Collections;
 import java.util.Date;
@@ -26,8 +27,8 @@ public class Account implements AccountInterface {
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
-    private final List<TransactionInterface> debitTransactions;
-    private final List<TransactionInterface> creditTransactions;
+    private final List<TransactionInterface> transactions;
+    private final List<Note> notes;
     
     ///   CONSTRUCTORS ///
     
@@ -48,8 +49,8 @@ public class Account implements AccountInterface {
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
-        this.debitTransactions = new ArrayList<>();
-        this.creditTransactions = new ArrayList<>();
+        this.transactions = new ArrayList();
+        this.notes = new ArrayList();
     }
     
     
@@ -59,9 +60,10 @@ public class Account implements AccountInterface {
     /**
      * @param balance
      */
-    public void setBalance(double balance) {
+    private void setBalance(double balance) {
         this.balance = balance;
     }
+    
     /**
      * @param startDate
      */
@@ -94,7 +96,6 @@ public class Account implements AccountInterface {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
-        
     }
     
     /**
@@ -108,7 +109,6 @@ public class Account implements AccountInterface {
             this.setAccountName(accName);
             this.modifiedBy(modifiedBy);
         }
-
     }
     
     /**
@@ -117,14 +117,37 @@ public class Account implements AccountInterface {
      */
     public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) {
         if (this.isCurrent()) {
-            if (transaction.isDebit()) {
-                this.debitTransactions.add(transaction);
-                this.setBalance(this.balance + transaction.getAmount());
-            } else {
-                this.creditTransactions.add(transaction);
-                this.setBalance(this.balance - transaction.getAmount());
-            }
+            transactions.add(transaction);
+            this.setBalance(this.balance + transaction.getAmount());
             this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    /**
+     * @param ref
+     * @param modifiedBy
+     */
+    public void deleteTransaction(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasTransaction(ref)) {
+            TransactionInterface transaction = this.getTransaction(ref);
+            this.transactions.remove(transaction);
+            this.setBalance(this.balance - transaction.getAmount());
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
     
@@ -206,6 +229,42 @@ public class Account implements AccountInterface {
         return !this.modifiedBy.isEmpty();
     }
     
+    @Override
+    public boolean hasTransaction(int ref) {
+        if(!transactions.isEmpty()) {
+            for(TransactionInterface transaction : transactions) {
+                if(transaction.getTransactionRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public TransactionInterface getTransaction(int ref) {
+        if(this.hasTransaction(ref)) {
+            for(TransactionInterface transaction : transactions) {
+                if(transaction.getTransactionRef() == ref) {
+                    return transaction;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * @return the name of the last user to modify the account
      */
@@ -246,6 +305,23 @@ public class Account implements AccountInterface {
         }
         return null;
     }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
 
     /**
      * @return createdBy
@@ -262,58 +338,13 @@ public class Account implements AccountInterface {
     public Date getCreatedDate() {
         return this.createdDate;
     }
-
-    /**
-     * @return debitTransactions
-     */
-    @Override
-    public List<TransactionInterface> getDebitTransactions() {
-        return Collections.unmodifiableList(this.debitTransactions);
-    }
     
     /**
      * @return creditTransactions
      */
     @Override
-    public List<TransactionInterface> getCreditTransactions() {
-        return Collections.unmodifiableList(this.creditTransactions);
-    }
-    
-    /**
-     * @return a list of date ordered transactions
-     */
-    @Override
-    public List<TransactionInterface> getDateOrderedTransactions() {
-        // Code to return an ordered List of Transactions
-        List<TransactionInterface> transactions = new ArrayList();
-        List<TransactionInterface> debits = this.getDebitTransactions();
-        List<TransactionInterface> credits = this.getDebitTransactions();
-        int i = 0;
-        int ind = 0;
-        
-        if (!debits.isEmpty() && !credits.isEmpty()) {
-            while (i < debits.size()) {
-                TransactionInterface debit = debits.get(i);
-                while (i < debits.size()) {
-                    TransactionInterface credit = credits.get(ind);
-                    if (debit.getTransactionDate().before(credit.getTransactionDate())) {
-                        transactions.add(debit);
-                        i++;
-                    } else {
-                        transactions.add(credit);
-                        ind++;
-                    }
-                }
-            }
-            return transactions;
-        } else if(!debits.isEmpty() && credits.isEmpty()) {
-            transactions = debits;
-            return transactions;
-        } else if(debits.isEmpty() && !credits.isEmpty()) {
-            transactions = credits;
-            return transactions;
-        }
-        return transactions;
+    public List<TransactionInterface> getTransactions() {
+        return Collections.unmodifiableList(this.transactions);
     }
     
     /**
@@ -325,8 +356,8 @@ public class Account implements AccountInterface {
                 "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
                 "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
                 this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +
-                isNegativeInd() + "\n\nModifed By\n" + this.getModifiedBy() + "\n\nCredit Transactions\n" +
-                this.getCreditTransactions() + "\n\nDebit Transactions\n" + this.getDebitTransactions();
+                isNegativeInd() + "\n\nModifed By\n" + this.getModifiedBy() + "\n\nTransactions\n" +
+                this.getTransactions();
         return temp;
     }
 }

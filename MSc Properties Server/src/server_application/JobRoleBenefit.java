@@ -8,6 +8,7 @@ package server_application;
 import interfaces.Element;
 import interfaces.JobRoleBenefitInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     private double doubleValue;
     private Date startDate;
     private Date endDate;
+    private final Note note;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -44,7 +46,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
      * @param createdBy
      * @param createdDate 
      */
-    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy, Date createdDate) {
+    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, Note note, String createdBy, Date createdDate) {
         this.jobRoleBenefitRef = ref;
         this.benefit = benefit;
         this.startDate = startDate;
@@ -55,6 +57,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
+        this.note = note;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -102,15 +105,22 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         }
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * 
      * @param stringValue
      * @param doubleValue
      * @param salaryBenefit
      * @param startDate
+     * @param comment
      * @param modifiedBy 
      */
-    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, Date startDate, ModifiedByInterface modifiedBy) {
+    public void updateJobRoleBenefit(String stringValue, double doubleValue, boolean salaryBenefit, Date startDate, String comment, ModifiedByInterface modifiedBy) {
         setSalaryBenefit(salaryBenefit);
         if(salaryBenefit) {
             setDoubleValue(doubleValue);
@@ -118,6 +128,7 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
+        this.setComment(comment, modifiedBy);
         setStartDate(startDate);
         this.modifiedBy(modifiedBy);
     }
@@ -256,6 +267,11 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
 
     /**

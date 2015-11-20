@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ public class PropertyElement implements PropertyElementInterface {
     private Date startDate;
     private Date endDate;
     private boolean charge;
+    private final Note note;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -43,10 +45,11 @@ public class PropertyElement implements PropertyElementInterface {
      * @param charge
      * @param stringValue
      * @param doubleValue
+     * @param note
      * @param createdBy
      * @param createdDate 
      */
-    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, String createdBy, Date createdDate) {
+    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) {
         this.propertyElementRef = propElementRef;
         this. element = element;
         this.startDate = startDate;
@@ -57,6 +60,7 @@ public class PropertyElement implements PropertyElementInterface {
         else if(!charge) {
             setStringValue(stringValue);
         }
+        this.note = note;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -105,23 +109,31 @@ public class PropertyElement implements PropertyElementInterface {
         }
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * 
      * @param startDate
      * @param stringValue
      * @param doubleValue
      * @param charge
+     * @param comment
      * @param modifiedBy 
      */
-    public void updatePropertyElement(Date startDate, String stringValue, Double doubleValue, boolean charge, ModifiedByInterface modifiedBy) {
+    public void updatePropertyElement(Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, ModifiedByInterface modifiedBy) {
         if(charge) {
-            setDoubleValue(doubleValue);
+            this.setDoubleValue(doubleValue);
         }
         else if(!charge) {
-            setStringValue(stringValue);
+            this.setStringValue(stringValue);
         }
-        setCharge(charge);
-        setStartDate(startDate);
+        this.setCharge(charge);
+        this.setStartDate(startDate);
+        this.setComment(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
     }
 
@@ -277,6 +289,11 @@ public class PropertyElement implements PropertyElementInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
 
     /**

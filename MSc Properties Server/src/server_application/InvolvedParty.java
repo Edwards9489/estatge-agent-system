@@ -7,6 +7,7 @@ package server_application;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PersonInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
     private Date endDate; // end date of the involved party against the application
     private Element endReason; // Indicates the reason the involved party was ended against the application
     private Element relationship; // Indicates the relationship of this involved party to the main applicant
+    private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -60,6 +62,7 @@ public class InvolvedParty implements InvolvedPartyInterface {
         this.jointApplicantInd = joint;
         this.startDate = start;
         this.relationship = relationship;
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -126,6 +129,21 @@ public class InvolvedParty implements InvolvedPartyInterface {
      */
     public void setMainInd() {
         this.mainApplicantInd = !this.mainApplicantInd;
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
+        }
     }
     
     /**
@@ -262,6 +280,35 @@ public class InvolvedParty implements InvolvedPartyInterface {
         else {
             return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
     }
     
     @Override

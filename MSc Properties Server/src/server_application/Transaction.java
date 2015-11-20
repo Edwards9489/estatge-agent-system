@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.Note;
 import interfaces.TransactionInterface;
 import java.util.Date;
 
@@ -22,6 +23,7 @@ public class Transaction implements TransactionInterface {
     private final int toRef;
     private final double amount;
     private final boolean debit;
+    private final Note note;
     private final Date transactionDate;
     private final String createdBy;
     private final Date createdDate;
@@ -37,10 +39,11 @@ public class Transaction implements TransactionInterface {
      * @param amount
      * @param debit
      * @param transactionDate
+     * @param note
      * @param createdBy
      * @param createdDate 
      */
-    public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy, Date createdDate) {
+    public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, Note note, String createdBy, Date createdDate) {
         this.transactionRef = transactionRef;
         this.accountRef = accountRef;
         this.fromRef = fromRef;
@@ -48,6 +51,7 @@ public class Transaction implements TransactionInterface {
         this.amount = amount;
         this.debit = debit;
         this.transactionDate = transactionDate;
+        this.note = note;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -106,6 +110,16 @@ public class Transaction implements TransactionInterface {
     @Override
     public Date getTransactionDate() {
         return transactionDate;
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
+    }
+    
+    @Override
+    public String getComment() {
+        return note.getNote();
     }
 
     /**

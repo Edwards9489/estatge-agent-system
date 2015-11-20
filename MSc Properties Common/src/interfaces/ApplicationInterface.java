@@ -26,6 +26,9 @@ public interface ApplicationInterface {
     List<PropertyInterface> getPropertiesInterestedIn();
     int getTenancyRef();
     boolean isCurrent();
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();

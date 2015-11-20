@@ -18,6 +18,8 @@ public interface TransactionInterface {
     int getToRef();
     double getAmount();
     Date getTransactionDate();
+    Note getNote();
+    String getComment();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isDebit();

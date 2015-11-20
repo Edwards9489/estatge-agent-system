@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class ElementImpl implements Element {
     private final String code;
     private String description;
     private boolean current;
+    private final Note note;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -33,12 +35,14 @@ public class ElementImpl implements Element {
      * Constructor for objects of class ElementImpl
      * @param code
      * @param description
+     * @param note
      * @param createdBy
      * @param createdDate 
      */
-    public ElementImpl(String code, String description, String createdBy, Date createdDate) {
+    public ElementImpl(String code, String description, Note note, String createdBy, Date createdDate) {
         this.code = code;
         this.description = description;
+        this.note = note;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -75,15 +79,23 @@ public class ElementImpl implements Element {
         }
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * 
      * @param description
      * @param current
+     * @param comment
      * @param modifiedBy 
      */
-    public void updateElement(String description, boolean current, ModifiedByInterface modifiedBy) {
-        setDescription(description);
-        setCurrent(current);
+    public void updateElement(String description, boolean current, String comment, ModifiedByInterface modifiedBy) {
+        this.setDescription(description);
+        this.setCurrent(current);
+        this.setComment(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
     }
     
@@ -160,6 +172,11 @@ public class ElementImpl implements Element {
     @Override
     public List<ModifiedByInterface> getModifiedBy() {
         return Collections.unmodifiableList(this.modifiedBy);
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
     
     /**

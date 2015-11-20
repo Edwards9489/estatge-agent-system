@@ -9,6 +9,7 @@ import interfaces.AddressUsageInterface;
 import interfaces.ContactInterface;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PersonInterface;
 import java.util.*;
 /**
@@ -35,6 +36,7 @@ public class Person implements PersonInterface {
     private Element religion;
     private final List<ContactInterface> contacts;
     private final List<AddressUsageInterface> addresses;
+    private final List<Note> notes;
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
@@ -80,6 +82,7 @@ public class Person implements PersonInterface {
         if(address != null) {
             this.addresses.add(address);
         }
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -215,7 +218,7 @@ public class Person implements PersonInterface {
     
     public void deleteContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
         if(this.contacts.isEmpty()) {
-            if(this.contacts.contains(contact)) {
+            if(contact != null && !contact.hasBeenModified() && this.contacts.contains(contact)) {
                 this.contacts.remove(contact);
                 this.modifiedBy(modifiedBy);
             }
@@ -242,8 +245,23 @@ public class Person implements PersonInterface {
     
     public void deleteAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
         if(this.addresses.isEmpty()) {
-            if(this.addresses.contains(address)) {
+            if(address != null && address.isCurrent() && !address.hasBeenModified() && this.addresses.contains(address)) {
                 this.addresses.remove(address);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
                 this.modifiedBy(modifiedBy);
             }
         }
@@ -529,11 +547,41 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
+    
     /**
      * 
      * @param contactRef
      * @return true if contacts contains a Contact with ref == contactRef
      */
+    @Override
     public boolean hasContact(int contactRef) {
         for(ContactInterface contact : contacts) {
             if(contact.getContactRef() == contactRef) {

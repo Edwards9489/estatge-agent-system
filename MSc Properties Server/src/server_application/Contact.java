@@ -7,6 +7,7 @@ package server_application;
 import interfaces.ContactInterface;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.*;
 
 /**
@@ -22,6 +23,7 @@ public class Contact implements ContactInterface {
     private String contactValue;
     private Date startDate;
     private Date endDate;
+    private final Note note;
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
@@ -34,14 +36,16 @@ public class Contact implements ContactInterface {
      * @param type
      * @param value
      * @param date
+     * @param note
      * @param createdBy
      * @param createdDate
      */
-    public Contact(int ref, Element type, String value, Date date, String createdBy, Date createdDate) {
+    public Contact(int ref, Element type, String value, Date date, Note note, String createdBy, Date createdDate) {
         this.contactRef = ref;
         contactType = type;
         contactValue = value;
         startDate = date;
+        this.note = note;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
@@ -92,16 +96,24 @@ public class Contact implements ContactInterface {
         }
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * @param contactType
      * @param contactValue
      * @param startDate
+     * @param comment
      * @param modifiedBy
      */
-    public void updateContact(Element contactType, String contactValue, Date startDate, ModifiedByInterface modifiedBy) {
+    public void updateContact(Element contactType, String contactValue, Date startDate, String comment, ModifiedByInterface modifiedBy) {
         this.setContactType(contactType);
         this.setContactValue(contactValue);
         this.setStartDate(startDate);
+        this.setComment(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
     }
     
@@ -214,6 +226,11 @@ public class Contact implements ContactInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
 
     /**

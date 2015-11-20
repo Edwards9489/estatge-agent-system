@@ -20,6 +20,7 @@ public interface AddressUsageInterface {
     Date getEndDate();
     boolean isCurrent();
     boolean hasBeenModified();
+    Note getNote();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

@@ -37,8 +37,12 @@ public interface PersonInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     String getCreatedBy();
     Date getCreatedDate();
+    boolean hasContact(int contactRef);
     List<ContactInterface> getContacts();
     List<AddressUsageInterface> getAddresses();
     AddressUsageInterface getLastAddress();

@@ -9,6 +9,7 @@ import interfaces.AddressInterface;
 import interfaces.Element;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import interfaces.PropertyInterface;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class Property implements PropertyInterface {
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
     private final Map<Integer, PropertyElementInterface> propertyElements;
+    private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -60,7 +62,8 @@ public class Property implements PropertyInterface {
         this.propType = propType;
         this.propSubType = propSubType;
         this.propStatus = "NEW";
-        propertyElements = new HashMap<>();
+        this.propertyElements = new HashMap<>();
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
@@ -168,6 +171,21 @@ public class Property implements PropertyInterface {
             PropertyElement propElement = (PropertyElement) propertyElements.get(ref);
             propElement.setEndDate(endDate, modifiedBy);
             this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
 
@@ -391,6 +409,35 @@ public class Property implements PropertyInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
     }
     
     /**

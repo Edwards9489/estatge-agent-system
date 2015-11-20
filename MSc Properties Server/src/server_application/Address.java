@@ -3,6 +3,7 @@ package server_application;
 
 import interfaces.AddressInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class Address implements AddressInterface {
     private String town;
     private String country;
     private String postcode;
+    private final Note note;
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
@@ -47,11 +49,12 @@ public class Address implements AddressInterface {
      * @param country
      * @param postcode
      * @param createdBy
+     * @param note
      * @param createdDate
      */
     public Address(int addressRef, String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
-            String country, String postcode, String createdBy, Date createdDate) {
+            String country, String postcode, Note note, String createdBy, Date createdDate) {
         
         this.addressRef = addressRef;
         this.setBuildingNumber(buildingNumber);
@@ -64,6 +67,7 @@ public class Address implements AddressInterface {
         this.setTown(town);
         this.setCountry(country);
         this.setPostcode(postcode);
+        this.note = note;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
@@ -143,6 +147,12 @@ public class Address implements AddressInterface {
         this.postcode = postcode;
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * @param modifiedBy
      */
@@ -161,13 +171,14 @@ public class Address implements AddressInterface {
      * @param street
      * @param area
      * @param town
+     * @param comment
      * @param country
      * @param postcode
      * @param modifiedBy
      */
     public void updateAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
-            String town, String country, String postcode, ModifiedByInterface modifiedBy) {
+            String town, String country, String postcode, String comment, ModifiedByInterface modifiedBy) {
         this.setBuildingNumber(buildingNumber);
         this.setBuildingName(buildingName);
         this.setSubStreetNumber(subStreetNumber);
@@ -186,6 +197,7 @@ public class Address implements AddressInterface {
         if(!postcode.isEmpty()) {
             this.setPostcode(postcode);
         }
+        this.setComment(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
     }
     
@@ -342,6 +354,11 @@ public class Address implements AddressInterface {
     @Override
     public String getPostcode() {
         return postcode;
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
     
     @Override

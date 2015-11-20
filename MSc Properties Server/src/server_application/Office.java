@@ -10,6 +10,7 @@ import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.OfficeInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ public class Office implements OfficeInterface {
     private final List<AgreementInterface> agreements;
     private final List<AccountInterface> accounts;
     private final List<ContactInterface> contacts;
+    private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -52,6 +54,7 @@ public class Office implements OfficeInterface {
         this.agreements = new ArrayList();
         this.accounts = new ArrayList();
         this.contacts = new ArrayList();
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -77,8 +80,35 @@ public class Office implements OfficeInterface {
      * @param modifiedBy 
      */
     public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
-        this.contacts.add(contact);
+        if(!this.hasContact(contact.getContactRef())) {
+            this.contacts.add(contact);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteContact(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasContact(ref)) {
+            ContactInterface contact = this.getContact(ref);
+            if(!contact.hasBeenModified()) {
+                contacts.remove(contact);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
         this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
+        }
     }
     
     /**
@@ -140,6 +170,35 @@ public class Office implements OfficeInterface {
     public Date getEndDate() {
         return endDate;
     }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
 
     /**
      * @return contacts
@@ -156,6 +215,18 @@ public class Office implements OfficeInterface {
     public List<AccountInterface> getAccounts() {
         return Collections.unmodifiableList(accounts);
     }
+    
+    @Override
+    public ContactInterface getContact(int ref) {
+        if(this.hasContact(ref)) {
+            for(ContactInterface contact : contacts) {
+                if(contact.getContactRef() == ref) {
+                    return contact;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * @return contacts
@@ -165,6 +236,7 @@ public class Office implements OfficeInterface {
         return Collections.unmodifiableList(contacts);
     }
     
+    @Override
     public boolean hasContact(int contactRef) {
         if(contacts.isEmpty()) {
             return false;

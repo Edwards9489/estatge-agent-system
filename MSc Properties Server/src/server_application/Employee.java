@@ -8,6 +8,7 @@ package server_application;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PersonInterface;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class Employee implements EmployeeInterface {
     private final PersonInterface person;
     private final List<ContractInterface> contracts;
     private String officeCode; // Create a class for office, which stores the office information
+    private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -48,6 +50,7 @@ public class Employee implements EmployeeInterface {
         this.employeeRef = employeeRef;
         this.person = person;
         this.contracts = new ArrayList();
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -101,6 +104,27 @@ public class Employee implements EmployeeInterface {
         contracts.add(contract);
         this.modifiedBy(modifiedBy);
         setOfficeCode(contract.getOfficeCode());
+    }
+    
+    public void deleteContract(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasContract(ref) && !this.getContract(ref).hasBeenModified()) {
+            contracts.remove(this.getContract(ref));
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
+        }
     }
     
     
@@ -208,6 +232,35 @@ public class Employee implements EmployeeInterface {
         }
         return null;
     }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
 
     /**
      * @return createdBy
@@ -225,12 +278,37 @@ public class Employee implements EmployeeInterface {
         return createdDate;
     }
     
+    public boolean hasContract(int ref) {
+        if(contracts.isEmpty()) {
+            for(ContractInterface contract : getContracts()) {
+                if(contract.getAccountRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public ContractInterface getContract(int ref) {
+        if(this.hasContract(ref)) {
+            for(ContractInterface contract : getContracts()) {
+                if(contract.getAccountRef() == ref) {
+                    return contract;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * @return most recent contract
      */
     @Override
     public ContractInterface getContract() {
-        return contracts.get(contracts.size()-1);
+        if(!contracts.isEmpty()) {
+            return contracts.get(contracts.size()-1);
+        }
+        return null;
     }
     
     /**

@@ -22,13 +22,16 @@ public interface AccountInterface {
     boolean isNegativeInd();
     boolean isCurrent();
     boolean hasBeenModified();
+    boolean hasTransaction(int ref);
+    boolean hasNote(int ref);
+    TransactionInterface getTransaction(int ref);
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    Note getNote(int ref);
+    List<Note> getNotes();
     String getCreatedBy();
     Date getCreatedDate();
-    List<TransactionInterface> getDebitTransactions();
-    List<TransactionInterface> getCreditTransactions();
-    List<TransactionInterface> getDateOrderedTransactions();
+    List<TransactionInterface> getTransactions();
 }

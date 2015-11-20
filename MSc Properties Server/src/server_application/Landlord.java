@@ -7,6 +7,7 @@ package server_application;
 import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PersonInterface;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Landlord implements LandlordInterface {
     private final int landlordRef;
     private final PersonInterface person;
     private final List<LeaseInterface> leases;
+    private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
     private final Date createdDate;
@@ -42,6 +44,7 @@ public class Landlord implements LandlordInterface {
         this.landlordRef = landlordRef;
         this.person = person;
         this.leases = new ArrayList();
+        this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
@@ -70,6 +73,31 @@ public class Landlord implements LandlordInterface {
         if (!leases.contains(lease)) {
             leases.add(lease);
             this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteLease(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasLease(ref)) {
+            LeaseInterface lease = this.getLease(ref);
+            if(lease.hasBeenModified()) {
+                leases.remove(lease);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
     
@@ -102,12 +130,65 @@ public class Landlord implements LandlordInterface {
         return person.getPersonRef();
     }
     
+    @Override
+    public boolean hasLease(int ref) {
+        if(!leases.isEmpty()) {
+            for(LeaseInterface lease : leases) {
+                if(lease.getAccountRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public LeaseInterface getLease(int ref) {
+        if(!leases.isEmpty()) {
+            for(LeaseInterface lease : leases) {
+                if(lease.getAccountRef() == ref) {
+                    return lease;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * @return leases
      */
     @Override
     public List<LeaseInterface> getLeases() {
         return Collections.unmodifiableList(leases);
+    }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
     }
     
     @Override

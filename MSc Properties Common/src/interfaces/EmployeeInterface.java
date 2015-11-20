@@ -22,6 +22,9 @@ public interface EmployeeInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     String getCreatedBy();
     Date getCreatedDate();
     ContractInterface getContract();

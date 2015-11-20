@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.AgreementInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -31,6 +32,7 @@ public class Agreement implements AgreementInterface {
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
+    private final List<Note> notes;
     private final String officeCode;
     
     ///   CONSTRUCTORS ///
@@ -56,6 +58,7 @@ public class Agreement implements AgreementInterface {
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
+        this.notes = new ArrayList();
         this.officeCode = officeCode;
     }
     
@@ -128,6 +131,21 @@ public class Agreement implements AgreementInterface {
             this.setStartDate(startDate);
             this.setLength(length);
             this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
     
@@ -229,6 +247,18 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
     public boolean hasBeenModified() {
         return !this.modifiedBy.isEmpty();
     }
@@ -272,6 +302,23 @@ public class Agreement implements AgreementInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
     }
 
     /**

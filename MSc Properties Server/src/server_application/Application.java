@@ -9,6 +9,7 @@ import interfaces.ApplicationInterface;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PropertyInterface;
 import java.util.*;
 
@@ -29,7 +30,8 @@ public class Application implements ApplicationInterface {
     private final List<AddressUsageInterface> appAddresses;
     private final List<PropertyInterface> propertiesInterestedIn;
     private final List<ModifiedByInterface> modifiedBy;
-    private int tenancyRef;
+    private final List<Note> notes;
+    private Integer tenancyRef;
     
     private final String createdBy;
     private final Date createdDate;
@@ -53,6 +55,7 @@ public class Application implements ApplicationInterface {
         this.appAddresses = new ArrayList();
         this.propertiesInterestedIn = new ArrayList();
         this.modifiedBy = new ArrayList();
+        this.notes = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -156,6 +159,17 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    private void deleteHouseholdAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
+        if(!household.isEmpty()) {
+            for(InvolvedPartyInterface invParty : household) {
+                if(invParty.isCurrent()) {
+                    Person temp = (Person) invParty.getPerson();
+                    temp.deleteAddress(address, modifiedBy);
+                }
+            }
+        }
+    }
+    
     /**
      * @param address
      * @param modifiedBy
@@ -174,6 +188,21 @@ public class Application implements ApplicationInterface {
         this.modifiedBy(modifiedBy);
     }
     
+    public void deleteAppAddress(int ref, ModifiedByInterface modifiedBy) {
+        if(this.isCurrentAddress(ref)) {
+            AddressUsageInterface addr = this.getCurrentApplicationAddress();
+            if(!addr.hasBeenModified()) {
+                appAddresses.remove(addr);
+                AddressUsage temp = (AddressUsage) this.getCurrentApplicationAddress();
+                if(temp != null) {
+                    temp.setEndDate(null, modifiedBy);
+                }
+                this.deleteHouseholdAddress(addr, modifiedBy);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
     /**
      * @param party
      * @param modifiedBy
@@ -182,27 +211,6 @@ public class Application implements ApplicationInterface {
         if(!this.isPersonHouseholdMember(party.getPersonRef())) {
             this.household.add(party);
             this.modifiedBy(modifiedBy);
-        }
-    }
-    
-    /**
-     * @param invPartyRef
-     * @param end
-     * @param endReason
-     * @param modifiedBy
-     */
-    public void changeMainApp(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
-        if(this.isHouseholdMember(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd()) {
-            if(this.getInvolvedParty(invPartyRef).isOver18()) {
-                if(this.getMainApp() != null) {
-                    InvolvedParty party = (InvolvedParty) this.getInvolvedParty(invPartyRef);
-                    party.updateInvolvedParty(true, party.getStartDate(), this.getMainApp().getRelationship(), modifiedBy);
-                    InvolvedParty mainApp = (InvolvedParty) this.getMainApp();
-                    mainApp.endInvolvedParty(end, endReason, modifiedBy);
-                    mainApp.setMainInd();
-                    party.setMainInd();
-                }
-            }
         }
     }
     
@@ -224,6 +232,38 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    public void deleteInvolvedParty(int invPartyRef, ModifiedByInterface modifiedBy) {
+        if(this.isHouseholdMember(invPartyRef)) {
+            InvolvedPartyInterface party = this.getInvolvedParty(invPartyRef);
+            if(!party.hasBeenModified() && !party.isMainInd()) {
+                household.remove(party);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    /**
+     * @param invPartyRef
+     * @param end
+     * @param endReason
+     * @param modifiedBy
+     */
+    public void changeMainApp(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
+        if(this.isHouseholdMember(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd()) {
+            if(this.getInvolvedParty(invPartyRef).isOver18()) {
+                if(this.getMainApp() != null) {
+                    InvolvedParty party = (InvolvedParty) this.getInvolvedParty(invPartyRef);
+                    party.updateInvolvedParty(true, party.getStartDate(), this.getMainApp().getRelationship(), modifiedBy);
+                    InvolvedParty mainApp = (InvolvedParty) this.getMainApp();
+                    mainApp.endInvolvedParty(end, endReason, modifiedBy);
+                    mainApp.setMainInd();
+                    party.setMainInd();
+                    this.modifiedBy(modifiedBy);
+                }
+            }
+        }
+    }
+    
     /**
      * @param tenancyRef
      * @param modifiedBy
@@ -236,6 +276,11 @@ public class Application implements ApplicationInterface {
         this.modifiedBy(modifiedBy);
         return properties;
     }
+    
+    public void clearTenancy(ModifiedBy modifiedBy) {
+        this.tenancyRef = null;
+        this.modifiedBy(modifiedBy);
+    } 
     
     /**
      * @param property
@@ -256,6 +301,21 @@ public class Application implements ApplicationInterface {
         if(this.isInterestedProperty(property)) {
             this.propertiesInterestedIn.remove(property);
             this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+        notes.add(note);
+        this.modifiedBy(modifiedBy);
+    }
+    
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasNote(ref)) {
+            Note note = this.getNote(ref);
+            if(note.hasBeenModified()) {
+                notes.remove(note);
+                this.modifiedBy(modifiedBy);
+            }
         }
     }
     
@@ -387,6 +447,16 @@ public class Application implements ApplicationInterface {
         return this.appEndDate;
     }
     
+    public boolean isCurrentAddress(int ref) {
+        if(!this.appAddresses.isEmpty()) {
+            AddressUsageInterface addr = this.appAddresses.get(this.appAddresses.size()-1);
+            if(addr.getAddressUsageRef() == ref) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * @return current AddressUsage
      */
@@ -460,6 +530,35 @@ public class Application implements ApplicationInterface {
         else {
             return this.getAppEndDate().after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasNote(int ref) {
+        if(!notes.isEmpty()) {
+            for(Note note : notes) {
+                if(note.getRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
     }
     
     @Override

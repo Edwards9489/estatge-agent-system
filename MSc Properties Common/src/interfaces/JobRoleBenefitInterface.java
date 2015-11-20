@@ -26,6 +26,7 @@ public interface JobRoleBenefitInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    Note getNote();
     String getCreatedBy();
     Date getCreatedDate();
     boolean isSalaryBenefit();

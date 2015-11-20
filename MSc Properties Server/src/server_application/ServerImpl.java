@@ -9,10 +9,11 @@ import interfaces.AddressUsageInterface;
 import interfaces.Server;
 import interfaces.RegistryLoader;
 import interfaces.Client;
+import interfaces.ContactInterface;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
-import interfaces.PersonInterface;
+import interfaces.Note;
 import interfaces.PropertyInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
@@ -57,6 +58,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int transactionRef;
     private int propertyElementRef;
     private int jobBenefitRef;
+    private int noteRef;
     
     private TaskGenerator scheduler;
     
@@ -83,6 +85,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.transactionRef = this.database.countTransactions() + 1;
         this.addressUsageRef = this.database.countAddressUsages() + 1;
         this.contactRef = this.database.countContacts() + 1;
+        this.noteRef = this.database.countNotes() + 1;
         try {
             this.propertyElementRef = this.database.getPropElementCount() + 1;
         } catch (SQLException ex) {
@@ -137,22 +140,28 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return serverStub;
     }
     
+    private Note createNote(String comment, String createdBy) {
+        Note note = new NoteImpl(noteRef++, comment, createdBy, new Date());
+        return note;
+    }
+    
     //////     METHODS TO CREATE, UPDATE AND DELETE PERSON ELEMENTS     ////////
     
-    public int createTitle(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createTitle(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.titleExists(code)) {
-            Element title = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element title = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createTitle(title);
             return 1;
         }
         return 0;
     }
     
-    public int updateTitle(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+    public int updateTitle(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.titleExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Title", new Date(), modifiedBy);
             ElementImpl title = (ElementImpl) this.database.getTitle(code);
-            title.updateElement(description, current, modified);
+            title.updateElement(description, current, comment, modified);
             this.database.updateTitle(title.getCode());
             return 1;
         }
@@ -167,20 +176,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createGender(String code, String description, String createdBy)  throws RemoteException, SQLException {
+    public int createGender(String code, String description, String comment, String createdBy)  throws RemoteException, SQLException {
         if(!this.database.genderExists(code)) {
-            Element gender = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element gender = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createGender(gender);
             return 1;
         }
         return 0;
     }
     
-    public int updateGender(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
+    public int updateGender(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.genderExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Gender", new Date(), modifiedBy);
             ElementImpl gender = (ElementImpl) this.database.getGender(code);
-            gender.updateElement(description, current, modified);
+            gender.updateElement(description, current, comment, modified);
             this.database.updateGender(gender.getCode());
             return 1;
         }
@@ -195,20 +205,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createMaritalStatus(String code, String description, String createdBy)  throws RemoteException, SQLException {
+    public int createMaritalStatus(String code, String description, String comment, String createdBy)  throws RemoteException, SQLException {
         if(!this.database.maritalStatusExists(code)) {
-            Element status = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element status = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createMaritalStatus(status);
             return 1;
         }
         return 0;
     }
     
-    public int updateMaritalStatus(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
+    public int updateMaritalStatus(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.maritalStatusExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Marital Status", new Date(), modifiedBy);
             ElementImpl status = (ElementImpl) this.database.getMaritalStatus(code);
-            status.updateElement(description, current, modified);
+            status.updateElement(description, current, comment, modified);
             this.database.updateMaritalStatus(status.getCode());
             return 1;
         }
@@ -223,20 +234,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createEthnicOrigin(String code, String description, String createdBy)  throws RemoteException, SQLException {
+    public int createEthnicOrigin(String code, String description, String comment, String createdBy)  throws RemoteException, SQLException {
         if(!this.database.ethnicOriginExists(code)) {
-            Element origin = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element origin = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createEthnicOrigin(origin);
             return 1;
         }
         return 0;
     }
     
-    public int updateEthnicOrigin(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateEthnicOrigin(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.ethnicOriginExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Ethnic Origin", new Date(), modifiedBy);
             ElementImpl origin = (ElementImpl) this.database.getEthnicOrigin(code);
-            origin.updateElement(description, current, modified);
+            origin.updateElement(description, current, comment, modified);
             this.database.updateEthnicOrigin(origin.getCode());
             return 1;
         }
@@ -251,20 +263,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createLanguage(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createLanguage(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.languageExists(code)) {
-            Element language = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element language = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createLanguage(language);
             return 1;
         }
         return 0;
     }
     
-    public int updateLanguage(String code, String description, boolean current, String modifiedBy) throws RemoteException, SQLException {
+    public int updateLanguage(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(!this.database.languageExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Language", new Date(), modifiedBy);
             ElementImpl language = (ElementImpl) this.database.getLanguage(code);
-            language.updateElement(description, current, modified);
+            language.updateElement(description, current, comment, modified);
             this.database.updateLanguage(language.getCode());
             return 1;
         }
@@ -279,20 +292,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createNationality(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createNationality(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.nationalityExists(code)) {
-            Element nationality = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element nationality = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createNationality(nationality);
             return 1;
         }
         return 0;
     }
     
-    public int updateNationality(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateNationality(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.nationalityExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Nationality", new Date(), modifiedBy);
             ElementImpl nationality = (ElementImpl) this.database.getNationality(code);
-            nationality.updateElement(description, current, modified);
+            nationality.updateElement(description, current, comment, modified);
             this.database.updateNationality(nationality.getCode());
             return 1;
         }
@@ -307,20 +321,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createSexuality(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createSexuality(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.sexualityExists(code)) {
-            Element sexuality = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element sexuality = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createSexuality(sexuality);
             return 1;
         }
         return 0;
     }
     
-    public int updateSexuality(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateSexuality(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.sexualityExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Sexuality", new Date(), modifiedBy);
             ElementImpl sexuality = (ElementImpl) this.database.getSexuality(code);
-            sexuality.updateElement(description, current, modified);
+            sexuality.updateElement(description, current, comment, modified);
             this.database.updateSexuality(sexuality.getCode());
             return 1;
         }
@@ -335,20 +350,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createReligion(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createReligion(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.religionExists(code)) {
-            Element religion = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element religion = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createReligion(religion);
             return 1;
         }
         return 0;
     }
     
-    public int updateReligion(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateReligion(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.religionExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Religion", new Date(), modifiedBy);
             ElementImpl religion = (ElementImpl) this.database.getReligion(code);
-            religion.updateElement(description, current, modified);
+            religion.updateElement(description, current, comment, modified);
             this.database.updateReligion(religion.getCode());
             return 1;
         }
@@ -365,20 +381,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE PROPERTY ELEMENTS     ////////
     
-    public int createPropertyType(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createPropertyType(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.propTypeExists(code)) {
-            Element type = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element type = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createPropertyType(type);
             return 1;
         }
         return 0;
     }
     
-    public int updatePropertyType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updatePropertyType(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Type", new Date(), modifiedBy);
             ElementImpl propType = (ElementImpl) this.database.getPropertyType(code);
-            propType.updateElement(description, current, modified);
+            propType.updateElement(description, current, comment, modified);
             this.database.updatePropertyType(propType.getCode());
             return 1;
         }
@@ -393,20 +410,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createPropertySubType(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createPropertySubType(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.propSubTypeExists(code)) {
-            Element type = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element type = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createPropertySubType(type);
             return 1;
         }
         return 0;
     }
     
-    public int updatePropertySubType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updatePropertySubType(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propSubTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Sub Type", new Date(), modifiedBy);
             ElementImpl propType = (ElementImpl) this.database.getPropertySubType(code);
-            propType.updateElement(description, current, modified);
+            propType.updateElement(description, current, comment, modified);
             this.database.updatePropertySubType(propType.getCode());
             return 1;
         }
@@ -421,20 +439,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createPropertyElement(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createPropertyElement(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.propElementExists(code)) {
-            Element element = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element element = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createPropElement(element);
             return 1;
         }
         return 0;
     }
     
-    public int updatePropertyElement(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updatePropertyElement(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.propElementExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Property Element", new Date(), modifiedBy);
             ElementImpl propElement = (ElementImpl) this.database.getPropElement(code);
-            propElement.updateElement(description, current, modified);
+            propElement.updateElement(description, current, comment, modified);
             this.database.updatePropertyElement(propElement.getCode());
             return 1;
         }
@@ -451,20 +470,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE CONTACT ELEMENTS     ////////
     
-    public int createContactType(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createContactType(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.contactTypeExists(code)) {
-            Element contactType = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element contactType = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createContactType(contactType);
             return 1;
         }
         return 0;
     }
     
-    public int updateContactType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateContactType(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.contactTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Contact Type", new Date(), modifiedBy);
             ElementImpl contactType = (ElementImpl) this.database.getContactType(code);
-            contactType.updateElement(description, current, modified);
+            contactType.updateElement(description, current, comment, modified);
             this.database.updateContactType(contactType.getCode());
             return 1;
         }
@@ -481,20 +501,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE END REASONS     ////////
     
-    public int createEndReason(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createEndReason(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.endReasonExists(code)) {
-            Element endReason = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element endReason = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createEndReason(endReason);
             return 1;
         }
         return 0;
     }
     
-    public int updateEndReason(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateEndReason(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.endReasonExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated End Reason", new Date(), modifiedBy);
             ElementImpl endReason = (ElementImpl) this.database.getEndReason(code);
-            endReason.updateElement(description, current, modified);
+            endReason.updateElement(description, current, comment, modified);
             this.database.updateEndReason(endReason.getCode());
             return 1;
         }
@@ -511,20 +532,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE RELATIONSHIPS     ////////
     
-    public int createRelationship(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createRelationship(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.relationshipExists(code)) {
-            Element relationship = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element relationship = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createRelationship(relationship);
             return 1;
         }
         return 0;
     }
     
-    public int updateRelationship(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateRelationship(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.relationshipExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Relationship", new Date(), modifiedBy);
             ElementImpl relationship = (ElementImpl) this.database.getRelationship(code);
-            relationship.updateElement(description, current, modified);
+            relationship.updateElement(description, current, comment, modified);
             this.database.updateRelationship(relationship.getCode());
             return 1;
         }
@@ -542,17 +564,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //////     METHODS TO CREATE, UPDATE AND DELETE ADDRESSES     ////////
     
     public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
-        Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, new Date());
+            String streetNumber, String street, String area, String town, String country, String postcode, String comment, String createdBy) throws RemoteException, SQLException {
+        Note note = this.createNote(comment, createdBy);
+        Address address = new Address(this.addressRef++, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, new Date());
         this.database.createAddress(address);
         return address.getAddressRef();
     }
     
     public int updateAddress(int aRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet,
-            String streetNumber, String street, String area, String town, String country, String postcode, String createdBy) throws RemoteException, SQLException {
+            String streetNumber, String street, String area, String town, String country, String postcode, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(database.addressExists(aRef)) {
             Address address = database.getAddress(aRef);
-            address.updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, new ModifiedBy("Updated Address", new Date(), createdBy));
+            address.updateAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, comment, new ModifiedBy("Updated Address", new Date(), modifiedBy));
             this.database.updateAddress(address.getAddressRef());
             return 1;
         }
@@ -571,8 +594,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.addressExists(addrRef)) {
-            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, createdBy, new Date());
+            Note note = this.createNote(null, createdBy);
+            AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, note, createdBy, new Date());
             return addressUsage;
+        }
+        return null;
+    }
+    
+    //////     METHOD TO CREATE CONTACT     ////////
+    
+    private ContactInterface createContact(String contactTypeCode, String value, Date startDate, String createdBy) throws RemoteException, SQLException {
+        if(database.contactTypeExists(contactTypeCode)) {
+            Note note = this.createNote(null, createdBy);
+            ContactInterface contact = new Contact(this.contactRef++, database.getContactType(contactTypeCode), value, startDate, note, createdBy, new Date());
+            return contact;
         }
         return null;
     }
@@ -633,10 +668,45 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int deletePersonContact(int pRef, int cRef) throws SQLException {
-        if(this.database.personExists(pRef) && this.database.contactExists(cRef) && this.database.canDeleteContact(cRef)) {
-            this.database.deletePersonContact(cRef, pRef);
+    //////     METHODS TO CREATE, UPDATE AND DELETE EMPLOYEE NOTES     ////////
+    
+    public int createPersonNote(int pRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.personExists(pRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Person person = this.database.getPerson(pRef);
+            person.createNote(note, new ModifiedBy("Created Person Note", new Date(), createdBy));
+            this.database.updatePerson(pRef);
+            this.database.createPersonNote(pRef, note);
             return 1;
+        }
+        return 0;
+    }
+    
+    public int updatePersonNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.personExists(pRef)) {
+            Person person = this.database.getPerson(pRef);
+            if(person.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) person.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Person Note", new Date(), modifiedBy));
+                this.database.updatePersonNote(pRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deletePersonNote(int pRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.personExists(pRef)) {
+            Person person = this.database.getPerson(pRef);
+            if(person.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) person.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    person.deleteNote(nRef, new ModifiedBy("Deleted Person Note", new Date(), modifiedBy));
+                    this.database.updatePerson(pRef);
+                    this.database.deletePersonNote(pRef, note.getRef());
+                    return 1;
+                }
+            }
         }
         return 0;
     }
@@ -646,25 +716,32 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException {
         if (this.database.personExists(pRef) && this.database.contactTypeExists(contactTypeCode)) {
             if (this.database.getContactType(contactTypeCode).isCurrent()) {
-                Contact contact = new Contact(this.contactRef++, this.database.getContactType(contactTypeCode), value, date, createdBy, new Date());
+                Contact contact = (Contact) this.createContact(contactTypeCode, value, date, createdBy);
                 this.database.createPersonContact(contact, pRef);
                 return contact.getContactRef();
             }
-
         }
         return 0;
     }
     
-    public int updatePersonContact(int pRef, int cRef, String contactTypeCode, String value, Date date, String modifiedBy) throws  RemoteException, SQLException {
+    public int updatePersonContact(int pRef, int cRef, String contactTypeCode, String value, Date date, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(this.database.personExists(pRef) && this.database.contactExists(cRef) && this.database.contactTypeExists(contactTypeCode) && this.database.getContactType(contactTypeCode).isCurrent()) {
             Person person = this.database.getPerson(pRef);
             if(person.hasContact(cRef)) {
                 ModifiedByInterface modified = new ModifiedBy("Updated Person Contact", new Date(), modifiedBy);
                 Contact contact = this.database.getContact(cRef);
-                contact.updateContact(this.database.getContactType(contactTypeCode), value, date, modified);
+                contact.updateContact(this.database.getContactType(contactTypeCode), value, date, comment, modified);
                 this.database.updatePersonContact(contact.getContactRef(), person.getPersonRef());
                 return 1;
             }
+        }
+        return 0;
+    }
+    
+    public int deletePersonContact(int pRef, int cRef) throws SQLException {
+        if(this.database.personExists(pRef) && this.database.contactExists(cRef) && this.database.canDeleteContact(cRef)) {
+            this.database.deletePersonContact(cRef, pRef);
+            return 1;
         }
         return 0;
     }
@@ -680,10 +757,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+    public int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(this.database.personExists(pRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
             AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
-            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
+            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, comment, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
             this.database.updatePersonAddressUsage(addrUsageRef, pRef);
             return 1;
         }
@@ -728,12 +805,55 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE OFFICE NOTES     ////////
+    
+    public int createOfficeNote(String officeCode, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.officeExists(officeCode)) {
+            Note note = this.createNote(comment, createdBy);
+            Office office = this.database.getOffice(officeCode);
+            office.createNote(note, new ModifiedBy("Created Office Note", new Date(), createdBy));
+            this.database.updateOffice(officeCode);
+            this.database.createOfficeNote(officeCode, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateOfficeNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.officeExists(officeCode)) {
+            Office office = this.database.getOffice(officeCode);
+            if(office.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) office.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Office Note", new Date(), modifiedBy));
+                this.database.updateOfficeNote(officeCode, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteOfficeNote(String officeCode, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.officeExists(officeCode)) {
+            Office office = this.database.getOffice(officeCode);
+            if(office.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) office.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    office.deleteNote(nRef, new ModifiedBy("Deleted Office Note", new Date(), modifiedBy));
+                    this.database.updateOffice(officeCode);
+                    this.database.deleteOfficeNote(officeCode, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
     //////     METHODS TO CREATE, UPDATE AND DELETE A OFFICE CONTACT     ////////
     
     public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException {
         if (this.database.officeExists(oCode) && this.database.contactTypeExists(contactTypeCode)) {
             if (this.database.getContactType(contactTypeCode).isCurrent()) {
-                Contact contact = new Contact(this.contactRef++, this.database.getContactType(contactTypeCode), value, date, createdBy, new Date());
+                Contact contact = (Contact) this.createContact(contactTypeCode, value, date, createdBy);
                 this.database.createOfficeContact(contact, oCode);
                 return contact.getContactRef();
             }
@@ -741,13 +861,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(this.database.officeExists(oCode) && this.database.contactExists(cRef) && this.database.contactTypeExists(contactTypeCode) && this.database.getContactType(contactTypeCode).isCurrent()) {
             Office office = this.database.getOffice(oCode);
             if(office.hasContact(cRef)) {
                 ModifiedByInterface modified = new ModifiedBy("Updated Office Contact", new Date(), modifiedBy);
                 Contact contact = this.database.getContact(cRef);
-                contact.updateContact(this.database.getContactType(contactTypeCode), value, date, modified);
+                contact.updateContact(this.database.getContactType(contactTypeCode), value, date, comment, modified);
                 this.database.updateOfficeContact(contact.getContactRef(), office.getOfficeCode());
                 return 1;
             }
@@ -793,6 +913,49 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(this.database.invPartyExists(iRef) && this.database.canDeleteInvolvedParty(iRef)) {
             this.database.deleteInvolvedParty(iRef);
             return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE INVOLVED PARTY NOTES     ////////
+    
+    public int createInvovedPartyNote(int iRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.invPartyExists(iRef)) {
+            Note note = this.createNote(comment, createdBy);
+            InvolvedParty invParty = this.database.getInvolvedParty(iRef);
+            invParty.createNote(note, new ModifiedBy("Created Involved Party Note", new Date(), createdBy));
+            this.database.updateInvolvedParty(iRef);
+            this.database.createInvolvedPartyNote(iRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateInvolvedPartyNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.invPartyExists(eRef)) {
+            InvolvedParty invParty = this.database.getInvolvedParty(eRef);
+            if(invParty.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) invParty.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Involved Party Note", new Date(), modifiedBy));
+                this.database.updateInvolvedPartyNote(eRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteInvolvedPartyNote(int iRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.invPartyExists(iRef)) {
+            InvolvedParty invParty = this.database.getInvolvedParty(iRef);
+            if(invParty.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) invParty.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    invParty.deleteNote(nRef, new ModifiedBy("Deleted Involved Party Note", new Date(), modifiedBy));
+                    this.database.updateInvolvedParty(iRef);
+                    this.database.deleteInvolvedPartyNote(iRef, note.getRef());
+                    return 1;
+                }
+            }
         }
         return 0;
     }
@@ -942,6 +1105,49 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE APPLICATION NOTES     ////////
+    
+    public int createApplicationNote(int aRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.applicationExists(aRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Application application = this.database.getApplication(aRef);
+            application.createNote(note, new ModifiedBy("Created Application Note", new Date(), createdBy));
+            this.database.updateApplication(aRef);
+            this.database.createApplicationNote(aRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateApplicationNote(int aRef, int nRef, String comment, String modifiedBy) {
+        if (this.database.applicationExists(aRef)) {
+            Application application = this.database.getApplication(aRef);
+            if(application.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) application.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Application Note", new Date(), modifiedBy));
+                this.database.updateApplicationNote(aRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteApplicationNote(int aRef, int nRef, String modifiedBy) {
+        if (this.database.applicationExists(aRef)) {
+            Application application = this.database.getApplication(aRef);
+            if(application.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) application.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    application.deleteNote(nRef, new ModifiedBy("Deleted Application Note", new Date(), modifiedBy));
+                    this.database.updateApplication(aRef);
+                    this.database.deleteApplicationNote(aRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
     //////     METHODS TO CREATE, UPDATE AND DELETE APPLICATION ADDRESS USAGES     ////////
     
     public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
@@ -959,10 +1165,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updateApplicationAddressUsage(int applicationRef, int addrUsageRef, int addrRef, Date startDate, String modifiedBy) throws RemoteException, SQLException {
+    public int updateApplicationAddressUsage(int applicationRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(this.database.applicationExists(applicationRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
             AddressUsage addressUsage = this.database.getAddressUsage(addrUsageRef);
-            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
+            addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, comment, new ModifiedBy("Updated Address Usage", new Date(), modifiedBy));
             this.database.updateApplicationAddressUsage(addrUsageRef, applicationRef);
             return 1;
         }
@@ -997,6 +1203,49 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE EMPLOYEE NOTES     ////////
+    
+    public int createEmployeeNote(int eRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.employeeExists(eRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Employee employee = this.database.getEmployee(eRef);
+            employee.createNote(note, new ModifiedBy("Created Employee Note", new Date(), createdBy));
+            this.database.updateEmployee(eRef);
+            this.database.createEmployeeNote(eRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = this.database.getEmployee(eRef);
+            if(employee.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) employee.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Employee Note", new Date(), modifiedBy));
+                this.database.updateEmployeeNote(eRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteEmployeeNote(int eRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = this.database.getEmployee(eRef);
+            if(employee.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) employee.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    employee.deleteNote(nRef, new ModifiedBy("Deleted Employee Note", new Date(), modifiedBy));
+                    this.database.updateEmployee(eRef);
+                    this.database.deleteEmployeeNote(eRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
     //////     METHODS TO CREATE AND DELETE LANDLORD     ////////
     
     public int createLandlord(int pRef, String createdBy) throws RemoteException, SQLException {
@@ -1008,10 +1257,53 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int deleteLandlord(int lRef) throws SQLException {
+    public int deleteLandlord(int lRef) throws RemoteException, SQLException  {
         if(this.database.landlordExists(lRef) && this.database.canDeleteLandlord(lRef)) {
             this.database.deleteLandlord(lRef);
             return 1;
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE LANDLORD NOTES     ////////
+    
+    public int createLandlordNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.landlordExists(lRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Landlord landlord = this.database.getLandlord(lRef);
+            landlord.createNote(note, new ModifiedBy("Created Landlord Note", new Date(), createdBy));
+            this.database.updateLandlord(lRef);
+            this.database.createLandlordNote(lRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateLandlordNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.landlordExists(lRef)) {
+            Landlord landlord = this.database.getLandlord(lRef);
+            if(landlord.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) landlord.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Landlord Note", new Date(), modifiedBy));
+                this.database.updateLandlordNote(lRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteLandlordNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.landlordExists(lRef)) {
+            Landlord landlord = this.database.getLandlord(lRef);
+            if(landlord.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) landlord.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    landlord.deleteNote(nRef, new ModifiedBy("Deleted Landlord Note", new Date(), modifiedBy));
+                    this.database.updateLandlord(lRef);
+                    this.database.deleteLandlordNote(lRef, note.getRef());
+                    return 1;
+                }
+            }
         }
         return 0;
     }
@@ -1045,9 +1337,55 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, double doubleValue, String createdBy) throws RemoteException, SQLException {
+    //////     METHODS TO CREATE, UPDATE AND DELETE PROPERTY NOTES     ////////
+    
+    public int createPropertyNote(int pRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Property property = this.database.getProperty(pRef);
+            property.createNote(note, new ModifiedBy("Created Property Note", new Date(), createdBy));
+            this.database.updateProperty(pRef);
+            this.database.createPropertyNote(pRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updatePropertyNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.propertyExists(pRef)) {
+            Property property = this.database.getProperty(pRef);
+            if(property.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) property.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
+                this.database.updatePropertyNote(pRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deletePropertyNote(int pRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.propertyExists(pRef)) {
+            Property property=  this.database.getProperty(pRef);
+            if(property.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) property.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    property.deleteNote(nRef, new ModifiedBy("Deleted Property Note", new Date(), modifiedBy));
+                    this.database.updateProperty(pRef);
+                    this.database.deletePropertyNote(pRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE PROPERTY ELEMENTS     ////////
+    
+    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, double doubleValue, String comment, String createdBy) throws RemoteException, SQLException {
         if(this.database.propertyExists(pRef) && this.database.propElementExists(elementCode)) {
-            PropertyElement propElement = new PropertyElement(propertyElementRef++, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            PropertyElement propElement = new PropertyElement(propertyElementRef++, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, note, createdBy, new Date());
             Property property = this.database.getProperty(pRef);
             property.createPropertyElement(propElement, new ModifiedBy("Created Property Element", new Date(), createdBy));
             this.database.createPropertyElementValue(pRef, propElement);
@@ -1056,8 +1394,17 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updatePropertyElement() {
-        
+    public int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.propertyExists(pRef)) {
+            Property property = this.database.getProperty(pRef);
+            if(property.hasPropElement(eRef)) {
+                PropertyElement propElement = (PropertyElement) property.getPropElement(eRef);
+                propElement.updatePropertyElement(startDate, stringValue, doubleValue, charge, comment, new ModifiedBy("Updated Property Element", new Date(), modifiedBy));
+                this.database.updatePropertyElementValue(pRef, propElement);
+            }
+            return 1;
+        }
+        return 0;
     }
     
     public int deletePropertyElement(int eRef, int pRef) throws SQLException {
@@ -1105,6 +1452,51 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLE NOTES     ////////
+    
+    public int createJobRoleNote(int pRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.propertyExists(pRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Property property = this.database.getProperty(pRef);
+            property.createNote(note, new ModifiedBy("Created Property Note", new Date(), createdBy));
+            this.database.updateProperty(pRef);
+            this.database.createPropertyNote(pRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateJobRoleNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.propertyExists(pRef)) {
+            Property property = this.database.getProperty(pRef);
+            if(property.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) property.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
+                this.database.updatePropertyNote(pRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteJobRoleNote(int pRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.propertyExists(pRef)) {
+            Property property=  this.database.getProperty(pRef);
+            if(property.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) property.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    property.deleteNote(nRef, new ModifiedBy("Deleted Property Note", new Date(), modifiedBy));
+                    this.database.updateProperty(pRef);
+                    this.database.deletePropertyNote(pRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO CREATE AND DELETE JOB ROLE REQUIREMENTS     ////////
+    
     public int createJobRoleRequirement(String jobRoleCode, String requirement, String createdBy) throws RemoteException, SQLException {
         if(this.database.jobRoleExists(jobRoleCode) && this.database.jobRequirementExists(requirement)) {
             JobRole jobRole = this.database.getJobRole(jobRoleCode);
@@ -1125,11 +1517,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String createdBy) throws RemoteException, SQLException {
+    //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLE BENEFITS     ////////
+    
+    public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String createdBy) throws RemoteException, SQLException {
         if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefit)) {
             JobRole jobRole = this.database.getJobRole(jobRoleCode);
             if(!jobRole.hasCurrentBenefit(benefit)) {
-                JobRoleBenefit jobBenefit = new JobRoleBenefit(jobBenefitRef++, this.database.getJobBenefit(benefit), startDate, salaryBenefit, stringValue, doubleValue, createdBy, new Date());
+                Note note = this.createNote(comment, createdBy);
+                JobRoleBenefit jobBenefit = new JobRoleBenefit(jobBenefitRef++, this.database.getJobBenefit(benefit), startDate, salaryBenefit, stringValue, doubleValue, note, createdBy, new Date());
                 jobRole.createJobBenefit(jobBenefit, new ModifiedBy("Created Job Role Benefit", new Date(), createdBy));
                 this.database.createJobRoleBenefit(jobRoleCode, jobBenefit);
                 return 1;
@@ -1138,10 +1533,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String modifiedBy) throws RemoteException, SQLException {
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException, SQLException {
         if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefitCode)) {
             JobRoleBenefit jobRoleBenefit = this.database.getJobRoleBenefit(benefitRef);
-            jobRoleBenefit.updateJobRoleBenefit(stringValue, doubleValue, salaryBenefit, startDate, new ModifiedBy("Updated Job Role Benefit", new Date(), modifiedBy));
+            jobRoleBenefit.updateJobRoleBenefit(stringValue, doubleValue, salaryBenefit, startDate, comment, new ModifiedBy("Updated Job Role Benefit", new Date(), modifiedBy));
             this.database.updateJobRoleBenefit(jobRoleCode, benefitRef);
             return 1;
         }
@@ -1149,7 +1544,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public int endJobRoleBenefit(Date endDate) {
-        
+        f
     }
     
     public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws SQLException {
@@ -1162,19 +1557,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE JOB REQUIREMENTS     ////////
     
-    public int createJobRequirement(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createJobRequirement(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.jobRequirementExists(code)) {
-            Element requirement = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element requirement = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createJobRequirement(requirement);
             return 1;
         }
         return 0;
     }
     
-    public int updateJobRequirement(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+    public int updateJobRequirement(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.jobRequirementExists(code)) {
             ElementImpl requirement = (ElementImpl) this.database.getJobRequirement(code);
-            requirement.updateElement(description, current, new ModifiedBy("Updated Requirement", new Date(), modifiedBy));
+            requirement.updateElement(description, current, comment, new ModifiedBy("Updated Requirement", new Date(), modifiedBy));
             this.database.updateJobRequirement(requirement.getCode());
             return 1;
         }
@@ -1191,19 +1587,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE JOB BENEFITS     ////////
     
-    public int createJobBenefit(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createJobBenefit(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.jobBenefitExists(code)) {
-            Element benefit = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element benefit = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createJobBenefit(benefit);
             return 1;
         }
         return 0;
     }
     
-    public int updateJobBenefit(String code, String description, boolean current, String modifiedBy) throws SQLException, RemoteException {
+    public int updateJobBenefit(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException {
         if(!this.database.jobBenefitExists(code)) {
             ElementImpl benefit = (ElementImpl) this.database.getJobBenefit(code);
-            benefit.updateElement(description, current, new ModifiedBy("Updated Benefit", new Date(), modifiedBy));
+            benefit.updateElement(description, current, comment, new ModifiedBy("Updated Benefit", new Date(), modifiedBy));
             this.database.updateJobBenefit(benefit.getCode());
             return 1;
         }
@@ -1252,22 +1649,66 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE TENANCY NOTES     ////////
+    
+    public int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.tenancyExists(tRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Tenancy tenancy = this.database.getTenancy(tRef);
+            tenancy.createNote(note, new ModifiedBy("Created Tenancy Note", new Date(), createdBy));
+            this.database.updateTenancy(tRef);
+            this.database.createTenancyNote(tRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.tenancyExists(tRef)) {
+            Tenancy tenancy = this.database.getTenancy(tRef);
+            if(tenancy.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) tenancy.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Tenancy Note", new Date(), modifiedBy));
+                this.database.updateTenancyNote(tRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteTenancyNote(int tRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.tenancyExists(tRef)) {
+            Tenancy tenancy = this.database.getTenancy(tRef);
+            if(tenancy.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) tenancy.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    tenancy.deleteNote(nRef, new ModifiedBy("Deleted Tenancy Note", new Date(), modifiedBy));
+                    this.database.updateTenancy(tRef);
+                    this.database.deleteTenancyNote(tRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
     //////     METHODS TO CREATE, UPDATE AND DELETE TENANCY TYPES     ////////
     
-    public int createTenancyType(String code, String description, String createdBy) throws RemoteException, SQLException {
+    public int createTenancyType(String code, String description, String comment, String createdBy) throws RemoteException, SQLException {
         if(!this.database.tenancyTypeExists(code)) {
-            Element tenancyType = new ElementImpl(code, description, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Element tenancyType = new ElementImpl(code, description, note, createdBy, new Date());
             this.database.createContactType(tenancyType);
             return 1;
         }
         return 0;
     }
     
-    public int updateTenancyType(String code, String description, boolean current, String modifiedBy) throws  RemoteException, SQLException {
+    public int updateTenancyType(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException {
         if(!this.database.tenancyTypeExists(code)) {
             ModifiedByInterface modified = new ModifiedBy("Updated Tenancy Type", new Date(), modifiedBy);
             ElementImpl tenancyType = (ElementImpl) this.database.getTenancyType(code);
-            tenancyType.updateElement(description, current, modified);
+            tenancyType.updateElement(description, current, comment, modified);
             this.database.updateTenancyType(tenancyType.getCode());
             return 1;
         }
@@ -1311,6 +1752,51 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             g// LOOK AT DELETE APPLICATIONS AND IMPLEMENT ROLLING BACK PROCESS
             this.database.deleteLease(lRef);
             return 1;
+        }
+        return 0;
+    }
+    
+    
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE LEASE NOTES     ////////
+    
+    public int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.leaseExists(lRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Lease lease = this.database.getLease(lRef);
+            lease.createNote(note, new ModifiedBy("Created Lease Note", new Date(), createdBy));
+            this.database.updateLease(lRef);
+            this.database.createLeaseNote(lRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.leaseExists(lRef)) {
+            Lease lease = this.database.getLease(lRef);
+            if(lease.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) lease.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Lease Note", new Date(), modifiedBy));
+                this.database.updateLeaseNote(lRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteLeaseNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.leaseExists(lRef)) {
+            Lease lease = this.database.getLease(lRef);
+            if(lease.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) lease.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    lease.deleteNote(nRef, new ModifiedBy("Deleted Lease Note", new Date(), modifiedBy));
+                    this.database.updateLease(lRef);
+                    this.database.deleteLeaseNote(lRef, note.getRef());
+                    return 1;
+                }
+            }
         }
         return 0;
     }
@@ -1378,7 +1864,52 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    //////     METHODS TO UPDATE ACCOUNTS     ////////
+    
+    
+    //////     METHODS TO CREATE, UPDATE AND DELETE CONTRACT NOTES     ////////
+    
+    public int createContractNote(int cRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.contractExists(cRef)) {
+            Note note = this.createNote(comment, createdBy);
+            Contract contract = this.database.getContract(cRef);
+            contract.createNote(note, new ModifiedBy("Created Contract Note", new Date(), createdBy));
+            this.database.updateContract(cRef);
+            this.database.createContractNote(cRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.invPartyExists(cRef)) {
+            Contract contract = this.database.getContract(cRef);
+            if(contract.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) contract.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Contract Note", new Date(), modifiedBy));
+                this.database.updateContractNote(cRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteContractNote(int cRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.contractExists(cRef)) {
+            Contract contract = this.database.getContract(cRef);
+            if(contract.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) contract.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    contract.deleteNote(nRef, new ModifiedBy("Deleted Contract Note", new Date(), modifiedBy));
+                    this.database.updateContract(cRef);
+                    this.database.deleteContractNote(cRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO RENT ACCOUNTS     ////////
     
     private int updateRentAccount(int rRef, String name, Date startDate, double rent, String modifiedBy) throws SQLException, RemoteException {
         if(this.database.rentAccountExists(rRef)) {
@@ -1391,6 +1922,53 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE RENT ACCOUNT NOTES     ////////
+    
+    public int createrRentAccNote(int rRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.rentAccountExists(rRef)) {
+            Note note = this.createNote(comment, createdBy);
+            RentAccount rentAcc = this.database.getRentAccount(rRef);
+            rentAcc.createNote(note, new ModifiedBy("Created Rent Account Note", new Date(), createdBy));
+            this.database.updateContract(rRef);
+            this.database.createRentAccountNote(rRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateRentAccNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.rentAccountExists(cRef)) {
+            RentAccount rentAcc = this.database.getRentAccount(cRef);
+            if(rentAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) rentAcc.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Rent Account Note", new Date(), modifiedBy));
+                this.database.updateRentAccountNote(cRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteRentAccNote(int rRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.rentAccountExists(rRef)) {
+            RentAccount rentAcc = this.database.getRentAccount(rRef);
+            if(rentAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) rentAcc.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    rentAcc.deleteNote(nRef, new ModifiedBy("Deleted Rent Account Note", new Date(), modifiedBy));
+                    this.database.updateContract(rRef);
+                    this.database.deleteRentAccountNote(rRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    
+    
+    //////     METHODS TO LEASE ACCOUNTS     ////////
+    
     private int updateLeaseAccount(int lRef, String name, Date startDate, double expenditure, String modifiedBy) throws SQLException, RemoteException {
         if(this.database.leaseAccountExists(lRef)) {
             LeaseAccount account = this.database.getLeaseAccount(lRef);
@@ -1402,6 +1980,51 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE LEASE ACCOUNT NOTES     ////////
+    
+    public int createLeaseAccNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.leaseAccountExists(lRef)) {
+            Note note = this.createNote(comment, createdBy);
+            LeaseAccount leaseAcc = this.database.getLeaseAccount(lRef);
+            leaseAcc.createNote(note, new ModifiedBy("Created Lease Account Note", new Date(), createdBy));
+            this.database.updateLeaseAccount(lRef);
+            this.database.createLeaseAccountNote(lRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateLeaseAccNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.leaseAccountExists(lRef)) {
+            LeaseAccount leaseAcc = this.database.getLeaseAccount(lRef);
+            if(leaseAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) leaseAcc.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Lease Account Note", new Date(), modifiedBy));
+                this.database.updateLeaseAccountNote(lRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteLeaseAccNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.leaseAccountExists(lRef)) {
+            LeaseAccount leaseAcc = this.database.getLeaseAccount(lRef);
+            if(leaseAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) leaseAcc.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    leaseAcc.deleteNote(nRef, new ModifiedBy("Deleted Lease Account Note", new Date(), modifiedBy));
+                    this.database.updateLeaseAccount(lRef);
+                    this.database.deleteLeaseAccountNote(lRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    //////     METHODS TO EMPLOYEE ACCOUNTS     ////////
+    
     private int updateEmployeeAccount(int eRef, String name, Date startDate, String modifiedBy) throws SQLException, RemoteException {
         if(this.database.employeeAccountExists(eRef)) {
             EmployeeAccount account = this.database.getEmployeeAccount(eRef);
@@ -1412,15 +2035,59 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
+    //////     METHODS TO CREATE, UPDATE AND DELETE EMPLOYEE NOTES     ////////
+    
+    public int createEmployeeAccNote(int eRef, String comment, String createdBy) throws RemoteException, SQLException {
+        if(this.database.employeeAccountExists(eRef)) {
+            Note note = this.createNote(comment, createdBy);
+            EmployeeAccount employeeAcc = this.database.getEmployeeAccount(eRef);
+            employeeAcc.createNote(note, new ModifiedBy("Created Employee Account Note", new Date(), createdBy));
+            this.database.updateLeaseAccount(eRef);
+            this.database.createEmployeeAccountNote(eRef, note);
+            return 1;
+        }
+        return 0;
+    }
+    
+    public int updateEmployeeAccNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.employeeAccountExists(eRef)) {
+            EmployeeAccount employeeAcc = this.database.getEmployeeAccount(eRef);
+            if(employeeAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) employeeAcc.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated Employee Account Note", new Date(), modifiedBy));
+                this.database.updateEmployeeAccountNote(eRef, note);
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    public int deleteEmployeeAccNote(int eRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.employeeAccountExists(eRef)) {
+            EmployeeAccount employeeAcc = this.database.getEmployeeAccount(eRef);
+            if(employeeAcc.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) employeeAcc.getNote(nRef);
+                if(!note.hasBeenModified()) {
+                    employeeAcc.deleteNote(nRef, new ModifiedBy("Deleted Employee Account Note", new Date(), modifiedBy));
+                    this.database.updateLeaseAccount(eRef);
+                    this.database.deleteEmployeeAccountNote(eRef, note.getRef());
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
     //////     METHODS TO DELETE ACCOUNTS     ////////
     
     // WRITE DELETE METHODS
     
     //////     METHODS TO CREATE ACCOUNT TRANSACTIONS     ////////    
 
-    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) {
         if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
-            Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
             RentAccount account = this.database.getRentAccount(rAccRef);
             account.createTransaction(transaction, new ModifiedBy("Created Rent Transaction", new Date(), createdBy));
             return 1;
@@ -1437,9 +2104,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+    public int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) {
         if (this.database.leaseAccountExists(lAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
-            Transaction transaction = new Transaction(transactionRef++, lAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Transaction transaction = new Transaction(transactionRef++, lAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
             LeaseAccount account = this.database.getLeaseAccount(lAccRef);
             account.createTransaction(transaction, new ModifiedBy("Created Lease Transaction", new Date(), createdBy));
             return 1;
@@ -1456,9 +2124,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String createdBy) {
+    public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) {
         if (this.database.employeeAccountExists(eAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
-            Transaction transaction = new Transaction(transactionRef++, eAccRef, fromRef, toRef, amount, debit, transactionDate, createdBy, new Date());
+            Note note = this.createNote(comment, createdBy);
+            Transaction transaction = new Transaction(transactionRef++, eAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
             EmployeeAccount account = this.database.getEmployeeAccount(eAccRef);
             account.createTransaction(transaction, new ModifiedBy("Created Employee Transaction", new Date(), createdBy));
             return 1;

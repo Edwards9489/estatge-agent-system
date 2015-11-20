@@ -16,7 +16,12 @@ public interface LandlordInterface {
     int getLandlordRef();
     PersonInterface getPerson();
     int getPersonRef();
+    boolean hasLease(int ref);
     List<LeaseInterface> getLeases();
+    LeaseInterface getLease(int ref);
+    boolean hasNote(int ref);
+    Note getNote(int ref);
+    List<Note> getNotes();
     boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();

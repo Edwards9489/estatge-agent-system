@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package interfaces;
-
 import java.util.Date;
 import java.util.List;
 
@@ -12,16 +11,14 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public interface Element {
-    String getCode();
-    String getDescription();
-    boolean isCurrent();
-    boolean hasBeenModified();
-    String getLastModifiedBy();
-    Date getLastModifiedDate();
-    ModifiedByInterface getLastModification();
-    List<ModifiedByInterface> getModifiedBy();
-    Note getNote();
+public interface Note {
     String getCreatedBy();
     Date getCreatedDate();
+    ModifiedByInterface getLastModification();
+    String getLastModifiedBy();
+    Date getLastModifiedDate();
+    List<ModifiedByInterface> getModifiedBy();
+    String getNote();
+    int getRef();
+    boolean hasBeenModified();
 }

@@ -28,6 +28,7 @@ public interface PropertyElementInterface {
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
+    Note getNote();
     String getCreatedBy();
     Date getCreatedDate();
 }

@@ -583,7 +583,7 @@ public class Database {
      */
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
-            contacts.put(contact.getContactRef(), contact);
+            contacts.put(contact.getContactRef(), (Contact) contact);
             String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -2791,6 +2791,13 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+        }
+    }
+
+    public void updateLandlord(int landlordRef) throws SQLException {
+        if (this.landlordExists(landlordRef)) {
+            Landlord landlord = this.getLandlord(landlordRef);
+            this.createModifiedBy("landlordModifications", landlord.getLastModification(), landlord.getLandlordRef());
         }
     }
     

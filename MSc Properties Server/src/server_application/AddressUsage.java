@@ -9,6 +9,7 @@ package server_application;
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class AddressUsage implements AddressUsageInterface {
     private AddressInterface address;
     private Date startDate;
     private Date endDate;
+    private final Note note;
     private final String createdBy;
     private final Date createdDate;
     private final List<ModifiedByInterface> modifiedBy;
@@ -37,13 +39,15 @@ public class AddressUsage implements AddressUsageInterface {
      * @param ref
      * @param address
      * @param startDate
+     * @param note
      * @param createdBy
      * @param createdDate 
      */
-    public AddressUsage(int ref, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
+    public AddressUsage(int ref, AddressInterface address, Date startDate, Note note, String createdBy, Date createdDate) {
         this.addressUsageRef = ref;
         this.address = address;
         this.startDate = startDate;
+        this.note = note;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.modifiedBy = new ArrayList();
@@ -68,6 +72,12 @@ public class AddressUsage implements AddressUsageInterface {
         this.startDate = startDate;
     }
     
+    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+        NoteImpl temp = (NoteImpl) this.getNote();
+        temp.setNote(comment, modifiedBy);
+        this.modifiedBy(modifiedBy);
+    }
+    
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
             this.modifiedBy.add(modifiedBy);
@@ -87,11 +97,13 @@ public class AddressUsage implements AddressUsageInterface {
     /**
      * @param address
      * @param startDate
+     * @param comment
      * @param modifiedBy
      */
-    public void updateAddress(AddressInterface address, Date startDate, ModifiedByInterface modifiedBy) {
+    public void updateAddress(AddressInterface address, Date startDate, String comment, ModifiedByInterface modifiedBy) {
         if(this.isCurrent()) {
             this.setAddress(address);
+            this.setComment(comment, modifiedBy);
             this.setStartDate(startDate);
             this.modifiedBy(modifiedBy);
         }
@@ -104,6 +116,7 @@ public class AddressUsage implements AddressUsageInterface {
     /**
      * @return addressUsageRef
      */
+    @Override
     public int getAddressUsageRef() {
         return this.addressUsageRef;
     }
@@ -151,6 +164,11 @@ public class AddressUsage implements AddressUsageInterface {
         else {
             return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public Note getNote() {
+        return note;
     }
     
     @Override

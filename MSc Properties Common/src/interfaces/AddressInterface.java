@@ -24,6 +24,7 @@ public interface AddressInterface {
     String getTown();
     String getCountry();
     String getPostcode();
+    Note getNote();
     boolean hasBeenModified();
     String getLastModifiedBy();
     Date getLastModifiedDate();
