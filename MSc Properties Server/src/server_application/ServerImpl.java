@@ -1357,7 +1357,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(property.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) property.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
-                this.database.updatePropertyNote(pRef, note);
+                this.database.updatePropertyNote(pRef, note.getRef());
                 return 1;
             }
         }

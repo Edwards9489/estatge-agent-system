@@ -12,6 +12,7 @@ import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleBenefitInterface;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import java.rmi.RemoteException;
 import java.sql.Connection;
@@ -92,6 +93,7 @@ public class Database {
     private final Map<String, Element> propertyTypes; // House, Flat, Bungalow
     private final Map<String, Element> propertySubTypes; // Terraced, Semi-detached
     private final Map<String, Element> propertyElements;
+    private final Map<Integer, PropertyElement> propertyElementValues;
     
     // List of Account Transactions
     private final Map<Integer, Transaction> transactions;
@@ -99,6 +101,7 @@ public class Database {
     private final Map<Integer, AddressUsage> addressUsages;
     private final Map<Integer, Contact> contacts;
     private final Map<String, UserImpl> users;
+    private final Map<Integer, Note> notes;
     
     
     ///   CONSTRUCTORS ///
@@ -163,6 +166,7 @@ public class Database {
         this.propertyTypes = new HashMap<>(); // House, Flat, Bungalow
         this.propertySubTypes = new HashMap<>(); // Terraced, Semi-detached
         this.propertyElements = new HashMap<>();
+        this.propertyElementValues = new HashMap<>();
         
         // List of Account Transactions
         this.transactions = new HashMap<>();
@@ -170,6 +174,7 @@ public class Database {
         this.addressUsages = new HashMap<>();
         this.contacts = new HashMap<>();
         this.users = new HashMap<>();
+        this.notes = new HashMap<>();
         
         
         try {
@@ -313,11 +318,13 @@ public class Database {
      */
     
     private void createElement(String from, Element element) throws SQLException {
-        String insertSql = "insert into " + from + " (code, description, cur, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+        String insertSql = "insert into " + from + " (code, description, noteRef, comment, cur, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
             int col = 1;
             insertStat.setString(col++, element.getCode());
             insertStat.setString(col++, element.getDescription());
+            insertStat.setInt(col++, element.getNote().getRef());
+            insertStat.setString(col++, element.getNote().getNote());
             insertStat.setBoolean(col++, element.isCurrent());
             insertStat.setString(col++, element.getCreatedBy());
             insertStat.setDate(col++, DateConversion.utilDateToSQLDate(element.getCreatedDate()));
@@ -334,10 +341,11 @@ public class Database {
      */
     private void updateElement(String from, Element element) throws SQLException {
         // use the from String as the from table and the element to update the actual element
-        String updateSql = "update " + from + " set description=?, cur=? where code=?";
+        String updateSql = "update " + from + " set description=?, comment=?, cur=? where code=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, element.getDescription());
+            updateStat.setString(col++, element.getNote().getNote());
             updateStat.setBoolean(col++, element.isCurrent());
             updateStat.setString(col++, element.getCode());
             updateStat.executeUpdate();
@@ -359,7 +367,7 @@ public class Database {
      * @throws SQLException 
      */
     private List<ElementImpl> loadElements(String from) throws SQLException {
-        String sql = "select code, description, cur, createdBy, createdDate from " + from + " order by createdDate";
+        String sql = "select code, description, noteRef, comment, cur, createdBy, createdDate from " + from + " order by createdDate";
         List<ElementImpl> elements = new ArrayList<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -367,11 +375,14 @@ public class Database {
             while(results.next()) {
                 String code = results.getString("code");
                 String description = results.getString("description");
+                int noteRef = results.getInt("noteRef");
+                String comment = results.getString("comment");
                 boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
                 
-                ElementImpl temp = new ElementImpl(code, description, createdBy, createdDate);
+                Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                ElementImpl temp = new ElementImpl(code, description, note, createdBy, createdDate);
                 temp.setCurrent(current);
                 
                 elements.add(temp);
@@ -503,6 +514,85 @@ public class Database {
         }
     }
     
+    private Map<Integer, Note> loadNoteMap(String from, int reference) throws SQLException {
+        String sql = "select noteRef, ref, comment, createdBy, createdDate from " + from + " order by createdDate";
+        Map<Integer, Note> noteMap = new HashMap<>();
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            
+            while(results.next()) {
+                int noteRef = results.getInt("noteRef");
+                int ref = results.getInt("ref");
+                if (reference == ref) {
+                    String comment = results.getString("comment");
+                    String createdBy = results.getString("createdBy");
+                    Date createdDate = results.getDate("createdDate");
+
+                    NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                    this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
+
+                    noteMap.put(ref, temp);
+                }
+            }
+        }
+        return noteMap;
+    }
+    
+    private Map<String, Note> loadNoteMap(String from, String uniqueCode) throws SQLException {
+        String sql = "select noteRef, code, comment, createdBy, createdDate from " + from + " order by createdDate";
+        Map<String, Note> noteMap = new HashMap<>();
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            
+            while(results.next()) {
+                int noteRef = results.getInt("noteRef");
+                String code = results.getString("code");
+                if (uniqueCode.equals(code)) {
+                    String comment = results.getString("comment");
+                    String createdBy = results.getString("createdBy");
+                    Date createdDate = results.getDate("createdDate");
+
+                    NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                    this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
+                    noteMap.put(code, temp);
+                }
+            }
+        }
+        return noteMap;
+    }
+    
+    private void deleteNote(int ref) {
+        if(this.noteExists(ref) && !this.getNote(ref).hasBeenModified()) {
+            notes.remove(ref);
+        }
+    }
+    
+    public boolean canDeleteNote(int noteRef) {
+        return (this.noteExists(noteRef) && !this.getNote(noteRef).hasBeenModified());
+    }
+    
+    private void createNoteMods(NoteImpl note, Map<Integer, ModifiedByInterface> loadadMods) {
+        if (note != null && this.noteExists(note.getRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(note.getRef() == (Integer) temp.getKey()) {
+                    tempMod = (ModifiedByInterface) temp.getValue();
+                    note.modifiedBy(tempMod);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public Note getNote(int ref) {
+        if(this.noteExists(ref)) {
+            return notes.get(ref);
+        }
+        return null;
+    }
+    
     /**
      * 
      * @param conType
@@ -511,6 +601,7 @@ public class Database {
     public void createContactType(Element conType) throws SQLException {
         if(conType != null && !this.contactTypeExists(conType.getCode())) {
             this.contactTypes.put(conType.getCode(), conType);
+            this.notes.put(conType.getNote().getRef(), conType.getNote());
             this.createElement("contactTypes", conType);
         }
     }
@@ -531,6 +622,7 @@ public class Database {
     public void deleteContactType(String contactTypeCode) throws SQLException {
         if (this.contactTypeExists(contactTypeCode) && this.canDeleteContactType(contactTypeCode)) {
             this.deleteElement("contactTypes", contactTypeCode);
+            this.deleteNote(this.getContactType(contactTypeCode).getNote().getRef());
             this.contactTypes.remove(contactTypeCode);
         }
     }
@@ -558,6 +650,7 @@ public class Database {
         if (!loadedContactTypes.isEmpty()) {
             for (Element temp : loadedContactTypes) {
                 this.contactTypes.put(temp.getCode(), temp);
+                this.notes.put(temp.getNote().getRef(), temp.getNote());
                 this.createElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
             }
         }
@@ -584,7 +677,8 @@ public class Database {
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
             contacts.put(contact.getContactRef(), (Contact) contact);
-            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
+            notes.put(contact.getNote().getRef(), contact.getNote());
+            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, noteRef, comment, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contact.getContactRef());
@@ -592,6 +686,8 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
+                insertStat.setInt(col++, contact.getNote().getRef());
+                insertStat.setString(col++, contact.getNote().getNote());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -609,13 +705,14 @@ public class Database {
     public void updatePersonContact(int contactRef, int personRef) throws SQLException {
         if(this.contactExists(contactRef) && this.personExists(personRef)) {
             Contact contact = this.getContact(contactRef);
-            String updateSql = "update personContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and personRef=?";
+            String updateSql = "update personContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=?, comment=? where contactRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, contact.getContactType().getCode());
             updateStat.setString(col++, contact.getContactValue());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
+            updateStat.setString(col++, contact.getNote().getNote());
             updateStat.setInt(col++, contact.getContactRef());
             updateStat.setInt(col++, personRef);
             updateStat.executeUpdate();
@@ -630,6 +727,7 @@ public class Database {
             String deleteSql = "delete from personContacts where contactRef=" + contactRef + " and personRef=" + personRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.deleteNote(this.getContact(contactRef).getNote().getRef());
                     this.contacts.remove(contactRef);
                 }
             }
@@ -642,7 +740,7 @@ public class Database {
      * @throws SQLException 
      */
     private void loadPersonContacts(int reference) throws SQLException {
-        String sql = "select contactRef, personRef, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from personContacts order by contactRef";
+        String sql = "select contactRef, personRef, contactTypeCode, contactValue, startDate, endDate, noteRef, comment, createdBy, createdDate from personContacts order by contactRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -656,10 +754,14 @@ public class Database {
                         String contactValue = results.getString("contactValue");
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
+                        int noteRef = results.getInt("noteRef");
+                        String comment = results.getString("comment");
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-
-                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, note, createdBy, createdDate);
+                        notes.put(note.getRef(), note);
                         contacts.put(temp.getContactRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
@@ -703,7 +805,8 @@ public class Database {
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.officeExists(officeCode)) {
             contacts.put(contact.getContactRef(), contact);
-            String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
+            notes.put(contact.getNote().getRef(), contact.getNote());
+            String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contact.getContactRef());
@@ -711,6 +814,8 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
+                insertStat.setInt(col++, contact.getNote().getRef());
+                insertStat.setString(col++, contact.getNote().getNote());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -728,13 +833,14 @@ public class Database {
     public void updateOfficeContact(int contactRef, String officeCode) throws SQLException {
         if(this.contactExists(contactRef) && this.officeExists(officeCode)) {
             Contact contact = this.getContact(contactRef);
-            String updateSql = "update officeContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=? where contactRef=? and officeCode=?";
+            String updateSql = "update officeContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=?, comment=? where contactRef=? and officeCode=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, contact.getContactType().getCode());
             updateStat.setString(col++, contact.getContactValue());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
+            updateStat.setString(col++, contact.getNote().getNote());
             updateStat.setInt(col++, contact.getContactRef());
             updateStat.setString(col++, officeCode);
             updateStat.executeUpdate();
@@ -749,6 +855,7 @@ public class Database {
             String deleteSql = "delete from officeContacts where contactRef=" + contactRef + " and officeCode=" + code;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.deleteNote(this.getContact(contactRef).getNote().getRef());
                     this.contacts.remove(contactRef);
                 }
             }
@@ -761,7 +868,7 @@ public class Database {
      * @throws SQLException 
      */
     private void loadOfficeContacts(String code) throws SQLException {
-        String sql = "select contactRef, officeCode, contactTypeCode, contactValue, startDate, endDate, createdBy, createdDate from officeContacts order by contactRef";
+        String sql = "select contactRef, officeCode, contactTypeCode, contactValue, startDate, endDate, noteRef, comment, createdBy, createdDate from officeContacts order by contactRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -775,10 +882,14 @@ public class Database {
                         String contactValue = results.getString("contactValue");
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
+                        int noteRef = results.getInt("noteRef");
+                        String comment = results.getString("comment");
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-
-                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, createdBy, createdDate);
+                        
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        Contact temp = new Contact(contactRef, contactType, contactValue, startDate, note, createdBy, createdDate);
+                        notes.put(note.getRef(), note);
                         contacts.put(temp.getContactRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
@@ -827,13 +938,16 @@ public class Database {
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
-            String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            notes.put(address.getNote().getRef(), address.getNote());
+            String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, personRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
+                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setString(col++, address.getNote().getNote());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -851,12 +965,13 @@ public class Database {
     public void updatePersonAddressUsage(int addressRef, int personRef) throws SQLException {
         if(this.addressUsageExists(addressRef) && this.personExists(personRef)) {
             AddressUsage address = this.getAddressUsage(addressRef);
-            String updateSql = "update peopleAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and personRef=?";
+            String updateSql = "update personAddresses set addressRef=?, startDate=?, endDate=?, comment=? where addressUsageRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setInt(col++, address.getAddress().getAddressRef());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
+            updateStat.setString(col++, address.getNote().getNote());
             updateStat.setInt(col++, address.getAddressUsageRef());
             updateStat.setInt(col++, personRef);
             updateStat.executeUpdate();
@@ -871,6 +986,7 @@ public class Database {
             String deleteSql = "delete from personAddresses where addressUsageRef=" + addrRef + " and personRef=" + personRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getRef());
                     this.addressUsages.remove(addrRef);
                 }
             }
@@ -883,7 +999,7 @@ public class Database {
      * @throws SQLException 
      */
     private void loadPersonAddresses(int reference) throws SQLException {
-        String sql = "select addressUsageRef, addressRef, personRef, startDate, endDate, createdBy, createdDate from personAddresses order by addressUsageRef";
+        String sql = "select addressUsageRef, addressRef, personRef, startDate, endDate, noteRef, comment, createdBy, createdDate from personAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
@@ -902,10 +1018,14 @@ public class Database {
                     if (reference == personRef) {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
+                        int noteRef = results.getInt("noteRef");
+                        String comment = results.getString("comment");
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-
-                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, note, createdBy, createdDate);
+                        notes.put(note.getRef(), note);
                         addressUsages.put(temp.getAddressUsageRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
@@ -950,13 +1070,16 @@ public class Database {
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
             addressUsages.put(address.getAddressUsageRef(), address);
-            String insertSql = "insert into applicationAddresses (addressUsageRef, addressRef, appRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
+            notes.put(address.getNote().getRef(), address.getNote());
+            String insertSql = "insert into applicationAddresses (addressUsageRef, addressRef, appRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressUsageRef());
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, appRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
+                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setString(col++, address.getNote().getNote());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -974,12 +1097,13 @@ public class Database {
     public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException {
         if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
             AddressUsage address = this.getAddressUsage(addressRef);
-            String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=? where addressUsageRef=? and appRef=?";
+            String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=?, comment=? where addressUsageRef=? and appRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setInt(col++, address.getAddress().getAddressRef());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
+            updateStat.setString(col++, address.getNote().getNote());
             updateStat.setInt(col++, address.getAddressUsageRef());
             updateStat.setInt(col++, appRef);
             updateStat.executeUpdate();
@@ -994,6 +1118,7 @@ public class Database {
             String deleteSql = "delete from applicationAddresses where addressUsageRef=" + addrRef + " and appRef=" + appRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getRef());
                     this.addressUsages.remove(addrRef);
                 }
             }
@@ -1006,7 +1131,7 @@ public class Database {
      * @throws SQLException 
      */
     private void loadApplicationAddresses(int reference) throws SQLException {
-        String sql = "select addressUsageRef, addressRef, appRef, startDate, endDate, createdBy, createdDate from applicationAddresses order by addressUsageRef";
+        String sql = "select addressUsageRef, addressRef, appRef, startDate, endDate, noteRef, comment, createdBy, createdDate from applicationAddresses order by addressUsageRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -1025,10 +1150,13 @@ public class Database {
                     if (reference == applicationRef) {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
+                        int noteRef = results.getInt("noteRef");
+                        String comment = results.getString("comment");
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
-
-                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, createdBy, createdDate);
+                        
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, note, createdBy, createdDate);
                         addressUsages.put(temp.getAddressUsageRef(), temp);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
@@ -1076,6 +1204,7 @@ public class Database {
     public void createTitle(Element title) throws SQLException {
         if(!this.titleExists(title.getCode())) {
             this.titles.put(title.getCode(), title);
+            this.notes.put(title.getNote().getRef(), title.getNote());
             this.createElement("titles", title);
         }
     }
@@ -1096,6 +1225,7 @@ public class Database {
     public void deleteTitle(String titleCode) throws SQLException {
         if(this.titleExists(titleCode) && this.canDeleteTitle(titleCode)) {
             this.deleteElement("titles", titleCode);
+            this.deleteNote(this.getTitle(titleCode).getNote().getRef());
             this.titles.remove(titleCode);
         }
     }
@@ -1124,6 +1254,7 @@ public class Database {
             for (Element temp : loadedTitles) {
                 if (temp instanceof Element) {
                     this.titles.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("titleModifications", temp.getCode()));
                 }
             }
@@ -1150,6 +1281,7 @@ public class Database {
     public void createGender(Element gender) throws SQLException {
         if(!this.genderExists(gender.getCode())) {
             this.genders.put(gender.getCode(), gender);
+            this.notes.put(gender.getNote().getRef(), gender.getNote());
             this.createElement("genders", gender);
         }
     }
@@ -1170,6 +1302,7 @@ public class Database {
     public void deleteGender(String genderCode) throws SQLException {
         if(this.genderExists(genderCode) && this.canDeleteGender(genderCode)) {
             this.deleteElement("genders", genderCode);
+            this.deleteNote(this.getGender(genderCode).getNote().getRef());
             this.genders.remove(genderCode);
         }
     }
@@ -1198,6 +1331,7 @@ public class Database {
             for (Element temp : loadedGenders) {
                 if (temp instanceof Element) {
                     this.genders.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("genderModifications", temp.getCode()));
                 }
             }
@@ -1223,7 +1357,8 @@ public class Database {
      */
     public void createMaritalStatus(Element status) throws SQLException {
         if(!this.maritalStatusExists(status.getCode())) {
-            maritalStatuses.put(status.getCode(), status);
+            this.maritalStatuses.put(status.getCode(), status);
+            this.notes.put(status.getNote().getRef(), status.getNote());
             this.createElement("maritalStatuses", status);
         }
     }
@@ -1239,6 +1374,7 @@ public class Database {
     public void deleteMaritalStatus(String statusCode) throws SQLException {
         if(this.maritalStatusExists(statusCode) && this.canDeleteMaritalStatus(statusCode)) {
             this.deleteElement("maritalStatuses", statusCode);
+            this.deleteNote(this.getMaritalStatus(statusCode).getNote().getRef());
             this.maritalStatuses.remove(statusCode);
         }
     }
@@ -1263,6 +1399,7 @@ public class Database {
             for (Element temp : loadedStatuses) {
                 if (temp instanceof Element) {
                     this.maritalStatuses.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("maritalStatusModifications", temp.getCode()));
                 }
             }
@@ -1279,6 +1416,7 @@ public class Database {
     public void createEthnicOrigin(Element ethnicOrigin) throws SQLException {
         if(!this.ethnicOriginExists(ethnicOrigin.getCode())) {
             this.ethnicOrigins.put(ethnicOrigin.getCode(), ethnicOrigin);
+            this.notes.put(ethnicOrigin.getNote().getRef(), ethnicOrigin.getNote());
             this.createElement("ethnicOrigins", ethnicOrigin);
         }
     }
@@ -1294,6 +1432,7 @@ public class Database {
     public void deleteEthnicOrigin(String originCode) throws SQLException {
         if(this.ethnicOriginExists(originCode) && this.canDeleteEthnicOrigin(originCode)) {
             this.deleteElement("ethnicOrigins", originCode);
+            this.deleteNote(this.getEthnicOrigin(originCode).getNote().getRef());
             this.ethnicOrigins.remove(originCode);
         }
     }
@@ -1318,6 +1457,7 @@ public class Database {
             for (Element temp : loadedEthnicOrigins) {
                 if (temp instanceof Element) {
                     this.ethnicOrigins.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("ethnicOriginModifications", temp.getCode()));
                 }
             }
@@ -1334,6 +1474,7 @@ public class Database {
     public void createLanguage(Element language) throws SQLException {
         if(!this.languageExists(language.getCode())) {
             this.languages.put(language.getCode(), language);
+            this.notes.put(language.getNote().getRef(), language.getNote());
             this.createElement("languages", language);
         }
     }
@@ -1349,6 +1490,7 @@ public class Database {
     public void deleteLanguage(String languageCode) throws SQLException {
         if(this.languageExists(languageCode) && this.canDeleteLanguage(languageCode)) {
             this.deleteElement("languages", languageCode);
+            this.deleteNote(this.getLanguage(languageCode).getNote().getRef());
             this.languages.remove(languageCode);
         }
     }
@@ -1373,6 +1515,7 @@ public class Database {
             for (Element temp : loadedLanguages) {
                 if (temp instanceof Element) {
                     this.languages.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("languageModifications", temp.getCode()));
                 }
             }
@@ -1389,6 +1532,7 @@ public class Database {
     public void createNationality(Element nationality) throws SQLException {
         if(!this.nationalityExists(nationality.getCode())) {
             this.nationalities.put(nationality.getCode(), nationality);
+            this.notes.put(nationality.getNote().getRef(), nationality.getNote());
             this.createElement("nationalities", nationality);
         }
     }
@@ -1404,6 +1548,7 @@ public class Database {
     public void deleteNationality(String nationalityCode) throws SQLException {
         if(this.nationalityExists(nationalityCode) && this.canDeleteNationality(nationalityCode)) {
             this.deleteElement("nationalitys", nationalityCode);
+            this.deleteNote(this.getNationality(nationalityCode).getNote().getRef());
             this.nationalities.remove(nationalityCode);
         }
     }
@@ -1428,6 +1573,7 @@ public class Database {
             for (Element temp : loadedNationalities) {
                 if (temp instanceof Element) {
                     this.nationalities.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("nationalityModifications", temp.getCode()));
                 }
             }
@@ -1444,6 +1590,7 @@ public class Database {
     public void createSexuality(Element sex) throws SQLException {
         if(!this.sexualityExists(sex.getCode())) {
             this.sexualities.put(sex.getCode(), sex);
+            this.notes.put(sex.getNote().getRef(), sex.getNote());
             this.createElement("sexualities", sex);
         }
     }
@@ -1459,6 +1606,7 @@ public class Database {
     public void deleteSexuality(String sexualityCode) throws SQLException {
         if(this.sexualityExists(sexualityCode) && this.canDeleteSexuality(sexualityCode)) {
             this.deleteElement("sexualitys", sexualityCode);
+            this.deleteNote(this.getSexuality(sexualityCode).getNote().getRef());
             this.sexualities.remove(sexualityCode);
         }
     }
@@ -1483,6 +1631,7 @@ public class Database {
             for (Element temp : loadedSexualities) {
                 if (temp instanceof Element) {
                     this.sexualities.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("sexualityModifications", temp.getCode()));
                 }
             }
@@ -1499,6 +1648,7 @@ public class Database {
     public void createReligion(Element religion) throws SQLException {
         if(!this.religionExists(religion.getCode())) {
             this.religions.put(religion.getCode(), religion);
+            this.notes.put(religion.getNote().getRef(), religion.getNote());
             this.createElement("religions", religion);
         }
     }
@@ -1514,6 +1664,7 @@ public class Database {
     public void deleteReligion(String religionCode) throws SQLException {
         if(this.religionExists(religionCode) && this.canDeleteReligion(religionCode)) {
             this.deleteElement("religions", religionCode);
+            this.deleteNote(this.getReligion(religionCode).getNote().getRef());
             this.religions.remove(religionCode);
         }
     }
@@ -1538,6 +1689,7 @@ public class Database {
             for (Element temp : loadedReligions) {
                 if (temp instanceof Element) {
                     this.religions.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("religionModifications", temp.getCode()));
                 }
             }
@@ -1554,8 +1706,9 @@ public class Database {
     public void createAddress(Address address) throws SQLException {
         if(!this.addressExists(address.getAddressRef())) {
             this.addresses.put(address.getAddressRef(), address);
+            this.notes.put(address.getNote().getRef(), address.getNote());
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
-                    + "streetNumber, street, area, town, country, postcode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressRef());
@@ -1569,6 +1722,8 @@ public class Database {
                 insertStat.setString(col++, address.getTown());
                 insertStat.setString(col++, address.getCountry());
                 insertStat.setString(col++, address.getPostcode());
+                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setString(col++, address.getNote().getNote());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -1581,7 +1736,7 @@ public class Database {
         if(this.addressExists(addressRef)) {
             Address address = this.getAddress(addressRef);
             String updateSql = "update addresses set buildingNumber=?, buildingName=?, subStreetNumber=?, subStreet=?, "
-                    + "streetNumber=?, street=?, area=?, town=?, country=?, postcode=? where addressRef=?";
+                    + "streetNumber=?, street=?, area=?, town=?, country=?, postcode=?, comment=? where addressRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, address.getBuildingNumber());
@@ -1594,6 +1749,7 @@ public class Database {
                 updateStat.setString(col++, address.getTown());
                 updateStat.setString(col++, address.getCountry());
                 updateStat.setString(col++, address.getPostcode());
+                updateStat.setString(col++, address.getNote().getNote());
                 updateStat.setInt(col++, address.getAddressRef());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -1607,6 +1763,7 @@ public class Database {
             String deleteSql = "delete from Addresses where addressRef=" + addrRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.deleteNote(this.getAddress(addrRef).getNote().getRef());
                     this.addresses.remove(addrRef);
                 }
             }
@@ -1643,10 +1800,13 @@ public class Database {
                 String town = results.getString("town");
                 String country = results.getString("country");
                 String postcode = results.getString("postcode");
+                int noteRef = results.getInt("noteRef");
+                String comment = results.getString("comment");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
-
-                Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+                
+                Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, createdDate);
                 
                 this.addresses.put(temp.getAddressRef(), temp);
                 this.createAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
@@ -1789,6 +1949,7 @@ public class Database {
                 this.properties.put(temp.getPropRef(), temp);
                 this.loadPropertyElementValues(temp.getPropRef());
                 this.createPropertyMods(temp.getPropRef(), this.loadModMap("propertyModifications", temp.getPropRef()));
+                this.createPropertyNotes(temp.getPropRef(), this.loadNoteMap("propertyNotes", temp.getPropRef()));
                 temp.setLeaseEndDate(leaseEndDate, null);
                 temp.setPropStatus(propStatus, null);
             }
@@ -1818,9 +1979,68 @@ public class Database {
         return null;
     }
     
+    private void createPropertyNotes(int propRef, Map<Integer, Note> loadadNotes) {
+        if (this.propertyExists(propRef) && !loadadNotes.isEmpty()) {
+            Property property = this.getProperty(propRef);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(property.getPropRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    property.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createPropertyNote(int propRef, Note note) throws SQLException {
+        if(this.propertyExists(propRef) && !this.noteExists(note.getRef()) && this.getProperty(propRef).hasNote(note.getRef())) {
+            String insertSql = "insert into propertyNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, propRef);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updatePropertyNote(int propRef, int noteRef) throws SQLException {
+        if(this.propertyExists(propRef) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update propertyNotes set comment=? where noteRef=" + noteRef + " and ref=" + propRef;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deletePropertyNote(int propRef, int noteRef) throws SQLException {
+        if (this.propertyExists(propRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from propertyNotes where noteRef=" + noteRef + " and ref=" + propRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
+    }
+    
     public void createPropertyType(Element type) throws SQLException {
         if(!this.propTypeExists(type.getCode())) {
             this.propertyTypes.put(type.getCode(), type);
+            this.notes.put(type.getNote().getRef(), type.getNote());
             this.createElement("propertyTypes", type);
         }
     }
@@ -1836,6 +2056,7 @@ public class Database {
     public void deletePropertyType(String typeCode) throws SQLException {
         if(this.propTypeExists(typeCode) && this.canDeletePropertyType(typeCode)) {
             this.deleteElement("propertyTypes", typeCode);
+            this.deleteNote(this.getPropertyType(typeCode).getNote().getRef());
             this.propertyTypes.remove(typeCode);
         }
     }
@@ -1860,6 +2081,7 @@ public class Database {
             for (Element temp : loadedPropTypes) {
                 if (temp instanceof Element) {
                     this.propertyTypes.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("propertyTypeModifications", temp.getCode()));
                 }
             }
@@ -1876,6 +2098,7 @@ public class Database {
     public void createPropertySubType(Element type) throws SQLException {
         if(!this.propSubTypeExists(type.getCode())) {
             this.propertySubTypes.put(type.getCode(), type);
+            this.notes.put(type.getNote().getRef(), type.getNote());
             this.createElement("propertySubTypes", type);
         }
     }
@@ -1891,6 +2114,7 @@ public class Database {
     public void deletePropertySubType(String typeCode) throws SQLException {
         if(this.propSubTypeExists(typeCode) && this.canDeletePropertySubType(typeCode)) {
             this.deleteElement("propertySubTypes", typeCode);
+            this.deleteNote(this.getPropertySubType(typeCode).getNote().getRef());
             this.propertySubTypes.remove(typeCode);
         }
     }
@@ -1915,6 +2139,7 @@ public class Database {
             for (Element temp : loadedPropSubTypes) {
                 if (temp instanceof Element) {
                     this.propertySubTypes.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("propertySubTypeModifications", temp.getCode()));
                 }
             }
@@ -1931,18 +2156,18 @@ public class Database {
     private void createPropertyElementValues(int propertyRef, List<PropertyElementInterface> propertyElements) throws SQLException {
         if (!propertyElements.isEmpty() && this.propertyExists(propertyRef)) {
             for (PropertyElementInterface temp : propertyElements) {
-                this.createPropertyElementValue(propertyRef, temp);
+                this.createPropertyElementValue(propertyRef, (PropertyElement) temp);
             }
         }
     }
     
-    public void createPropertyElementValue(int propertyRef, PropertyElementInterface propertyElement) throws SQLException {
-        if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
+    public void createPropertyElementValue(int propertyRef, PropertyElement propertyElement) throws SQLException {
+        if (propertyElement != null && this.propertyExists(propertyRef) && this.propertyElementValueExists(propertyElement.getPropertyElementRef()) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
             String insertSql = "";
             if (propertyElement.isCharge()) {
-                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             } else if (!propertyElement.isCharge()) {
-                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, stringValue, startDate, endDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, stringValue, startDate, endDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             }
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -1956,48 +2181,59 @@ public class Database {
                 }
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
+                insertStat.setInt(col++, propertyElement.getNote().getRef());
+                insertStat.setString(col++, propertyElement.getNote().getNote());
                 insertStat.setString(col++, propertyElement.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.propertyElementValues.put(propertyElement.getPropertyElementRef(), propertyElement);
+            this.notes.put(propertyElement.getNote().getRef(), propertyElement.getNote());
             Property property = this.getProperty(propertyRef);
             this.createModifiedBy("propertyModifications", property.getLastModification(), property.getPropRef());
         }
     }
-    
-    public void updatePropertyElementValue(int propertyRef, PropertyElement propertyElement) throws SQLException {
-        if (propertyElement != null && this.propertyExists(propertyRef) && this.propElementExists(propertyElement.getElement().getCode())) {
-            String updateSql = "";
-            if (propertyElement.isCharge()) {
-                updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=? where propertyElementRef=? and propRef=? and elementCode=?";
-            } else if (!propertyElement.isCharge()) {
-                updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=? where propertyElementRef=? and propRef=? and elementCode=?";
-            }
-            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
-                int col = 1;
+
+    public void updatePropertyElementValue(int propertyRef, int propElementRef) throws SQLException {
+        if (this.propertyExists(propertyRef) && this.propertyElementValueExists(propElementRef)) {
+            PropertyElementInterface propertyElement = this.getPropertyElementValue(propElementRef);
+            if (this.propElementExists(propertyElement.getElementCode())) {
+                String updateSql = "";
                 if (propertyElement.isCharge()) {
-                    updateStat.setDouble(col++, propertyElement.getDoubleValue());
+                    updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 } else if (!propertyElement.isCharge()) {
-                    updateStat.setString(col++, propertyElement.getStringValue());
+                    updateSql = "update propertyElementValues set stringValue=?, startDate=? endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 }
-                updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
-                updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
-                updateStat.setInt(col++, propertyElement.getPropertyElementRef());
-                updateStat.setInt(col++, propertyRef);
-                updateStat.setString(col++, propertyElement.getElementCode());
-                updateStat.executeUpdate();
-                updateStat.close();
+                try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                    int col = 1;
+                    if (propertyElement.isCharge()) {
+                        updateStat.setDouble(col++, propertyElement.getDoubleValue());
+                    } else if (!propertyElement.isCharge()) {
+                        updateStat.setString(col++, propertyElement.getStringValue());
+                    }
+                    updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
+                    updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
+                    updateStat.setString(col++, propertyElement.getNote().getNote());
+                    updateStat.setInt(col++, propertyElement.getPropertyElementRef());
+                    updateStat.setInt(col++, propertyRef);
+                    updateStat.setString(col++, propertyElement.getElementCode());
+                    updateStat.executeUpdate();
+                    updateStat.close();
+                }
             }
             this.createModifiedBy("propertyElementValueModifications", propertyElement.getLastModification(), propertyElement.getPropertyElementRef()); // 
         }
     }
     
     public void deletePropertyElementValue(int propElementRef, int propRef) throws SQLException {
-        if (this.propertyExists(propRef) && this.getProperty(propRef).hasPropElement(propElementRef) && this.canDeletePropertyElementValue(propElementRef, propRef)) {
-            String deleteSql = "delete from PropertyElementValues where propertyElementRef=" + propElementRef + "propRef=" + propRef;
+        if (this.propertyExists(propRef) && this.propertyElementValueExists(propElementRef) && this.getProperty(propRef).hasPropElement(propElementRef) && this.canDeletePropertyElementValue(propElementRef, propRef)) {
+            String deleteSql = "delete from PropertyElementValues where propertyElementRef=" + propElementRef + " and propRef=" + propRef;
             try(Statement deleteStat = this.con.createStatement()) {
-                deleteStat.executeUpdate(deleteSql);
+                if(deleteStat.executeUpdate(deleteSql) >= 1) {
+                    propertyElementValues.remove(propElementRef);
+                    this.deleteNote(this.getPropertyElementValue(propElementRef).getNote().getRef());
+                }
             }
         }
     }
@@ -2009,7 +2245,7 @@ public class Database {
     private void loadPropertyElementValues(int propRef) throws SQLException {
         if (this.propertyExists(propRef)) {
             Property property = this.getProperty(propRef);
-            String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, createdBy, createdDate from propertyElementValues order by createdDate";
+            String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate from propertyElementValues order by createdDate";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
                 while (results.next()) {
@@ -2024,13 +2260,19 @@ public class Database {
                             Date endDate = results.getDate("endDate");
                             String stringValue = results.getString("stringValue");
                             double doubleValue = results.getDouble("doubleValue");
+                            int noteRef = results.getInt("noteRef");
+                            String comment = results.getString("comment");
                             String createdBy = results.getString("createdBy");
                             Date createdDate = results.getDate("createdDate");
-                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue != null, stringValue, doubleValue, createdBy, createdDate);
-                            temp.updatePropertyElement(startDate, stringValue, doubleValue, stringValue != null, null);
+                            
+                            Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue != null, stringValue, doubleValue, note, createdBy, createdDate);
+                            temp.updatePropertyElement(startDate, stringValue, doubleValue, stringValue != null, comment, null);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
+                            this.propertyElementValues.put(temp.getPropertyElementRef(), temp);
+                            this.notes.put(note.getRef(), note);
                             this.createPropElementMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getPropertyElementRef()));
                             property.createPropertyElement(temp, null);
                         }
@@ -2055,9 +2297,17 @@ public class Database {
         }
     }
     
+    public PropertyElement getPropertyElementValue(int propElementRef) {
+        if(this.propertyElementValueExists(propElementRef)) {
+            return this.propertyElementValues.get(propElementRef);
+        }
+        return null;
+    }
+    
     public void createPropElement(Element element) throws SQLException {
         if(!this.propElementExists(element.getCode())) {
             this.propertyElements.put(element.getCode(), element);
+            this.notes.put(element.getNote().getRef(), element.getNote());
             this.createElement("propertyElements", element);
         }
     }
@@ -2073,6 +2323,7 @@ public class Database {
     public void deletePropertyElement(String elementCode) throws SQLException {
         if(this.propElementExists(elementCode) && this.canDeletePropertyElement(elementCode)) {
             this.deleteElement("propertyElements", elementCode);
+            this.deleteNote(this.getPropElement(elementCode).getNote().getRef());
             this.propertyElements.remove(elementCode);
         }
     }
@@ -2097,6 +2348,7 @@ public class Database {
             for (Element temp : loadedPropertyElements) {
                 if (temp instanceof Element) {
                     this.propertyElements.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("propertyElementModifications", temp.getCode()));
                 }
             }
@@ -2263,14 +2515,15 @@ public class Database {
                 Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, createdBy, createdDate);
                 
                 this.people.put(temp.getPersonRef(), temp);
-                this.createPeopleMods(temp.getPersonRef(), this.loadModMap("personModifications", temp.getPersonRef()));
+                this.createPersonMods(temp.getPersonRef(), this.loadModMap("personModifications", temp.getPersonRef()));
+                this.createPersonNotes(temp.getPersonRef(), this.loadNoteMap("personNotes", temp.getPersonRef()));
                 this.loadPersonContacts(temp.getPersonRef());
                 this.loadPersonAddresses(temp.getPersonRef());
             }
         }
     }
     
-    private void createPeopleMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void createPersonMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.personExists(personRef) && !loadedMods.isEmpty()) {
             Person person = this.getPerson(personRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2292,6 +2545,64 @@ public class Database {
             return this.people.get(personRef);
         }
         return null;
+    }
+    
+    private void createPersonNotes(int personRef, Map<Integer, Note> loadadNotes) {
+        if (this.personExists(personRef) && !loadadNotes.isEmpty()) {
+            Person person = this.getPerson(personRef);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(person.getPersonRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    person.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createPersonNote(int personRef, Note note) throws SQLException {
+        if(this.personExists(personRef) && !this.noteExists(note.getRef()) && this.getPerson(personRef).hasNote(note.getRef())) {
+            String insertSql = "insert into peopleNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, personRef);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updatePersonNote(int personRef, int noteRef) throws SQLException {
+        if(this.personExists(personRef) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update personNotes set comment=? where noteRef=" + noteRef + " and ref=" + personRef;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deletePersonNote(int personRef, int noteRef) throws SQLException {
+        if (this.personExists(personRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from personNotes where noteRef=" + noteRef + " and ref=" + personRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
     }
     
     public void createInvolvedParty(InvolvedParty invParty) throws SQLException {
@@ -2404,6 +2715,7 @@ public class Database {
                             temp.endInvolvedParty(endDate, endReason, null);
                         }
                         this.createInvolvedPartyMods(temp.getInvolvedPartyRef(), this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
+                        this.createInvolvedPartyNotes(temp.getInvolvedPartyRef(), this.loadNoteMap("involvedPartyNotes", temp.getInvolvedPartyRef()));
                     }
                 }
             }
@@ -2435,9 +2747,68 @@ public class Database {
         return invParty;
     }
     
+    private void createInvolvedPartyNotes(int invPartyRef, Map<Integer, Note> loadadNotes) {
+        if (this.invPartyExists(invPartyRef) && !loadadNotes.isEmpty()) {
+            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(invParty.getInvolvedPartyRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    invParty.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createInvolvedPartyNote(int invPartyRef, Note note) throws SQLException {
+        if(this.invPartyExists(invPartyRef) && !this.noteExists(note.getRef()) && this.getInvolvedParty(invPartyRef).hasNote(note.getRef())) {
+            String insertSql = "insert into involvedPartyNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, invPartyRef);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updateInvolvedPartyNote(int invPartyRef, int noteRef) throws SQLException {
+        if(this.invPartyExists(invPartyRef) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update involvedPartyNotes set comment=? where noteRef=" + noteRef + " and ref=" + invPartyRef;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deleteInvolvedPartyNote(int invPartyRef, int noteRef) throws SQLException {
+        if (this.invPartyExists(invPartyRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from involvedPartyNotes where noteRef=" + noteRef + " and ref=" + invPartyRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
+    }
+    
     public void createEndReason(Element endReason) throws SQLException {
         if(!this.endReasonExists(endReason.getCode())) {
             this.endReasons.put(endReason.getCode(), endReason);
+            this.notes.put(endReason.getNote().getRef(), endReason.getNote());
             this.createElement("endReasons", endReason);
         }
     }
@@ -2453,6 +2824,7 @@ public class Database {
     public void deleteEndReason(String endReason) throws SQLException {
         if(this.endReasonExists(endReason) && this.canDeleteEndReason(endReason)) {
             this.deleteElement("endReasons", endReason);
+            this.deleteNote(this.getEndReason(endReason).getNote().getRef());
             endReasons.remove(endReason);
         }
     }
@@ -2477,6 +2849,7 @@ public class Database {
             for (Element temp : loadedEndReasons) {
                 if (temp instanceof Element) {
                     this.endReasons.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("endReasonModifications", temp.getCode()));
                 }
             }
@@ -2493,6 +2866,7 @@ public class Database {
     public void createRelationship(Element relationship) throws SQLException {
         if(!this.relationshipExists(relationship.getCode())) {
             this.relationships.put(relationship.getCode(), relationship);
+            this.notes.put(relationship.getNote().getRef(), relationship.getNote());
             this.createElement("relationships", relationship);
         }
     }
@@ -2508,6 +2882,7 @@ public class Database {
     public void deleteRelationship(String relationship) throws SQLException {
         if(this.relationshipExists(relationship) && this.canDeleteRelationship(relationship)) {
             this.deleteElement("relationships", relationship);
+            this.deleteNote(this.getRelationship(relationship).getNote().getRef());
             relationships.remove(relationship);
         }
     }
@@ -2532,6 +2907,7 @@ public class Database {
             for (Element temp : loadedRelationships) {
                 if (temp instanceof Element) {
                     this.relationships.put(temp.getCode(), temp);
+                    this.notes.put(temp.getNote().getRef(), temp.getNote());
                     this.createElementMods(temp, this.loadModMap("relationshipModifications", temp.getCode()));
                 }
             }
@@ -2650,6 +3026,7 @@ public class Database {
                 this.applications.put(temp.getApplicationRef(), temp);
                 
                 this.createApplicationMods(temp.getApplicationRef(), this.loadModMap("applicationModifications", temp.getApplicationRef()));
+                this.createApplicationNotes(temp.getApplicationRef(), this.loadNoteMap("applicationNotes", temp.getApplicationRef()));
                 this.loadApplicationAddresses(temp.getApplicationRef());
                 this.loadInvolvedParties(temp.getApplicationRef());
                 this.loadPropertiesInterestedIn(temp.getApplicationRef());
@@ -2679,6 +3056,64 @@ public class Database {
             return this.applications.get(appRef);
         }
         return null;
+    }
+    
+    private void createApplicationNotes(int appRef, Map<Integer, Note> loadadNotes) {
+        if (this.applicationExists(appRef) && !loadadNotes.isEmpty()) {
+            Application application = this.getApplication(appRef);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(application.getApplicationRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    application.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createApplicationNote(int appRef, Note note) throws SQLException {
+        if(this.applicationExists(appRef) && !this.noteExists(note.getRef()) && this.getApplication(appRef).hasNote(note.getRef())) {
+            String insertSql = "insert into applicationNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, appRef);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updateApplicationNote(int appRef, int noteRef) throws SQLException {
+        if(this.applicationExists(appRef) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update applicationNotes set comment=? where noteRef=" + noteRef + " and ref=" + appRef;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deleteApplicationNote(int appRef, int noteRef) throws SQLException {
+        if (this.applicationExists(appRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from applicationNotes where noteRef=" + noteRef + " and ref=" + appRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
     }
     
     public void createPropertyInterest(int appRef, int propRef) throws SQLException {
@@ -2840,6 +3275,7 @@ public class Database {
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
                     landlords.put(temp.getLandlordRef(), temp);
                     this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("landlordModifications", temp.getLandlordRef()));
+                    this.createLandlordNotes(temp.getLandlordRef(), this.loadNoteMap("landlordNotes", temp.getLandlordRef()));
                 }
             }
         }
@@ -2866,6 +3302,64 @@ public class Database {
             return this.landlords.get(landlordRef);
         }
         return null;
+    }
+    
+    private void createLandlordNotes(int landlordRef, Map<Integer, Note> loadadNotes) {
+        if (this.landlordExists(landlordRef) && !loadadNotes.isEmpty()) {
+            Landlord landlord = this.getLandlord(landlordRef);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(landlord.getLandlordRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    landlord.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createLandlordNote(int landlordRef, Note note) throws SQLException {
+        if(this.landlordExists(landlordRef) && !this.noteExists(note.getRef()) && this.getLandlord(landlordRef).hasNote(note.getRef())) {
+            String insertSql = "insert into landlordNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, landlordRef);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updateLandlordNote(int landlordRef, int noteRef) throws SQLException {
+        if(this.landlordExists(landlordRef) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update landlordNotes set comment=? where noteRef=" + noteRef + " and ref=" + landlordRef;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deleteLandlordNote(int landlordRef, int noteRef) throws SQLException {
+        if (this.landlordExists(landlordRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from landlordNotes where noteRef=" + noteRef + " and ref=" + landlordRef;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
     }
     
     public void createOffice(Office office) throws SQLException {
@@ -2943,6 +3437,7 @@ public class Database {
                 
                 this.offices.put(temp.getOfficeCode(), temp);
                 this.createOfficeMods(temp.getOfficeCode(), this.loadModMap("officeModifications", temp.getOfficeCode()));
+                this.createOfficeNotes(temp.getOfficeCode(), this.loadNoteMap("officeNotes", temp.getOfficeCode()));
                 this.loadOfficeContacts(temp.getOfficeCode());
             }
         }
@@ -2970,6 +3465,64 @@ public class Database {
             return this.offices.get(code);
         }
         return null;
+    }
+    
+    private void createOfficeNotes(String officeCode, Map<String, Note> loadadNotes) {
+        if (this.officeExists(officeCode) && !loadadNotes.isEmpty()) {
+            Landlord landlord = this.getLandlord(officeCode);
+            Iterator it = loadadNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Note tempNote;
+                Map.Entry temp = (Map.Entry) it.next();
+                if(landlord.getLandlordRef() == (Integer) temp.getKey()) {
+                    tempNote = (Note) temp.getValue();
+                    landlord.createNote(tempNote, null);
+                }
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createOfficeNote(String officeCode, Note note) throws SQLException {
+        if(this.officeExists(officeCode) && !this.noteExists(note.getRef()) && this.getLandlord(officeCode).hasNote(note.getRef())) {
+            String insertSql = "insert into landlordNotes (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, officeCode);
+                insertStat.setString(col++, note.getNote());
+                insertStat.setString(col++, note.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(note.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.notes.put(note.getRef(), note);
+        }
+    }
+    
+    public void updateOfficeNote(String officeCode, int noteRef) throws SQLException {
+        if(this.officeExists(officeCode) && this.noteExists(noteRef)) {
+            Note note = this.getNote(noteRef);
+            String updateSql = "update landlordNotes set comment=? where noteRef=" + noteRef + " and ref=" + officeCode;
+            try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
+                int col = 1;
+                updateStat.setString(col++, note.getNote());
+                updateStat.executeUpdate();
+                updateStat.close();
+            }
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+        }
+    }
+    
+    public void deleteOfficeNote(String officeCode, int noteRef) throws SQLException {
+        if (this.officeExists(officeCode) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            String deleteSql = "delete from landlordNotes where noteRef=" + noteRef + " and ref=" + officeCode;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.notes.remove(noteRef);
+                }
+            }
+        }
     }
     
     public void createJobRole(JobRole jobRole) throws SQLException {
@@ -4563,6 +5116,10 @@ public class Database {
         return this.propertyElements.containsKey(code);
     }
     
+    public boolean propertyElementValueExists(int ref) {
+        return this.propertyElementValues.containsKey(ref);
+    }
+    
     public boolean personExists(int personRef) {
         return this.people.containsKey(personRef);
     }
@@ -4644,6 +5201,10 @@ public class Database {
             }
         }
         return false;
+    }
+    
+    public boolean noteExists(int ref) {
+        return notes.containsKey(ref);
     }
     
     public boolean tenancyExists(int tenancyRef) {
