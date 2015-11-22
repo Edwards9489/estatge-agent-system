@@ -113,6 +113,50 @@ public class Office implements OfficeInterface {
     
     /**
      * 
+     * @param agreement
+     * @param modifiedBy 
+     */
+    public void createAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) {
+        if(!this.hasAgreement(agreement.getAgreementRef())) {
+            this.agreements.add(agreement);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteAgreement(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasAgreement(ref)) {
+            AgreementInterface agreement = this.getAgreement(ref);
+            if(!agreement.hasBeenModified()) {
+                agreements.remove(agreement);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param account
+     * @param modifiedBy 
+     */
+    public void createAccount(AccountInterface account, ModifiedByInterface modifiedBy) {
+        if(!this.hasAccount(account.getAccRef())) {
+            this.accounts.add(account);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteAccount(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasAccount(ref)) {
+            AccountInterface account = this.getAccount(ref);
+            if(!account.hasBeenModified()) {
+                accounts.remove(account);
+                this.modifiedBy(modifiedBy);
+            }
+        }
+    }
+    
+    /**
+     * 
      * @param startDate
      * @param modifiedBy 
      */
@@ -199,6 +243,30 @@ public class Office implements OfficeInterface {
     public List<Note> getNotes() {
         return Collections.unmodifiableList(this.notes);
     }
+    
+    @Override
+    public boolean hasAgreement(int ref) {
+        if(!agreements.isEmpty()) {
+            for(AgreementInterface agreement : agreements) {
+                if(agreement.getAgreementRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public AgreementInterface getAgreement(int ref) {
+        if(this.hasAgreement(ref)) {
+            for (AgreementInterface agreement : agreements) {
+                if(agreement.getAgreementRef() == ref) {
+                    return agreement;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * @return contacts
@@ -206,6 +274,30 @@ public class Office implements OfficeInterface {
     @Override
     public List<AgreementInterface> getAgreements() {
         return Collections.unmodifiableList(agreements);
+    }
+    
+    @Override
+    public boolean hasAccount(int ref) {
+        if(!accounts.isEmpty()) {
+            for(AccountInterface account : accounts) {
+                if(account.getAccRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public AccountInterface getAccount(int ref) {
+        if(this.hasAccount(ref)) {
+            for (AccountInterface account : accounts) {
+                if(account.getAccRef() == ref) {
+                    return account;
+                }
+            }
+        }
+        return null;
     }
 
     /**

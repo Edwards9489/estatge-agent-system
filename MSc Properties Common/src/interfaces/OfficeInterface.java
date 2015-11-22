@@ -17,7 +17,11 @@ public interface OfficeInterface {
     AddressInterface getAddress();
     Date getStartDate();
     Date getEndDate();
+    boolean hasAgreement(int ref);
+    AgreementInterface getAgreement(int ref);
     List<AgreementInterface> getAgreements();
+    boolean hasAccount(int ref);
+    AccountInterface getAccount(int ref);
     List<AccountInterface> getAccounts();
     ContactInterface getContact(int ref);
     List<ContactInterface> getContacts();

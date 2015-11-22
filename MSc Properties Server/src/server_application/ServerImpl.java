@@ -688,7 +688,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(person.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) person.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Person Note", new Date(), modifiedBy));
-                this.database.updatePersonNote(pRef, note);
+                this.database.updatePersonNote(pRef, note.getRef());
                 return 1;
             }
         }
@@ -825,7 +825,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(office.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) office.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Office Note", new Date(), modifiedBy));
-                this.database.updateOfficeNote(officeCode, note);
+                this.database.updateOfficeNote(officeCode, note.getRef());
                 return 1;
             }
         }
@@ -937,7 +937,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(invParty.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) invParty.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Involved Party Note", new Date(), modifiedBy));
-                this.database.updateInvolvedPartyNote(eRef, note);
+                this.database.updateInvolvedPartyNote(eRef, note.getRef());
                 return 1;
             }
         }
@@ -1119,20 +1119,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int updateApplicationNote(int aRef, int nRef, String comment, String modifiedBy) {
+    public int updateApplicationNote(int aRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
         if (this.database.applicationExists(aRef)) {
             Application application = this.database.getApplication(aRef);
             if(application.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) application.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Application Note", new Date(), modifiedBy));
-                this.database.updateApplicationNote(aRef, note);
+                this.database.updateApplicationNote(aRef, note.getRef());
                 return 1;
             }
         }
         return 0;
     }
     
-    public int deleteApplicationNote(int aRef, int nRef, String modifiedBy) {
+    public int deleteApplicationNote(int aRef, int nRef, String modifiedBy) throws RemoteException, SQLException {
         if (this.database.applicationExists(aRef)) {
             Application application = this.database.getApplication(aRef);
             if(application.hasNote(nRef)) {
@@ -1223,7 +1223,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(employee.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) employee.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Employee Note", new Date(), modifiedBy));
-                this.database.updateEmployeeNote(eRef, note);
+                this.database.updateEmployeeNote(eRef, note.getRef());
                 return 1;
             }
         }
@@ -1285,7 +1285,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(landlord.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) landlord.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Landlord Note", new Date(), modifiedBy));
-                this.database.updateLandlordNote(lRef, note);
+                this.database.updateLandlordNote(lRef, note.getRef());
                 return 1;
             }
         }
@@ -1400,7 +1400,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(property.hasPropElement(eRef)) {
                 PropertyElement propElement = (PropertyElement) property.getPropElement(eRef);
                 propElement.updatePropertyElement(startDate, stringValue, doubleValue, charge, comment, new ModifiedBy("Updated Property Element", new Date(), modifiedBy));
-                this.database.updatePropertyElementValue(pRef, propElement);
+                this.database.updatePropertyElementValue(pRef, propElement.getPropertyElementRef());
             }
             return 1;
         }
@@ -1472,7 +1472,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(property.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) property.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
-                this.database.updatePropertyNote(pRef, note);
+                this.database.updatePropertyNote(pRef, note.getRef());
                 return 1;
             }
         }
@@ -1534,7 +1534,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException, SQLException {
-        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobBenefitExists(benefitCode)) {
+        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobRoleBenefitExists(benefitRef) && this.database.getJobRole(jobRoleCode).hasBenefit(benefitRef) && this.database.jobBenefitExists(benefitCode)) {
             JobRoleBenefit jobRoleBenefit = this.database.getJobRoleBenefit(benefitRef);
             jobRoleBenefit.updateJobRoleBenefit(stringValue, doubleValue, salaryBenefit, startDate, comment, new ModifiedBy("Updated Job Role Benefit", new Date(), modifiedBy));
             this.database.updateJobRoleBenefit(jobRoleCode, benefitRef);
@@ -1543,8 +1543,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int endJobRoleBenefit(Date endDate) {
-        f
+    public int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate, String modifiedBy) throws RemoteException, SQLException {
+        if(this.database.jobRoleExists(jobRoleCode) && this.database.jobRoleBenefitExists(benefitRef) && this.database.getJobRole(jobRoleCode).hasBenefit(benefitRef)) {
+            JobRole jobRole = this.database.getJobRole(jobRoleCode);
+            jobRole.endJobBenefit(benefitRef, endDate, new ModifiedBy("Ended Job Role Benefit", new Date(), modifiedBy));
+            this.database.updateJobRole(jobRoleCode);
+            this.database.updateJobRoleBenefit(jobRoleCode, benefitRef);
+            return 1;
+        }
+        return 0;
     }
     
     public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws SQLException {
@@ -1619,8 +1626,28 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode, String createdBy) throws RemoteException, SQLException {
         if(this.database.propertyExists(pRef) && this.database.applicationExists(aRef) && this.database.tenancyTypeExists(tenTypeCode) && this.database.officeExists(officeCode)) {
-            Tenancy tenancy = new Tenancy(tenRef++, startDate, length, rentAccRef, this.database.getProperty(pRef), this.database.getApplication(aRef), this.database.getTenancyType(tenTypeCode), officeCode, createdBy, new Date());
+            Application application = this.database.getApplication(aRef);
+            Property property = this.database.getProperty(pRef);
+            Office office = this.database.getOffice(officeCode);
+            Tenancy tenancy = new Tenancy(tenRef++, startDate, length, rentAccRef, property, application, this.database.getTenancyType(tenTypeCode), officeCode, createdBy, new Date());
             RentAccount rentAcc = new RentAccount(rentAccRef++, tenancy, createdBy, new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("Created Tenancy", new Date(), createdBy);
+            
+            application.setTenancy(tenRef, modifiedBy);
+            this.database.updateApplication(application.getApplicationRef());
+            application.setAppStatusCode("HSED");
+            AddressUsage address = this.createAddressUsage(property.getAddress().getAddressRef(), startDate, createdBy);
+            application.setAppAddress(address, new ModifiedBy("Set Application Address", new Date(), createdBy));
+            this.database.updateApplication(application.getApplicationRef());
+            
+            property.setPropStatus("OCCP", modifiedBy);
+            this.database.updateProperty(property.getPropRef());
+            
+            office.createAgreement(tenancy, modifiedBy);
+            this.database.updateOffice(office.getOfficeCode());
+            office.createAgreement(tenancy, new ModifiedBy("Created Rent Account", new Date(), createdBy));
+            this.database.updateOffice(office.getOfficeCode());
+            
             this.database.createTenancy(tenancy);
             this.database.createRentAccount(rentAcc);
             return tenancy.getAgreementRef();
@@ -1642,7 +1669,26 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     public int deleteTenancy(int tRef) throws SQLException {
         if(this.database.tenancyExists(tRef) && this.database.canDeleteTenancy(tRef)) {
-            g// LOOK AT DELETE APPLICATIONS AND IMPLEMENT ROLLING BACK PROCESS
+            Tenancy tenancy = this.database.getTenancy(tRef);
+            Application application = (Application) tenancy.getApplication();
+            Property property = (Property) tenancy.getProperty();
+            
+            if(application != null && property != null && this.database.officeExists(tenancy.getOfficeCode()));
+            Office office = this.database.getOffice(tenancy.getOfficeCode());
+            
+            RentAccount rentAcc = new RentAccount(rentAccRef++, tenancy, createdBy, new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("Created Tenancy", new Date(), createdBy);
+            application.setTenancy(tenRef, modifiedBy);
+            application.setAppStatusCode("HSED");
+            property.setPropStatus("OCCP", modifiedBy);
+            office.createAgreement(tenancy, modifiedBy);
+            this.database.updateOffice(office.getOfficeCode());
+            office.createAgreement(tenancy, new ModifiedBy("Created Rent Account", new Date(), createdBy));
+            this.database.updateOffice(office.getOfficeCode());
+            this.database.updateApplication(application.getApplicationRef());
+            this.database.updateProperty(property.getPropRef());
+            this.database.createTenancy(tenancy);
+            this.database.createRentAccount(rentAcc);
             this.database.deleteTenancy(tRef);
             return 1;
         }
@@ -1669,7 +1715,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(tenancy.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) tenancy.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Tenancy Note", new Date(), modifiedBy));
-                this.database.updateTenancyNote(tRef, note);
+                this.database.updateTenancyNote(tRef, note.getRef());
                 return 1;
             }
         }
@@ -1778,7 +1824,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(lease.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) lease.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Lease Note", new Date(), modifiedBy));
-                this.database.updateLeaseNote(lRef, note);
+                this.database.updateLeaseNote(lRef, note.getRef());
                 return 1;
             }
         }
@@ -1886,7 +1932,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(contract.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) contract.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Contract Note", new Date(), modifiedBy));
-                this.database.updateContractNote(cRef, note);
+                this.database.updateContractNote(cRef, note.getRef());
                 return 1;
             }
         }
@@ -1942,7 +1988,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(rentAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) rentAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Rent Account Note", new Date(), modifiedBy));
-                this.database.updateRentAccountNote(cRef, note);
+                this.database.updateRentAccountNote(cRef, note.getRef());
                 return 1;
             }
         }
@@ -2000,7 +2046,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(leaseAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) leaseAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Lease Account Note", new Date(), modifiedBy));
-                this.database.updateLeaseAccountNote(lRef, note);
+                this.database.updateLeaseAccountNote(lRef, note.getRef());
                 return 1;
             }
         }
@@ -2055,7 +2101,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(employeeAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) employeeAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Employee Account Note", new Date(), modifiedBy));
-                this.database.updateEmployeeAccountNote(eRef, note);
+                this.database.updateEmployeeAccountNote(eRef, note.getRef());
                 return 1;
             }
         }
@@ -2084,21 +2130,22 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE ACCOUNT TRANSACTIONS     ////////    
 
-    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) {
+    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException, SQLException {
         if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
             Note note = this.createNote(comment, createdBy);
             Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
             RentAccount account = this.database.getRentAccount(rAccRef);
             account.createTransaction(transaction, new ModifiedBy("Created Rent Transaction", new Date(), createdBy));
+            this.database.createRentAccountTransaction(account.getAccRef(), transaction);
             return 1;
         }
         return 0;
     }
     
-    public int deleteRentAccTransaction(int tRef, int rAcc) throws SQLException {
-        if(this.database.rentAccountExists(rAcc)) {
+    public int deleteRentAccTransaction(int tRef, int rAccRef) throws SQLException {
+        if(this.database.rentAccountExists(rAccRef)) {
             g// LOOK AT DELETE APPLICATIONS AND IMPLEMENT ROLLING BACK PROCESS
-            this.database.deleteRentAccTransaction(tRef);
+            this.database.deleteRentAccountTransaction(rAccRef, tRef);
             return 1;
         }
         return 0;
@@ -2115,10 +2162,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int deleteLeaseAccTransaction(int tRef, int rAcc) throws SQLException {
-        if(this.database.leaseAccountExists(rAcc)) {
+    public int deleteLeaseAccTransaction(int tRef, int lAccRef) throws SQLException {
+        if(this.database.leaseAccountExists(lAccRef)) {
             g// LOOK AT DELETE APPLICATIONS AND IMPLEMENT ROLLING BACK PROCESS
-            this.database.deleteLeaseAccTransaction(tRef);
+            this.database.deleteLeaseAccountTransaction(lAccRef, tRef);
             return 1;
         }
         return 0;
@@ -2135,10 +2182,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    public int deleteEmployeeAccTransaction(int tRef, int rAcc) throws SQLException {
-        if(this.database.employeeAccountExists(rAcc)) {
+    public int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws SQLException {
+        if(this.database.employeeAccountExists(eAccRef)) {
             g// LOOK AT DELETE APPLICATIONS AND IMPLEMENT ROLLING BACK PROCESS
-            this.database.deleteEmployeeAccTransaction(tRef);
+            this.database.deleteEmployeeAccountTransaction(eAccRef, tRef);
             return 1;
         }
         return 0;
