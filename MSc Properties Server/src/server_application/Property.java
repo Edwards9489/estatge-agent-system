@@ -333,7 +333,7 @@ public class Property implements PropertyInterface {
      */
     @Override
     public double getRent() {
-        double rent = -1;
+        double rent = 0;
         if (!propertyElements.isEmpty()) {
             for (PropertyElementInterface temp : propertyElements.values()) {
                 if (temp.isCurrent() && temp.isElementCode("RENT")) {
@@ -350,11 +350,11 @@ public class Property implements PropertyInterface {
      */
     @Override
     public double getCharges() {
-        double charges = -1;
+        double charges = 0;
         if(!propertyElements.isEmpty()) {
             for (PropertyElementInterface temp : propertyElements.values()) {
                 if(temp.isCurrent() && temp.isCharge() && !temp.isElementCode("RENT")) {
-                    charges = temp.getDoubleValue();
+                    charges = charges + temp.getDoubleValue();
                 }
             }
         }

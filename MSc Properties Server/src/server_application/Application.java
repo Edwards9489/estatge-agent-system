@@ -53,6 +53,7 @@ public class Application implements ApplicationInterface {
         this.appStatusCode = statusCode;
         this.household = new ArrayList();
         this.appAddresses = new ArrayList();
+        this.tenancyRef = null;
         this.propertiesInterestedIn = new ArrayList();
         this.modifiedBy = new ArrayList();
         this.notes = new ArrayList();
@@ -515,8 +516,12 @@ public class Application implements ApplicationInterface {
      * @return tenancyRef
      */
     @Override
-    public int getTenancyRef() {
+    public Integer getTenancyRef() {
         return this.tenancyRef;
+    }
+    
+    public boolean hasTenancyRef() {
+        return tenancyRef != null;
     }
 
     /**

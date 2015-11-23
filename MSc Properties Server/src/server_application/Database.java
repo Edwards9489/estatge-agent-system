@@ -422,12 +422,13 @@ public class Database {
      * @throws SQLException 
      */
     private Map<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException {
-        String sql = "select ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
+        String sql = "select modificationRef, ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
         Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
             while(results.next()) {
+                int modificationRef = results.getInt("modificationRef");
                 int ref = results.getInt("ref");
                 if (reference == ref) {
                     String modifiedBy = results.getString("modifiedBy");
@@ -436,7 +437,7 @@ public class Database {
 
                     ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
 
-                    modifiedByMap.put(ref, temp);
+                    modifiedByMap.put(modificationRef, temp);
                 }
             }
         }
@@ -472,13 +473,13 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private Map<String, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
-        String sql = "select code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
-        Map<String, ModifiedByInterface> modifiedByMap = new HashMap<>();
+    private Map<Integer, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
+        String sql = "select modificationRef, code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
+        Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-            
             while(results.next()) {
+                int modificationRef = results.getInt("modificationRef");
                 String code = results.getString("code");
                 if (uniqueCode.equals(code)) {
                     String modifiedBy = results.getString("modifiedBy");
@@ -486,8 +487,7 @@ public class Database {
                     String description = results.getString("description");
 
                     ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
-
-                    modifiedByMap.put(code, temp);
+                    modifiedByMap.put(modificationRef, temp);
                 }
             }
         }
@@ -499,17 +499,15 @@ public class Database {
      * @param element
      * @param loadedMods 
      */
-    private void createElementMods(Element element, Map<String, ModifiedByInterface> loadedMods) {
+    private void createElementMods(Element element, Map<Integer, ModifiedByInterface> loadedMods) {
         if (element != null && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(element.getCode().equals(temp.getKey())) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    ElementImpl tempElement = (ElementImpl) element;
-                    tempElement.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                ElementImpl tempElement = (ElementImpl) element;
+                tempElement.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -532,16 +530,16 @@ public class Database {
                     NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
                     this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
 
-                    noteMap.put(ref, temp);
+                    noteMap.put(noteRef, temp);
                 }
             }
         }
         return noteMap;
     }
     
-    private Map<String, Note> loadNoteMap(String from, String uniqueCode) throws SQLException {
+    private Map<Integer, Note> loadNoteMap(String from, String uniqueCode) throws SQLException {
         String sql = "select noteRef, code, comment, createdBy, createdDate from " + from + " order by createdDate";
-        Map<String, Note> noteMap = new HashMap<>();
+        Map<Integer, Note> noteMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
@@ -555,7 +553,7 @@ public class Database {
 
                     NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
                     this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
-                    noteMap.put(code, temp);
+                    noteMap.put(noteRef, temp);
                 }
             }
         }
@@ -662,10 +660,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(note.getRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    note.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                note.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -763,7 +759,7 @@ public class Database {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
             contacts.put(contact.getContactRef(), (Contact) contact);
             notes.put(contact.getNote().getRef(), contact.getNote());
-            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, noteRef, comment, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, contact.getContactRef());
@@ -872,11 +868,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(contact.getContactRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Contact tempContact = (Contact) contact;
-                    tempContact.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Contact tempContact = (Contact) contact;
+                tempContact.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1000,11 +994,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(contact.getContactRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Contact tempContact = (Contact) contact;
-                    tempContact.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Contact tempContact = (Contact) contact;
+                tempContact.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1136,11 +1128,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(address.getAddressUsageRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    AddressUsage tempAddress = (AddressUsage) address;
-                    tempAddress.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                AddressUsage tempAddress = (AddressUsage) address;
+                tempAddress.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1268,11 +1258,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(address.getAddressUsageRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    AddressUsage tempAddress = address;
-                    tempAddress.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                AddressUsage tempAddress = address;
+                tempAddress.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1869,8 +1857,8 @@ public class Database {
     }
     
     private void loadAddresses() throws SQLException {
-        String sql = "select addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
-                    + "streetNumber, street, area, town, country, postcode, createdBy, createdDate from addresses order by addressRef";
+        String sql = "select addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, "
+                    + "town, country, postcode, noteRef, comment, createdBy, createdDate from addresses order by addressRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -1907,11 +1895,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(address.getAddressRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Address tempAddress = (Address) address;
-                    tempAddress.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Address tempAddress = (Address) address;
+                tempAddress.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2049,10 +2035,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(property.getPropRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    property.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                property.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2072,10 +2056,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(property.getPropRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    property.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                property.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2224,7 +2206,7 @@ public class Database {
     }
     
     public void createPropertyElementValue(int propertyRef, PropertyElement propertyElement) throws SQLException {
-        if (propertyElement != null && this.propertyExists(propertyRef) && this.propertyElementValueExists(propertyElement.getPropertyElementRef()) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
+        if (propertyElement != null && this.propertyExists(propertyRef) && !this.propertyElementValueExists(propertyElement.getPropertyElementRef()) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
             String insertSql = "";
             if (propertyElement.isCharge()) {
                 insertSql = "insert into propertyElementValues (propertyElementRef, propRef, elementCode, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -2265,7 +2247,7 @@ public class Database {
                 if (propertyElement.isCharge()) {
                     updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 } else if (!propertyElement.isCharge()) {
-                    updateSql = "update propertyElementValues set stringValue=?, startDate=? endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
+                    updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 }
                 try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                     int col = 1;
@@ -2328,8 +2310,7 @@ public class Database {
                             Date createdDate = results.getDate("createdDate");
                             
                             Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue != null, stringValue, doubleValue, note, createdBy, createdDate);
-                            temp.updatePropertyElement(startDate, stringValue, doubleValue, stringValue != null, comment, null);
+                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue == null, stringValue, doubleValue, note, createdBy, createdDate);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
@@ -2350,10 +2331,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(element.getPropertyElementRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    element.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                element.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2592,11 +2571,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(person.getPersonRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Person tempPerson = (Person) person;
-                    tempPerson.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Person tempPerson = (Person) person;
+                tempPerson.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2616,10 +2593,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(person.getPersonRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    person.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                person.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2654,7 +2629,9 @@ public class Database {
                 insertStat.setInt(col++, invParty.getApplicationRef());
                 insertStat.setInt(col++, invParty.getPersonRef());
                 insertStat.setBoolean(col++, invParty.isJointInd());
+                System.out.println(invParty.isJointInd());
                 insertStat.setBoolean(col++, invParty.isMainInd());
+                System.out.println(invParty.isMainInd());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getStartDate()));
                 insertStat.setString(col++, invParty.getRelationship().getCode());
                 insertStat.setString(col++, invParty.getCreatedBy());
@@ -2767,11 +2744,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(invParty.getApplicationRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    InvolvedParty tempInvParty = invParty;
-                    tempInvParty.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                InvolvedParty tempInvParty = invParty;
+                tempInvParty.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2792,10 +2767,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(invParty.getInvolvedPartyRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    invParty.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                invParty.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2939,14 +2912,13 @@ public class Database {
         if(!this.applicationExists(application.getApplicationRef())) {
             this.applications.put(application.getApplicationRef(), application);
             String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatus, "
-                    + "tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
+                    + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, application.getApplicationRef());
                 insertStat.setString(col++, application.getAppCorrName());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppStartDate()));
                 insertStat.setString(col++, application.getAppStatusCode());
-                insertStat.setInt(col++, application.getTenancyRef());
                 insertStat.setString(col++, application.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -2958,15 +2930,24 @@ public class Database {
     public void updateApplication(int appRef) throws SQLException {
         if(this.applicationExists(appRef)) {
             Application application = this.getApplication(appRef);
-            String updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
+            String updateSql;
+            if(application.hasTenancyRef()) {
+                updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
                     + "appStatus=?, tenancyRef=? where appRef=?";
+            } else { // No Tenancy
+                updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
+                    + "appStatus=? where appRef=?";
+            }
+             
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, application.getAppCorrName());
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppStartDate()));
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(application.getAppEndDate()));
                 updateStat.setString(col++, application.getAppStatusCode());
-                updateStat.setInt(col++, application.getTenancyRef());
+                if(application.hasTenancyRef()) {
+                    updateStat.setInt(col++, application.getTenancyRef());
+                }
                 updateStat.setInt(col++, application.getApplicationRef());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -3054,11 +3035,9 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(application.getApplicationRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Application tempApp = (Application) application;
-                    tempApp.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Application tempApp = (Application) application;
+                tempApp.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3078,10 +3057,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(application.getApplicationRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    application.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                application.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3277,10 +3254,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(landlord.getLandlordRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    landlord.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                landlord.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3300,10 +3275,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(landlord.getLandlordRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    landlord.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                landlord.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3408,18 +3381,16 @@ public class Database {
         }
     }
     
-    private void createOfficeMods(String officeCode, Map<String, ModifiedByInterface> loadedMods) {
+    private void createOfficeMods(String officeCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(office.getOfficeCode().equals(temp.getKey())) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    Office tempOffice = (Office) office;
-                    tempOffice.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                Office tempOffice = (Office) office;
+                tempOffice.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3432,17 +3403,15 @@ public class Database {
         return null;
     }
     
-    private void createOfficeNotes(String officeCode, Map<String, Note> loadadNotes) {
+    private void createOfficeNotes(String officeCode, Map<Integer, Note> loadadNotes) {
         if (this.officeExists(officeCode) && !loadadNotes.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(office.getOfficeCode().equals((String) temp.getKey())) {
-                    tempNote = (Note) temp.getValue();
-                    office.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                office.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3580,17 +3549,15 @@ public class Database {
         }
     }
     
-    private void createJobRoleMods(String jobRoleCode, Map<String, ModifiedByInterface> loadedMods) {
+    private void createJobRoleMods(String jobRoleCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(jobRole.getJobRoleCode().equals(temp.getKey())) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    jobRole.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                jobRole.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3603,17 +3570,15 @@ public class Database {
         return null;
     }
     
-    private void createJobRoleNotes(String jobRoleCode, Map<String, Note> loadadNotes) {
+    private void createJobRoleNotes(String jobRoleCode, Map<Integer, Note> loadadNotes) {
         if (this.jobRoleExists(jobRoleCode) && !loadadNotes.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(jobRole.getJobRoleCode().equals((String) temp.getKey())) {
-                    tempNote = (Note) temp.getValue();
-                    jobRole.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                jobRole.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3815,10 +3780,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if((Integer) temp.getKey() == benefit.getBenefitRef()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    benefit.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                benefit.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4048,10 +4011,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(employee.getEmployeeRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    employee.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                employee.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4071,10 +4032,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(employee.getEmployeeRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    employee.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                employee.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4214,10 +4173,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(tenancy.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    tenancy.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                tenancy.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4237,10 +4194,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(tenancy.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    tenancy.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                tenancy.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4325,8 +4280,8 @@ public class Database {
     public void createLease(Lease lease) throws SQLException {
         if(!this.leaseExists(lease.getAgreementRef())) {
             leases.put(lease.getAgreementRef(), lease);
-            String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, length, accountRef"
-                    + "officeCode, propertyRef, expenditure, fullManagement, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, "
+                    + "officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, lease.getAgreementRef());
@@ -4341,6 +4296,7 @@ public class Database {
                 insertStat.setBoolean(col++, lease.isFullManagement());
                 insertStat.setString(col++, lease.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(lease.getCreatedDate()));
+                System.out.println(insertStat);
                 insertStat.executeUpdate();
                 insertStat.close();
             }
@@ -4429,10 +4385,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(lease.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    lease.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                lease.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4452,10 +4406,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(lease.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    lease.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                lease.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4530,6 +4482,8 @@ public class Database {
                 if(leaseRef == ref && this.leaseExists(leaseRef) && this.landlordExists(landlordRef) && current) {
                     Lease lease = this.getLease(leaseRef);
                     lease.addLandlord(this.getLandlord(landlordRef), null);
+                    Landlord landlord = this.getLandlord(landlordRef);
+                    landlord.createLease(lease, null);
                 }
             }
         }
@@ -4680,10 +4634,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(contract.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    contract.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                contract.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4703,10 +4655,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(contract.getAgreementRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    contract.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                contract.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4822,10 +4772,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(rentAcc.getAccRef() == (Integer) temp.getKey()) {
-                    tempMod = (ModifiedByInterface) temp.getValue();
-                    rentAcc.modifiedBy(tempMod);
-                }
+                tempMod = (ModifiedByInterface) temp.getValue();
+                rentAcc.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4845,10 +4793,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(rentAcc.getAccRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    rentAcc.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                rentAcc.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4976,10 +4922,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(leaseAcc.getAccRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
                     leaseAcc.modifiedBy(tempMod);
-                }
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4999,10 +4943,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(leaseAcc.getAccRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    leaseAcc.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                leaseAcc.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -5042,7 +4984,7 @@ public class Database {
         if(!this.employeeAccountExists(employeeAcc.getAccRef())) {
             employeeAccounts.put(employeeAcc.getAccRef(), employeeAcc);
             String insertSql = "insert into employeeAccounts (employeeAccRef, name, startDate, "
-                    + "balance, officeCode, contractRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "balance, officeCode, salary, contractRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, employeeAcc.getAccRef());
@@ -5050,6 +4992,7 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(employeeAcc.getStartDate()));
                 insertStat.setDouble(col++, employeeAcc.getBalance());
                 insertStat.setString(col++, employeeAcc.getOfficeCode());
+                insertStat.setDouble(col++, employeeAcc.getContract().getJobRole().getSalary());
                 insertStat.setInt(col++, employeeAcc.getContractRef());
                 insertStat.setString(col++, employeeAcc.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(employeeAcc.getCreatedDate()));
@@ -5129,10 +5072,8 @@ public class Database {
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(employeeAcc.getAccRef() == (Integer) temp.getKey()) {
                     tempMod = (ModifiedByInterface) temp.getValue();
                     employeeAcc.modifiedBy(tempMod);
-                }
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -5152,10 +5093,8 @@ public class Database {
             while (it.hasNext()) {
                 Note tempNote;
                 Map.Entry temp = (Map.Entry) it.next();
-                if(employeeAcc.getAccRef() == (Integer) temp.getKey()) {
-                    tempNote = (Note) temp.getValue();
-                    employeeAcc.createNote(tempNote, null);
-                }
+                tempNote = (Note) temp.getValue();
+                employeeAcc.createNote(tempNote, null);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -5582,7 +5521,7 @@ public class Database {
     }
     
     public int countLeaseAccounts() {
-        return this.titles.size();
+        return this.leaseAccounts.size();
     }
     
     public int countEmployeeAccounts() {

@@ -24,7 +24,7 @@ public interface ApplicationInterface {
     boolean isAppInterestedFlag();
     List<InvolvedPartyInterface> getHousehold();
     List<PropertyInterface> getPropertiesInterestedIn();
-    int getTenancyRef();
+    Integer getTenancyRef();
     boolean isCurrent();
     boolean hasNote(int ref);
     Note getNote(int ref);

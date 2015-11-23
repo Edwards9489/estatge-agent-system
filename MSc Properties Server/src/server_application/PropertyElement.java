@@ -314,6 +314,8 @@ public class PropertyElement implements PropertyElementInterface {
     
     @Override
     public String toString() {
-        return "AMEND TO STRING METHOD";
+        return "Property Element Ref: " + this.propertyElementRef + "\nstringValue: " + this.stringValue
+                + "\ndoubleValue: " + this.doubleValue + "\nstartDate: " + startDate + "\nendDate: " + this.endDate
+                + "\nCharge: " + this.charge;
     }
 }

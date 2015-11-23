@@ -54,10 +54,6 @@ public class InvolvedParty implements InvolvedPartyInterface {
         this.involvedPartyRef = invPartyRef;
         this.appRef = appRef;
         this.person = person;
-        if(!person.isOver18()) {
-            main = false;
-            joint = false;
-        }
         this.mainApplicantInd = main;
         this.jointApplicantInd = joint;
         this.startDate = start;
