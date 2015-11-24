@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
+import interfaces.Document;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleBenefitInterface;
@@ -15,6 +16,7 @@ import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import interfaces.User;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -103,6 +105,7 @@ public class Database {
     private final Map<Integer, Contact> contacts;
     private final Map<String, UserImpl> users;
     private final Map<Integer, Note> notes;
+    private final Map<Integer, Document> documents;
     
     
     ///   CONSTRUCTORS ///
@@ -176,6 +179,7 @@ public class Database {
         this.contacts = new HashMap<>();
         this.users = new HashMap<>();
         this.notes = new HashMap<>();
+        this.documents = new HashMap<>();
         
         
         try {
@@ -325,7 +329,7 @@ public class Database {
             insertStat.setString(col++, element.getCode());
             insertStat.setString(col++, element.getDescription());
             insertStat.setInt(col++, element.getNote().getRef());
-            insertStat.setString(col++, element.getNote().getNote());
+            insertStat.setString(col++, element.getComment());
             insertStat.setBoolean(col++, element.isCurrent());
             insertStat.setString(col++, element.getCreatedBy());
             insertStat.setDate(col++, DateConversion.utilDateToSQLDate(element.getCreatedDate()));
@@ -346,7 +350,7 @@ public class Database {
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
             updateStat.setString(col++, element.getDescription());
-            updateStat.setString(col++, element.getNote().getNote());
+            updateStat.setString(col++, element.getComment());
             updateStat.setBoolean(col++, element.isCurrent());
             updateStat.setString(col++, element.getCode());
             updateStat.executeUpdate();
@@ -499,7 +503,7 @@ public class Database {
      * @param element
      * @param loadedMods 
      */
-    private void createElementMods(Element element, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadElementMods(Element element, Map<Integer, ModifiedByInterface> loadedMods) {
         if (element != null && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -511,6 +515,151 @@ public class Database {
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
+    }
+    
+    /**
+     * 
+     * @param from
+     * @param reference
+     * @return
+     * @throws SQLException 
+     */
+    private Map<Integer, Document> loadDocMap(String from, int reference) throws SQLException {
+        String sql = "select documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
+        Map<Integer, Document> fileMap = new HashMap<>();
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            
+            while(results.next()) {
+                int documentRef = results.getInt("documentRef");
+                int ref = results.getInt("ref");
+                if (reference == ref) {
+                    String documentName = results.getString("documentName");
+                    String documentPath = results.getString("documentPath");
+                    int noteRef = results.getInt("noteRef");
+                    String comment = results.getString("comment");
+                    String createdBy = results.getString("createdBy");
+                    Date createdDate = results.getDate("createdDate");
+                    
+                    File document = new File(documentPath); // Possibly might not work once File is used, may need to use getResouceAsStream
+                    Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                    Document temp = new DocumentImpl(documentRef, document, documentName, note, createdBy, createdDate);
+
+                    fileMap.put(documentRef, temp);
+                }
+            }
+        }
+        return fileMap;
+    }
+    
+    /**
+     * 
+     * @param from
+     * @param uniqueCode
+     * @return
+     * @throws SQLException 
+     */
+    private Map<Integer, Document> loadDocMap(String from, String uniqueCode) throws SQLException {
+        String sql = "select documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
+        Map<Integer, Document> fileMap = new HashMap<>();
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            
+            while(results.next()) {
+                int documentRef = results.getInt("documentRef");
+                String code = results.getString("code");
+                if (uniqueCode.equals(code)) {
+                    String documentName = results.getString("documentName");
+                    String documentPath = results.getString("documentPath");
+                    int noteRef = results.getInt("noteRef");
+                    String comment = results.getString("comment");
+                    String createdBy = results.getString("createdBy");
+                    Date createdDate = results.getDate("createdDate");
+                    
+                    //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
+                    
+                    File document = new File(documentPath);
+                    Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                    Document temp = new DocumentImpl(documentRef, document, documentName, note, createdBy, createdDate);
+
+                    fileMap.put(documentRef, temp);
+                }
+            }
+        }
+        return fileMap;
+    }
+    
+    private void createDocument(String from, int ref, Document document) throws SQLException {
+        if(!this.documentExists(document.getDocumentRef())) {
+            String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, document.getDocumentRef());
+                insertStat.setInt(col++, ref);
+                insertStat.setString(col++, document.getDocumentName());
+                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setInt(col++, document.getNote().getRef());
+                insertStat.setString(col++, document.getComment());
+                insertStat.setString(col++, document.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(document.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.documents.put(document.getDocumentRef(), document);
+        }
+    }
+    
+    private void deleteDocument(String from, int ref, int documentRef) throws SQLException {
+        if (this.documentExists(documentRef) && this.canDeleteDocument(documentRef)) {
+            String deleteSql = "delete from " + from + " where documentRef=" + documentRef + " and ref=" + ref;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.documents.remove(documentRef);
+                }
+            }
+        }
+    }
+    
+    private void createDocument(String from, String code, Document document) throws SQLException {
+        if(!this.documentExists(document.getDocumentRef())) {
+            String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
+                int col = 1;
+                insertStat.setInt(col++, document.getDocumentRef());
+                insertStat.setString(col++, code);
+                insertStat.setString(col++, document.getDocumentName());
+                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setInt(col++, document.getNote().getRef());
+                insertStat.setString(col++, document.getComment());
+                insertStat.setString(col++, document.getCreatedBy());
+                insertStat.setDate(col++, DateConversion.utilDateToSQLDate(document.getCreatedDate()));
+                insertStat.executeUpdate();
+                insertStat.close();
+            }
+            this.documents.put(document.getDocumentRef(), document);
+        }
+    }
+    
+    private void deleteDocument(String from, String code, int documentRef) throws SQLException {
+        if (this.documentExists(documentRef) && this.canDeleteDocument(documentRef)) {
+            String deleteSql = "delete from " + from + " where documentRef=" + documentRef + " and code=" + code;
+            try(Statement deleteStat = this.con.createStatement()) {
+                if (deleteStat.executeUpdate(deleteSql) >= 1) {
+                    this.documents.remove(documentRef);
+                }
+            }
+        }
+    }
+    
+    public boolean canDeleteDocument(int documentRef) {
+        return (this.documentExists(documentRef));
+    }
+    
+    public Document getDocument(int ref) {
+        if(this.noteExists(ref)) {
+            return documents.get(ref);
+        }
+        return null;
     }
     
     private Map<Integer, Note> loadNoteMap(String from, int reference) throws SQLException {
@@ -597,7 +746,7 @@ public class Database {
         }
     }
     
-    public void deleteNote(String from, int ref, int noteRef) throws SQLException {
+    private void deleteNote(String from, int ref, int noteRef) throws SQLException {
         if (this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             String deleteSql = "delete from " + from + " where noteRef=" + noteRef + " and ref=" + ref;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -639,7 +788,7 @@ public class Database {
         }
     }
     
-    public void deleteNote(String from, String code, int noteRef) throws SQLException {
+    private void deleteNote(String from, String code, int noteRef) throws SQLException {
         if (this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             String deleteSql = "delete from " + from + " where noteRef=" + noteRef + " and code=" + code;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -681,9 +830,9 @@ public class Database {
      */
     public void createContactType(Element conType) throws SQLException {
         if(conType != null && !this.contactTypeExists(conType.getCode())) {
+            this.createElement("contactTypes", conType);
             this.contactTypes.put(conType.getCode(), conType);
             this.notes.put(conType.getNote().getRef(), conType.getNote());
-            this.createElement("contactTypes", conType);
         }
     }
     
@@ -732,7 +881,7 @@ public class Database {
             for (Element temp : loadedContactTypes) {
                 this.contactTypes.put(temp.getCode(), temp);
                 this.notes.put(temp.getNote().getRef(), temp.getNote());
-                this.createElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
+                this.loadElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
             }
         }
     }
@@ -757,8 +906,6 @@ public class Database {
      */
     public void createPersonContact(Contact contact, int personRef) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
-            contacts.put(contact.getContactRef(), (Contact) contact);
-            notes.put(contact.getNote().getRef(), contact.getNote());
             String insertSql = "insert into personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -768,12 +915,14 @@ public class Database {
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
                 insertStat.setInt(col++, contact.getNote().getRef());
-                insertStat.setString(col++, contact.getNote().getNote());
+                insertStat.setString(col++, contact.getComment());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            contacts.put(contact.getContactRef(), (Contact) contact);
+            notes.put(contact.getNote().getRef(), contact.getNote());
         }
     }
     
@@ -793,7 +942,7 @@ public class Database {
             updateStat.setString(col++, contact.getContactValue());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
-            updateStat.setString(col++, contact.getNote().getNote());
+            updateStat.setString(col++, contact.getComment());
             updateStat.setInt(col++, contact.getContactRef());
             updateStat.setInt(col++, personRef);
             updateStat.executeUpdate();
@@ -848,7 +997,7 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         person.createContact(temp, null);
-                        this.createPersonContactMods(temp.getContactRef(), reference, this.loadModMap("personContactModifications", temp.getContactRef()));
+                        this.loadPersonContactMods(temp.getContactRef(), reference, this.loadModMap("personContactModifications", temp.getContactRef()));
                     }
                 }
             }
@@ -861,7 +1010,7 @@ public class Database {
      * @param personRef
      * @param loadedMods 
      */
-    private void createPersonContactMods(int contactRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadPersonContactMods(int contactRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
             Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -883,8 +1032,6 @@ public class Database {
      */
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.officeExists(officeCode)) {
-            contacts.put(contact.getContactRef(), contact);
-            notes.put(contact.getNote().getRef(), contact.getNote());
             String insertSql = "insert into officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -894,12 +1041,14 @@ public class Database {
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
                 insertStat.setInt(col++, contact.getNote().getRef());
-                insertStat.setString(col++, contact.getNote().getNote());
+                insertStat.setString(col++, contact.getComment());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            contacts.put(contact.getContactRef(), contact);
+            notes.put(contact.getNote().getRef(), contact.getNote());
         }
     }
     
@@ -919,7 +1068,7 @@ public class Database {
             updateStat.setString(col++, contact.getContactValue());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getEndDate()));
-            updateStat.setString(col++, contact.getNote().getNote());
+            updateStat.setString(col++, contact.getComment());
             updateStat.setInt(col++, contact.getContactRef());
             updateStat.setString(col++, officeCode);
             updateStat.executeUpdate();
@@ -974,7 +1123,7 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         office.createContact(temp, null);
-                        this.createOfficeContactMods(temp.getContactRef(), code, this.loadModMap("officeContactModifications", temp.getContactRef()));
+                        this.loadOfficeContactMods(temp.getContactRef(), code, this.loadModMap("officeContactModifications", temp.getContactRef()));
                     }
                 }
             }
@@ -987,7 +1136,7 @@ public class Database {
      * @param code
      * @param loadedMods 
      */
-    private void createOfficeContactMods(int contactRef, String code, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadOfficeContactMods(int contactRef, String code, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.officeExists(code) && !loadedMods.isEmpty()) {
             Contact contact = this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1014,8 +1163,6 @@ public class Database {
      */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
-            addressUsages.put(address.getAddressUsageRef(), address);
-            notes.put(address.getNote().getRef(), address.getNote());
             String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -1024,11 +1171,13 @@ public class Database {
                 insertStat.setInt(col++, personRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
                 insertStat.setInt(col++, address.getNote().getRef());
-                insertStat.setString(col++, address.getNote().getNote());
+                insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
+                addressUsages.put(address.getAddressUsageRef(), address);
+                notes.put(address.getNote().getRef(), address.getNote());
             }
         }
     }
@@ -1048,7 +1197,7 @@ public class Database {
             updateStat.setInt(col++, address.getAddress().getAddressRef());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
-            updateStat.setString(col++, address.getNote().getNote());
+            updateStat.setString(col++, address.getComment());
             updateStat.setInt(col++, address.getAddressUsageRef());
             updateStat.setInt(col++, personRef);
             updateStat.executeUpdate();
@@ -1108,7 +1257,7 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         person.createAddress(temp, null);
-                        this.createPersonAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("personAddressModifications", temp.getAddressUsageRef()));
+                        this.loadPersonAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("personAddressModifications", temp.getAddressUsageRef()));
                     }
                 }
             }
@@ -1121,7 +1270,7 @@ public class Database {
      * @param personRef
      * @param loadedMods 
      */
-    private void createPersonAddressMods(int addressRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadPersonAddressMods(int addressRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
             AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1144,8 +1293,6 @@ public class Database {
      */
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
-            addressUsages.put(address.getAddressUsageRef(), address);
-            notes.put(address.getNote().getRef(), address.getNote());
             String insertSql = "insert into applicationAddresses (addressUsageRef, addressRef, appRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -1154,11 +1301,13 @@ public class Database {
                 insertStat.setInt(col++, appRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
                 insertStat.setInt(col++, address.getNote().getRef());
-                insertStat.setString(col++, address.getNote().getNote());
+                insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
+                addressUsages.put(address.getAddressUsageRef(), address);
+                notes.put(address.getNote().getRef(), address.getNote());
             }
         }
     }
@@ -1178,7 +1327,7 @@ public class Database {
             updateStat.setInt(col++, address.getAddress().getAddressRef());
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
             updateStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getEndDate()));
-            updateStat.setString(col++, address.getNote().getNote());
+            updateStat.setString(col++, address.getComment());
             updateStat.setInt(col++, address.getAddressUsageRef());
             updateStat.setInt(col++, appRef);
             updateStat.executeUpdate();
@@ -1238,7 +1387,7 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         application.setAppAddress(temp, null);
-                        this.createApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressModifications", temp.getAddressUsageRef()));
+                        this.loadApplicationAddressMods(temp.getAddressUsageRef(), reference, this.loadModMap("applicationAddressModifications", temp.getAddressUsageRef()));
                     }
                 }
             }
@@ -1251,7 +1400,7 @@ public class Database {
      * @param applicationRef
      * @param loadedMods 
      */
-    private void createApplicationAddressMods(int addressRef, int applicationRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadApplicationAddressMods(int addressRef, int applicationRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
             AddressUsage address = this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1277,9 +1426,9 @@ public class Database {
      */
     public void createTitle(Element title) throws SQLException {
         if(!this.titleExists(title.getCode())) {
+            this.createElement("titles", title);
             this.titles.put(title.getCode(), title);
             this.notes.put(title.getNote().getRef(), title.getNote());
-            this.createElement("titles", title);
         }
     }
     
@@ -1329,7 +1478,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.titles.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("titleModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("titleModifications", temp.getCode()));
                 }
             }
         }
@@ -1354,9 +1503,9 @@ public class Database {
      */
     public void createGender(Element gender) throws SQLException {
         if(!this.genderExists(gender.getCode())) {
+            this.createElement("genders", gender);
             this.genders.put(gender.getCode(), gender);
             this.notes.put(gender.getNote().getRef(), gender.getNote());
-            this.createElement("genders", gender);
         }
     }
     
@@ -1406,7 +1555,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.genders.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("genderModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("genderModifications", temp.getCode()));
                 }
             }
         }
@@ -1431,9 +1580,9 @@ public class Database {
      */
     public void createMaritalStatus(Element status) throws SQLException {
         if(!this.maritalStatusExists(status.getCode())) {
+            this.createElement("maritalStatuses", status);
             this.maritalStatuses.put(status.getCode(), status);
             this.notes.put(status.getNote().getRef(), status.getNote());
-            this.createElement("maritalStatuses", status);
         }
     }
     
@@ -1474,7 +1623,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.maritalStatuses.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("maritalStatusModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("maritalStatusModifications", temp.getCode()));
                 }
             }
         }
@@ -1489,9 +1638,9 @@ public class Database {
     
     public void createEthnicOrigin(Element ethnicOrigin) throws SQLException {
         if(!this.ethnicOriginExists(ethnicOrigin.getCode())) {
+            this.createElement("ethnicOrigins", ethnicOrigin);
             this.ethnicOrigins.put(ethnicOrigin.getCode(), ethnicOrigin);
             this.notes.put(ethnicOrigin.getNote().getRef(), ethnicOrigin.getNote());
-            this.createElement("ethnicOrigins", ethnicOrigin);
         }
     }
     
@@ -1532,7 +1681,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.ethnicOrigins.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("ethnicOriginModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("ethnicOriginModifications", temp.getCode()));
                 }
             }
         }
@@ -1547,9 +1696,9 @@ public class Database {
     
     public void createLanguage(Element language) throws SQLException {
         if(!this.languageExists(language.getCode())) {
+            this.createElement("languages", language);
             this.languages.put(language.getCode(), language);
             this.notes.put(language.getNote().getRef(), language.getNote());
-            this.createElement("languages", language);
         }
     }
     
@@ -1590,7 +1739,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.languages.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("languageModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("languageModifications", temp.getCode()));
                 }
             }
         }
@@ -1605,9 +1754,9 @@ public class Database {
     
     public void createNationality(Element nationality) throws SQLException {
         if(!this.nationalityExists(nationality.getCode())) {
+            this.createElement("nationalities", nationality);
             this.nationalities.put(nationality.getCode(), nationality);
             this.notes.put(nationality.getNote().getRef(), nationality.getNote());
-            this.createElement("nationalities", nationality);
         }
     }
     
@@ -1648,7 +1797,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.nationalities.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("nationalityModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("nationalityModifications", temp.getCode()));
                 }
             }
         }
@@ -1663,9 +1812,9 @@ public class Database {
     
     public void createSexuality(Element sex) throws SQLException {
         if(!this.sexualityExists(sex.getCode())) {
+            this.createElement("sexualities", sex);
             this.sexualities.put(sex.getCode(), sex);
             this.notes.put(sex.getNote().getRef(), sex.getNote());
-            this.createElement("sexualities", sex);
         }
     }
     
@@ -1706,7 +1855,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.sexualities.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("sexualityModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("sexualityModifications", temp.getCode()));
                 }
             }
         }
@@ -1721,9 +1870,9 @@ public class Database {
     
     public void createReligion(Element religion) throws SQLException {
         if(!this.religionExists(religion.getCode())) {
+            this.createElement("religions", religion);
             this.religions.put(religion.getCode(), religion);
             this.notes.put(religion.getNote().getRef(), religion.getNote());
-            this.createElement("religions", religion);
         }
     }
     
@@ -1764,7 +1913,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.religions.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("religionModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("religionModifications", temp.getCode()));
                 }
             }
         }
@@ -1779,8 +1928,6 @@ public class Database {
     
     public void createAddress(Address address) throws SQLException {
         if(!this.addressExists(address.getAddressRef())) {
-            this.addresses.put(address.getAddressRef(), address);
-            this.notes.put(address.getNote().getRef(), address.getNote());
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
                     + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
@@ -1797,11 +1944,13 @@ public class Database {
                 insertStat.setString(col++, address.getCountry());
                 insertStat.setString(col++, address.getPostcode());
                 insertStat.setInt(col++, address.getNote().getRef());
-                insertStat.setString(col++, address.getNote().getNote());
+                insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
+                this.addresses.put(address.getAddressRef(), address);
+                this.notes.put(address.getNote().getRef(), address.getNote());
             }
         }
     }
@@ -1823,7 +1972,7 @@ public class Database {
                 updateStat.setString(col++, address.getTown());
                 updateStat.setString(col++, address.getCountry());
                 updateStat.setString(col++, address.getPostcode());
-                updateStat.setString(col++, address.getNote().getNote());
+                updateStat.setString(col++, address.getComment());
                 updateStat.setInt(col++, address.getAddressRef());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -1883,12 +2032,12 @@ public class Database {
                 Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, createdDate);
                 this.addresses.put(temp.getAddressRef(), temp);
                 this.notes.put(note.getRef(), note);
-                this.createAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
+                this.loadAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
             }
         }
     }
     
-    private void createAddressMods(int addressRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadAddressMods(int addressRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressExists(addressRef) && !loadedMods.isEmpty()) {
             Address address = this.getAddress(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -1912,7 +2061,6 @@ public class Database {
     
     public void createProperty(Property property) throws SQLException {
         if(!this.propertyExists(property.getPropRef())) {
-            properties.put(property.getPropRef(), property);
             String insertSql = "insert into properties (propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
                     + "propSubTypeCode, propStatus, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -1929,6 +2077,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            properties.put(property.getPropRef(), property);
             this.createPropertyElementValues(property.getPropRef(), property.getPropertyElements());
         }
     }
@@ -2020,15 +2169,16 @@ public class Database {
                 Property temp = new Property(propertyRef, address, acquiredDate, propType, propSubType, createdBy, createdDate);
                 this.properties.put(temp.getPropRef(), temp);
                 this.loadPropertyElementValues(temp.getPropRef());
-                this.createPropertyMods(temp.getPropRef(), this.loadModMap("propertyModifications", temp.getPropRef()));
-                this.createPropertyNotes(temp.getPropRef(), this.loadNoteMap("propertyNotes", temp.getPropRef()));
+                this.loadPropertyMods(temp.getPropRef(), this.loadModMap("propertyModifications", temp.getPropRef()));
+                this.loadPropertyNotes(temp.getPropRef(), this.loadNoteMap("propertyNotes", temp.getPropRef()));
+                this.loadPropertyDocs(temp.getPropRef(), this.loadDocMap("propertyDocuments", temp.getPropRef()));
                 temp.setLeaseEndDate(leaseEndDate, null);
                 temp.setPropStatus(propStatus, null);
             }
         }
     }
     
-    private void createPropertyMods(int propRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadPropertyMods(int propRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propertyExists(propRef) && !loadadMods.isEmpty()) {
             Property property = this.getProperty(propRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -2049,7 +2199,35 @@ public class Database {
         return null;
     }
     
-    private void createPropertyNotes(int propRef, Map<Integer, Note> loadadNotes) {
+    private void loadPropertyDocs(int propertyRef, Map<Integer, Document> loadedDocs) {
+        if (this.propertyExists(propertyRef) && !loadedDocs.isEmpty()) {
+            Property property = this.getProperty(propertyRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                property.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createPropertyDoc(int propertyRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.propertyExists(propertyRef) && !this.documentExists(document.getDocumentRef()) && this.getProperty(propertyRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("propertyDocuments", propertyRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deletePropertyDoc(int propertyRef, int documentRef) throws RemoteException, SQLException {
+        if(this.propertyExists(propertyRef) && this.documentExists(documentRef) && this.getProperty(propertyRef).hasDocument(documentRef)) {
+            this.deleteDocument("propertyDocuments", propertyRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadPropertyNotes(int propRef, Map<Integer, Note> loadadNotes) {
         if (this.propertyExists(propRef) && !loadadNotes.isEmpty()) {
             Property property = this.getProperty(propRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -2058,6 +2236,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 property.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2083,9 +2262,9 @@ public class Database {
     
     public void createPropertyType(Element type) throws SQLException {
         if(!this.propTypeExists(type.getCode())) {
+            this.createElement("propertyTypes", type);
             this.propertyTypes.put(type.getCode(), type);
             this.notes.put(type.getNote().getRef(), type.getNote());
-            this.createElement("propertyTypes", type);
         }
     }
     
@@ -2126,7 +2305,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.propertyTypes.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("propertyTypeModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("propertyTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -2141,9 +2320,9 @@ public class Database {
     
     public void createPropertySubType(Element type) throws SQLException {
         if(!this.propSubTypeExists(type.getCode())) {
+            this.createElement("propertySubTypes", type);
             this.propertySubTypes.put(type.getCode(), type);
             this.notes.put(type.getNote().getRef(), type.getNote());
-            this.createElement("propertySubTypes", type);
         }
     }
     
@@ -2184,7 +2363,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.propertySubTypes.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("propertySubTypeModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("propertySubTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -2226,7 +2405,7 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
                 insertStat.setInt(col++, propertyElement.getNote().getRef());
-                insertStat.setString(col++, propertyElement.getNote().getNote());
+                insertStat.setString(col++, propertyElement.getComment());
                 insertStat.setString(col++, propertyElement.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -2234,8 +2413,6 @@ public class Database {
             }
             this.propertyElementValues.put(propertyElement.getPropertyElementRef(), propertyElement);
             this.notes.put(propertyElement.getNote().getRef(), propertyElement.getNote());
-            Property property = this.getProperty(propertyRef);
-            this.createModifiedBy("propertyModifications", property.getLastModification(), property.getPropRef());
         }
     }
 
@@ -2258,7 +2435,7 @@ public class Database {
                     }
                     updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
                     updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
-                    updateStat.setString(col++, propertyElement.getNote().getNote());
+                    updateStat.setString(col++, propertyElement.getComment());
                     updateStat.setInt(col++, propertyElement.getPropertyElementRef());
                     updateStat.setInt(col++, propertyRef);
                     updateStat.setString(col++, propertyElement.getElementCode());
@@ -2316,7 +2493,7 @@ public class Database {
                             }
                             this.propertyElementValues.put(temp.getPropertyElementRef(), temp);
                             this.notes.put(note.getRef(), note);
-                            this.createPropElementMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getPropertyElementRef()));
+                            this.loadPropElementMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getPropertyElementRef()));
                             property.createPropertyElement(temp, null);
                         }
                     }
@@ -2325,7 +2502,7 @@ public class Database {
         }
     }
     
-    private void createPropElementMods(PropertyElement element, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadPropElementMods(PropertyElement element, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -2347,9 +2524,9 @@ public class Database {
     
     public void createPropElement(Element element) throws SQLException {
         if(!this.propElementExists(element.getCode())) {
+            this.createElement("propertyElements", element);
             this.propertyElements.put(element.getCode(), element);
             this.notes.put(element.getNote().getRef(), element.getNote());
-            this.createElement("propertyElements", element);
         }
     }
     
@@ -2390,7 +2567,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.propertyElements.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("propertyElementModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("propertyElementModifications", temp.getCode()));
                 }
             }
         }
@@ -2405,7 +2582,6 @@ public class Database {
     
     public void createPerson(Person person) throws SQLException {
         if(!this.personExists(person.getPersonRef())) {
-            people.put(person.getPersonRef(), person);
             String insertSql = "insert into people (personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
                     + "nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, "
                     + "sexualityCode, religionCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -2430,6 +2606,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            people.put(person.getPersonRef(), person);
         }
     }
     
@@ -2556,15 +2733,16 @@ public class Database {
                 Person temp = new Person(personRef, title, forename, middleNames, surname, dateOfBirth, nationalInsurance, gender, maritalStatus, ethnicOrigin, language, nationality, sexuality, religion, null, createdBy, createdDate);
                 
                 this.people.put(temp.getPersonRef(), temp);
-                this.createPersonMods(temp.getPersonRef(), this.loadModMap("personModifications", temp.getPersonRef()));
-                this.createPersonNotes(temp.getPersonRef(), this.loadNoteMap("personNotes", temp.getPersonRef()));
+                this.loadPersonMods(temp.getPersonRef(), this.loadModMap("personModifications", temp.getPersonRef()));
+                this.loadPersonNotes(temp.getPersonRef(), this.loadNoteMap("personNotes", temp.getPersonRef()));
+                this.loadPersonDocs(temp.getPersonRef(), this.loadDocMap("personDocuments", temp.getPersonRef()));
                 this.loadPersonContacts(temp.getPersonRef());
                 this.loadPersonAddresses(temp.getPersonRef());
             }
         }
     }
     
-    private void createPersonMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadPersonMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.personExists(personRef) && !loadedMods.isEmpty()) {
             Person person = this.getPerson(personRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2586,7 +2764,35 @@ public class Database {
         return null;
     }
     
-    private void createPersonNotes(int personRef, Map<Integer, Note> loadadNotes) {
+    private void loadPersonDocs(int personRef, Map<Integer, Document> loadedDocs) {
+        if (this.personExists(personRef) && !loadedDocs.isEmpty()) {
+            Person person = this.getPerson(personRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                person.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createPersonDoc(int appRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.personExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getPerson(appRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("personDocuments", appRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deletePersonDoc(int appRef, int documentRef) throws RemoteException, SQLException {
+        if(this.personExists(appRef) && this.documentExists(documentRef) && this.getPerson(appRef).hasDocument(documentRef)) {
+            this.deleteDocument("personDocuments", appRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadPersonNotes(int personRef, Map<Integer, Note> loadadNotes) {
         if (this.personExists(personRef) && !loadadNotes.isEmpty()) {
             Person person = this.getPerson(personRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -2595,6 +2801,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 person.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2620,7 +2827,6 @@ public class Database {
     
     public void createInvolvedParty(InvolvedParty invParty) throws SQLException {
         if(!this.invPartyExists(invParty.getInvolvedPartyRef())) {
-            involvedParties.put(invParty.getInvolvedPartyRef(), invParty);
             String insertSql = "insert into involvedParties (invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, "
                     + "startDate, relationshipCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -2629,9 +2835,7 @@ public class Database {
                 insertStat.setInt(col++, invParty.getApplicationRef());
                 insertStat.setInt(col++, invParty.getPersonRef());
                 insertStat.setBoolean(col++, invParty.isJointInd());
-                System.out.println(invParty.isJointInd());
                 insertStat.setBoolean(col++, invParty.isMainInd());
-                System.out.println(invParty.isMainInd());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(invParty.getStartDate()));
                 insertStat.setString(col++, invParty.getRelationship().getCode());
                 insertStat.setString(col++, invParty.getCreatedBy());
@@ -2639,6 +2843,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            involvedParties.put(invParty.getInvolvedPartyRef(), invParty);
         }
     }
 
@@ -2729,15 +2934,15 @@ public class Database {
                         if (endDate != null && endReason != null) {
                             temp.endInvolvedParty(endDate, endReason, null);
                         }
-                        this.createInvolvedPartyMods(temp.getInvolvedPartyRef(), this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
-                        this.createInvolvedPartyNotes(temp.getInvolvedPartyRef(), this.loadNoteMap("involvedPartyNotes", temp.getInvolvedPartyRef()));
+                        this.loadInvolvedPartyMods(temp.getInvolvedPartyRef(), this.loadModMap("involvedPartyModifications", temp.getInvolvedPartyRef()));
+                        this.loadInvolvedPartyNotes(temp.getInvolvedPartyRef(), this.loadNoteMap("involvedPartyNotes", temp.getInvolvedPartyRef()));
                     }
                 }
             }
         }
     }
     
-    private void createInvolvedPartyMods(int invPartyRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadInvolvedPartyMods(int invPartyRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.invPartyExists(invPartyRef) && !loadedMods.isEmpty()) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -2760,7 +2965,7 @@ public class Database {
         return invParty;
     }
     
-    private void createInvolvedPartyNotes(int invPartyRef, Map<Integer, Note> loadadNotes) {
+    private void loadInvolvedPartyNotes(int invPartyRef, Map<Integer, Note> loadadNotes) {
         if (this.invPartyExists(invPartyRef) && !loadadNotes.isEmpty()) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -2769,6 +2974,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 invParty.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -2794,9 +3000,9 @@ public class Database {
     
     public void createEndReason(Element endReason) throws SQLException {
         if(!this.endReasonExists(endReason.getCode())) {
+            this.createElement("endReasons", endReason);
             this.endReasons.put(endReason.getCode(), endReason);
             this.notes.put(endReason.getNote().getRef(), endReason.getNote());
-            this.createElement("endReasons", endReason);
         }
     }
     
@@ -2837,7 +3043,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.endReasons.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("endReasonModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("endReasonModifications", temp.getCode()));
                 }
             }
         }
@@ -2852,9 +3058,9 @@ public class Database {
     
     public void createRelationship(Element relationship) throws SQLException {
         if(!this.relationshipExists(relationship.getCode())) {
+            this.createElement("relationships", relationship);
             this.relationships.put(relationship.getCode(), relationship);
             this.notes.put(relationship.getNote().getRef(), relationship.getNote());
-            this.createElement("relationships", relationship);
         }
     }
     
@@ -2895,7 +3101,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.relationships.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("relationshipModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("relationshipModifications", temp.getCode()));
                 }
             }
         }
@@ -2910,7 +3116,6 @@ public class Database {
     
     public void createApplication(Application application) throws SQLException {
         if(!this.applicationExists(application.getApplicationRef())) {
-            this.applications.put(application.getApplicationRef(), application);
             String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatus, "
                     + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -2924,6 +3129,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.applications.put(application.getApplicationRef(), application);
         }
     }
     
@@ -3019,8 +3225,9 @@ public class Database {
                 }
                 
                 this.applications.put(temp.getApplicationRef(), temp);
-                this.createApplicationMods(temp.getApplicationRef(), this.loadModMap("applicationModifications", temp.getApplicationRef()));
-                this.createApplicationNotes(temp.getApplicationRef(), this.loadNoteMap("applicationNotes", temp.getApplicationRef()));
+                this.loadApplicationMods(temp.getApplicationRef(), this.loadModMap("applicationModifications", temp.getApplicationRef()));
+                this.loadApplicationNotes(temp.getApplicationRef(), this.loadNoteMap("applicationNotes", temp.getApplicationRef()));
+                this.loadApplicationDocs(temp.getApplicationRef(), this.loadDocMap("applicationDocuments", temp.getApplicationRef()));
                 this.loadApplicationAddresses(temp.getApplicationRef());
                 this.loadInvolvedParties(temp.getApplicationRef());
                 this.loadPropertiesInterestedIn(temp.getApplicationRef());
@@ -3028,7 +3235,7 @@ public class Database {
         }
     }
     
-    private void createApplicationMods(int appRef, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadApplicationMods(int appRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.applicationExists(appRef) && !loadedMods.isEmpty()) {
             Application application = this.getApplication(appRef);
             Iterator it = loadedMods.entrySet().iterator();
@@ -3050,7 +3257,35 @@ public class Database {
         return null;
     }
     
-    private void createApplicationNotes(int appRef, Map<Integer, Note> loadadNotes) {
+    private void loadApplicationDocs(int appRef, Map<Integer, Document> loadedDocs) {
+        if (this.applicationExists(appRef) && !loadedDocs.isEmpty()) {
+            Application application = this.getApplication(appRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                application.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createApplicationDoc(int appRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.applicationExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getApplication(appRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("applicationDocuments", appRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteApplicationDoc(int appRef, int documentRef) throws RemoteException, SQLException {
+        if(this.applicationExists(appRef) && this.documentExists(documentRef) && this.getApplication(appRef).hasDocument(documentRef)) {
+            this.deleteDocument("applicationDocuments", appRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadApplicationNotes(int appRef, Map<Integer, Note> loadadNotes) {
         if (this.applicationExists(appRef) && !loadadNotes.isEmpty()) {
             Application application = this.getApplication(appRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -3059,6 +3294,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 application.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3181,7 +3417,6 @@ public class Database {
     
     public void createLandlord(Landlord landlord) throws SQLException {
         if(!this.landlordExists(landlord.getLandlordRef())) {
-            landlords.put(landlord.getLandlordRef(), landlord);
             String insertSql = "insert into landlords (landlordRef, personRef, createdBy, createdDate) values (?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -3192,6 +3427,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            landlords.put(landlord.getLandlordRef(), landlord);
         }
     }
 
@@ -3240,14 +3476,14 @@ public class Database {
                     Date createdDate = results.getDate("createdDate");
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
                     landlords.put(temp.getLandlordRef(), temp);
-                    this.createLandlordMods(temp.getLandlordRef(), this.loadModMap("landlordModifications", temp.getLandlordRef()));
-                    this.createLandlordNotes(temp.getLandlordRef(), this.loadNoteMap("landlordNotes", temp.getLandlordRef()));
+                    this.loadLandlordMods(temp.getLandlordRef(), this.loadModMap("landlordModifications", temp.getLandlordRef()));
+                    this.loadLandlordNotes(temp.getLandlordRef(), this.loadNoteMap("landlordNotes", temp.getLandlordRef()));
                 }
             }
         }
     }
     
-    private void createLandlordMods(int landlordRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadLandlordMods(int landlordRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.landlordExists(landlordRef) && !loadadMods.isEmpty()) {
             Landlord landlord = this.getLandlord(landlordRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -3268,7 +3504,7 @@ public class Database {
         return null;
     }
     
-    private void createLandlordNotes(int landlordRef, Map<Integer, Note> loadadNotes) {
+    private void loadLandlordNotes(int landlordRef, Map<Integer, Note> loadadNotes) {
         if (this.landlordExists(landlordRef) && !loadadNotes.isEmpty()) {
             Landlord landlord = this.getLandlord(landlordRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -3277,6 +3513,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 landlord.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3302,7 +3539,6 @@ public class Database {
     
     public void createOffice(Office office) throws SQLException {
         if(!this.officeExists(office.getOfficeCode())) {
-            this.offices.put(office.getOfficeCode(), office);
             String insertSql = "insert into Offices (officeCode, addressRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -3314,6 +3550,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.offices.put(office.getOfficeCode(), office);
         }
     }
     
@@ -3374,14 +3611,15 @@ public class Database {
                 }
                 
                 this.offices.put(temp.getOfficeCode(), temp);
-                this.createOfficeMods(temp.getOfficeCode(), this.loadModMap("officeModifications", temp.getOfficeCode()));
-                this.createOfficeNotes(temp.getOfficeCode(), this.loadNoteMap("officeNotes", temp.getOfficeCode()));
+                this.loadOfficeMods(temp.getOfficeCode(), this.loadModMap("officeModifications", temp.getOfficeCode()));
+                this.loadOfficeNotes(temp.getOfficeCode(), this.loadNoteMap("officeNotes", temp.getOfficeCode()));
+                this.loadOfficeDocs(temp.getOfficeCode(), this.loadDocMap("officeDocuments", temp.getOfficeCode()));
                 this.loadOfficeContacts(temp.getOfficeCode());
             }
         }
     }
     
-    private void createOfficeMods(String officeCode, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadOfficeMods(String officeCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadedMods.entrySet().iterator();
@@ -3403,7 +3641,35 @@ public class Database {
         return null;
     }
     
-    private void createOfficeNotes(String officeCode, Map<Integer, Note> loadadNotes) {
+    private void loadOfficeDocs(String officeCode, Map<Integer, Document> loadedDocs) {
+        if (this.officeExists(officeCode) && !loadedDocs.isEmpty()) {
+            Office office = this.getOffice(officeCode);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                office.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createOfficeDoc(String officeCode, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.officeExists(officeCode) && !this.documentExists(document.getDocumentRef()) && this.getOffice(officeCode).hasDocument(document.getDocumentRef())) {
+            this.createDocument("applicationDocuments", officeCode, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteOfficeDoc(String officeCode, int documentRef) throws RemoteException, SQLException {
+        if(this.officeExists(officeCode) && this.documentExists(documentRef) && this.getOffice(officeCode).hasDocument(documentRef)) {
+            this.deleteDocument("officeDocuments", officeCode, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadOfficeNotes(String officeCode, Map<Integer, Note> loadadNotes) {
         if (this.officeExists(officeCode) && !loadadNotes.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -3412,6 +3678,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 office.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3437,7 +3704,6 @@ public class Database {
     
     public void createJobRole(JobRole jobRole) throws SQLException {
         if(!this.jobRoleExists(jobRole.getJobRoleCode())) {
-            jobRoles.put(jobRole.getJobRoleCode(), jobRole);
             String insertSql = "insert into jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
                     + "cur, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate, "
                     + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -3460,6 +3726,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            jobRoles.put(jobRole.getJobRoleCode(), jobRole);
             this.createJobRoleRequirements(jobRole.getJobRoleCode(), jobRole.getJobRequirements());
             this.createJobRoleBenefits(jobRole.getJobRoleCode(), jobRole.getBenefits());
         }
@@ -3541,15 +3808,15 @@ public class Database {
                 temp.setCurrent(current);
                 
                 this.jobRoles.put(temp.getJobRoleCode(), temp);
-                this.createJobRoleMods(temp.getJobRoleCode(), this.loadModMap("jobRoleModifications", temp.getJobRoleCode()));
-                this.createJobRoleNotes(temp.getJobRoleCode(), this.loadNoteMap("jobRoleNotes", temp.getJobRoleCode()));
+                this.loadJobRoleMods(temp.getJobRoleCode(), this.loadModMap("jobRoleModifications", temp.getJobRoleCode()));
+                this.loadJobRoleNotes(temp.getJobRoleCode(), this.loadNoteMap("jobRoleNotes", temp.getJobRoleCode()));
                 this.loadJobRoleRequirements(temp.getJobRoleCode());
                 this.loadJobRoleBenefits(temp.getJobRoleCode());
             }
         }
     }
     
-    private void createJobRoleMods(String jobRoleCode, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadJobRoleMods(String jobRoleCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadedMods.entrySet().iterator();
@@ -3570,7 +3837,7 @@ public class Database {
         return null;
     }
     
-    private void createJobRoleNotes(String jobRoleCode, Map<Integer, Note> loadadNotes) {
+    private void loadJobRoleNotes(String jobRoleCode, Map<Integer, Note> loadadNotes) {
         if (this.jobRoleExists(jobRoleCode) && !loadadNotes.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -3579,6 +3846,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 jobRole.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -3665,8 +3933,6 @@ public class Database {
     
     public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException {
         if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode()) && !this.jobRoleBenefitExists(benefit.getBenefitRef())) {
-            this.jobRoleBenefits.put(benefit.getBenefitRef(), benefit);
-            this.notes.put(benefit.getNote().getRef(), benefit.getNote());
             String insertSql = "";
             if (benefit.isSalaryBenefit()) {
                 insertSql = "insert into jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -3686,12 +3952,14 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getEndDate()));
                 insertStat.setInt(col++, benefit.getNote().getRef());
-                insertStat.setString(col++, benefit.getNote().getNote());
+                insertStat.setString(col++, benefit.getComment());
                 insertStat.setString(col++, benefit.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.jobRoleBenefits.put(benefit.getBenefitRef(), benefit);
+            this.notes.put(benefit.getNote().getRef(), benefit.getNote());
         }
     }
     
@@ -3714,7 +3982,7 @@ public class Database {
                 }
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getStartDate()));
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getEndDate()));
-                updateStat.setString(col++, benefit.getNote().getNote());
+                updateStat.setString(col++, benefit.getComment());
                 updateStat.setInt(col++, benefit.getBenefitRef());
                 updateStat.setString(col++, code);
                 updateStat.executeUpdate();
@@ -3765,7 +4033,7 @@ public class Database {
                             }
                             this.jobRoleBenefits.put(temp.getBenefitRef(), temp);
                             this.notes.put(note.getRef(), note);
-                            this.createBenefitMods(temp, this.loadModMap("jobRoleBenefitModifications", temp.getBenefitRef()));
+                            this.loadBenefitMods(temp, this.loadModMap("jobRoleBenefitModifications", temp.getBenefitRef()));
                             jobRole.createJobBenefit(temp, null);
                         }
                     }
@@ -3774,7 +4042,7 @@ public class Database {
         }
     }
     
-    private void createBenefitMods(JobRoleBenefit benefit, Map<Integer, ModifiedByInterface> loadedMods) {
+    private void loadBenefitMods(JobRoleBenefit benefit, Map<Integer, ModifiedByInterface> loadedMods) {
         if (benefit != null && this.jobBenefitExists(benefit.getBenefit().getCode()) && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -3789,9 +4057,9 @@ public class Database {
     
     public void createJobRequirement(Element requirement) throws SQLException {
         if(!this.jobRequirementExists(requirement.getCode())) {
+            this.createElement("jobRequirements", requirement);
             this.jobRequirements.put(requirement.getCode(), requirement);
             this.notes.put(requirement.getNote().getRef(), requirement.getNote());
-            this.createElement("jobRequirements", requirement);
         }
     }
     
@@ -3834,7 +4102,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.jobRequirements.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("jobRequirementModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("jobRequirementModifications", temp.getCode()));
                 }
             }
         }
@@ -3849,9 +4117,9 @@ public class Database {
     
     public void createJobBenefit(Element benefit) throws SQLException {
         if(!this.jobBenefitExists(benefit.getCode())) {
+            this.createElement("jobBenefits", benefit);
             this.jobBenefits.put(benefit.getCode(), benefit);
             this.notes.put(benefit.getNote().getRef(), benefit.getNote());
-            this.createElement("jobBenefits", benefit);
         }
     }
     
@@ -3892,7 +4160,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.jobBenefits.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("jobBenefitModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("jobBenefitModifications", temp.getCode()));
                 }
             }
         }
@@ -3904,10 +4172,9 @@ public class Database {
         }
         return null;
     }
-
+    
     public void createEmployee(Employee employee) throws SQLException {
         if (!this.employeeExists(employee.getEmployeeRef())) {
-            employees.put(employee.getEmployeeRef(), employee);
             String insertSql = "insert into employees (employeeRef, personRef, officeCode, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -3919,9 +4186,10 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            employees.put(employee.getEmployeeRef(), employee);
         }
     }
-
+    
     public void updateEmployee(int employeeRef) throws SQLException {
         if (this.employeeExists(employeeRef)) {
             Employee employee = this.getEmployee(employeeRef);
@@ -3993,8 +4261,8 @@ public class Database {
                                 Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
                                 employees.put(temp.getEmployeeRef(), temp);
                                 users.put(temp.getUser().getUsername(), temp.getUser());
-                                this.createEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));
-                                this.createEmployeeNotes(temp.getEmployeeRef(), this.loadNoteMap("employeeNotes", temp.getEmployeeRef()));
+                                this.loadEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));
+                                this.loadEmployeeNotes(temp.getEmployeeRef(), this.loadNoteMap("employeeNotes", temp.getEmployeeRef()));
                                 }
                             }
                         }
@@ -4004,7 +4272,7 @@ public class Database {
         }
     }
     
-    private void createEmployeeMods(int employeeRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadEmployeeMods(int employeeRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.employeeExists(employeeRef) && !loadadMods.isEmpty()) {
             Employee employee = this.getEmployee(employeeRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -4025,7 +4293,7 @@ public class Database {
         return null;
     }
     
-    private void createEmployeeNotes(int employeeRef, Map<Integer, Note> loadadNotes) {
+    private void loadEmployeeNotes(int employeeRef, Map<Integer, Note> loadadNotes) {
         if (this.employeeExists(employeeRef) && !loadadNotes.isEmpty()) {
             Employee employee = this.getEmployee(employeeRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -4034,6 +4302,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 employee.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4059,7 +4328,6 @@ public class Database {
     
     public void createTenancy(Tenancy tenancy) throws SQLException {
         if(!this.tenancyExists(tenancy.getAgreementRef())) {
-            tenancies.put(tenancy.getAgreementRef(), tenancy);
             String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
                     + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4081,6 +4349,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            tenancies.put(tenancy.getAgreementRef(), tenancy);
         }
     }
     
@@ -4156,8 +4425,9 @@ public class Database {
                                 if (actualEndDate != null) {
                                     temp.setActualEndDate(actualEndDate, null);
                                 }
-                                this.createTenancyMods(temp.getAgreementRef(), this.loadModMap("tenancyModifications", temp.getAgreementRef()));
-                                this.createTenancyNotes(temp.getAgreementRef(), this.loadNoteMap("tenancyNotes", temp.getAgreementRef()));
+                                this.loadTenancyMods(temp.getAgreementRef(), this.loadModMap("tenancyModifications", temp.getAgreementRef()));
+                                this.loadTenancyNotes(temp.getAgreementRef(), this.loadNoteMap("tenancyNotes", temp.getAgreementRef()));
+                                this.loadTenancyDocs(temp.getAgreementRef(), this.loadDocMap("tenancyDocuments", temp.getAgreementRef()));
                             }
                         }
                     }
@@ -4166,7 +4436,7 @@ public class Database {
         }
     }
     
-    private void createTenancyMods(int tenancyRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadTenancyMods(int tenancyRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.tenancyExists(tenancyRef) && !loadadMods.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -4187,7 +4457,35 @@ public class Database {
         return null;
     }
     
-    private void createTenancyNotes(int tenancyRef, Map<Integer, Note> loadadNotes) {
+    private void loadTenancyDocs(int tenancyRef, Map<Integer, Document> loadedDocs) {
+        if (this.tenancyExists(tenancyRef) && !loadedDocs.isEmpty()) {
+            Tenancy tenancy = this.getTenancy(tenancyRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                tenancy.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createTenancyDoc(int tenancyRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.tenancyExists(tenancyRef) && !this.documentExists(document.getDocumentRef()) && this.getTenancy(tenancyRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("tenancyDocuments", tenancyRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteTenancyDoc(int tenancyRef, int documentRef) throws RemoteException, SQLException {
+        if(this.tenancyExists(tenancyRef) && this.documentExists(documentRef) && this.getTenancy(tenancyRef).hasDocument(documentRef)) {
+            this.deleteDocument("tenancyDocuments", tenancyRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadTenancyNotes(int tenancyRef, Map<Integer, Note> loadadNotes) {
         if (this.tenancyExists(tenancyRef) && !loadadNotes.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -4196,6 +4494,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 tenancy.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4221,9 +4520,9 @@ public class Database {
     
     public void createTenancyType(Element tenType) throws SQLException {
         if(!this.tenancyTypeExists(tenType.getCode())) {
+            this.createElement("tenancyTypes", tenType);
             this.tenancyTypes.put(tenType.getCode(), tenType);
             this.notes.put(tenType.getNote().getRef(), tenType.getNote());
-            this.createElement("tenancyTypes", tenType);
         }
     }
     
@@ -4264,7 +4563,7 @@ public class Database {
                 if (temp instanceof Element) {
                     this.tenancyTypes.put(temp.getCode(), temp);
                     this.notes.put(temp.getNote().getRef(), temp.getNote());
-                    this.createElementMods(temp, this.loadModMap("tenancyTypeModifications", temp.getCode()));
+                    this.loadElementMods(temp, this.loadModMap("tenancyTypeModifications", temp.getCode()));
                 }
             }
         }
@@ -4279,7 +4578,6 @@ public class Database {
     
     public void createLease(Lease lease) throws SQLException {
         if(!this.leaseExists(lease.getAgreementRef())) {
-            leases.put(lease.getAgreementRef(), lease);
             String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, "
                     + "officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4296,10 +4594,10 @@ public class Database {
                 insertStat.setBoolean(col++, lease.isFullManagement());
                 insertStat.setString(col++, lease.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(lease.getCreatedDate()));
-                System.out.println(insertStat);
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            leases.put(lease.getAgreementRef(), lease);
         }
     }
     
@@ -4370,15 +4668,16 @@ public class Database {
                         }
                         this.loadLeaseLandlords(temp.getAccountRef());
                         property.setLandlords(temp.getLandlords(), null);
-                        this.createLeaseMods(temp.getAgreementRef(), this.loadModMap("leaseModifications", temp.getAgreementRef()));
-                        this.createLeaseNotes(temp.getAgreementRef(), this.loadNoteMap("leaseNotes", temp.getAgreementRef()));
+                        this.loadLeaseMods(temp.getAgreementRef(), this.loadModMap("leaseModifications", temp.getAgreementRef()));
+                        this.loadLeaseNotes(temp.getAgreementRef(), this.loadNoteMap("leaseNotes", temp.getAgreementRef()));
+                        this.loadLeaseDocs(temp.getAgreementRef(), this.loadDocMap("leaseDocuments", temp.getAgreementRef()));
                     }
                 }
             }
         }
     }
     
-    private void createLeaseMods(int leaseRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadLeaseMods(int leaseRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseExists(leaseRef) && !loadadMods.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -4399,7 +4698,35 @@ public class Database {
         return null;
     }
     
-    private void createLeaseNotes(int leaseRef, Map<Integer, Note> loadadNotes) {
+    private void loadLeaseDocs(int leaseRef, Map<Integer, Document> loadedDocs) {
+        if (this.leaseExists(leaseRef) && !loadedDocs.isEmpty()) {
+            Lease lease = this.getLease(leaseRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                lease.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createLeaseDoc(int leaseRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.leaseExists(leaseRef) && !this.documentExists(document.getDocumentRef()) && this.getLease(leaseRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("leaseDocuments", leaseRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteLeaseDoc(int tenancyRef, int documentRef) throws RemoteException, SQLException {
+        if(this.leaseExists(tenancyRef) && this.documentExists(documentRef) && this.getLease(tenancyRef).hasDocument(documentRef)) {
+            this.deleteDocument("leaseDocuments", tenancyRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadLeaseNotes(int leaseRef, Map<Integer, Note> loadadNotes) {
         if (this.leaseExists(leaseRef) && !loadadNotes.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -4408,6 +4735,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 lease.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4528,7 +4856,6 @@ public class Database {
     
     public void createContract(Contract contract) throws SQLException {
         if(!this.contractExists(contract.getAgreementRef())) {
-            contracts.put(contract.getAgreementRef(), contract);
             String insertSql = "insert into contracts (contractRef, name, startDate, expectedEndDate, length, "
                     + "accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4547,6 +4874,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            contracts.put(contract.getAgreementRef(), contract);
         }
     }
     
@@ -4618,8 +4946,9 @@ public class Database {
                             employee.createContract(temp, null);
                             UserImpl user = employee.getUser();
                             user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate());
-                            this.createContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
-                            this.createContractNotes(temp.getAgreementRef(), this.loadNoteMap("contractNotes", temp.getAgreementRef()));
+                            this.loadContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
+                            this.loadContractNotes(temp.getAgreementRef(), this.loadNoteMap("contractNotes", temp.getAgreementRef()));
+                            this.loadContractDocs(temp.getAgreementRef(), this.loadDocMap("contractDocuments", temp.getAgreementRef()));
                         }
                     }
                 }
@@ -4627,7 +4956,7 @@ public class Database {
         }
     }
     
-    private void createContractMods(int contractRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadContractMods(int contractRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(contractRef) && !loadadMods.isEmpty()) {
             Contract contract = this.getContract(contractRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -4648,7 +4977,35 @@ public class Database {
         return null;
     }
     
-    private void createContractNotes(int contractRef, Map<Integer, Note> loadadNotes) {
+    private void loadContractDocs(int contractRef, Map<Integer, Document> loadedDocs) {
+        if (this.contractExists(contractRef) && !loadedDocs.isEmpty()) {
+            Contract contract = this.getContract(contractRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                contract.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createContractDoc(int contractRef, DocumentImpl document) throws RemoteException, SQLException {
+        if(this.contractExists(contractRef) && !this.documentExists(document.getDocumentRef()) && this.getContract(contractRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("contractDocuments", contractRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteContractDoc(int contractRef, int documentRef) throws RemoteException, SQLException {
+        if(this.leaseExists(contractRef) && this.documentExists(documentRef) && this.getContract(contractRef).hasDocument(documentRef)) {
+            this.deleteDocument("contractDocuments", contractRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadContractNotes(int contractRef, Map<Integer, Note> loadadNotes) {
         if (this.contractExists(contractRef) && !loadadNotes.isEmpty()) {
             Contract contract = this.getContract(contractRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -4657,6 +5014,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 contract.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4682,7 +5040,6 @@ public class Database {
     
     public void createRentAccount(RentAccount rentAcc) throws SQLException {
         if(!this.rentAccountExists(rentAcc.getAccRef())) {
-            rentAccounts.put(rentAcc.getAccRef(), rentAcc);
             String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, balance, "
                     + "officeCode, rent, tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4699,6 +5056,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            rentAccounts.put(rentAcc.getAccRef(), rentAcc);
         }
     }
     
@@ -4795,6 +5153,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 rentAcc.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4832,7 +5191,6 @@ public class Database {
     
     public void createLeaseAccount(LeaseAccount leaseAcc) throws SQLException {
         if(!this.leaseAccountExists(leaseAcc.getAccRef())) {
-            leaseAccounts.put(leaseAcc.getAccRef(), leaseAcc);
             String insertSql = "insert into leaseAccounts (leaseAccRef, name, startDate, balance, "
                     + "officeCode, leaseRef, expenditure, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4849,6 +5207,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            leaseAccounts.put(leaseAcc.getAccRef(), leaseAcc);
         }
     }
 
@@ -4945,6 +5304,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 leaseAcc.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -4982,7 +5342,6 @@ public class Database {
     
     public void createEmployeeAccount(EmployeeAccount employeeAcc) throws SQLException {
         if(!this.employeeAccountExists(employeeAcc.getAccRef())) {
-            employeeAccounts.put(employeeAcc.getAccRef(), employeeAcc);
             String insertSql = "insert into employeeAccounts (employeeAccRef, name, startDate, "
                     + "balance, officeCode, salary, contractRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -4999,6 +5358,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            employeeAccounts.put(employeeAcc.getAccRef(), employeeAcc);
         }
     }
     
@@ -5095,6 +5455,7 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 employeeAcc.createNote(tempNote, null);
+                notes.put(tempNote.getRef(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -5132,7 +5493,6 @@ public class Database {
     
     private void createTransaction(String from, Transaction transaction) throws SQLException {
         if(!this.transactionExists(transaction.getTransactionRef())) {
-            transactions.put(transaction.getTransactionRef(), transaction);
             String insertSql = "insert into " + from + " (transactionRef, accountRef, fromRef, toRef, amount, "
                     + "isDebit, transactionDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -5149,6 +5509,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            transactions.put(transaction.getTransactionRef(), transaction);
         }
     }
     
@@ -5205,7 +5566,6 @@ public class Database {
     
     public void createUser(UserImpl user) throws SQLException {
         if(!this.userExists(user.getUsername()) && this.employeeExists(user.getEmployeeRef())) {
-            users.put(user.getUsername(), user);
             String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
                     + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -5222,6 +5582,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            users.put(user.getUsername(), user);
         }
     }
     
@@ -5430,6 +5791,10 @@ public class Database {
             }
         }
         return false;
+    }
+    
+    public boolean documentExists(int ref) {
+        return documents.containsKey(ref);
     }
     
     public boolean noteExists(int ref) {

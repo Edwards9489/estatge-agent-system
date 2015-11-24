@@ -362,6 +362,11 @@ public class Address implements AddressInterface {
     }
     
     @Override
+    public String getComment() {
+        return note.getNote();
+    }
+    
+    @Override
     public boolean hasBeenModified() {
         return !this.modifiedBy.isEmpty();
     }

@@ -273,6 +273,11 @@ public class JobRoleBenefit implements JobRoleBenefitInterface {
     public Note getNote() {
         return note;
     }
+    
+    @Override
+    public String getComment() {
+        return note.getNote();
+    }
 
     /**
      * @return createdBy

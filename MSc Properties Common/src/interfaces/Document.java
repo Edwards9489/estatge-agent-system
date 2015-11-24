@@ -5,22 +5,18 @@
  */
 package interfaces;
 
+import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
  * @author Dwayne
  */
-public interface Element {
-    String getCode();
-    String getDescription();
-    boolean isCurrent();
-    boolean hasBeenModified();
-    String getLastModifiedBy();
-    Date getLastModifiedDate();
-    ModifiedByInterface getLastModification();
-    List<ModifiedByInterface> getModifiedBy();
+public interface Document {
+    int getDocumentRef();
+    String getDocumentName();
+    File getDocument();
+    String getDocumentPath();
     Note getNote();
     String getComment();
     String getCreatedBy();

@@ -7,6 +7,7 @@ package interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 
 /**
  *
@@ -15,6 +16,8 @@ import java.rmi.RemoteException;
 public interface Server extends Remote {
     void   register(Client c) throws RemoteException;
     void unregister(Client c) throws RemoteException;
+    void uploadDocument(String fileName, byte[] buffer, String createdBy) throws RemoteException, SQLException;
     boolean isAlive() throws RemoteException;
     boolean isUser(String username, String password) throws RemoteException;
+    byte[] downloadDocument(String fileName, String createdBy) throws RemoteException, SQLException;
 }

@@ -179,6 +179,11 @@ public class ElementImpl implements Element {
         return note;
     }
     
+    @Override
+    public String getComment() {
+        return note.getNote();
+    }
+    
     /**
      * 
      * @return createdBy

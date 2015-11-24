@@ -232,6 +232,11 @@ public class Contact implements ContactInterface {
     public Note getNote() {
         return note;
     }
+    
+    @Override
+    public String getComment() {
+        return note.getNote();
+    }
 
     /**
      * @return createdBy

@@ -6,6 +6,7 @@
 package server_application;
 
 import interfaces.AgreementInterface;
+import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Agreement implements AgreementInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final List<Note> notes;
     private final String officeCode;
+    private final List<Document> documents;
     
     ///   CONSTRUCTORS ///
     
@@ -60,6 +62,7 @@ public class Agreement implements AgreementInterface {
         this.modifiedBy = new ArrayList();
         this.notes = new ArrayList();
         this.officeCode = officeCode;
+        this.documents = new ArrayList();
     }
     
     
@@ -146,6 +149,20 @@ public class Agreement implements AgreementInterface {
                 notes.remove(note);
                 this.modifiedBy(modifiedBy);
             }
+        }
+    }
+    
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+        if(!this.hasDocument(document.getDocumentRef())) {
+            documents.add(document);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasDocument(ref)) {
+            documents.remove(this.getDocument(ref));
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -319,6 +336,35 @@ public class Agreement implements AgreementInterface {
     @Override
     public List<Note> getNotes() {
         return Collections.unmodifiableList(this.notes);
+    }
+    
+    @Override
+    public boolean hasDocument(int ref) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Document getDocument(int ref) {
+        if(this.hasDocument(ref)) {
+            for (Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return document;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(this.documents);
     }
 
     /**

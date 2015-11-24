@@ -6,6 +6,7 @@
 package server_application;
 
 import interfaces.AddressInterface;
+import interfaces.Document;
 import interfaces.Element;
 import interfaces.LandlordInterface;
 import interfaces.ModifiedByInterface;
@@ -38,6 +39,7 @@ public class Property implements PropertyInterface {
     private final Map<Integer, PropertyElementInterface> propertyElements;
     private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
+    private final List<Document> documents;
     private final String createdBy;
     private final Date createdDate;
     
@@ -65,6 +67,7 @@ public class Property implements PropertyInterface {
         this.propertyElements = new HashMap<>();
         this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
+        this.documents = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }
@@ -186,6 +189,20 @@ public class Property implements PropertyInterface {
                 notes.remove(note);
                 this.modifiedBy(modifiedBy);
             }
+        }
+    }
+    
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+        if(!this.hasDocument(document.getDocumentRef())) {
+            documents.add(document);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasDocument(ref)) {
+            documents.remove(this.getDocument(ref));
+            this.modifiedBy(modifiedBy);
         }
     }
 
@@ -438,6 +455,35 @@ public class Property implements PropertyInterface {
     @Override
     public List<Note> getNotes() {
         return Collections.unmodifiableList(this.notes);
+    }
+    
+    @Override
+    public boolean hasDocument(int ref) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Document getDocument(int ref) {
+        if(this.hasDocument(ref)) {
+            for (Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return document;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(this.documents);
     }
     
     /**

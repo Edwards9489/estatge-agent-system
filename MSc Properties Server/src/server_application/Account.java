@@ -2,6 +2,7 @@
 package server_application;
 
 import interfaces.AccountInterface;
+import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.TransactionInterface;
@@ -29,6 +30,7 @@ public class Account implements AccountInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final List<TransactionInterface> transactions;
     private final List<Note> notes;
+    private final ArrayList<Document> documents;
     
     ///   CONSTRUCTORS ///
     
@@ -51,6 +53,7 @@ public class Account implements AccountInterface {
         this.createdDate = createdDate;
         this.transactions = new ArrayList();
         this.notes = new ArrayList();
+        this.documents = new ArrayList();
     }
     
     
@@ -137,8 +140,10 @@ public class Account implements AccountInterface {
     }
     
     public void createNote(Note note, ModifiedByInterface modifiedBy) {
-        notes.add(note);
-        this.modifiedBy(modifiedBy);
+        if(this.hasNote(note.getRef())) {
+            notes.add(note);
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
@@ -148,6 +153,20 @@ public class Account implements AccountInterface {
                 notes.remove(note);
                 this.modifiedBy(modifiedBy);
             }
+        }
+    }
+    
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+        if(!this.hasDocument(document.getDocumentRef())) {
+            documents.add(document);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasDocument(ref)) {
+            documents.remove(this.getDocument(ref));
+            this.modifiedBy(modifiedBy);
         }
     }
     
@@ -254,6 +273,52 @@ public class Account implements AccountInterface {
     }
     
     @Override
+    public Note getNote(int ref) {
+        if(this.hasNote(ref)) {
+            for (Note note : notes) {
+                if(note.getRef() == ref) {
+                    return note;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(this.notes);
+    }
+    
+    @Override
+    public boolean hasDocument(int ref) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Document getDocument(int ref) {
+        if(this.hasDocument(ref)) {
+            for (Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return document;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(this.documents);
+    }
+    
+    @Override
     public TransactionInterface getTransaction(int ref) {
         if(this.hasTransaction(ref)) {
             for(TransactionInterface transaction : transactions) {
@@ -304,23 +369,6 @@ public class Account implements AccountInterface {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
-    }
-    
-    @Override
-    public Note getNote(int ref) {
-        if(this.hasNote(ref)) {
-            for (Note note : notes) {
-                if(note.getRef() == ref) {
-                    return note;
-                }
-            }
-        }
-        return null;
-    }
-    
-    @Override
-    public List<Note> getNotes() {
-        return Collections.unmodifiableList(this.notes);
     }
 
     /**

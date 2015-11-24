@@ -21,6 +21,7 @@ public interface AddressUsageInterface {
     boolean isCurrent();
     boolean hasBeenModified();
     Note getNote();
+    String getComment();
     String getLastModifiedBy();
     Date getLastModifiedDate();
     ModifiedByInterface getLastModification();

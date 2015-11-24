@@ -15,6 +15,11 @@ import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PropertyInterface;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -2303,5 +2308,33 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         UserImpl user = this.database.getUser(username);
         return user.isUser(temp, password);
+    }
+ 
+    @Override
+    public byte[] downloadDocument(String fileName, String createdBy) throws RemoteException, SQLException{
+        try {
+            File file = new File(fileName);
+            byte buffer[] = new byte[(int) file.length()];
+            try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(fileName))) {
+                input.read(buffer, 0, buffer.length);
+            }
+            return (buffer);
+        } catch (Exception e) {
+            System.out.println("FileImpl: " + e.getMessage());
+            return (null);
+        }
+    }
+    
+    @Override
+    public void uploadDocument(String fileName, byte[] buffer, String createdBy) throws RemoteException, SQLException {
+        try {
+            File file = new File(fileName);
+            try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileName))) {
+                output.write(buffer, 0, buffer.length);
+                output.flush();
+            }
+        } catch (Exception e) {
+            System.out.println("ServerImpl: " + e.getMessage());
+        }
     }
 }

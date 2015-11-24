@@ -6,6 +6,7 @@
 package server_application;
 import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
+import interfaces.Document;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
@@ -32,7 +33,7 @@ public class Application implements ApplicationInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final List<Note> notes;
     private Integer tenancyRef;
-    
+    private final List<Document> documents;
     private final String createdBy;
     private final Date createdDate;
     
@@ -59,6 +60,7 @@ public class Application implements ApplicationInterface {
         this.notes = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
+        this.documents = new ArrayList();
     }
     
     /**
@@ -320,6 +322,20 @@ public class Application implements ApplicationInterface {
         }
     }
     
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+        if(!this.hasDocument(document.getDocumentRef())) {
+            documents.add(document);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasDocument(ref)) {
+            documents.remove(this.getDocument(ref));
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
     
     
     /// ACCESSOR METHODS   ///
@@ -564,6 +580,35 @@ public class Application implements ApplicationInterface {
     @Override
     public List<Note> getNotes() {
         return Collections.unmodifiableList(this.notes);
+    }
+    
+    @Override
+    public boolean hasDocument(int ref) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Document getDocument(int ref) {
+        if(this.hasDocument(ref)) {
+            for (Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return document;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(this.documents);
     }
     
     @Override

@@ -40,6 +40,9 @@ public interface PersonInterface {
     boolean hasNote(int ref);
     Note getNote(int ref);
     List<Note> getNotes();
+    boolean hasDocument(int ref);
+    Document getDocument(int ref);
+    List<Document> getDocuments();
     String getCreatedBy();
     Date getCreatedDate();
     boolean hasContact(int contactRef);

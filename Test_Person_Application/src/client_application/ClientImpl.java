@@ -8,6 +8,13 @@ import interfaces.Client;
 import interfaces.RMISecurityPolicyLoader;
 import interfaces.Server;
 import interfaces.User;
+import java.awt.Desktop;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
@@ -15,6 +22,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -117,5 +127,27 @@ public class ClientImpl implements Client{
     
     public boolean isUser(String username, String password) throws RemoteException {
         return server.isUser(username, password);
+    }
+
+    public void uploadDocument(String fileName, byte[] buffer) throws SQLException, IOException {
+        File file = new File(fileName);
+        byte documentData[] = new byte[(int) file.length()];
+        try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(file.getName()))) {
+            input.read(documentData, 0, documentData.length);
+        }
+        server.uploadDocument(fileName, documentData, user.getUsername());
+    }
+
+    public File openDocument(String fileName) throws SQLException, IOException {
+        byte[] documentData = server.downloadDocument(fileName, user.getUsername());
+        File file = File.createTempFile("msctmp", ".pdf", new File("D:/"));
+        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()))) {
+            output.write(documentData, 0, documentData.length);
+            output.flush();
+        }
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(file);
+
+        return file;
     }
 }

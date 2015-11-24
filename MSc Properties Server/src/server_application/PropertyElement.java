@@ -295,6 +295,11 @@ public class PropertyElement implements PropertyElementInterface {
     public Note getNote() {
         return note;
     }
+    
+    @Override
+    public String getComment() {
+        return note.getNote();
+    }
 
     /**
      * @return createdBy

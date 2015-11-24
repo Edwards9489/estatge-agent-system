@@ -24,6 +24,9 @@ public interface AccountInterface {
     boolean hasBeenModified();
     boolean hasTransaction(int ref);
     boolean hasNote(int ref);
+    boolean hasDocument(int ref);
+    Document getDocument(int ref);
+    List<Document> getDocuments();
     TransactionInterface getTransaction(int ref);
     String getLastModifiedBy();
     Date getLastModifiedDate();

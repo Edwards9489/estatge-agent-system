@@ -5,6 +5,7 @@
  */
 package client_gui;
 
+import classes.Utils;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 

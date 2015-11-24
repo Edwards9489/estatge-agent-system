@@ -9,6 +9,7 @@ import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
+import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.OfficeInterface;
@@ -34,6 +35,7 @@ public class Office implements OfficeInterface {
     private final List<ContactInterface> contacts;
     private final List<Note> notes;
     private final List<ModifiedByInterface> modifiedBy;
+    private final List<Document> documents;
     private final String createdBy;
     private final Date createdDate;
     
@@ -56,6 +58,7 @@ public class Office implements OfficeInterface {
         this.contacts = new ArrayList();
         this.notes = new ArrayList();
         this.modifiedBy = new ArrayList();
+        this.documents = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -173,6 +176,20 @@ public class Office implements OfficeInterface {
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
         if (endDate == null || this.canCloseOffice() && endDate.after(this.startDate)) {
             this.endDate = endDate;
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+        if(!this.hasDocument(document.getDocumentRef())) {
+            documents.add(document);
+            this.modifiedBy(modifiedBy);
+        }
+    }
+    
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+        if(this.hasDocument(ref)) {
+            documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
         }
     }
@@ -377,6 +394,35 @@ public class Office implements OfficeInterface {
         else {
             return this.endDate.after(new Date());
         }
+    }
+    
+    @Override
+    public boolean hasDocument(int ref) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public Document getDocument(int ref) {
+        if(this.hasDocument(ref)) {
+            for (Document document : documents) {
+                if(document.getDocumentRef() == ref) {
+                    return document;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(this.documents);
     }
     
     @Override

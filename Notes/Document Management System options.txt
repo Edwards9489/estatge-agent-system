@@ -1,0 +1,7 @@
+Document Management System options
+
+http://stackoverflow.com/questions/18513635/dms-document-management-system-file-repository-file-manager-under-java-ee
+
+http://stackoverflow.com/questions/26123945/rmi-tranfer-file
+
+http://stackoverflow.com/questions/10333483/standard-java-classes-for-ftp-operations

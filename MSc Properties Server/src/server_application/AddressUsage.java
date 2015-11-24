@@ -172,6 +172,11 @@ public class AddressUsage implements AddressUsageInterface {
     }
     
     @Override
+    public String getComment() {
+        return note.getNote();
+    }
+    
+    @Override
     public boolean hasBeenModified() {
         return !this.modifiedBy.isEmpty();
     }

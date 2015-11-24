@@ -26,6 +26,7 @@ public interface ContactInterface {
     ModifiedByInterface getLastModification();
     List<ModifiedByInterface> getModifiedBy();
     Note getNote();
+    String getComment();
     String getCreatedBy();
     Date getCreatedDate();
 }
