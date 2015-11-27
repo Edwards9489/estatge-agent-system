@@ -351,6 +351,18 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
+    public boolean hasDocument(String fileName) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(fileName.equals(document.getDocumentName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
     public Document getDocument(int ref) {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {

@@ -151,32 +151,6 @@ public class Application implements ApplicationInterface {
      * @param address
      * @param modifiedBy
      */
-    private void setHouseholdAddress(AddressUsage address, ModifiedByInterface modifiedBy) {
-        if(!household.isEmpty()) {
-            for(InvolvedPartyInterface invParty : household) {
-                if(invParty.isCurrent()) {
-                    Person temp = (Person) invParty.getPerson();
-                    temp.createAddress(address, modifiedBy);
-                }
-            }
-        }
-    }
-    
-    private void deleteHouseholdAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
-        if(!household.isEmpty()) {
-            for(InvolvedPartyInterface invParty : household) {
-                if(invParty.isCurrent()) {
-                    Person temp = (Person) invParty.getPerson();
-                    temp.deleteAddress(address, modifiedBy);
-                }
-            }
-        }
-    }
-    
-    /**
-     * @param address
-     * @param modifiedBy
-     */
     public void setAppAddress(AddressUsage address, ModifiedByInterface modifiedBy) {
         if(!this.appAddresses.isEmpty()) {
             for(AddressUsageInterface addressUsage : this.appAddresses) {
@@ -187,7 +161,6 @@ public class Application implements ApplicationInterface {
             }
         }
         this.appAddresses.add(address);
-        this.setHouseholdAddress(address, modifiedBy);
         this.modifiedBy(modifiedBy);
     }
     
@@ -200,7 +173,6 @@ public class Application implements ApplicationInterface {
                 if(temp != null) {
                     temp.setEndDate(null, modifiedBy);
                 }
-                this.deleteHouseholdAddress(addr, modifiedBy);
                 this.modifiedBy(modifiedBy);
             }
         }
@@ -587,6 +559,18 @@ public class Application implements ApplicationInterface {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasDocument(String fileName) {
+        if(!documents.isEmpty()) {
+            for(Document document : documents) {
+                if(fileName.equals(document.getDocumentName())) {
                     return true;
                 }
             }

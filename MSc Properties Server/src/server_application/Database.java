@@ -116,8 +116,7 @@ public class Database {
      * @param addr
      * @param username
      * @param password
-     * @param port
-     * @throws RemoteException 
+     * @param port 
      */
     public Database(String environment, String addr, String username, String password, Integer port) throws RemoteException {
         this.offices = new HashMap<>();
@@ -252,7 +251,6 @@ public class Database {
     /**
      * 
      * @throws SQLException
-     * @throws RemoteException 
      */
     private void load() throws SQLException, RemoteException {
         if (this.con != null) {
@@ -2213,14 +2211,14 @@ public class Database {
         }
     }
     
-    public void createPropertyDoc(int propertyRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createPropertyDoc(int propertyRef, DocumentImpl document) throws SQLException {
         if(this.propertyExists(propertyRef) && !this.documentExists(document.getDocumentRef()) && this.getProperty(propertyRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("propertyDocuments", propertyRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deletePropertyDoc(int propertyRef, int documentRef) throws RemoteException, SQLException {
+    public void deletePropertyDoc(int propertyRef, int documentRef) throws SQLException {
         if(this.propertyExists(propertyRef) && this.documentExists(documentRef) && this.getProperty(propertyRef).hasDocument(documentRef)) {
             this.deleteDocument("propertyDocuments", propertyRef, documentRef);
             this.deleteNote(documentRef);
@@ -2778,14 +2776,14 @@ public class Database {
         }
     }
     
-    public void createPersonDoc(int appRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createPersonDoc(int appRef, DocumentImpl document) throws SQLException {
         if(this.personExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getPerson(appRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("personDocuments", appRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deletePersonDoc(int appRef, int documentRef) throws RemoteException, SQLException {
+    public void deletePersonDoc(int appRef, int documentRef) throws SQLException {
         if(this.personExists(appRef) && this.documentExists(documentRef) && this.getPerson(appRef).hasDocument(documentRef)) {
             this.deleteDocument("personDocuments", appRef, documentRef);
             this.deleteNote(documentRef);
@@ -3271,14 +3269,14 @@ public class Database {
         }
     }
     
-    public void createApplicationDoc(int appRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createApplicationDoc(int appRef, DocumentImpl document) throws SQLException {
         if(this.applicationExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getApplication(appRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("applicationDocuments", appRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deleteApplicationDoc(int appRef, int documentRef) throws RemoteException, SQLException {
+    public void deleteApplicationDoc(int appRef, int documentRef) throws SQLException {
         if(this.applicationExists(appRef) && this.documentExists(documentRef) && this.getApplication(appRef).hasDocument(documentRef)) {
             this.deleteDocument("applicationDocuments", appRef, documentRef);
             this.deleteNote(documentRef);
@@ -3655,14 +3653,14 @@ public class Database {
         }
     }
     
-    public void createOfficeDoc(String officeCode, DocumentImpl document) throws RemoteException, SQLException {
+    public void createOfficeDoc(String officeCode, DocumentImpl document) throws SQLException {
         if(this.officeExists(officeCode) && !this.documentExists(document.getDocumentRef()) && this.getOffice(officeCode).hasDocument(document.getDocumentRef())) {
-            this.createDocument("applicationDocuments", officeCode, document);
+            this.createDocument("officeDocuments", officeCode, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deleteOfficeDoc(String officeCode, int documentRef) throws RemoteException, SQLException {
+    public void deleteOfficeDoc(String officeCode, int documentRef) throws SQLException {
         if(this.officeExists(officeCode) && this.documentExists(documentRef) && this.getOffice(officeCode).hasDocument(documentRef)) {
             this.deleteDocument("officeDocuments", officeCode, documentRef);
             this.deleteNote(documentRef);
@@ -4471,14 +4469,14 @@ public class Database {
         }
     }
     
-    public void createTenancyDoc(int tenancyRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createTenancyDoc(int tenancyRef, DocumentImpl document) throws SQLException {
         if(this.tenancyExists(tenancyRef) && !this.documentExists(document.getDocumentRef()) && this.getTenancy(tenancyRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("tenancyDocuments", tenancyRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deleteTenancyDoc(int tenancyRef, int documentRef) throws RemoteException, SQLException {
+    public void deleteTenancyDoc(int tenancyRef, int documentRef) throws SQLException {
         if(this.tenancyExists(tenancyRef) && this.documentExists(documentRef) && this.getTenancy(tenancyRef).hasDocument(documentRef)) {
             this.deleteDocument("tenancyDocuments", tenancyRef, documentRef);
             this.deleteNote(documentRef);
@@ -4712,14 +4710,14 @@ public class Database {
         }
     }
     
-    public void createLeaseDoc(int leaseRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createLeaseDoc(int leaseRef, DocumentImpl document) throws SQLException {
         if(this.leaseExists(leaseRef) && !this.documentExists(document.getDocumentRef()) && this.getLease(leaseRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("leaseDocuments", leaseRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deleteLeaseDoc(int tenancyRef, int documentRef) throws RemoteException, SQLException {
+    public void deleteLeaseDoc(int tenancyRef, int documentRef) throws SQLException {
         if(this.leaseExists(tenancyRef) && this.documentExists(documentRef) && this.getLease(tenancyRef).hasDocument(documentRef)) {
             this.deleteDocument("leaseDocuments", tenancyRef, documentRef);
             this.deleteNote(documentRef);
@@ -4991,14 +4989,14 @@ public class Database {
         }
     }
     
-    public void createContractDoc(int contractRef, DocumentImpl document) throws RemoteException, SQLException {
+    public void createContractDoc(int contractRef, DocumentImpl document) throws SQLException {
         if(this.contractExists(contractRef) && !this.documentExists(document.getDocumentRef()) && this.getContract(contractRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("contractDocuments", contractRef, document);
             this.notes.put(document.getNote().getRef(), document.getNote());
         }
     }
     
-    public void deleteContractDoc(int contractRef, int documentRef) throws RemoteException, SQLException {
+    public void deleteContractDoc(int contractRef, int documentRef) throws SQLException {
         if(this.leaseExists(contractRef) && this.documentExists(documentRef) && this.getContract(contractRef).hasDocument(documentRef)) {
             this.deleteDocument("contractDocuments", contractRef, documentRef);
             this.deleteNote(documentRef);
@@ -5115,15 +5113,16 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.rentAccounts.put(temp.getAccRef(), temp);
-                        this.createRentAccountMods(temp.getAccRef(), this.loadModMap("rentAccountModifications", temp.getAccRef()));
-                        this.createRentAccountNotes(temp.getAccRef(), this.loadNoteMap("rentAccountNotes", temp.getAccRef()));
+                        this.loadRentAccountMods(temp.getAccRef(), this.loadModMap("rentAccountModifications", temp.getAccRef()));
+                        this.loadRentAccountNotes(temp.getAccRef(), this.loadNoteMap("rentAccountNotes", temp.getAccRef()));
+                        this.loadRentAccountDocs(temp.getAccRef(), this.loadDocMap("rentAccountDocuments", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createRentAccountMods(int rentAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadRentAccountMods(int rentAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.rentAccountExists(rentAccRef) && !loadadMods.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -5144,7 +5143,35 @@ public class Database {
         return null;
     }
     
-    private void createRentAccountNotes(int rentAccRef, Map<Integer, Note> loadadNotes) {
+    private void loadRentAccountDocs(int rentAccRef, Map<Integer, Document> loadedDocs) {
+        if (this.rentAccountExists(rentAccRef) && !loadedDocs.isEmpty()) {
+            RentAccount rentAcc = this.getRentAccount(rentAccRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                rentAcc.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createRentAccountDoc(int rentAccRef, DocumentImpl document) throws SQLException {
+        if(this.rentAccountExists(rentAccRef) && !this.documentExists(document.getDocumentRef()) && this.getRentAccount(rentAccRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("rentAccountDocuments", rentAccRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteRentAccountDoc(int rentAccRef, int documentRef) throws SQLException {
+        if(this.rentAccountExists(rentAccRef) && this.documentExists(documentRef) && this.getRentAccount(rentAccRef).hasDocument(documentRef)) {
+            this.deleteDocument("rentAccountDocuments", rentAccRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadRentAccountNotes(int rentAccRef, Map<Integer, Note> loadadNotes) {
         if (this.rentAccountExists(rentAccRef) && !loadadNotes.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -5266,15 +5293,16 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.leaseAccounts.put(temp.getAccRef(), temp);
-                        this.createLeaseAccountMods(temp.getAccRef(), this.loadModMap("leaseAccountModifications", temp.getAccRef()));
-                        this.createLeaseAccountNotes(temp.getAccRef(), this.loadNoteMap("leaseAccountNotes", temp.getAccRef()));
+                        this.loadLeaseAccountMods(temp.getAccRef(), this.loadModMap("leaseAccountModifications", temp.getAccRef()));
+                        this.loadLeaseAccountNotes(temp.getAccRef(), this.loadNoteMap("leaseAccountNotes", temp.getAccRef()));
+                        this.loadLeaseAccountDocs(temp.getAccRef(), this.loadDocMap("leaseAccountDocuments", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createLeaseAccountMods(int leaseAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadLeaseAccountMods(int leaseAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseAccountExists(leaseAccRef) && !loadadMods.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -5295,7 +5323,35 @@ public class Database {
         return null;
     }
     
-    private void createLeaseAccountNotes(int leaseAccRef, Map<Integer, Note> loadadNotes) {
+    private void loadLeaseAccountDocs(int leaseAccRef, Map<Integer, Document> loadedDocs) {
+        if (this.leaseAccountExists(leaseAccRef) && !loadedDocs.isEmpty()) {
+            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                leaseAcc.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createLeaseAccountDoc(int leaseAccRef, DocumentImpl document) throws SQLException {
+        if(this.leaseAccountExists(leaseAccRef) && !this.documentExists(document.getDocumentRef()) && this.getLeaseAccount(leaseAccRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("leaseAccountDocuments", leaseAccRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteLeaseAccountDoc(int leaseAccRef, int documentRef) throws SQLException {
+        if(this.leaseAccountExists(leaseAccRef) && this.documentExists(documentRef) && this.getLeaseAccount(leaseAccRef).hasDocument(documentRef)) {
+            this.deleteDocument("leaseAccountDocuments", leaseAccRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadLeaseAccountNotes(int leaseAccRef, Map<Integer, Note> loadadNotes) {
         if (this.leaseAccountExists(leaseAccRef) && !loadadNotes.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -5417,15 +5473,16 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.employeeAccounts.put(temp.getAccRef(), temp);
-                        this.createEmployeeAccountMods(temp.getAccRef(), this.loadModMap("employeeAccountModifications", temp.getAccRef()));
-                        this.createEmployeeAccountNotes(temp.getAccRef(), this.loadNoteMap("employeeAccountNotes", temp.getAccRef()));
+                        this.loadEmployeeAccountMods(temp.getAccRef(), this.loadModMap("employeeAccountModifications", temp.getAccRef()));
+                        this.loadEmployeeAccountNotes(temp.getAccRef(), this.loadNoteMap("employeeAccountNotes", temp.getAccRef()));
+                        this.loadEmployeeAccountDocs(temp.getAccRef(), this.loadDocMap("employeeAccountNotes", temp.getAccRef()));
                     }
                 }
             }
         }
     }
     
-    private void createEmployeeAccountMods(int employeeAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
+    private void loadEmployeeAccountMods(int employeeAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(employeeAccRef) && !loadadMods.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadMods.entrySet().iterator();
@@ -5446,7 +5503,35 @@ public class Database {
         return null;
     }
     
-    private void createEmployeeAccountNotes(int employeeAccRef, Map<Integer, Note> loadadNotes) {
+    private void loadEmployeeAccountDocs(int employeeAccRef, Map<Integer, Document> loadedDocs) {
+        if (this.employeeAccountExists(employeeAccRef) && !loadedDocs.isEmpty()) {
+            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
+            Iterator it = loadedDocs.entrySet().iterator();
+            while (it.hasNext()) {
+                Document tempDoc;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempDoc = (Document) temp.getValue();
+                employeeAcc.createDocument(tempDoc, null);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
+    
+    public void createEmployeeAccountDoc(int employeeAccRef, DocumentImpl document) throws SQLException {
+        if(this.employeeAccountExists(employeeAccRef) && !this.documentExists(document.getDocumentRef()) && this.getEmployeeAccount(employeeAccRef).hasDocument(document.getDocumentRef())) {
+            this.createDocument("employeeAccountDocuments", employeeAccRef, document);
+            this.notes.put(document.getNote().getRef(), document.getNote());
+        }
+    }
+    
+    public void deleteEmployeeAccountDoc(int employeeAccRef, int documentRef) throws SQLException {
+        if(this.employeeAccountExists(employeeAccRef) && this.documentExists(documentRef) && this.getEmployeeAccount(employeeAccRef).hasDocument(documentRef)) {
+            this.deleteDocument("employeeAccountDocuments", employeeAccRef, documentRef);
+            this.deleteNote(documentRef);
+        }
+    }
+    
+    private void loadEmployeeAccountNotes(int employeeAccRef, Map<Integer, Note> loadadNotes) {
         if (this.employeeAccountExists(employeeAccRef) && !loadadNotes.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
@@ -5845,6 +5930,13 @@ public class Database {
         return this.users.containsKey(username);
     }
     
+    public boolean isUser(String username, String password) {
+        if(this.userExists(username)) {
+            return this.getUser(username).isUser(username, password);
+        }
+        return false;
+    }
+    
     public int countPeople() {
         return this.people.size();
     }
@@ -5911,6 +6003,10 @@ public class Database {
     
     public int countNotes() {
         return this.notes.size();
+    }
+    
+    public int countDocuments() {
+        return this.documents.size();
     }
     
     public int getPropElementCount() throws SQLException {

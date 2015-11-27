@@ -25,6 +25,7 @@ public interface AccountInterface {
     boolean hasTransaction(int ref);
     boolean hasNote(int ref);
     boolean hasDocument(int ref);
+    boolean hasDocument(String fileName);
     Document getDocument(int ref);
     List<Document> getDocuments();
     TransactionInterface getTransaction(int ref);

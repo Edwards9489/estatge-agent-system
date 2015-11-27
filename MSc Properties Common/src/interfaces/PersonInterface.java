@@ -41,6 +41,7 @@ public interface PersonInterface {
     Note getNote(int ref);
     List<Note> getNotes();
     boolean hasDocument(int ref);
+    boolean hasDocument(String fileName);
     Document getDocument(int ref);
     List<Document> getDocuments();
     String getCreatedBy();

@@ -31,6 +31,7 @@ public interface OfficeInterface {
     Note getNote(int ref);
     List<Note> getNotes();
     boolean hasDocument(int ref);
+    boolean hasDocument(String fileName);
     Document getDocument(int ref);
     List<Document> getDocuments();
     boolean hasBeenModified();
