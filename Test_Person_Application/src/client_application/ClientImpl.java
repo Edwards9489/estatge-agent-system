@@ -129,25 +129,25 @@ public class ClientImpl implements Client{
         return server.isUser(username, password);
     }
 
-    public void uploadDocument(String fileName, byte[] buffer) throws SQLException, IOException {
-        File file = new File(fileName);
-        byte documentData[] = new byte[(int) file.length()];
-        try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(file.getName()))) {
-            input.read(documentData, 0, documentData.length);
-        }
-        server.uploadDocument(fileName, documentData, user.getUsername());
-    }
-
-    public File openDocument(String fileName) throws SQLException, IOException {
-        byte[] documentData = server.downloadDocument(fileName, user.getUsername());
-        File file = File.createTempFile("msctmp", ".pdf", new File("D:/"));
-        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()))) {
-            output.write(documentData, 0, documentData.length);
-            output.flush();
-        }
-        Desktop desktop = Desktop.getDesktop();
-        desktop.open(file);
-
-        return file;
-    }
+//    public void uploadDocument(String fileName, byte[] buffer) throws SQLException, IOException {
+//        File file = new File(fileName);
+//        byte documentData[] = new byte[(int) file.length()];
+//        try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(file.getName()))) {
+//            input.read(documentData, 0, documentData.length);
+//        }
+//        server.uploadDocument(fileName, documentData, user.getUsername());
+//    }
+//
+//    public File openDocument(String fileName) throws SQLException, IOException {
+//        byte[] documentData = server.downloadDocument(fileName, user.getUsername());
+//        File file = File.createTempFile("msctmp", ".pdf", new File("D:/"));
+//        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()))) {
+//            output.write(documentData, 0, documentData.length);
+//            output.flush();
+//        }
+//        Desktop desktop = Desktop.getDesktop();
+//        desktop.open(file);
+//
+//        return file;
+//    }
 }

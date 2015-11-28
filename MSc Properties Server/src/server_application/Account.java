@@ -6,16 +6,20 @@ import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.TransactionInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Collections;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class Account implements AccountInterface {
+public class Account extends UnicastRemoteObject implements AccountInterface {
     
     ///   VARIABLES   ///
     
@@ -42,8 +46,9 @@ public class Account implements AccountInterface {
      * @param createdBy
      * @param startDate
      * @param createdDate
+     * @throws java.rmi.RemoteException
      */
-    public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy, Date createdDate) {
+    public Account(int accRef, String accName, String officeCode, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         this.accRef = accRef;
         this.accName = accName;
         this.startDate = startDate;
@@ -105,8 +110,9 @@ public class Account implements AccountInterface {
      * @param startDate
      * @param accName
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy) {
+    public void updateAccount(Date startDate, String accName, ModifiedByInterface modifiedBy) throws RemoteException {
         if (this.isCurrent()) {
             this.setStartDate(startDate);
             this.setAccountName(accName);
@@ -117,8 +123,9 @@ public class Account implements AccountInterface {
     /**
      * @param transaction
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) {
+    public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) throws RemoteException {
         if (this.isCurrent()) {
             transactions.add(transaction);
             this.setBalance(this.balance + transaction.getAmount());
@@ -129,8 +136,9 @@ public class Account implements AccountInterface {
     /**
      * @param ref
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void deleteTransaction(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteTransaction(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasTransaction(ref)) {
             TransactionInterface transaction = this.getTransaction(ref);
             this.transactions.remove(transaction);
@@ -139,14 +147,14 @@ public class Account implements AccountInterface {
         }
     }
     
-    public void createNote(Note note, ModifiedByInterface modifiedBy) {
+    public void createNote(Note note, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(note.getRef())) {
             notes.add(note);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -156,14 +164,14 @@ public class Account implements AccountInterface {
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -176,65 +184,73 @@ public class Account implements AccountInterface {
      
      /**
      * @return accRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAccRef() {
+    public int getAccRef() throws RemoteException {
         return this.accRef;
     }
 
     /**
      * @return accName
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getAccName() {
+    public String getAccName() throws RemoteException {
         return this.accName;
     }
 
     /**
      * @return startDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getStartDate() {
+    public Date getStartDate() throws RemoteException {
         return this.startDate;
     }
 
     /**
      * @return endDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getEndDate() {
+    public Date getEndDate() throws RemoteException {
         return this.endDate;
     }
 
     /**
      * @return balance
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getBalance() {
+    public double getBalance() throws RemoteException {
         return this.balance;
     }
     
     /**
      * @return officeCode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getOfficeCode() {
+    public String getOfficeCode() throws RemoteException {
         return this.officeCode;
     }
     
     /**
      * @return true if the account balance < 0
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isNegativeInd() {
+    public boolean isNegativeInd() throws RemoteException {
         return this.balance < 0;
     }
     
     /**
      * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(this.endDate == null) {
             return true;
         }
@@ -244,12 +260,12 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     @Override
-    public boolean hasTransaction(int ref) {
+    public boolean hasTransaction(int ref) throws RemoteException {
         if(!transactions.isEmpty()) {
             for(TransactionInterface transaction : transactions) {
                 if(transaction.getTransactionRef() == ref) {
@@ -261,7 +277,7 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
                 if(note.getRef() == ref) {
@@ -273,7 +289,7 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
                 if(note.getRef() == ref) {
@@ -285,12 +301,12 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -302,7 +318,7 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -314,7 +330,7 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -326,12 +342,12 @@ public class Account implements AccountInterface {
     }
     
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
     
     @Override
-    public TransactionInterface getTransaction(int ref) {
+    public TransactionInterface getTransaction(int ref) throws RemoteException {
         if(this.hasTransaction(ref)) {
             for(TransactionInterface transaction : transactions) {
                 if(transaction.getTransactionRef() == ref) {
@@ -344,9 +360,10 @@ public class Account implements AccountInterface {
     
     /**
      * @return the name of the last user to modify the account
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -355,9 +372,10 @@ public class Account implements AccountInterface {
     
     /**
      * @return the last date the account was modified
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -366,17 +384,19 @@ public class Account implements AccountInterface {
     
     /**
      * @return the list of modifiedBy objects
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * @return the last modifiedBy object for the account
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -385,25 +405,28 @@ public class Account implements AccountInterface {
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
     
     /**
      * @return creditTransactions
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<TransactionInterface> getTransactions() {
+    public List<TransactionInterface> getTransactions() throws RemoteException {
         return Collections.unmodifiableList(this.transactions);
     }
     
@@ -412,12 +435,17 @@ public class Account implements AccountInterface {
      */
     @Override
     public String toString() {
-        String temp = "\n\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
-                "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
-                "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
-                this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +
-                isNegativeInd() + "\n\nModifed By\n" + this.getModifiedBy() + "\n\nTransactions\n" +
-                this.getTransactions();
-        return temp;
+        try {
+            String temp = "\n\nAccount Ref: " + this.getAccRef() + "\nAccount Name: " + this.getAccName() +
+                    "\nAccount Balance: " + this.getBalance() + "\nStart Date: " + this.getStartDate() +
+                    "\nEnd Date: " + this.getEndDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " +
+                    this.createdDate + "\nIs Account Current: " + isCurrent() + "\nIs Account in Arrears: " +
+                    isNegativeInd() + "\n\nModifed By\n" + this.getModifiedBy() + "\n\nTransactions\n" +
+                    this.getTransactions();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Account.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return null;
     }
 }

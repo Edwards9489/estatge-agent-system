@@ -7,6 +7,7 @@ package server_application;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
 import interfaces.JobRoleInterface;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -33,8 +34,9 @@ public class Contract extends Agreement implements ContractInterface {
      * @param officeCode
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Contract(int contractRef, int accountRef, Date startDate, int length, EmployeeInterface employee, JobRoleInterface jobRole, String officeCode, String createdBy, Date createdDate) {
+    public Contract(int contractRef, int accountRef, Date startDate, int length, EmployeeInterface employee, JobRoleInterface jobRole, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         super(contractRef, employee.getPerson().getName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.employee = employee;
         this.jobRole = jobRole;
@@ -49,34 +51,38 @@ public class Contract extends Agreement implements ContractInterface {
 
     /**
      * @return employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public EmployeeInterface getEmployee() {
+    public EmployeeInterface getEmployee() throws RemoteException {
         return employee;
     }
     
     /**
      * 
      * @return ref of employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getEmployeeRef() {
+    public int getEmployeeRef() throws RemoteException {
         return getEmployee().getEmployeeRef();
     }
     
     /**
      * @return jobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public JobRoleInterface getJobRole() {
+    public JobRoleInterface getJobRole() throws RemoteException {
         return jobRole;
     }
     
     /**
      * @return code of jobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getJobRoleCode() {
+    public String getJobRoleCode() throws RemoteException {
         return getJobRole().getJobRoleCode();
     }
     

@@ -5,13 +5,15 @@
  */
 package interfaces;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
 public interface ContractInterface extends AgreementInterface {
-    EmployeeInterface getEmployee();
-    int getEmployeeRef();
-    JobRoleInterface getJobRole();
-    String getJobRoleCode();
+    EmployeeInterface getEmployee() throws RemoteException;
+    int getEmployeeRef() throws RemoteException;
+    JobRoleInterface getJobRole() throws RemoteException;
+    String getJobRoleCode() throws RemoteException;
 }

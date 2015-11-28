@@ -5,14 +5,16 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public interface ModifiedByInterface {
-    String getModifiedBy();
-    Date getModifiedDate();
-    String getDescription();
+public interface ModifiedByInterface extends Remote {
+    String getModifiedBy() throws RemoteException;
+    Date getModifiedDate() throws RemoteException;
+    String getDescription() throws RemoteException;
 }

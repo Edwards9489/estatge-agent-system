@@ -9,17 +9,21 @@ import interfaces.AgreementInterface;
 import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class Agreement implements AgreementInterface {
+public class Agreement extends UnicastRemoteObject implements AgreementInterface {
     
     ///   VARIABLES   ///
     
@@ -49,8 +53,9 @@ public class Agreement implements AgreementInterface {
      * @param createdBy
      * @param createdDate
      * @param officeCode 
+     * @throws java.rmi.RemoteException 
      */
-    public Agreement(int agreementRef, String agreementName, Date startDate, int length, int accountRef, String createdBy, Date createdDate, String officeCode) {
+    public Agreement(int agreementRef, String agreementName, Date startDate, int length, int accountRef, String createdBy, Date createdDate, String officeCode) throws RemoteException {
         this.agreementRef = agreementRef;
         this.agreementName = agreementName;
         this.startDate = startDate;
@@ -127,8 +132,9 @@ public class Agreement implements AgreementInterface {
      * @param startDate
      * @param length
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy) {
+    public void updateAgreement(String name, Date startDate, int length, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isCurrent()) {
             this.setAgreementName(name);
             this.setStartDate(startDate);
@@ -142,7 +148,7 @@ public class Agreement implements AgreementInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -152,14 +158,14 @@ public class Agreement implements AgreementInterface {
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -188,73 +194,82 @@ public class Agreement implements AgreementInterface {
 
     /**
      * @return agreementRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAgreementRef() {
+    public int getAgreementRef() throws RemoteException {
         return agreementRef;
     }
     
     /**
      * @return agreementName
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getAgreementName() {
+    public String getAgreementName() throws RemoteException {
         return agreementName;
     }
 
     /**
      * @return startDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getStartDate() {
+    public Date getStartDate() throws RemoteException {
         return startDate;
     }
 
     /**
      * @return expectedEndDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getExpectedEndDate() {
+    public Date getExpectedEndDate() throws RemoteException {
         return expectedEndDate;
     }
 
     /**
      * @return actualEndDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getActualEndDate() {
+    public Date getActualEndDate() throws RemoteException {
         return actualEndDate;
     }
 
     /**
      * @return length
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getLength() {
+    public int getLength() throws RemoteException {
         return length;
     }
     
     /**
      * @return accountRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAccountRef() {
+    public int getAccountRef() throws RemoteException {
         return this.accountRef;
     }
     
     /**
      * @return officeCode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getOfficeCode() {
+    public String getOfficeCode() throws RemoteException {
         return officeCode;
     }
     
     /**
      * @return true if actualEndDate == null || (actualEndDate != null) && actualEndDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(this.isEndDateNull()) {
             return true;
         }
@@ -264,7 +279,7 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
                 if(note.getRef() == ref) {
@@ -276,15 +291,16 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * @return the name of the last user to modify the Agreement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -293,9 +309,10 @@ public class Agreement implements AgreementInterface {
     
     /**
      * @return the date the of the last modification to the Agreement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -304,17 +321,19 @@ public class Agreement implements AgreementInterface {
     
     /**
      * @return the list of modifiedBy objects for the Agreement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * @return the last modifiedBy object for the Agreement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -322,7 +341,7 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
                 if(note.getRef() == ref) {
@@ -334,12 +353,12 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -351,7 +370,7 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -363,7 +382,7 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -375,23 +394,25 @@ public class Agreement implements AgreementInterface {
     }
     
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
     
@@ -400,12 +421,17 @@ public class Agreement implements AgreementInterface {
      */
     @Override
     public String toString() {
-        String temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +
-                "\nOffice Code: " + this.getOfficeCode() + "\nAgreement Length: " + this.getLength() + "\nStart Date: " +
-                this.getStartDate() + "\nExpected End Date: " + this.getExpectedEndDate() + "\nActual End Date: " +
-                this.getActualEndDate() + "\nIs Current: " + this.isCurrent() + "\nCreated By: " + this.getCreatedBy() +
-                "\nCreated Date: " + this.getCreatedDate() + "\nLast Modified By:" + this.getLastModifiedBy() +
-                "\nLast Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
-        return temp;
+        try {
+            String temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +
+                    "\nOffice Code: " + this.getOfficeCode() + "\nAgreement Length: " + this.getLength() + "\nStart Date: " +
+                    this.getStartDate() + "\nExpected End Date: " + this.getExpectedEndDate() + "\nActual End Date: " +
+                    this.getActualEndDate() + "\nIs Current: " + this.isCurrent() + "\nCreated By: " + this.getCreatedBy() +
+                    "\nCreated Date: " + this.getCreatedDate() + "\nLast Modified By:" + this.getLastModifiedBy() +
+                    "\nLast Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Agreement.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

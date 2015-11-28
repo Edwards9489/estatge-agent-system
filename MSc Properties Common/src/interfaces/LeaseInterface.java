@@ -5,7 +5,7 @@
  */
 package interfaces;
 
-import java.util.Date;
+import java.rmi.RemoteException;
 import java.util.List;
 
 /**
@@ -13,10 +13,10 @@ import java.util.List;
  * @author Dwayne
  */
 public interface LeaseInterface extends AgreementInterface {
-    List<LandlordInterface> getLandlords();
-    PropertyInterface getProperty();
-    int getPropertyRef();
-    boolean isFullManagement();
-    boolean isAlreadyLandlord(int landlordRef);
-    double getExpenditure();
+    List<LandlordInterface> getLandlords() throws RemoteException;
+    PropertyInterface getProperty() throws RemoteException;
+    int getPropertyRef() throws RemoteException;
+    boolean isFullManagement() throws RemoteException;
+    boolean isAlreadyLandlord(int landlordRef) throws RemoteException;
+    double getExpenditure() throws RemoteException;
 }

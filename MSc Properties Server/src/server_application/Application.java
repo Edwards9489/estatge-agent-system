@@ -12,13 +12,17 @@ import interfaces.InvolvedPartyInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PropertyInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class Application implements ApplicationInterface {
+public class Application extends UnicastRemoteObject implements ApplicationInterface {
     
     ///   VARIABLES   ///
     
@@ -46,8 +50,9 @@ public class Application implements ApplicationInterface {
      * @param statusCode
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Application(int appRef, String corrName, Date appStartDate, String statusCode, String createdBy, Date createdDate) {
+    public Application(int appRef, String corrName, Date appStartDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
         this.appRef = appRef;
         this.appCorrName = corrName;
         this.appStartDate = appStartDate;
@@ -72,8 +77,9 @@ public class Application implements ApplicationInterface {
      * @param corrName
      * @param createdBy
      * @param createdDate
+     * @throws java.rmi.RemoteException
      */
-    public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy, Date createdDate) {
+    public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy, Date createdDate) throws RemoteException {
         this(appRef, corrName, appStartDate, "NEW", createdBy, createdDate);
         this.household.add(mainApp);
         this.appAddresses.add(address);
@@ -120,8 +126,9 @@ public class Application implements ApplicationInterface {
      * @param name
      * @param startDate
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void updateApplication(String name, Date startDate, ModifiedByInterface modifiedBy) {
+    public void updateApplication(String name, Date startDate, ModifiedByInterface modifiedBy) throws RemoteException {
         if(isCurrent()) {
             this.setCorrespondenceName(name);
             this.setStartDate(startDate);
@@ -150,8 +157,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param address
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void setAppAddress(AddressUsage address, ModifiedByInterface modifiedBy) {
+    public void setAppAddress(AddressUsage address, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.appAddresses.isEmpty()) {
             for(AddressUsageInterface addressUsage : this.appAddresses) {
                 if(addressUsage.isCurrent()) {
@@ -164,7 +172,7 @@ public class Application implements ApplicationInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteAppAddress(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteAppAddress(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isCurrentAddress(ref)) {
             AddressUsageInterface addr = this.getCurrentApplicationAddress();
             if(!addr.hasBeenModified()) {
@@ -181,8 +189,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param party
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void addInvolvedParty(InvolvedParty party, ModifiedByInterface modifiedBy) {
+    public void addInvolvedParty(InvolvedParty party, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.isPersonHouseholdMember(party.getPersonRef())) {
             this.household.add(party);
             this.modifiedBy(modifiedBy);
@@ -194,8 +203,9 @@ public class Application implements ApplicationInterface {
      * @param end
      * @param endReason
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void endInvolvedParty(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
+    public void endInvolvedParty(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isHouseholdMember(invPartyRef)) {
             InvolvedParty party = (InvolvedParty) this.getInvolvedParty(invPartyRef);
             if(!party.isCurrent()) {
@@ -207,7 +217,7 @@ public class Application implements ApplicationInterface {
         }
     }
     
-    public void deleteInvolvedParty(int invPartyRef, ModifiedByInterface modifiedBy) {
+    public void deleteInvolvedParty(int invPartyRef, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isHouseholdMember(invPartyRef)) {
             InvolvedPartyInterface party = this.getInvolvedParty(invPartyRef);
             if(!party.hasBeenModified() && !party.isMainInd()) {
@@ -222,8 +232,9 @@ public class Application implements ApplicationInterface {
      * @param end
      * @param endReason
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void changeMainApp(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) {
+    public void changeMainApp(int invPartyRef, Date end, Element endReason, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isHouseholdMember(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd()) {
             if(this.getInvolvedParty(invPartyRef).isOver18()) {
                 if(this.getMainApp() != null) {
@@ -243,8 +254,9 @@ public class Application implements ApplicationInterface {
      * @param tenancyRef
      * @param modifiedBy
      * @return copy of propertiesInterestedIn
+     * @throws java.rmi.RemoteException
      */
-    public List<PropertyInterface> setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) {
+    public List<PropertyInterface> setTenancy(int tenancyRef, ModifiedByInterface modifiedBy) throws RemoteException {
         this.tenancyRef = tenancyRef;
         List<PropertyInterface> properties = new ArrayList(this.getPropertiesInterestedIn());
         this.clearInterestedProperties(modifiedBy);
@@ -260,8 +272,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param property
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void addInterestedProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
+    public void addInterestedProperty(PropertyInterface property, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.isInterestedProperty(property)) {
             this.propertiesInterestedIn.add(property);
             this.modifiedBy(modifiedBy);
@@ -271,8 +284,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param property
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void endInterestInProperty(PropertyInterface property, ModifiedByInterface modifiedBy) {
+    public void endInterestInProperty(PropertyInterface property, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isInterestedProperty(property)) {
             this.propertiesInterestedIn.remove(property);
             this.modifiedBy(modifiedBy);
@@ -284,7 +298,7 @@ public class Application implements ApplicationInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -294,14 +308,14 @@ public class Application implements ApplicationInterface {
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -315,8 +329,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param personRef
      * @return true if household contains a current InvolvedParty instance with a person ref ==  personRef
+     * @throws java.rmi.RemoteException
      */
-    public boolean isPersonHouseholdMember(int personRef) {
+    public boolean isPersonHouseholdMember(int personRef) throws RemoteException {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface invParty : this.household) {
                 if(invParty.isCurrent()) {
@@ -332,8 +347,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param invPartyRef
      * @return true if household contains a current InvolvedParty instance with a ref ==  invPartyRef
+     * @throws java.rmi.RemoteException
      */
-    public boolean isHouseholdMember(int invPartyRef) {
+    public boolean isHouseholdMember(int invPartyRef) throws RemoteException {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface invParty : this.household) {
                 if(invParty.isCurrent() && invParty.getInvolvedPartyRef() == invPartyRef) {
@@ -347,8 +363,9 @@ public class Application implements ApplicationInterface {
     /**
      * @param invPartyRef
      * @return InvolvedParty instance from household with ref == invPartyRef
+     * @throws java.rmi.RemoteException
      */
-    public InvolvedPartyInterface getInvolvedParty(int invPartyRef) {
+    public InvolvedPartyInterface getInvolvedParty(int invPartyRef) throws RemoteException {
         if(!this.household.isEmpty() && this.isHouseholdMember(invPartyRef)) {
             for(InvolvedPartyInterface party : this.household) {
                 if(party.getPersonRef() == invPartyRef) {
@@ -361,8 +378,9 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return InvolvedParty from households with mainInd == true && current == true
+     * @throws java.rmi.RemoteException
      */
-    public InvolvedPartyInterface getMainApp() {
+    public InvolvedPartyInterface getMainApp() throws RemoteException {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface party : this.household) {
                 if(party.isMainInd() && party.isCurrent()) {
@@ -377,7 +395,7 @@ public class Application implements ApplicationInterface {
      * @param property
      * @return true if propertiesInterestedIn contains property
      */
-    private boolean isInterestedProperty(PropertyInterface property) {
+    private boolean isInterestedProperty(PropertyInterface property) throws RemoteException {
         if(!this.propertiesInterestedIn.isEmpty()) {
             for(PropertyInterface prop : this.propertiesInterestedIn) {
                 if(prop.getPropRef() == property.getPropRef()) {
@@ -398,45 +416,50 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return appRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getApplicationRef() {
+    public int getApplicationRef() throws RemoteException {
         return this.appRef;
     }
 
     /**
      * @return the appCorrName
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getAppCorrName() {
+    public String getAppCorrName() throws RemoteException {
         return this.appCorrName;
     }
 
     /**
      * @return the appStatusCode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getAppStatusCode() {
+    public String getAppStatusCode() throws RemoteException {
         return this.appStatusCode;
     }
     
     /**
      * @return the appStartDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getAppStartDate() {
+    public Date getAppStartDate() throws RemoteException {
         return this.appStartDate;
     }
     
     /**
      * @return the appEndDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getAppEndDate() {
+    public Date getAppEndDate() throws RemoteException {
         return this.appEndDate;
     }
     
-    public boolean isCurrentAddress(int ref) {
+    public boolean isCurrentAddress(int ref) throws RemoteException {
         if(!this.appAddresses.isEmpty()) {
             AddressUsageInterface addr = this.appAddresses.get(this.appAddresses.size()-1);
             if(addr.getAddressUsageRef() == ref) {
@@ -448,9 +471,10 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return current AddressUsage
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressUsageInterface getCurrentApplicationAddress() {
+    public AddressUsageInterface getCurrentApplicationAddress() throws RemoteException {
         if(!this.appAddresses.isEmpty()) {
             return this.appAddresses.get(this.appAddresses.size()-1);
         }
@@ -459,9 +483,10 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return String of current Address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCurrentApplicationAddressString() {
+    public String getCurrentApplicationAddressString() throws RemoteException {
         if(!this.appAddresses.isEmpty()) {
             return this.appAddresses.get(this.appAddresses.size()-1).getAddressString();
         }
@@ -470,53 +495,59 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return appAddresses
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<AddressUsageInterface> getApplicationAddressess() {
+    public List<AddressUsageInterface> getApplicationAddressess() throws RemoteException {
         return Collections.unmodifiableList((List<AddressUsageInterface>) this.appAddresses);
     }
 
     /**
      * @return propertiesInterestedIn.isEmpty() == false
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isAppInterestedFlag() {
+    public boolean isAppInterestedFlag() throws RemoteException {
         return !this.propertiesInterestedIn.isEmpty();
     }
 
     /**
      * @return household
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<InvolvedPartyInterface> getHousehold() {
+    public List<InvolvedPartyInterface> getHousehold() throws RemoteException {
         return Collections.unmodifiableList(this.household);
     }
 
     /**
      * @return propertiesIntrestedIn
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<PropertyInterface> getPropertiesInterestedIn() {
+    public List<PropertyInterface> getPropertiesInterestedIn() throws RemoteException {
         return Collections.unmodifiableList(this.propertiesInterestedIn);
     }
 
     /**
      * @return tenancyRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Integer getTenancyRef() {
+    public Integer getTenancyRef() throws RemoteException {
         return this.tenancyRef;
     }
     
-    public boolean hasTenancyRef() {
+    public boolean hasTenancyRef() throws RemoteException {
         return tenancyRef != null;
     }
 
     /**
      * @return true if appEndDate == null || (appEndDate != null && appEndDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(this.isAppEndDateNull()) {
             return true;
         }
@@ -526,7 +557,7 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
                 if(note.getRef() == ref) {
@@ -538,7 +569,7 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
                 if(note.getRef() == ref) {
@@ -550,12 +581,12 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -567,7 +598,7 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -579,7 +610,7 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -591,20 +622,21 @@ public class Application implements ApplicationInterface {
     }
     
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * @return the name of the last user to modify the Application
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -613,9 +645,10 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return the last date the Application was modified
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -624,17 +657,19 @@ public class Application implements ApplicationInterface {
     
     /**
      * @return the list of modifiedBy object for the Application
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * @return the last modifiedBy object for the Application
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -643,17 +678,19 @@ public class Application implements ApplicationInterface {
 
     /**
      * @return getCreatedBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return getCreatedDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
     
@@ -662,13 +699,18 @@ public class Application implements ApplicationInterface {
      */
     @Override
     public String toString() {
-        String temp = "\nApplication Ref: " + this.getApplicationRef() + "\nApplication Correspondence Name: " + this.getAppCorrName() +
-                "\nApplication Status Code: " + this.getAppStatusCode() + "\nApplication Address: " + this.getCurrentApplicationAddressString() +
-                "\nApplication Addresses\n" + this.getApplicationAddressess() + "\nApplication Start Date: " + this.getAppStartDate() +
-                "\nApplication End Date: " + this.getAppEndDate() + "\nIs Current: " + this.isCurrent() + "\nInterested in Properties: " +
-                this.isAppInterestedFlag() + "\nHousehold\n" + this.getHousehold() + "\nProperties Interested In\n" + this.getPropertiesInterestedIn() +
-                "\nTenancy Ref\n" + this.getTenancyRef() + "\nCreated By: " + this.getCreatedBy() + "\nCreated Date: " + this.getCreatedDate() +
-                "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " + this.getLastModifiedDate() + "\nModified By\n" + this.getModifiedBy();
-        return temp;
+        try {
+            String temp = "\nApplication Ref: " + this.getApplicationRef() + "\nApplication Correspondence Name: " + this.getAppCorrName() +
+                    "\nApplication Status Code: " + this.getAppStatusCode() + "\nApplication Address: " + this.getCurrentApplicationAddressString() +
+                    "\nApplication Addresses\n" + this.getApplicationAddressess() + "\nApplication Start Date: " + this.getAppStartDate() +
+                    "\nApplication End Date: " + this.getAppEndDate() + "\nIs Current: " + this.isCurrent() + "\nInterested in Properties: " +
+                    this.isAppInterestedFlag() + "\nHousehold\n" + this.getHousehold() + "\nProperties Interested In\n" + this.getPropertiesInterestedIn() +
+                    "\nTenancy Ref\n" + this.getTenancyRef() + "\nCreated By: " + this.getCreatedBy() + "\nCreated Date: " + this.getCreatedDate() +
+                    "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " + this.getLastModifiedDate() + "\nModified By\n" + this.getModifiedBy();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Application.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

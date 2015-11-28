@@ -5,12 +5,14 @@
  */
 package interfaces;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
-public interface LeaseAccountInterface {
-    LeaseInterface getLease();
-    int getLeaseRef();
-    double getExpenditure();
+public interface LeaseAccountInterface extends AccountInterface {
+    LeaseInterface getLease() throws RemoteException;
+    int getLeaseRef() throws RemoteException;
+    double getExpenditure() throws RemoteException;
 }

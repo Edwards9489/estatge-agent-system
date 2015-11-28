@@ -5,22 +5,24 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public interface TransactionInterface {
-    int getTransactionRef();
-    int getAccountRef();
-    int getFromRef();
-    int getToRef();
-    double getAmount();
-    Date getTransactionDate();
-    Note getNote();
-    String getComment();
-    String getCreatedBy();
-    Date getCreatedDate();
-    boolean isDebit();
+public interface TransactionInterface extends Remote {
+    int getTransactionRef() throws RemoteException;
+    int getAccountRef() throws RemoteException;
+    int getFromRef() throws RemoteException;
+    int getToRef() throws RemoteException;
+    double getAmount() throws RemoteException;
+    Date getTransactionDate() throws RemoteException;
+    Note getNote() throws RemoteException;
+    String getComment() throws RemoteException;
+    String getCreatedBy() throws RemoteException;
+    Date getCreatedDate() throws RemoteException;
+    boolean isDebit() throws RemoteException;
 }

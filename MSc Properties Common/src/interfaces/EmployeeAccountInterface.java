@@ -5,12 +5,14 @@
  */
 package interfaces;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
 public interface EmployeeAccountInterface extends AccountInterface {
-    ContractInterface getContract();
-    int getContractRef();
-    double getSalary();
+    ContractInterface getContract() throws RemoteException;
+    int getContractRef() throws RemoteException;
+    double getSalary() throws RemoteException;
 }

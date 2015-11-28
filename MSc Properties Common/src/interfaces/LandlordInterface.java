@@ -5,6 +5,8 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,21 +14,21 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public interface LandlordInterface {
-    int getLandlordRef();
-    PersonInterface getPerson();
-    int getPersonRef();
-    boolean hasLease(int ref);
-    List<LeaseInterface> getLeases();
-    LeaseInterface getLease(int ref);
-    boolean hasNote(int ref);
-    Note getNote(int ref);
-    List<Note> getNotes();
-    boolean hasBeenModified();
-    String getLastModifiedBy();
-    Date getLastModifiedDate();
-    ModifiedByInterface getLastModification();
-    List<ModifiedByInterface> getModifiedBy();
-    String getCreatedBy();
-    Date getCreatedDate();
+public interface LandlordInterface extends Remote {
+    int getLandlordRef() throws RemoteException;
+    PersonInterface getPerson() throws RemoteException;
+    int getPersonRef() throws RemoteException;
+    boolean hasLease(int ref) throws RemoteException;
+    List<LeaseInterface> getLeases() throws RemoteException;
+    LeaseInterface getLease(int ref) throws RemoteException;
+    boolean hasNote(int ref) throws RemoteException;
+    Note getNote(int ref) throws RemoteException;
+    List<Note> getNotes() throws RemoteException;
+    boolean hasBeenModified() throws RemoteException;
+    String getLastModifiedBy() throws RemoteException;
+    Date getLastModifiedDate() throws RemoteException;
+    ModifiedByInterface getLastModification() throws RemoteException;
+    List<ModifiedByInterface> getModifiedBy() throws RemoteException;
+    String getCreatedBy() throws RemoteException;
+    Date getCreatedDate() throws RemoteException;
 }

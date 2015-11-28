@@ -4,16 +4,20 @@ package server_application;
 import interfaces.AddressInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class Address implements AddressInterface {
+public class Address extends UnicastRemoteObject implements AddressInterface {
     
     ///   VARIABLES   ///
     
@@ -51,10 +55,11 @@ public class Address implements AddressInterface {
      * @param createdBy
      * @param note
      * @param createdDate
+     * @throws java.rmi.RemoteException
      */
     public Address(int addressRef, String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
-            String country, String postcode, Note note, String createdBy, Date createdDate) {
+            String country, String postcode, Note note, String createdBy, Date createdDate) throws RemoteException {
         
         this.addressRef = addressRef;
         this.setBuildingNumber(buildingNumber);
@@ -147,7 +152,7 @@ public class Address implements AddressInterface {
         this.postcode = postcode;
     }
     
-    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+    private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
@@ -178,7 +183,7 @@ public class Address implements AddressInterface {
      */
     public void updateAddress(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area,
-            String town, String country, String postcode, String comment, ModifiedByInterface modifiedBy) {
+            String town, String country, String postcode, String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         this.setBuildingNumber(buildingNumber);
         this.setBuildingName(buildingName);
         this.setSubStreetNumber(subStreetNumber);
@@ -270,112 +275,124 @@ public class Address implements AddressInterface {
 
     /**
      * @return addressRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAddressRef() {
+    public int getAddressRef() throws RemoteException {
         return addressRef;
     }
 
     /**
      * @return buildingNumber
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getBuildingNumber() {
+    public String getBuildingNumber() throws RemoteException {
         return buildingNumber;
     }
 
     /**
      * @return buildingName
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getBuildingName() {
+    public String getBuildingName() throws RemoteException {
         return buildingName;
     }
 
     /**
      * @return subStreetNumber
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getSubStreetNumber() {
+    public String getSubStreetNumber() throws RemoteException {
         return subStreetNumber;
     }
 
     /**
      * @return subStreet
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getSubStreet() {
+    public String getSubStreet() throws RemoteException {
         return subStreet;
     }
 
     /**
      * @return streetNumber
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getStreetNumber() {
+    public String getStreetNumber() throws RemoteException {
         return streetNumber;
     }
 
     /**
      * @return street
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getStreet() {
+    public String getStreet() throws RemoteException {
         return street;
     }
 
     /**
      * @return area
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getArea() {
+    public String getArea() throws RemoteException {
         return area;
     }
 
     /**
      * @return town
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getTown() {
+    public String getTown() throws RemoteException {
         return town;
     }
 
     /**
      * @return country
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCountry() {
+    public String getCountry() throws RemoteException {
         return country;
     }
 
     /**
      * @return postcode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getPostcode() {
+    public String getPostcode() throws RemoteException {
         return postcode;
     }
     
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * @return the name of the last user to modify the Address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -384,9 +401,10 @@ public class Address implements AddressInterface {
     
     /**
      * @return the date the last time the Address was modified
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -395,17 +413,19 @@ public class Address implements AddressInterface {
     
     /**
      * @return a list of modifiedBy objects for the Address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * @return get the last modifiedBy object for the Address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -414,26 +434,28 @@ public class Address implements AddressInterface {
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
     
     /**
      * @return String representation of the Address as one line
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String printAddress()
-    {
+    public String printAddress() throws RemoteException {
         String temp = "";
         
         if (!isBuildingNumberNull()) {
@@ -476,9 +498,14 @@ public class Address implements AddressInterface {
      */
     @Override
     public String toString() {
-        String temp = "\n\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +
-                "\nCreated Date: " + this.getCreatedDate() + "Last ModifiedBy: " + this.getLastModifiedBy() +
-                "Last Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
-        return temp;
+        try {
+            String temp = "\n\nAddress: " + this.printAddress() + "\nCreatedBy: " + this.getCreatedBy() +
+                    "\nCreated Date: " + this.getCreatedDate() + "Last ModifiedBy: " + this.getLastModifiedBy() +
+                    "Last Modified Date: " + this.getLastModifiedDate() + "\nModifiedBy\n" + this.getModifiedBy();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Address.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

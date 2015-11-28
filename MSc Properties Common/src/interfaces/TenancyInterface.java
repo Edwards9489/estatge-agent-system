@@ -5,17 +5,19 @@
  */
 package interfaces;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
 public interface TenancyInterface extends AgreementInterface {
-    int getPropertyRef();
-    PropertyInterface getProperty();
-    int getApplicationRef();
-    ApplicationInterface getApplication();
-    Element getTenType();
-    double getRent();
-    double getCharges();
-    double getExpectedRevenue();
+    int getPropertyRef() throws RemoteException;
+    PropertyInterface getProperty() throws RemoteException;
+    int getApplicationRef() throws RemoteException;
+    ApplicationInterface getApplication() throws RemoteException;
+    Element getTenType() throws RemoteException;
+    double getRent() throws RemoteException;
+    double getCharges() throws RemoteException;
+    double getExpectedRevenue() throws RemoteException;
 }

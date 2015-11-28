@@ -5,21 +5,24 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
-public interface User {
-    boolean isUser(String username, String password);
-    int getEmployeeRef();
-    String getUsername();
-    String getPassword();
-    String getOfficeCode();
-    boolean getPasswordReset();
-    boolean getRead();
-    boolean getWrite();
-    boolean getUpdate();
-    boolean getEmployeeRead();
-    boolean getEmployeeWrite();
-    boolean getEmployeeUpdate();
+public interface User extends Remote {
+    boolean isUser(String username, String password) throws RemoteException;
+    int getEmployeeRef() throws RemoteException;
+    String getUsername() throws RemoteException;
+    String getPassword() throws RemoteException;
+    String getOfficeCode() throws RemoteException;
+    boolean getPasswordReset() throws RemoteException;
+    boolean getRead() throws RemoteException;
+    boolean getWrite() throws RemoteException;
+    boolean getUpdate() throws RemoteException;
+    boolean getEmployeeRead() throws RemoteException;
+    boolean getEmployeeWrite() throws RemoteException;
+    boolean getEmployeeUpdate() throws RemoteException;
 }

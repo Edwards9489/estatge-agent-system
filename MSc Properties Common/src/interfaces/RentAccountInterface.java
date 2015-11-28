@@ -5,12 +5,14 @@
  */
 package interfaces;
 
+import java.rmi.RemoteException;
+
 /**
  *
  * @author Dwayne
  */
 public interface RentAccountInterface extends AccountInterface {
-    double getRent();
-    TenancyInterface getTenancy();
-    int getTenancyRef();
+    double getRent() throws RemoteException;
+    TenancyInterface getTenancy() throws RemoteException;
+    int getTenancyRef() throws RemoteException;
 }

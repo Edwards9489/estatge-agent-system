@@ -5,6 +5,8 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,20 +14,20 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public interface AddressUsageInterface {
-    int getAddressUsageRef();
-    String getAddressString();
-    AddressInterface getAddress();
-    Date getStartDate();
-    Date getEndDate();
-    boolean isCurrent();
-    boolean hasBeenModified();
-    Note getNote();
-    String getComment();
-    String getLastModifiedBy();
-    Date getLastModifiedDate();
-    ModifiedByInterface getLastModification();
-    List<ModifiedByInterface> getModifiedBy();
-    String getCreatedBy();
-    Date getCreatedDate();
+public interface AddressUsageInterface extends Remote {
+    int getAddressUsageRef() throws RemoteException;
+    String getAddressString() throws RemoteException;
+    AddressInterface getAddress() throws RemoteException;
+    Date getStartDate() throws RemoteException;
+    Date getEndDate() throws RemoteException;
+    boolean isCurrent() throws RemoteException;
+    boolean hasBeenModified() throws RemoteException;
+    Note getNote() throws RemoteException;
+    String getComment() throws RemoteException;
+    String getLastModifiedBy() throws RemoteException;
+    Date getLastModifiedDate() throws RemoteException;
+    ModifiedByInterface getLastModification() throws RemoteException;
+    List<ModifiedByInterface> getModifiedBy() throws RemoteException;
+    String getCreatedBy() throws RemoteException;
+    Date getCreatedDate() throws RemoteException;
 }

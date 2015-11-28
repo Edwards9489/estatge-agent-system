@@ -10,16 +10,20 @@ import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class AddressUsage implements AddressUsageInterface {
+public class AddressUsage extends UnicastRemoteObject implements AddressUsageInterface {
     
     ///   VARIABLES   ///
     
@@ -42,8 +46,9 @@ public class AddressUsage implements AddressUsageInterface {
      * @param note
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public AddressUsage(int ref, AddressInterface address, Date startDate, Note note, String createdBy, Date createdDate) {
+    public AddressUsage(int ref, AddressInterface address, Date startDate, Note note, String createdBy, Date createdDate) throws RemoteException {
         this.addressUsageRef = ref;
         this.address = address;
         this.startDate = startDate;
@@ -72,7 +77,7 @@ public class AddressUsage implements AddressUsageInterface {
         this.startDate = startDate;
     }
     
-    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+    private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
@@ -99,8 +104,9 @@ public class AddressUsage implements AddressUsageInterface {
      * @param startDate
      * @param comment
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
-    public void updateAddress(AddressInterface address, Date startDate, String comment, ModifiedByInterface modifiedBy) {
+    public void updateAddress(AddressInterface address, Date startDate, String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.isCurrent()) {
             this.setAddress(address);
             this.setComment(comment, modifiedBy);
@@ -115,49 +121,55 @@ public class AddressUsage implements AddressUsageInterface {
     
     /**
      * @return addressUsageRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAddressUsageRef() {
+    public int getAddressUsageRef() throws RemoteException {
         return this.addressUsageRef;
     }
     
     /**
      * @return a string representation address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getAddressString() {
+    public String getAddressString() throws RemoteException {
         return this.address.printAddress();
     }
     
     /**
      * @return address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressInterface getAddress() {
+    public AddressInterface getAddress() throws RemoteException {
         return this.address;
     }
 
     /**
      * @return startDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getStartDate() {
+    public Date getStartDate() throws RemoteException {
         return this.startDate;
     }
 
     /**
      * @return endDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getEndDate() {
+    public Date getEndDate() throws RemoteException {
         return this.endDate;
     }
 
     /**
      * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(this.endDate == null) {
             return true;
         }
@@ -167,25 +179,26 @@ public class AddressUsage implements AddressUsageInterface {
     }
     
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * @return the name of the user that last modified the AddressUsage
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -194,9 +207,10 @@ public class AddressUsage implements AddressUsageInterface {
     
     /**
      * @return the last date the AddressUsage was modified
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -205,17 +219,19 @@ public class AddressUsage implements AddressUsageInterface {
     
     /**
      * @return the list of modifiedBy objects for the AddressUsage
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * @return the last modifiedBy object for the AddressUsage
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -224,17 +240,19 @@ public class AddressUsage implements AddressUsageInterface {
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
     
@@ -243,10 +261,15 @@ public class AddressUsage implements AddressUsageInterface {
      */
     @Override
     public String toString() {
-        String temp = "\n\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
-                "\nEnd Date: " + this.getEndDate() + "\nCreatedBy: " + this.getCreatedBy() + "\nCreated Date: " +
-                this.getCreatedDate() + "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " +
-                this.getLastModifiedDate() + "\nIs Current: " + isCurrent() +  "\nModified By\n" + this.getModifiedBy();
-        return temp;
+        try {
+            String temp = "\n\nAddress: " + this.getAddressString() + "\nStart Date: " + this.getStartDate() +
+                    "\nEnd Date: " + this.getEndDate() + "\nCreatedBy: " + this.getCreatedBy() + "\nCreated Date: " +
+                    this.getCreatedDate() + "\nLast Modified By: " + this.getLastModifiedBy() + "\nLast Modified Date: " +
+                    this.getLastModifiedDate() + "\nIs Current: " + isCurrent() +  "\nModified By\n" + this.getModifiedBy();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(AddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

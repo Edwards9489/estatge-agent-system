@@ -5,6 +5,8 @@
  */
 package interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,21 +14,21 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public interface EmployeeInterface {
-    int getEmployeeRef();
-    PersonInterface getPerson();
-    int getPersonRef();
-    String getOfficeCode();
-    boolean hasBeenModified();
-    String getLastModifiedBy();
-    Date getLastModifiedDate();
-    ModifiedByInterface getLastModification();
-    List<ModifiedByInterface> getModifiedBy();
-    boolean hasNote(int ref);
-    Note getNote(int ref);
-    List<Note> getNotes();
-    String getCreatedBy();
-    Date getCreatedDate();
-    ContractInterface getContract();
-    List<ContractInterface> getContracts();
+public interface EmployeeInterface extends Remote {
+    int getEmployeeRef() throws RemoteException;
+    PersonInterface getPerson() throws RemoteException;
+    int getPersonRef() throws RemoteException;
+    String getOfficeCode() throws RemoteException;
+    boolean hasBeenModified() throws RemoteException;
+    String getLastModifiedBy() throws RemoteException;
+    Date getLastModifiedDate() throws RemoteException;
+    ModifiedByInterface getLastModification() throws RemoteException;
+    List<ModifiedByInterface> getModifiedBy() throws RemoteException;
+    boolean hasNote(int ref) throws RemoteException;
+    Note getNote(int ref) throws RemoteException;
+    List<Note> getNotes() throws RemoteException;
+    String getCreatedBy() throws RemoteException;
+    Date getCreatedDate() throws RemoteException;
+    ContractInterface getContract() throws RemoteException;
+    List<ContractInterface> getContracts() throws RemoteException;
 }
