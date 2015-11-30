@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.ContractInterface;
 import interfaces.EmployeeAccountInterface;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -28,8 +29,9 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
      * @param contract
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy, Date createdDate) {
+    public EmployeeAccount(int employeeAccRef, ContractInterface contract, String createdBy, Date createdDate) throws RemoteException {
         super(employeeAccRef, contract.getAgreementName(), contract.getOfficeCode(), contract.getStartDate(), createdBy, createdDate);
         this.contract = contract;
         salary = contract.getJobRole().getSalary();
@@ -42,8 +44,9 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
     /**
      * 
      * @param salary 
+     * @throws java.rmi.RemoteException 
      */
-    public void setSalary(double salary) {
+    public void setSalary(double salary) throws RemoteException {
         this.salary = salary;
     }
     
@@ -51,27 +54,30 @@ public class EmployeeAccount extends Account implements EmployeeAccountInterface
 
     /**
      * @return contract
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ContractInterface getContract() {
+    public ContractInterface getContract() throws RemoteException {
         return contract;
     }
     
     /**
      * 
      * @return ref of contract
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getContractRef() {
+    public int getContractRef() throws RemoteException {
         return contract.getAgreementRef();
     }
     
     /**
      * 
      * @return salary
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getSalary() {
+    public double getSalary() throws RemoteException {
         return this.salary;
     }
 }

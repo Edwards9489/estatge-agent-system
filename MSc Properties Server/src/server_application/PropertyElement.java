@@ -9,6 +9,8 @@ import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -18,7 +20,7 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class PropertyElement implements PropertyElementInterface {
+public class PropertyElement extends UnicastRemoteObject implements PropertyElementInterface {
     
     ///   VARIABLES   ///
     
@@ -49,7 +51,7 @@ public class PropertyElement implements PropertyElementInterface {
      * @param createdBy
      * @param createdDate 
      */
-    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) {
+    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) throws RemoteException {
         this.propertyElementRef = propElementRef;
         this. element = element;
         this.startDate = startDate;
@@ -109,7 +111,7 @@ public class PropertyElement implements PropertyElementInterface {
         }
     }
     
-    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+    private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
@@ -124,7 +126,7 @@ public class PropertyElement implements PropertyElementInterface {
      * @param comment
      * @param modifiedBy 
      */
-    public void updatePropertyElement(Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, ModifiedByInterface modifiedBy) {
+    public void updatePropertyElement(Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         if(charge) {
             this.setDoubleValue(doubleValue);
         }
@@ -155,66 +157,74 @@ public class PropertyElement implements PropertyElementInterface {
     /**
      * 
      * @return propertyElementRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPropertyElementRef() {
+    public int getPropertyElementRef() throws RemoteException {
         return this.propertyElementRef;
     }
     
     /**
      * @return element
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getElement() {
+    public Element getElement() throws RemoteException {
         return element;
     }
     
     /**
      * 
      * @return code for element
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getElementCode() {
+    public String getElementCode() throws RemoteException {
         return element.getCode();
     }
 
     /**
      * @return stringValue
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getStringValue() {
+    public String getStringValue() throws RemoteException {
         return stringValue;
     }
     
     /**
      * @return doubleValue
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getDoubleValue() {
+    public double getDoubleValue() throws RemoteException {
         return doubleValue;
     }
 
     /**
      * @return startDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getStartDate() {
+    public Date getStartDate() throws RemoteException {
         return startDate;
     }
 
     /**
      * @return endDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getEndDate() {
+    public Date getEndDate() throws RemoteException {
         return endDate;
     }
 
     /**
      * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(endDate == null) {
             return true;
         }
@@ -225,9 +235,10 @@ public class PropertyElement implements PropertyElementInterface {
 
     /**
      * @return charge
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCharge() {
+    public boolean isCharge() throws RemoteException {
         return charge;
     }
     
@@ -235,23 +246,25 @@ public class PropertyElement implements PropertyElementInterface {
      * 
      * @param code
      * @return true if this.code == code
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isElementCode(String code) {
+    public boolean isElementCode(String code) throws RemoteException {
         return code.equals(element.getCode());
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user who modified the PropertyElement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -261,9 +274,10 @@ public class PropertyElement implements PropertyElementInterface {
     /**
      * 
      * @return the last date a user modified the PropertyElement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -273,47 +287,61 @@ public class PropertyElement implements PropertyElementInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the PropertyElement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last mdodifiedBy object for the PropertyElement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
     

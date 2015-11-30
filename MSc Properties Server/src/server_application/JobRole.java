@@ -10,6 +10,8 @@ import interfaces.JobRoleBenefitInterface;
 import interfaces.JobRoleInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +22,7 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class JobRole implements JobRoleInterface {
+public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     
     ///   VARIABLES   ///
     
@@ -60,9 +62,10 @@ public class JobRole implements JobRoleInterface {
      * @param employeeUpdate
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
     public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy, Date createdDate) {
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy, Date createdDate) throws RemoteException {
         this.jobRoleCode = code;
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
@@ -168,7 +171,7 @@ public class JobRole implements JobRoleInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -211,8 +214,9 @@ public class JobRole implements JobRoleInterface {
      * 
      * @param requirement
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
+    public void createJobRequirement(Element requirement, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasRequirement(requirement.getCode())) {
             this.requirements.put(requirement.getCode(), requirement);
             this.modifiedBy(modifiedBy);
@@ -223,8 +227,9 @@ public class JobRole implements JobRoleInterface {
      * 
      * @param requirement
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy) {
+    public void removeJobRequirement(Element requirement, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasRequirement(requirement.getCode())) {
             this.requirements.remove(requirement.getCode());
             this.modifiedBy(modifiedBy);
@@ -235,8 +240,9 @@ public class JobRole implements JobRoleInterface {
      * 
      * @param benefit
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) {
+    public void createJobBenefit(JobRoleBenefitInterface benefit, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasCurrentBenefit(benefit.getBenefitCode())) {
             benefits.put(benefit.getBenefitRef(), benefit);
             this.modifiedBy(modifiedBy);
@@ -248,8 +254,9 @@ public class JobRole implements JobRoleInterface {
      * @param ref
      * @param endDate
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void endJobBenefit(int ref, Date endDate, ModifiedByInterface modifiedBy) {
+    public void endJobBenefit(int ref, Date endDate, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasBenefit(ref)) {
             JobRoleBenefit benefit = (JobRoleBenefit) this.benefits.get(ref);
             benefit.setEndDate(endDate, modifiedBy);
@@ -263,57 +270,64 @@ public class JobRole implements JobRoleInterface {
 
     /**
      * @return jobRoleRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getJobRoleCode() {
+    public String getJobRoleCode() throws RemoteException {
         return this.jobRoleCode;
     }
 
     /**
      * @return jobTitle
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getJobTitle() {
+    public String getJobTitle() throws RemoteException {
         return this.jobTitle;
     }
     
     /**
      * @return jobDescription
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getJobDescription() {
+    public String getJobDescription() throws RemoteException {
         return this.jobDescription;
     }
 
     /**
      * @return jobRequirements
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<Element> getJobRequirements() {
+    public List<Element> getJobRequirements() throws RemoteException {
         return Collections.unmodifiableList(new ArrayList<>(this.requirements.values()));
     }
 
     /**
      * @return fullTime
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isFullTime() {
+    public boolean isFullTime() throws RemoteException {
         return this.fullTime;
     }
 
     /**
      * @return salary
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getSalary() {
+    public double getSalary() throws RemoteException {
         return this.salary;
     }
     
     /**
      * @return current
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         return this.current;
     }
     
@@ -321,16 +335,17 @@ public class JobRole implements JobRoleInterface {
      * 
      * @param code
      * @return true if requirements contains Element with code == code
+     * @throws java.rmi.RemoteException
      */
-    public boolean hasRequirement(String code) {
+    public boolean hasRequirement(String code) throws RemoteException {
         return this.requirements.containsKey(code);
     }
     
-    public boolean hasBenefit(int ref) {
+    public boolean hasBenefit(int ref) throws RemoteException {
         return this.benefits.containsKey(ref);
     }
     
-    public boolean hasCurrentBenefit(String code) {
+    public boolean hasCurrentBenefit(String code) throws RemoteException {
         for(JobRoleBenefitInterface benefit : benefits.values()) {
             if(benefit.isCurrent() && code.equals(benefit.getBenefitCode())) {
                 return true;
@@ -341,23 +356,25 @@ public class JobRole implements JobRoleInterface {
 
     /**
      * @return benefits
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<JobRoleBenefitInterface> getBenefits() {
+    public List<JobRoleBenefitInterface> getBenefits() throws RemoteException {
         return Collections.unmodifiableList(new ArrayList<>(this.benefits.values()));
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user to modify the JobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -367,9 +384,10 @@ public class JobRole implements JobRoleInterface {
     /**
      * 
      * @return the last date a user made a modification to the JobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -379,18 +397,20 @@ public class JobRole implements JobRoleInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the JobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifiedBy object for JobRole
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -398,10 +418,10 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -410,10 +430,10 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -422,65 +442,73 @@ public class JobRole implements JobRoleInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
 
     /**
      * @return read
+     * @throws java.rmi.RemoteException
      */
-    public boolean getRead() {
+    public boolean getRead() throws RemoteException {
         return read;
     }
 
     /**
      * @return write
+     * @throws java.rmi.RemoteException
      */
-    public boolean getWrite() {
+    public boolean getWrite() throws RemoteException {
         return write;
     }
 
     /**
      * @return update
+     * @throws java.rmi.RemoteException
      */
-    public boolean getUpdate() {
+    public boolean getUpdate() throws RemoteException {
         return update;
     }
 
     /**
      * @return employeeRead
+     * @throws java.rmi.RemoteException
      */
-    public boolean getEmployeeRead() {
+    public boolean getEmployeeRead() throws RemoteException {
         return employeeRead;
     }
 
     /**
      * @return employeeWrite
+     * @throws java.rmi.RemoteException
      */
-    public boolean getEmployeeWrite() {
+    public boolean getEmployeeWrite() throws RemoteException {
         return employeeWrite;
     }
 
     /**
      * @return employeeUpdate
+     * @throws java.rmi.RemoteException
      */
-    public boolean getEmployeeUpdate() {
+    public boolean getEmployeeUpdate() throws RemoteException {
         return employeeUpdate;
     }
 }

@@ -13,6 +13,8 @@ import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import interfaces.PropertyInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +26,7 @@ import java.util.Map;
  *
  * @author Dwayne
  */
-public class Property implements PropertyInterface {
+public class Property extends UnicastRemoteObject implements PropertyInterface {
     
     ///   VARIABLES   ///
         
@@ -54,8 +56,9 @@ public class Property implements PropertyInterface {
      * @param propSubType
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Property(int propRef, AddressInterface address, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) {
+    public Property(int propRef, AddressInterface address, Date acquiredDate, Element propType, Element propSubType, String createdBy, Date createdDate) throws RemoteException {
         // initialise instance variables
         this.propRef = propRef;
         this.address = address;
@@ -161,15 +164,23 @@ public class Property implements PropertyInterface {
      * 
      * @param element
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createPropertyElement(PropertyElement element, ModifiedByInterface modifiedBy) {
+    public void createPropertyElement(PropertyElement element, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasCurrentPropElement(element.getElementCode())) {
             this.propertyElements.put(element.getPropertyElementRef(), element);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void endPropertyElement(int ref, Date endDate, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param endDate
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void endPropertyElement(int ref, Date endDate, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasPropElement(ref)) {
             PropertyElement propElement = (PropertyElement) propertyElements.get(ref);
             propElement.setEndDate(endDate, modifiedBy);
@@ -182,7 +193,13 @@ public class Property implements PropertyInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -192,14 +209,26 @@ public class Property implements PropertyInterface {
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param document
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -212,73 +241,82 @@ public class Property implements PropertyInterface {
     
     /**
      * @return propRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPropRef() {
+    public int getPropRef() throws RemoteException {
         return propRef;
     }
 
     /**
      * @return address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressInterface getAddress() {
+    public AddressInterface getAddress() throws RemoteException {
         return address;
     }
     
     /**
      * @return landlords
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<LandlordInterface> getLandlords() {
+    public List<LandlordInterface> getLandlords() throws RemoteException {
         return Collections.unmodifiableList(landlords);
     }
 
     /**
      * @return acquiredDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getAcquiredDate() {
+    public Date getAcquiredDate() throws RemoteException {
         return acquiredDate;
     }
 
     /**
      * @return leaseEndDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLeaseEndDate() {
+    public Date getLeaseEndDate() throws RemoteException {
         return leaseEndDate;
     }
 
     /**
      * @return propType
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getPropType() {
+    public Element getPropType() throws RemoteException {
         return propType;
     }
 
     /**
      * @return propSubType
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getPropSubType() {
+    public Element getPropSubType() throws RemoteException {
         return propSubType;
     }
 
     /**
      * @return propStatus
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getPropStatus() {
+    public String getPropStatus() throws RemoteException {
         return propStatus;
     }
 
     /**
      * @return propertyElements
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<PropertyElementInterface> getPropertyElements() {
+    public List<PropertyElementInterface> getPropertyElements() throws RemoteException {
         return Collections.unmodifiableList(new ArrayList(propertyElements.values()));
     }
     
@@ -286,8 +324,9 @@ public class Property implements PropertyInterface {
      * 
      * @param code
      * @return true if propertyElements contains PropertyElement with code == code
+     * @throws java.rmi.RemoteException
      */
-    public boolean hasPropElement(String code) {
+    public boolean hasPropElement(String code) throws RemoteException {
         if(!propertyElements.isEmpty()) {
             for(PropertyElementInterface element : propertyElements.values()) {
                 if(code.equals(element.getElementCode())) {
@@ -302,8 +341,9 @@ public class Property implements PropertyInterface {
      * 
      * @param code
      * @return true if propertyElements contains PropertyElement with code == code and current
+     * @throws java.rmi.RemoteException
      */
-    public boolean hasCurrentPropElement(String code) {
+    public boolean hasCurrentPropElement(String code) throws RemoteException {
         if(!propertyElements.isEmpty()) {
             for(PropertyElementInterface element : propertyElements.values()) {
                 if(element.isCurrent() && code.equals(element.getElementCode())) {
@@ -318,12 +358,19 @@ public class Property implements PropertyInterface {
      * 
      * @param ref
      * @return true if propertyElements contains PropertyElement with ref == ref
+     * @throws java.rmi.RemoteException
      */
-    public boolean hasPropElement(int ref) {
+    public boolean hasPropElement(int ref) throws RemoteException {
         return propertyElements.containsKey(ref);
     }
     
-    public PropertyElementInterface getPropElement(int ref) {
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
+    public PropertyElementInterface getPropElement(int ref) throws RemoteException {
         if(this.hasPropElement(ref)) {
             return this.propertyElements.get(ref);
         }
@@ -333,9 +380,10 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @return true if leaseEndDate == null || (leaseEndDate != null && leaseEndDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(leaseEndDate == null) {
             return true;
         }
@@ -347,9 +395,10 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @return value assigned to RENT element from propertyElements
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getRent() {
+    public double getRent() throws RemoteException {
         double rent = 0;
         if (!propertyElements.isEmpty()) {
             for (PropertyElementInterface temp : propertyElements.values()) {
@@ -364,9 +413,10 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @return sum of values assigned to charge elements from propertyElements
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getCharges() {
+    public double getCharges() throws RemoteException {
         double charges = 0;
         if(!propertyElements.isEmpty()) {
             for (PropertyElementInterface temp : propertyElements.values()) {
@@ -378,17 +428,23 @@ public class Property implements PropertyInterface {
         return charges;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user who modified the Property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -398,9 +454,10 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @return the last date a user modified the Property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -410,29 +467,37 @@ public class Property implements PropertyInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the Property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifedBy object for the Property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -440,11 +505,17 @@ public class Property implements PropertyInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -452,13 +523,24 @@ public class Property implements PropertyInterface {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -469,8 +551,14 @@ public class Property implements PropertyInterface {
         return false;
     }
     
+    /**
+     *
+     * @param fileName
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -481,8 +569,14 @@ public class Property implements PropertyInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -493,24 +587,31 @@ public class Property implements PropertyInterface {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
     
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
 }

@@ -11,6 +11,7 @@ import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PersonInterface;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +21,7 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class Employee implements EmployeeInterface {
+public class Employee extends UnicastRemoteObject implements EmployeeInterface {
     
     ///   VARIABLES   ///
     
@@ -94,7 +95,7 @@ public class Employee implements EmployeeInterface {
      * @param contract
      * @param modifiedBy 
      */
-    public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) {
+    public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!contracts.isEmpty()) {
             Agreement temp = (Agreement) contracts.get(contracts.size()-1);
             if(temp.isCurrent()) {
@@ -106,7 +107,7 @@ public class Employee implements EmployeeInterface {
         setOfficeCode(contract.getOfficeCode());
     }
     
-    public void deleteContract(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteContract(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasContract(ref) && !this.getContract(ref).hasBeenModified()) {
             contracts.remove(this.getContract(ref));
         }
@@ -117,7 +118,7 @@ public class Employee implements EmployeeInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -133,25 +134,28 @@ public class Employee implements EmployeeInterface {
     
     /**
      * @return employeeRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getEmployeeRef() {
+    public int getEmployeeRef() throws RemoteException {
         return employeeRef;
     }
 
     /**
      * @return person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public PersonInterface getPerson() {
+    public PersonInterface getPerson() throws RemoteException {
         return person;
     }
     
     /**
      * 
      * @return true if contracts.isEmpty() == false || getContract.isCurrent()
+     * @throws java.rmi.RemoteException
      */
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(contracts.isEmpty()) {
             return false;
         } else {
@@ -160,40 +164,44 @@ public class Employee implements EmployeeInterface {
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * @return ref of person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPersonRef() {
+    public int getPersonRef() throws RemoteException {
         return person.getPersonRef();
     }
     
     /**
      * 
      * @return user
+     * @throws java.rmi.RemoteException
      */
-    public UserImpl getUser() {
+    public UserImpl getUser() throws RemoteException {
         return this.user;
     }
 
     /**
      * @return officeCode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getOfficeCode() {
+    public String getOfficeCode() throws RemoteException {
         return officeCode;
     }
     
     /**
      * 
      * @return the name of the last user to modify the Employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -203,9 +211,10 @@ public class Employee implements EmployeeInterface {
     /**
      * 
      * @return the date of the last modification for the Employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -215,18 +224,20 @@ public class Employee implements EmployeeInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the Employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifiedBy object for the Employee
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -234,10 +245,10 @@ public class Employee implements EmployeeInterface {
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -246,10 +257,10 @@ public class Employee implements EmployeeInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -258,27 +269,29 @@ public class Employee implements EmployeeInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
     
-    public boolean hasContract(int ref) {
+    public boolean hasContract(int ref) throws RemoteException {
         if(contracts.isEmpty()) {
             for(ContractInterface contract : getContracts()) {
                 if(contract.getAccountRef() == ref) {
@@ -289,7 +302,7 @@ public class Employee implements EmployeeInterface {
         return false;
     }
     
-    public ContractInterface getContract(int ref) {
+    public ContractInterface getContract(int ref) throws RemoteException {
         if(this.hasContract(ref)) {
             for(ContractInterface contract : getContracts()) {
                 if(contract.getAccountRef() == ref) {
@@ -302,9 +315,10 @@ public class Employee implements EmployeeInterface {
     
     /**
      * @return most recent contract
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ContractInterface getContract() {
+    public ContractInterface getContract() throws RemoteException {
         if(!contracts.isEmpty()) {
             return contracts.get(contracts.size()-1);
         }
@@ -313,9 +327,10 @@ public class Employee implements EmployeeInterface {
     
     /**
      * @return contracts
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ContractInterface> getContracts() {
+    public List<ContractInterface> getContracts() throws RemoteException {
         return Collections.unmodifiableList(contracts);
     }
 }

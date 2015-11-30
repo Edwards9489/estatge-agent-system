@@ -8,6 +8,7 @@ package server_application;
 import interfaces.Document;
 import interfaces.Note;
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -20,7 +21,7 @@ public class DocumentImpl extends File implements Document {
     private final String createdBy;
     private final Date createdDate;
     
-    public DocumentImpl(int documentRef, File file, String fileName, Note note, String createdBy, Date createdDate) {
+    public DocumentImpl(int documentRef, File file, String fileName, Note note, String createdBy, Date createdDate) throws RemoteException {
         super(file, fileName);
         this.documentRef = documentRef;
         this.createdBy =  createdBy;
@@ -30,53 +31,57 @@ public class DocumentImpl extends File implements Document {
 
     /**
      * @return the documentRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getDocumentRef() {
+    public int getDocumentRef() throws RemoteException {
         return documentRef;
     }
 
     /**
      * @return the documentName
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getDocumentName() {
+    public String getDocumentName() throws RemoteException {
         return getName();
     }
     
     @Override
-    public String getDocumentPath() {
+    public String getDocumentPath() throws RemoteException {
         return this.getDocument().getAbsolutePath();
     }
     
     @Override
-    public File getDocument() {
+    public File getDocument() throws RemoteException {
         return super.getParentFile();
     }
     
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
 
     /**
      * @return the createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return the createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
 }

@@ -5,13 +5,15 @@
  */
 package server_application;
 import interfaces.ModifiedByInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 
 /**
  *
  * @author Dwayne
  */
-public class ModifiedBy implements ModifiedByInterface {
+public class ModifiedBy extends UnicastRemoteObject implements ModifiedByInterface {
     
     ///   VARIABLES   ///
     
@@ -26,8 +28,9 @@ public class ModifiedBy implements ModifiedByInterface {
      * @param modifiedBy
      * @param modifedDate
      * @param description 
+     * @throws java.rmi.RemoteException 
      */
-    public ModifiedBy(String modifiedBy, Date modifedDate, String description) {
+    public ModifiedBy(String modifiedBy, Date modifedDate, String description) throws RemoteException {
         this.modifiedBy = modifiedBy;
         this.modifiedDate = modifedDate;
         this.description = description;
@@ -43,25 +46,28 @@ public class ModifiedBy implements ModifiedByInterface {
     
     /**
      * @return modifiedBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getModifiedBy() {
+    public String getModifiedBy() throws RemoteException {
         return modifiedBy;
     }
 
     /**
      * @return modifiedDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getModifiedDate() {
+    public Date getModifiedDate() throws RemoteException {
         return modifiedDate;
     }
     
     /**
      * @return description
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getDescription() {
+    public String getDescription() throws RemoteException {
         return description;
     }
     

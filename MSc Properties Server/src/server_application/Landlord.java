@@ -9,7 +9,8 @@ import interfaces.LeaseInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PersonInterface;
-
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class Landlord implements LandlordInterface {
+public class Landlord extends UnicastRemoteObject implements LandlordInterface {
     
     ///   VARIABLES   ///
     
@@ -39,8 +40,9 @@ public class Landlord implements LandlordInterface {
      * @param person
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Landlord(int landlordRef, PersonInterface person, String createdBy, Date createdDate) {
+    public Landlord(int landlordRef, PersonInterface person, String createdBy, Date createdDate) throws RemoteException {
         this.landlordRef = landlordRef;
         this.person = person;
         this.leases = new ArrayList();
@@ -76,7 +78,7 @@ public class Landlord implements LandlordInterface {
         }
     }
     
-    public void deleteLease(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteLease(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasLease(ref)) {
             LeaseInterface lease = this.getLease(ref);
             if(lease.hasBeenModified()) {
@@ -91,7 +93,7 @@ public class Landlord implements LandlordInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -107,31 +109,34 @@ public class Landlord implements LandlordInterface {
     
     /**
      * @return landlordRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getLandlordRef() {
+    public int getLandlordRef() throws RemoteException {
         return landlordRef;
     }
 
     /**
      * @return person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public PersonInterface getPerson() {
+    public PersonInterface getPerson() throws RemoteException {
         return person;
     }
     
     /**
      * 
      * @return ref of person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPersonRef() {
+    public int getPersonRef() throws RemoteException {
         return person.getPersonRef();
     }
     
     @Override
-    public boolean hasLease(int ref) {
+    public boolean hasLease(int ref) throws RemoteException {
         if(!leases.isEmpty()) {
             for(LeaseInterface lease : leases) {
                 if(lease.getAccountRef() == ref) {
@@ -143,7 +148,7 @@ public class Landlord implements LandlordInterface {
     }
     
     @Override
-    public LeaseInterface getLease(int ref) {
+    public LeaseInterface getLease(int ref) throws RemoteException {
         if(!leases.isEmpty()) {
             for(LeaseInterface lease : leases) {
                 if(lease.getAccountRef() == ref) {
@@ -156,17 +161,18 @@ public class Landlord implements LandlordInterface {
     
     /**
      * @return leases
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<LeaseInterface> getLeases() {
+    public List<LeaseInterface> getLeases() throws RemoteException {
         return Collections.unmodifiableList(leases);
     }
     
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -175,10 +181,10 @@ public class Landlord implements LandlordInterface {
     }
     
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -187,21 +193,22 @@ public class Landlord implements LandlordInterface {
     }
     
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user that modified the Landlord
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -211,9 +218,10 @@ public class Landlord implements LandlordInterface {
     /**
      * 
      * @return the last date a user modified the Landlord
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -223,18 +231,20 @@ public class Landlord implements LandlordInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the Landlord
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifiedBy object for the Landlord
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -243,17 +253,19 @@ public class Landlord implements LandlordInterface {
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
 }

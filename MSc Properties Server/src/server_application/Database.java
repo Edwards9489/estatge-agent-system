@@ -117,6 +117,7 @@ public class Database {
      * @param username
      * @param password
      * @param port 
+     * @throws java.rmi.RemoteException 
      */
     public Database(String environment, String addr, String username, String password, Integer port) throws RemoteException {
         this.offices = new HashMap<>();
@@ -235,6 +236,7 @@ public class Database {
          * on the Add button
          */
     }
+    
     /**
      * 
      */
@@ -251,6 +253,7 @@ public class Database {
     /**
      * 
      * @throws SQLException
+     * @throws RemoteException
      */
     private void load() throws SQLException, RemoteException {
         if (this.con != null) {
@@ -305,12 +308,10 @@ public class Database {
                 this.loadEmployeeAccounts();
             } catch (SQLException ex) {
                 System.out.println("Cant load System data");
-                ex.printStackTrace();
             }
         } else if(this.con == null) {
             System.out.println("Connection is null");
         }
-        //Add all load methods here
     }
     
     /**
@@ -326,7 +327,7 @@ public class Database {
             int col = 1;
             insertStat.setString(col++, element.getCode());
             insertStat.setString(col++, element.getDescription());
-            insertStat.setInt(col++, element.getNote().getRef());
+            insertStat.setInt(col++, element.getNote().getReference());
             insertStat.setString(col++, element.getComment());
             insertStat.setBoolean(col++, element.isCurrent());
             insertStat.setString(col++, element.getCreatedBy());
@@ -356,6 +357,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @throws SQLException 
+     */
     private void deleteElement(String from, String code) throws SQLException {
         String deleteSql = "delete from " + from + " where code=" + code;
         try (Statement deleteStat = this.con.createStatement()) {
@@ -369,7 +376,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private List<ElementImpl> loadElements(String from) throws SQLException {
+    private List<ElementImpl> loadElements(String from) throws SQLException, RemoteException {
         String sql = "select code, description, noteRef, comment, cur, createdBy, createdDate from " + from + " order by createdDate";
         List<ElementImpl> elements = new ArrayList<>();
         try (Statement selectStat = con.createStatement()) {
@@ -423,7 +430,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private Map<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException {
+    private Map<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException, RemoteException {
         String sql = "select modificationRef, ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
         Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -475,7 +482,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private Map<Integer, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException {
+    private Map<Integer, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException, RemoteException {
         String sql = "select modificationRef, code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
         Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -522,7 +529,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private Map<Integer, Document> loadDocMap(String from, int reference) throws SQLException {
+    private Map<Integer, Document> loadDocMap(String from, int reference) throws SQLException, RemoteException {
         String sql = "select documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
         Map<Integer, Document> fileMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -557,7 +564,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    private Map<Integer, Document> loadDocMap(String from, String uniqueCode) throws SQLException {
+    private Map<Integer, Document> loadDocMap(String from, String uniqueCode) throws SQLException, RemoteException {
         String sql = "select documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
         Map<Integer, Document> fileMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -587,6 +594,14 @@ public class Database {
         return fileMap;
     }
     
+    /**
+     * 
+     * @param from
+     * @param ref
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createDocument(String from, int ref, Document document) throws SQLException, RemoteException {
         if(!this.documentExists(document.getDocumentRef())) {
             String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -596,7 +611,7 @@ public class Database {
                 insertStat.setInt(col++, ref);
                 insertStat.setString(col++, document.getDocumentName());
                 insertStat.setString(col++, document.getDocumentPath());
-                insertStat.setInt(col++, document.getNote().getRef());
+                insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(document.getCreatedDate()));
@@ -607,6 +622,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param ref
+     * @param documentRef
+     * @throws SQLException 
+     */
     private void deleteDocument(String from, int ref, int documentRef) throws SQLException {
         if (this.documentExists(documentRef) && this.canDeleteDocument(documentRef)) {
             String deleteSql = "delete from " + from + " where documentRef=" + documentRef + " and ref=" + ref;
@@ -618,6 +640,14 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createDocument(String from, String code, Document document) throws SQLException, RemoteException {
         if(!this.documentExists(document.getDocumentRef())) {
             String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -627,7 +657,7 @@ public class Database {
                 insertStat.setString(col++, code);
                 insertStat.setString(col++, document.getDocumentName());
                 insertStat.setString(col++, document.getDocumentPath());
-                insertStat.setInt(col++, document.getNote().getRef());
+                insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(document.getCreatedDate()));
@@ -638,6 +668,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @param documentRef
+     * @throws SQLException 
+     */
     private void deleteDocument(String from, String code, int documentRef) throws SQLException {
         if (this.documentExists(documentRef) && this.canDeleteDocument(documentRef)) {
             String deleteSql = "delete from " + from + " where documentRef=" + documentRef + " and code=" + code;
@@ -649,10 +686,20 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param documentRef
+     * @return 
+     */
     public boolean canDeleteDocument(int documentRef) {
         return (this.documentExists(documentRef));
     }
     
+    /**
+     * 
+     * @param ref
+     * @return 
+     */
     public Document getDocument(int ref) {
         if(this.noteExists(ref)) {
             return documents.get(ref);
@@ -660,7 +707,15 @@ public class Database {
         return null;
     }
     
-    private Map<Integer, Note> loadNoteMap(String from, int reference) throws SQLException {
+    /**
+     * 
+     * @param from
+     * @param reference
+     * @return
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    private Map<Integer, Note> loadNoteMap(String from, int reference) throws SQLException, RemoteException {
         String sql = "select noteRef, ref, comment, createdBy, createdDate from " + from + " order by createdDate";
         Map<Integer, Note> noteMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -684,7 +739,15 @@ public class Database {
         return noteMap;
     }
     
-    private Map<Integer, Note> loadNoteMap(String from, String uniqueCode) throws SQLException {
+    /**
+     * 
+     * @param from
+     * @param uniqueCode
+     * @return
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    private Map<Integer, Note> loadNoteMap(String from, String uniqueCode) throws SQLException, RemoteException {
         String sql = "select noteRef, code, comment, createdBy, createdDate from " + from + " order by createdDate";
         Map<Integer, Note> noteMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
@@ -707,18 +770,31 @@ public class Database {
         return noteMap;
     }
     
+    /**
+     * 
+     * @param ref
+     * @throws RemoteException 
+     */
     private void deleteNote(int ref) throws RemoteException {
         if(this.noteExists(ref) && !this.getNote(ref).hasBeenModified()) {
             notes.remove(ref);
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param ref
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createNote(String from, int ref, Note note) throws SQLException, RemoteException {
-        if(!this.noteExists(note.getRef())) {
+        if(!this.noteExists(note.getReference())) {
             String insertSql = "insert into " + from + " (noteRef, ref, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
-                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, note.getReference());
                 insertStat.setInt(col++, ref);
                 insertStat.setString(col++, note.getNote());
                 insertStat.setString(col++, note.getCreatedBy());
@@ -726,10 +802,18 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
-            this.notes.put(note.getRef(), note);
+            this.notes.put(note.getReference(), note);
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param ref
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void updateNote(String from, int ref, int noteRef) throws SQLException, RemoteException {
         if(this.noteExists(noteRef)) {
             Note note = this.getNote(noteRef);
@@ -740,10 +824,18 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getReference());
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param ref
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void deleteNote(String from, int ref, int noteRef) throws SQLException, RemoteException {
         if (this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             String deleteSql = "delete from " + from + " where noteRef=" + noteRef + " and ref=" + ref;
@@ -755,12 +847,20 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createNote(String from, String code, Note note) throws SQLException, RemoteException {
-        if(!this.noteExists(note.getRef())) {
+        if(!this.noteExists(note.getReference())) {
             String insertSql = "insert into " + from + " (noteRef, code, comment, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
-                insertStat.setInt(col++, note.getRef());
+                insertStat.setInt(col++, note.getReference());
                 insertStat.setString(col++, code);
                 insertStat.setString(col++, note.getNote());
                 insertStat.setString(col++, note.getCreatedBy());
@@ -768,10 +868,18 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
-            this.notes.put(note.getRef(), note);
+            this.notes.put(note.getReference(), note);
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void updateNote(String from, String code, int noteRef) throws SQLException, RemoteException {
         if(this.noteExists(noteRef)) {
             Note note = this.getNote(noteRef);
@@ -782,10 +890,18 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            this.createModifiedBy("noteModifications", note.getLastModification(), note.getRef());
+            this.createModifiedBy("noteModifications", note.getLastModification(), note.getReference());
         }
     }
     
+    /**
+     * 
+     * @param from
+     * @param code
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void deleteNote(String from, String code, int noteRef) throws SQLException, RemoteException {
         if (this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             String deleteSql = "delete from " + from + " where noteRef=" + noteRef + " and code=" + code;
@@ -797,12 +913,24 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param noteRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteNote(int noteRef) throws RemoteException {
         return (this.noteExists(noteRef) && !this.getNote(noteRef).hasBeenModified());
     }
     
-    private void createNoteMods(NoteImpl note, Map<Integer, ModifiedByInterface> loadadMods) {
-        if (note != null && this.noteExists(note.getRef()) && !loadadMods.isEmpty()) {
+    /**
+     * 
+     * @param note
+     * @param loadadMods
+     * @throws RemoteException 
+     */
+    private void createNoteMods(NoteImpl note, Map<Integer, ModifiedByInterface> loadadMods) throws RemoteException {
+        if (note != null && this.noteExists(note.getReference()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -814,6 +942,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param ref
+     * @return 
+     */
     public Note getNote(int ref) {
         if(this.noteExists(ref)) {
             return notes.get(ref);
@@ -825,12 +958,13 @@ public class Database {
      * 
      * @param conType
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createContactType(Element conType) throws SQLException, RemoteException {
         if(conType != null && !this.contactTypeExists(conType.getCode())) {
             this.createElement("contactTypes", conType);
             this.contactTypes.put(conType.getCode(), conType);
-            this.notes.put(conType.getNote().getRef(), conType.getNote());
+            this.notes.put(conType.getNote().getReference(), conType.getNote());
         }
     }
     
@@ -838,6 +972,7 @@ public class Database {
      * 
      * @param contactTypeCode
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updateContactType(String contactTypeCode) throws SQLException, RemoteException {
         if(this.contactTypeExists(contactTypeCode)) {
@@ -847,14 +982,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactTypeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteContactType(String contactTypeCode) throws SQLException, RemoteException {
         if (this.contactTypeExists(contactTypeCode) && this.canDeleteContactType(contactTypeCode)) {
             this.deleteElement("contactTypes", contactTypeCode);
-            this.deleteNote(this.getContactType(contactTypeCode).getNote().getRef());
+            this.deleteNote(this.getContactType(contactTypeCode).getNote().getReference());
             this.contactTypes.remove(contactTypeCode);
         }
     }
     
+    /**
+     * 
+     * @param contactTypeCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteContactType(String contactTypeCode) throws RemoteException {
         if (this.contactTypeExists(contactTypeCode) && !this.getContactType(contactTypeCode).hasBeenModified()) {
             for (Contact contact : this.getContacts()) {
@@ -870,6 +1017,7 @@ public class Database {
     /**
      * 
      * @throws SQLException 
+     * @throws RemoteException
      */
     private void loadContactTypes() throws SQLException, RemoteException {
         this.contactTypes.clear();
@@ -878,7 +1026,7 @@ public class Database {
         if (!loadedContactTypes.isEmpty()) {
             for (Element temp : loadedContactTypes) {
                 this.contactTypes.put(temp.getCode(), temp);
-                this.notes.put(temp.getNote().getRef(), temp.getNote());
+                this.notes.put(temp.getNote().getReference(), temp.getNote());
                 this.loadElementMods(temp, this.loadModMap("contactTypeModifications", temp.getCode()));
             }
         }
@@ -901,6 +1049,7 @@ public class Database {
      * @param contact
      * @param personRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createPersonContact(Contact contact, int personRef) throws SQLException, RemoteException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.personExists(personRef)) {
@@ -912,7 +1061,7 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
-                insertStat.setInt(col++, contact.getNote().getRef());
+                insertStat.setInt(col++, contact.getNote().getReference());
                 insertStat.setString(col++, contact.getComment());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
@@ -920,7 +1069,7 @@ public class Database {
                 insertStat.close();
             }
             contacts.put(contact.getContactRef(), (Contact) contact);
-            notes.put(contact.getNote().getRef(), contact.getNote());
+            notes.put(contact.getNote().getReference(), contact.getNote());
         }
     }
     
@@ -929,6 +1078,7 @@ public class Database {
      * @param contactRef
      * @param personRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updatePersonContact(int contactRef, int personRef) throws SQLException, RemoteException {
         if(this.contactExists(contactRef) && this.personExists(personRef)) {
@@ -950,12 +1100,19 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactRef
+     * @param personRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePersonContact(int contactRef, int personRef) throws SQLException, RemoteException {
         if (this.contactExists(contactRef) && this.personExists(personRef) && this.getPerson(personRef).hasContact(contactRef) && this.canDeleteContact(contactRef)) {
             String deleteSql = "delete from personContacts where contactRef=" + contactRef + " and personRef=" + personRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.deleteNote(this.getContact(contactRef).getNote().getRef());
+                    this.deleteNote(this.getContact(contactRef).getNote().getReference());
                     this.contacts.remove(contactRef);
                 }
             }
@@ -990,7 +1147,7 @@ public class Database {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
                         Contact temp = new Contact(contactRef, contactType, contactValue, startDate, note, createdBy, createdDate);
                         this.contacts.put(temp.getContactRef(), temp);
-                        this.notes.put(note.getRef(), note);
+                        this.notes.put(note.getReference(), note);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -1027,6 +1184,7 @@ public class Database {
      * @param contact
      * @param officeCode
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createOfficeContact(Contact contact, String officeCode) throws SQLException, RemoteException {
         if(contact != null && !this.contactExists(contact.getContactRef()) && this.officeExists(officeCode)) {
@@ -1038,7 +1196,7 @@ public class Database {
                 insertStat.setString(col++, contact.getContactType().getCode());
                 insertStat.setString(col++, contact.getContactValue());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getStartDate()));
-                insertStat.setInt(col++, contact.getNote().getRef());
+                insertStat.setInt(col++, contact.getNote().getReference());
                 insertStat.setString(col++, contact.getComment());
                 insertStat.setString(col++, contact.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(contact.getCreatedDate()));
@@ -1046,7 +1204,7 @@ public class Database {
                 insertStat.close();
             }
             contacts.put(contact.getContactRef(), contact);
-            notes.put(contact.getNote().getRef(), contact.getNote());
+            notes.put(contact.getNote().getReference(), contact.getNote());
         }
     }
     
@@ -1055,6 +1213,7 @@ public class Database {
      * @param contactRef
      * @param officeCode
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updateOfficeContact(int contactRef, String officeCode) throws SQLException, RemoteException {
         if(this.contactExists(contactRef) && this.officeExists(officeCode)) {
@@ -1076,12 +1235,19 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contactRef
+     * @param code
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteOfficeContact(int contactRef, String code) throws SQLException, RemoteException {
         if (this.contactExists(contactRef) && this.officeExists(code) && this.getOffice(code).hasContact(contactRef) && this.canDeleteContact(contactRef)) {
             String deleteSql = "delete from officeContacts where contactRef=" + contactRef + " and officeCode=" + code;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.deleteNote(this.getContact(contactRef).getNote().getRef());
+                    this.deleteNote(this.getContact(contactRef).getNote().getReference());
                     this.contacts.remove(contactRef);
                 }
             }
@@ -1116,7 +1282,7 @@ public class Database {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
                         Contact temp = new Contact(contactRef, contactType, contactValue, startDate, note, createdBy, createdDate);
                         this.contacts.put(temp.getContactRef(), temp);
-                        this.notes.put(note.getRef(), note);
+                        this.notes.put(note.getReference(), note);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -1158,6 +1324,7 @@ public class Database {
      * @param address
      * @param personRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException, RemoteException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
@@ -1168,14 +1335,14 @@ public class Database {
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, personRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
-                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setInt(col++, address.getNote().getReference());
                 insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
                 addressUsages.put(address.getAddressUsageRef(), address);
-                notes.put(address.getNote().getRef(), address.getNote());
+                notes.put(address.getNote().getReference(), address.getNote());
             }
         }
     }
@@ -1185,6 +1352,7 @@ public class Database {
      * @param addressRef
      * @param personRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updatePersonAddressUsage(int addressRef, int personRef) throws SQLException, RemoteException {
         if(this.addressUsageExists(addressRef) && this.personExists(personRef)) {
@@ -1205,12 +1373,19 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param addrRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePersonAddressUsage(int personRef, int addrRef) throws SQLException, RemoteException {
         if (this.addressUsageExists(addrRef) && this.personExists(personRef) && this.getPerson(personRef).getCurrentAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
             String deleteSql = "delete from personAddresses where addressUsageRef=" + addrRef + " and personRef=" + personRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getRef());
+                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getReference());
                     this.addressUsages.remove(addrRef);
                 }
             }
@@ -1250,7 +1425,7 @@ public class Database {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
                         AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, note, createdBy, createdDate);
                         this.addressUsages.put(temp.getAddressUsageRef(), temp);
-                        this.notes.put(note.getRef(), note);
+                        this.notes.put(note.getReference(), note);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -1288,6 +1463,7 @@ public class Database {
      * @param address
      * @param appRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createApplicationAddressUsage(AddressUsage address, int appRef) throws SQLException, RemoteException {
         if(address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.applicationExists(appRef)) {
@@ -1298,14 +1474,14 @@ public class Database {
                 insertStat.setInt(col++, address.getAddress().getAddressRef());
                 insertStat.setInt(col++, appRef);
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getStartDate()));
-                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setInt(col++, address.getNote().getReference());
                 insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
                 addressUsages.put(address.getAddressUsageRef(), address);
-                notes.put(address.getNote().getRef(), address.getNote());
+                notes.put(address.getNote().getReference(), address.getNote());
             }
         }
     }
@@ -1315,6 +1491,7 @@ public class Database {
      * @param addressRef
      * @param appRef
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException, RemoteException {
         if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
@@ -1335,12 +1512,19 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addrRef
+     * @param appRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteApplicationAddressUsage(int addrRef, int appRef) throws SQLException, RemoteException {
         if (this.addressUsageExists(addrRef) && this.applicationExists(appRef) && this.getApplication(appRef).getCurrentApplicationAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
             String deleteSql = "delete from applicationAddresses where addressUsageRef=" + addrRef + " and appRef=" + appRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getRef());
+                    this.deleteNote(this.getAddressUsage(addrRef).getNote().getReference());
                     this.addressUsages.remove(addrRef);
                 }
             }
@@ -1380,7 +1564,7 @@ public class Database {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
                         AddressUsage temp = new AddressUsage(addressUsageRef, address, startDate, note, createdBy, createdDate);
                         this.addressUsages.put(temp.getAddressUsageRef(), temp);
-                        this.notes.put(note.getRef(), note);
+                        this.notes.put(note.getReference(), note);
                         if(endDate != null) {
                             temp.setEndDate(endDate, null);
                         }
@@ -1413,6 +1597,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteAddressUsage(int addressRef) throws RemoteException {
         return (this.addressUsageExists(addressRef) && !this.getAddressUsage(addressRef).hasBeenModified());
     }
@@ -1421,12 +1611,13 @@ public class Database {
      * 
      * @param title
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createTitle(Element title) throws SQLException, RemoteException {
         if(!this.titleExists(title.getCode())) {
             this.createElement("titles", title);
             this.titles.put(title.getCode(), title);
-            this.notes.put(title.getNote().getRef(), title.getNote());
+            this.notes.put(title.getNote().getReference(), title.getNote());
         }
     }
     
@@ -1434,6 +1625,7 @@ public class Database {
      * 
      * @param titleCode
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updateTitle(String titleCode) throws SQLException, RemoteException {
         if(this.titleExists(titleCode)) {
@@ -1443,14 +1635,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param titleCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteTitle(String titleCode) throws SQLException, RemoteException {
         if(this.titleExists(titleCode) && this.canDeleteTitle(titleCode)) {
             this.deleteElement("titles", titleCode);
-            this.deleteNote(this.getTitle(titleCode).getNote().getRef());
+            this.deleteNote(this.getTitle(titleCode).getNote().getReference());
             this.titles.remove(titleCode);
         }
     }
     
+    /**
+     * 
+     * @param titleCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteTitle(String titleCode) throws RemoteException {
         if(this.titleExists(titleCode) && !this.getTitle(titleCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1475,7 +1679,7 @@ public class Database {
             for (Element temp : loadedTitles) {
                 if (temp instanceof Element) {
                     this.titles.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("titleModifications", temp.getCode()));
                 }
             }
@@ -1498,12 +1702,13 @@ public class Database {
      * 
      * @param gender
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createGender(Element gender) throws SQLException, RemoteException {
         if(!this.genderExists(gender.getCode())) {
             this.createElement("genders", gender);
             this.genders.put(gender.getCode(), gender);
-            this.notes.put(gender.getNote().getRef(), gender.getNote());
+            this.notes.put(gender.getNote().getReference(), gender.getNote());
         }
     }
     
@@ -1511,6 +1716,7 @@ public class Database {
      * 
      * @param genderCode
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void updateGender(String genderCode) throws SQLException, RemoteException {
         if(this.genderExists(genderCode)) {
@@ -1520,14 +1726,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param genderCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteGender(String genderCode) throws SQLException, RemoteException {
         if(this.genderExists(genderCode) && this.canDeleteGender(genderCode)) {
             this.deleteElement("genders", genderCode);
-            this.deleteNote(this.getGender(genderCode).getNote().getRef());
+            this.deleteNote(this.getGender(genderCode).getNote().getReference());
             this.genders.remove(genderCode);
         }
     }
     
+    /**
+     * 
+     * @param genderCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteGender(String genderCode) throws RemoteException {
         if(this.genderExists(genderCode) && !this.getGender(genderCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1552,7 +1770,7 @@ public class Database {
             for (Element temp : loadedGenders) {
                 if (temp instanceof Element) {
                     this.genders.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("genderModifications", temp.getCode()));
                 }
             }
@@ -1575,15 +1793,22 @@ public class Database {
      * 
      * @param status
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     public void createMaritalStatus(Element status) throws SQLException, RemoteException {
         if(!this.maritalStatusExists(status.getCode())) {
             this.createElement("maritalStatuses", status);
             this.maritalStatuses.put(status.getCode(), status);
-            this.notes.put(status.getNote().getRef(), status.getNote());
+            this.notes.put(status.getNote().getReference(), status.getNote());
         }
     }
     
+    /**
+     * 
+     * @param statusCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateMaritalStatus(String statusCode) throws SQLException, RemoteException {
         if(this.maritalStatusExists(statusCode)) {
             Element status = this.getMaritalStatus(statusCode);
@@ -1592,14 +1817,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param statusCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteMaritalStatus(String statusCode) throws SQLException, RemoteException {
         if(this.maritalStatusExists(statusCode) && this.canDeleteMaritalStatus(statusCode)) {
             this.deleteElement("maritalStatuses", statusCode);
-            this.deleteNote(this.getMaritalStatus(statusCode).getNote().getRef());
+            this.deleteNote(this.getMaritalStatus(statusCode).getNote().getReference());
             this.maritalStatuses.remove(statusCode);
         }
     }
     
+    /**
+     * 
+     * @param statusCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteMaritalStatus(String statusCode) throws RemoteException {
         if(this.maritalStatusExists(statusCode) && !this.getMaritalStatus(statusCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1612,6 +1849,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadMaritalStatuses() throws SQLException, RemoteException {
         this.maritalStatuses.clear();
         List<ElementImpl> loadedStatuses;
@@ -1620,13 +1862,18 @@ public class Database {
             for (Element temp : loadedStatuses) {
                 if (temp instanceof Element) {
                     this.maritalStatuses.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("maritalStatusModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getMaritalStatus(String code) {
         if(this.maritalStatusExists(code)) {
             return this.maritalStatuses.get(code);
@@ -1634,14 +1881,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param ethnicOrigin
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEthnicOrigin(Element ethnicOrigin) throws SQLException, RemoteException {
         if(!this.ethnicOriginExists(ethnicOrigin.getCode())) {
             this.createElement("ethnicOrigins", ethnicOrigin);
             this.ethnicOrigins.put(ethnicOrigin.getCode(), ethnicOrigin);
-            this.notes.put(ethnicOrigin.getNote().getRef(), ethnicOrigin.getNote());
+            this.notes.put(ethnicOrigin.getNote().getReference(), ethnicOrigin.getNote());
         }
     }
     
+    /**
+     * 
+     * @param originCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEthnicOrigin(String originCode) throws SQLException, RemoteException {
         if(this.ethnicOriginExists(originCode)) {
             Element origin = this.getEthnicOrigin(originCode);
@@ -1650,14 +1909,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param originCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEthnicOrigin(String originCode) throws SQLException, RemoteException {
         if(this.ethnicOriginExists(originCode) && this.canDeleteEthnicOrigin(originCode)) {
             this.deleteElement("ethnicOrigins", originCode);
-            this.deleteNote(this.getEthnicOrigin(originCode).getNote().getRef());
+            this.deleteNote(this.getEthnicOrigin(originCode).getNote().getReference());
             this.ethnicOrigins.remove(originCode);
         }
     }
     
+    /**
+     * 
+     * @param originCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteEthnicOrigin(String originCode) throws RemoteException {
         if(this.ethnicOriginExists(originCode) && !this.getEthnicOrigin(originCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1670,6 +1941,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadEthnicOrigins() throws SQLException, RemoteException {
         this.ethnicOrigins.clear();
         List<ElementImpl> loadedEthnicOrigins;
@@ -1678,13 +1954,18 @@ public class Database {
             for (Element temp : loadedEthnicOrigins) {
                 if (temp instanceof Element) {
                     this.ethnicOrigins.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("ethnicOriginModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getEthnicOrigin(String code) {
         if(this.ethnicOriginExists(code)) {
             return this.ethnicOrigins.get(code);
@@ -1692,14 +1973,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param language
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLanguage(Element language) throws SQLException, RemoteException {
         if(!this.languageExists(language.getCode())) {
             this.createElement("languages", language);
             this.languages.put(language.getCode(), language);
-            this.notes.put(language.getNote().getRef(), language.getNote());
+            this.notes.put(language.getNote().getReference(), language.getNote());
         }
     }
     
+    /**
+     * 
+     * @param languageCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLanguage(String languageCode) throws SQLException, RemoteException {
         if(this.languageExists(languageCode)) {
             Element language = this.getLanguage(languageCode);
@@ -1708,14 +2001,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param languageCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLanguage(String languageCode) throws SQLException, RemoteException {
         if(this.languageExists(languageCode) && this.canDeleteLanguage(languageCode)) {
             this.deleteElement("languages", languageCode);
-            this.deleteNote(this.getLanguage(languageCode).getNote().getRef());
+            this.deleteNote(this.getLanguage(languageCode).getNote().getReference());
             this.languages.remove(languageCode);
         }
     }
     
+    /**
+     * 
+     * @param languageCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteLanguage(String languageCode) throws RemoteException {
         if(this.languageExists(languageCode) && !this.getLanguage(languageCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1728,6 +2033,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadLanguages() throws SQLException, RemoteException {
         this.languages.clear();
         List<ElementImpl> loadedLanguages;
@@ -1736,13 +2046,18 @@ public class Database {
             for (Element temp : loadedLanguages) {
                 if (temp instanceof Element) {
                     this.languages.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("languageModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getLanguage(String code) {
         if(this.languageExists(code)) {
             return this.languages.get(code);
@@ -1750,14 +2065,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param nationality
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createNationality(Element nationality) throws SQLException, RemoteException {
         if(!this.nationalityExists(nationality.getCode())) {
             this.createElement("nationalities", nationality);
             this.nationalities.put(nationality.getCode(), nationality);
-            this.notes.put(nationality.getNote().getRef(), nationality.getNote());
+            this.notes.put(nationality.getNote().getReference(), nationality.getNote());
         }
     }
     
+    /**
+     * 
+     * @param nationalityCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateNationality(String nationalityCode) throws SQLException, RemoteException {
         if(this.nationalityExists(nationalityCode)) {
             Element nationality = this.getNationality(nationalityCode);
@@ -1766,14 +2093,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param nationalityCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteNationality(String nationalityCode) throws SQLException, RemoteException {
         if(this.nationalityExists(nationalityCode) && this.canDeleteNationality(nationalityCode)) {
             this.deleteElement("nationalitys", nationalityCode);
-            this.deleteNote(this.getNationality(nationalityCode).getNote().getRef());
+            this.deleteNote(this.getNationality(nationalityCode).getNote().getReference());
             this.nationalities.remove(nationalityCode);
         }
     }
     
+    /**
+     * 
+     * @param nationalityCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteNationality(String nationalityCode) throws RemoteException {
         if(this.nationalityExists(nationalityCode) && !this.getNationality(nationalityCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1786,6 +2125,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadNationalties() throws SQLException, RemoteException {
         this.nationalities.clear();
         List<ElementImpl> loadedNationalities;
@@ -1794,13 +2138,18 @@ public class Database {
             for (Element temp : loadedNationalities) {
                 if (temp instanceof Element) {
                     this.nationalities.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("nationalityModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getNationality(String code) {
         if(this.nationalityExists(code)) {
             return this.nationalities.get(code);
@@ -1808,14 +2157,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param sex
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createSexuality(Element sex) throws SQLException, RemoteException {
         if(!this.sexualityExists(sex.getCode())) {
             this.createElement("sexualities", sex);
             this.sexualities.put(sex.getCode(), sex);
-            this.notes.put(sex.getNote().getRef(), sex.getNote());
+            this.notes.put(sex.getNote().getReference(), sex.getNote());
         }
     }
     
+    /**
+     * 
+     * @param sexCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateSexuality(String sexCode) throws SQLException, RemoteException {
         if(this.sexualityExists(sexCode)) {
             Element sex = this.getSexuality(sexCode);
@@ -1824,14 +2185,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param sexualityCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteSexuality(String sexualityCode) throws SQLException, RemoteException {
         if(this.sexualityExists(sexualityCode) && this.canDeleteSexuality(sexualityCode)) {
             this.deleteElement("sexualitys", sexualityCode);
-            this.deleteNote(this.getSexuality(sexualityCode).getNote().getRef());
+            this.deleteNote(this.getSexuality(sexualityCode).getNote().getReference());
             this.sexualities.remove(sexualityCode);
         }
     }
     
+    /**
+     * 
+     * @param sexualityCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteSexuality(String sexualityCode) throws RemoteException {
         if(this.sexualityExists(sexualityCode) && !this.getSexuality(sexualityCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1844,6 +2217,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadSexualities() throws SQLException, RemoteException {
         this.sexualities.clear();
         List<ElementImpl> loadedSexualities;
@@ -1852,13 +2230,18 @@ public class Database {
             for (Element temp : loadedSexualities) {
                 if (temp instanceof Element) {
                     this.sexualities.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("sexualityModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getSexuality(String code) {
         if(this.sexualityExists(code)) {
             return this.sexualities.get(code);
@@ -1866,14 +2249,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param religion
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createReligion(Element religion) throws SQLException, RemoteException {
         if(!this.religionExists(religion.getCode())) {
             this.createElement("religions", religion);
             this.religions.put(religion.getCode(), religion);
-            this.notes.put(religion.getNote().getRef(), religion.getNote());
+            this.notes.put(religion.getNote().getReference(), religion.getNote());
         }
     }
     
+    /**
+     * 
+     * @param religionCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateReligion(String religionCode) throws SQLException, RemoteException {
         if(this.religionExists(religionCode)) {
             Element religion = this.getReligion(religionCode);
@@ -1882,14 +2277,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param religionCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteReligion(String religionCode) throws SQLException, RemoteException {
         if(this.religionExists(religionCode) && this.canDeleteReligion(religionCode)) {
             this.deleteElement("religions", religionCode);
-            this.deleteNote(this.getReligion(religionCode).getNote().getRef());
+            this.deleteNote(this.getReligion(religionCode).getNote().getReference());
             this.religions.remove(religionCode);
         }
     }
     
+    /**
+     * 
+     * @param religionCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteReligion(String religionCode) throws RemoteException {
         if(this.religionExists(religionCode) && !this.getReligion(religionCode).hasBeenModified()) {
             for(Person person : this.getPeople()) {
@@ -1902,6 +2309,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadReligions() throws SQLException, RemoteException {
         this.religions.clear();
         List<ElementImpl> loadedReligions;
@@ -1910,13 +2322,18 @@ public class Database {
             for (Element temp : loadedReligions) {
                 if (temp instanceof Element) {
                     this.religions.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("religionModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getReligion(String code) {
         if(this.religionExists(code)) {
             return this.religions.get(code);
@@ -1924,6 +2341,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param address
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createAddress(Address address) throws SQLException, RemoteException {
         if(!this.addressExists(address.getAddressRef())) {
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
@@ -1941,18 +2364,24 @@ public class Database {
                 insertStat.setString(col++, address.getTown());
                 insertStat.setString(col++, address.getCountry());
                 insertStat.setString(col++, address.getPostcode());
-                insertStat.setInt(col++, address.getNote().getRef());
+                insertStat.setInt(col++, address.getNote().getReference());
                 insertStat.setString(col++, address.getComment());
                 insertStat.setString(col++, address.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(address.getCreatedDate()));
                 insertStat.executeUpdate();
                 insertStat.close();
                 this.addresses.put(address.getAddressRef(), address);
-                this.notes.put(address.getNote().getRef(), address.getNote());
+                this.notes.put(address.getNote().getReference(), address.getNote());
             }
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateAddress(int addressRef) throws SQLException, RemoteException {
         if(this.addressExists(addressRef)) {
             Address address = this.getAddress(addressRef);
@@ -1979,18 +2408,30 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addrRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteAddress(int addrRef) throws SQLException, RemoteException {
         if (this.addressExists(addrRef) && this.canDeleteAddress(addrRef)) {
             String deleteSql = "delete from Addresses where addressRef=" + addrRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.deleteNote(this.getAddress(addrRef).getNote().getRef());
+                    this.deleteNote(this.getAddress(addrRef).getNote().getReference());
                     this.addresses.remove(addrRef);
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteAddress(int addressRef) throws RemoteException {
         if (this.addressExists(addressRef) && !this.getAddress(addressRef).hasBeenModified()) {
             for(AddressUsage address : this.getAddressUsages()) {
@@ -2003,6 +2444,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadAddresses() throws SQLException, RemoteException {
         String sql = "select addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, "
                     + "town, country, postcode, noteRef, comment, createdBy, createdDate from addresses order by addressRef";
@@ -2029,12 +2475,17 @@ public class Database {
                 Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
                 Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, createdDate);
                 this.addresses.put(temp.getAddressRef(), temp);
-                this.notes.put(note.getRef(), note);
+                this.notes.put(note.getReference(), note);
                 this.loadAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
             }
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @param loadedMods 
+     */
     private void loadAddressMods(int addressRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressExists(addressRef) && !loadedMods.isEmpty()) {
             Address address = this.getAddress(addressRef);
@@ -2050,6 +2501,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param addressRef
+     * @return 
+     */
     public Address getAddress(int addressRef) {
         if(this.addressExists(addressRef)) {
             return this.addresses.get(addressRef);
@@ -2057,6 +2513,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param property
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createProperty(Property property) throws SQLException, RemoteException {
         if(!this.propertyExists(property.getPropRef())) {
             String insertSql = "insert into properties (propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
@@ -2080,6 +2542,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateProperty(int propRef) throws SQLException, RemoteException {
         if(this.propertyExists(propRef)) {
             Property property = this.getProperty(propRef);
@@ -2101,7 +2569,13 @@ public class Database {
         }
     }
     
-    public void deleteProperty(int propRef) throws SQLException {
+    /**
+     * 
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void deleteProperty(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef) && this.canDeleteProperty(propRef)) {
             String deleteSql = "delete from Properties where propRef=" + propRef;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -2112,7 +2586,13 @@ public class Database {
         }
     }
     
-    public boolean canDeleteProperty(int propRef) {
+    /**
+     * 
+     * @param propRef
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean canDeleteProperty(int propRef) throws RemoteException{
         if (this.propertyExists(propRef) && !this.getProperty(propRef).hasBeenModified()) {
             for(Lease lease : this.getLeases()) {
                 if(lease.getPropertyRef() == propRef) {
@@ -2129,6 +2609,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadProperties() throws SQLException, RemoteException {
         String sql = "select propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
                     + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propertyRef";
@@ -2176,6 +2661,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @param loadadMods 
+     */
     private void loadPropertyMods(int propRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propertyExists(propRef) && !loadadMods.isEmpty()) {
             Property property = this.getProperty(propRef);
@@ -2190,6 +2680,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @return 
+     */
     public Property getProperty(int propRef) {
         if (properties.containsKey(propRef)) {
             return properties.get(propRef);
@@ -2197,7 +2692,13 @@ public class Database {
         return null;
     }
     
-    private void loadPropertyDocs(int propertyRef, Map<Integer, Document> loadedDocs) {
+    /**
+     * 
+     * @param propertyRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
+    private void loadPropertyDocs(int propertyRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.propertyExists(propertyRef) && !loadedDocs.isEmpty()) {
             Property property = this.getProperty(propertyRef);
             Iterator it = loadedDocs.entrySet().iterator();
@@ -2211,13 +2712,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propertyRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertyDoc(int propertyRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.propertyExists(propertyRef) && !this.documentExists(document.getDocumentRef()) && this.getProperty(propertyRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("propertyDocuments", propertyRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param propertyRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertyDoc(int propertyRef, int documentRef) throws SQLException, RemoteException {
         if(this.propertyExists(propertyRef) && this.documentExists(documentRef) && this.getProperty(propertyRef).hasDocument(documentRef)) {
             this.deleteDocument("propertyDocuments", propertyRef, documentRef);
@@ -2225,6 +2740,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadPropertyNotes(int propRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.propertyExists(propRef) && !loadadNotes.isEmpty()) {
             Property property = this.getProperty(propRef);
@@ -2234,38 +2755,71 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 property.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertyNote(int propRef, Note note) throws SQLException, RemoteException {
-        if(this.propertyExists(propRef) && !this.noteExists(note.getRef()) && this.getProperty(propRef).hasNote(note.getRef())) {
+        if(this.propertyExists(propRef) && !this.noteExists(note.getReference()) && this.getProperty(propRef).hasNote(note.getReference())) {
             this.createNote("propertyNotes", propRef, note);
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePropertyNote(int propRef, int noteRef) throws SQLException, RemoteException {
         if(this.propertyExists(propRef) && this.noteExists(noteRef)) {
             this.updateNote("propertyNotes", propRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param propRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertyNote(int propRef, int noteRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("propertyNotes", propRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param type
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertyType(Element type) throws SQLException, RemoteException {
         if(!this.propTypeExists(type.getCode())) {
             this.createElement("propertyTypes", type);
             this.propertyTypes.put(type.getCode(), type);
-            this.notes.put(type.getNote().getRef(), type.getNote());
+            this.notes.put(type.getNote().getReference(), type.getNote());
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePropertyType(String typeCode) throws SQLException, RemoteException {
         if(this.propTypeExists(typeCode)) {
             Element type = this.getPropertyType(typeCode);
@@ -2274,14 +2828,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertyType(String typeCode) throws SQLException, RemoteException {
         if(this.propTypeExists(typeCode) && this.canDeletePropertyType(typeCode)) {
             this.deleteElement("propertyTypes", typeCode);
-            this.deleteNote(this.getPropertyType(typeCode).getNote().getRef());
+            this.deleteNote(this.getPropertyType(typeCode).getNote().getReference());
             this.propertyTypes.remove(typeCode);
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeletePropertyType(String typeCode) throws RemoteException {
         if(this.propTypeExists(typeCode) && !this.getPropertyType(typeCode).hasBeenModified()) {
             for(Property property : this.getProperties()) {
@@ -2294,6 +2860,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPropertyTypes() throws SQLException, RemoteException {
         this.propertyTypes.clear();
         List<ElementImpl> loadedPropTypes;
@@ -2302,13 +2873,18 @@ public class Database {
             for (Element temp : loadedPropTypes) {
                 if (temp instanceof Element) {
                     this.propertyTypes.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("propertyTypeModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getPropertyType(String code) {
         if(this.propTypeExists(code)) {
             return this.propertyTypes.get(code);
@@ -2316,14 +2892,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param type
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertySubType(Element type) throws SQLException, RemoteException {
         if(!this.propSubTypeExists(type.getCode())) {
             this.createElement("propertySubTypes", type);
             this.propertySubTypes.put(type.getCode(), type);
-            this.notes.put(type.getNote().getRef(), type.getNote());
+            this.notes.put(type.getNote().getReference(), type.getNote());
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePropertySubType(String typeCode) throws SQLException, RemoteException {
         Element type = this.getPropertySubType(typeCode);
         if(this.propSubTypeExists(type.getCode())) {
@@ -2332,14 +2920,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertySubType(String typeCode) throws SQLException, RemoteException {
         if(this.propSubTypeExists(typeCode) && this.canDeletePropertySubType(typeCode)) {
             this.deleteElement("propertySubTypes", typeCode);
-            this.deleteNote(this.getPropertySubType(typeCode).getNote().getRef());
+            this.deleteNote(this.getPropertySubType(typeCode).getNote().getReference());
             this.propertySubTypes.remove(typeCode);
         }
     }
     
+    /**
+     * 
+     * @param typeCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeletePropertySubType(String typeCode) throws RemoteException {
         if(this.propSubTypeExists(typeCode) && !this.getPropertySubType(typeCode).hasBeenModified()) {
             for(Property property : this.getProperties()) {
@@ -2352,6 +2952,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPropertySubTypes() throws SQLException, RemoteException {
         this.propertySubTypes.clear();
         List<ElementImpl> loadedPropSubTypes;
@@ -2360,13 +2965,18 @@ public class Database {
             for (Element temp : loadedPropSubTypes) {
                 if (temp instanceof Element) {
                     this.propertySubTypes.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("propertySubTypeModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getPropertySubType(String code) {
         if(this.propSubTypeExists(code)) {
             return this.propertySubTypes.get(code);
@@ -2374,6 +2984,13 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param propertyRef
+     * @param propertyElements
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createPropertyElementValues(int propertyRef, List<PropertyElementInterface> propertyElements) throws SQLException, RemoteException {
         if (!propertyElements.isEmpty() && this.propertyExists(propertyRef)) {
             for (PropertyElementInterface temp : propertyElements) {
@@ -2382,6 +2999,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propertyRef
+     * @param propertyElement
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertyElementValue(int propertyRef, PropertyElement propertyElement) throws SQLException, RemoteException {
         if (propertyElement != null && this.propertyExists(propertyRef) && !this.propertyElementValueExists(propertyElement.getPropertyElementRef()) && this.propElementExists(propertyElement.getElement().getCode()) && this.getProperty(propertyRef).hasPropElement(propertyElement.getPropertyElementRef())) {
             String insertSql = "";
@@ -2402,7 +3026,7 @@ public class Database {
                 }
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getEndDate()));
-                insertStat.setInt(col++, propertyElement.getNote().getRef());
+                insertStat.setInt(col++, propertyElement.getNote().getReference());
                 insertStat.setString(col++, propertyElement.getComment());
                 insertStat.setString(col++, propertyElement.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getCreatedDate()));
@@ -2410,10 +3034,17 @@ public class Database {
                 insertStat.close();
             }
             this.propertyElementValues.put(propertyElement.getPropertyElementRef(), propertyElement);
-            this.notes.put(propertyElement.getNote().getRef(), propertyElement.getNote());
+            this.notes.put(propertyElement.getNote().getReference(), propertyElement.getNote());
         }
     }
-
+    
+    /**
+     * 
+     * @param propertyRef
+     * @param propElementRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePropertyElementValue(int propertyRef, int propElementRef) throws SQLException, RemoteException {
         if (this.propertyExists(propertyRef) && this.propertyElementValueExists(propElementRef)) {
             PropertyElementInterface propertyElement = this.getPropertyElementValue(propElementRef);
@@ -2445,22 +3076,42 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propElementRef
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertyElementValue(int propElementRef, int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef) && this.propertyElementValueExists(propElementRef) && this.getProperty(propRef).hasPropElement(propElementRef) && this.canDeletePropertyElementValue(propElementRef, propRef)) {
             String deleteSql = "delete from PropertyElementValues where propertyElementRef=" + propElementRef + " and propRef=" + propRef;
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >= 1) {
                     propertyElementValues.remove(propElementRef);
-                    this.deleteNote(this.getPropertyElementValue(propElementRef).getNote().getRef());
+                    this.deleteNote(this.getPropertyElementValue(propElementRef).getNote().getReference());
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param propElementRef
+     * @param propRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeletePropertyElementValue(int propElementRef, int propRef) throws RemoteException {
         return this.propertyExists(propRef) && !this.getProperty(propRef).getPropElement(propElementRef).hasBeenModified();
     }
-
+    
+    /**
+     * 
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPropertyElementValues(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef)) {
             Property property = this.getProperty(propRef);
@@ -2490,7 +3141,7 @@ public class Database {
                                 temp.setEndDate(endDate, null);
                             }
                             this.propertyElementValues.put(temp.getPropertyElementRef(), temp);
-                            this.notes.put(note.getRef(), note);
+                            this.notes.put(note.getReference(), note);
                             this.loadPropElementMods(temp, this.loadModMap("PropertyElementValueModifications", temp.getPropertyElementRef()));
                             property.createPropertyElement(temp, null);
                         }
@@ -2500,7 +3151,13 @@ public class Database {
         }
     }
     
-    private void loadPropElementMods(PropertyElement element, Map<Integer, ModifiedByInterface> loadadMods) {
+    /**
+     * 
+     * @param element
+     * @param loadadMods
+     * @throws RemoteException 
+     */
+    private void loadPropElementMods(PropertyElement element, Map<Integer, ModifiedByInterface> loadadMods) throws RemoteException {
         if (this.propElementExists(element.getElementCode()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
@@ -2513,6 +3170,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param propElementRef
+     * @return 
+     */
     public PropertyElement getPropertyElementValue(int propElementRef) {
         if(this.propertyElementValueExists(propElementRef)) {
             return this.propertyElementValues.get(propElementRef);
@@ -2524,10 +3186,16 @@ public class Database {
         if(!this.propElementExists(element.getCode())) {
             this.createElement("propertyElements", element);
             this.propertyElements.put(element.getCode(), element);
-            this.notes.put(element.getNote().getRef(), element.getNote());
+            this.notes.put(element.getNote().getReference(), element.getNote());
         }
     }
     
+    /**
+     * 
+     * @param elementCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePropertyElement(String elementCode) throws SQLException, RemoteException {
         Element element = this.getPropElement(elementCode);
         if(this.propElementExists(element.getCode())) {
@@ -2536,14 +3204,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param elementCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePropertyElement(String elementCode) throws SQLException, RemoteException {
         if(this.propElementExists(elementCode) && this.canDeletePropertyElement(elementCode)) {
             this.deleteElement("propertyElements", elementCode);
-            this.deleteNote(this.getPropElement(elementCode).getNote().getRef());
+            this.deleteNote(this.getPropElement(elementCode).getNote().getReference());
             this.propertyElements.remove(elementCode);
         }
     }
     
+    /**
+     * 
+     * @param elementCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeletePropertyElement(String elementCode) throws RemoteException {
         if(this.propElementExists(elementCode) && !this.getPropElement(elementCode).hasBeenModified()) {
             for(Property property : this.getProperties()) {
@@ -2556,6 +3236,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPropertyElements() throws SQLException, RemoteException {
         this.propertyElements.clear();
         List<ElementImpl> loadedPropertyElements;
@@ -2564,13 +3249,18 @@ public class Database {
             for (Element temp : loadedPropertyElements) {
                 if (temp instanceof Element) {
                     this.propertyElements.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("propertyElementModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getPropElement(String code) {
         if(this.propElementExists(code)) {
             return this.propertyElements.get(code);
@@ -2578,6 +3268,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param person
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPerson(Person person) throws SQLException, RemoteException {
         if(!this.personExists(person.getPersonRef())) {
             String insertSql = "insert into people (personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
@@ -2608,6 +3304,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePerson(int personRef) throws SQLException, RemoteException {
         if(this.personExists(personRef)) {
             Person person = this.getPerson(personRef);
@@ -2637,6 +3339,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePerson(int personRef) throws SQLException, RemoteException {
         if (this.personExists(personRef) && this.canDeletePerson(personRef)) {
             String deleteSql = "delete from people where personRef=" + personRef;
@@ -2648,10 +3356,21 @@ public class Database {
         }
     }
     
-    public boolean canDeletePerson(int personRef) {
+    /**
+     * 
+     * @param personRef
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean canDeletePerson(int personRef) throws RemoteException {
         return this.propertyExists(personRef) && !this.getPerson(personRef).hasBeenModified() && !this.personInvPartyExists(personRef) && !this.personEmployeeExists(personRef) && !this.personLandlordExists(personRef);
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPeople() throws SQLException, RemoteException {
         this.people.clear();
         String sql = "select personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
@@ -2740,6 +3459,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param loadedMods 
+     */
     private void loadPersonMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.personExists(personRef) && !loadedMods.isEmpty()) {
             Person person = this.getPerson(personRef);
@@ -2755,6 +3479,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @return 
+     */
     public Person getPerson(int personRef) {
         if(this.personExists(personRef)) {
             return this.people.get(personRef);
@@ -2762,7 +3491,13 @@ public class Database {
         return null;
     }
     
-    private void loadPersonDocs(int personRef, Map<Integer, Document> loadedDocs) {
+    /**
+     * 
+     * @param personRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
+    private void loadPersonDocs(int personRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.personExists(personRef) && !loadedDocs.isEmpty()) {
             Person person = this.getPerson(personRef);
             Iterator it = loadedDocs.entrySet().iterator();
@@ -2776,13 +3511,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPersonDoc(int appRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.personExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getPerson(appRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("personDocuments", appRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePersonDoc(int appRef, int documentRef) throws SQLException, RemoteException {
         if(this.personExists(appRef) && this.documentExists(documentRef) && this.getPerson(appRef).hasDocument(documentRef)) {
             this.deleteDocument("personDocuments", appRef, documentRef);
@@ -2790,6 +3539,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadPersonNotes(int personRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.personExists(personRef) && !loadadNotes.isEmpty()) {
             Person person = this.getPerson(personRef);
@@ -2799,30 +3554,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 person.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPersonNote(int personRef, Note note) throws SQLException, RemoteException {
-        if(this.personExists(personRef) && !this.noteExists(note.getRef()) && this.getPerson(personRef).hasNote(note.getRef())) {
+        if(this.personExists(personRef) && !this.noteExists(note.getReference()) && this.getPerson(personRef).hasNote(note.getReference())) {
             this.createNote("personNotes", personRef, note);
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updatePersonNote(int personRef, int noteRef) throws SQLException, RemoteException {
         if(this.personExists(personRef) && this.noteExists(noteRef)) {
             this.updateNote("personNotes", personRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param personRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deletePersonNote(int personRef, int noteRef) throws SQLException, RemoteException {
         if (this.personExists(personRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("personNotes", personRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param invParty
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createInvolvedParty(InvolvedParty invParty) throws SQLException, RemoteException {
         if(!this.invPartyExists(invParty.getInvolvedPartyRef())) {
             String insertSql = "insert into involvedParties (invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, "
@@ -2844,7 +3626,13 @@ public class Database {
             involvedParties.put(invParty.getInvolvedPartyRef(), invParty);
         }
     }
-
+    
+    /**
+     * 
+     * @param invPartyRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateInvolvedParty(int invPartyRef) throws SQLException, RemoteException {
         if (this.invPartyExists(invPartyRef)) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
@@ -2870,7 +3658,13 @@ public class Database {
         }
     }
     
-    public void deleteInvolvedParty(int invPartyRef) throws SQLException {
+    /**
+     * 
+     * @param invPartyRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void deleteInvolvedParty(int invPartyRef) throws SQLException, RemoteException {
         if (this.personExists(invPartyRef) && this.canDeleteInvolvedParty(invPartyRef)) {
             String deleteSql = "delete from people where personRef=" + invPartyRef;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -2881,10 +3675,22 @@ public class Database {
         }
     }
     
-    public boolean canDeleteInvolvedParty(int invPartyRef) {
+    /**
+     * 
+     * @param invPartyRef
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean canDeleteInvolvedParty(int invPartyRef) throws RemoteException {
         return (this.invPartyExists(invPartyRef) && !this.getInvolvedParty(invPartyRef).isMainInd() && !this.getInvolvedParty(invPartyRef).hasBeenModified());
     }
     
+    /**
+     * 
+     * @param reference
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadInvolvedParties(int reference) throws SQLException, RemoteException {
         this.involvedParties.clear();
         String sql = "select invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
@@ -2940,6 +3746,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @param loadedMods 
+     */
     private void loadInvolvedPartyMods(int invPartyRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.invPartyExists(invPartyRef) && !loadedMods.isEmpty()) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
@@ -2955,6 +3766,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @return 
+     */
     public InvolvedParty getInvolvedParty(int invPartyRef) {
         InvolvedParty invParty = null;
         if(this.invPartyExists(invPartyRef)) {
@@ -2963,6 +3779,12 @@ public class Database {
         return invParty;
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadInvolvedPartyNotes(int invPartyRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.invPartyExists(invPartyRef) && !loadadNotes.isEmpty()) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
@@ -2972,38 +3794,71 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 invParty.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createInvolvedPartyNote(int invPartyRef, Note note) throws SQLException, RemoteException {
-        if(this.invPartyExists(invPartyRef) && !this.noteExists(note.getRef()) && this.getInvolvedParty(invPartyRef).hasNote(note.getRef())) {
+        if(this.invPartyExists(invPartyRef) && !this.noteExists(note.getReference()) && this.getInvolvedParty(invPartyRef).hasNote(note.getReference())) {
             this.createNote("involvedPartyNotes", invPartyRef, note);
         }
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateInvolvedPartyNote(int invPartyRef, int noteRef) throws SQLException, RemoteException {
         if(this.invPartyExists(invPartyRef) && this.noteExists(noteRef)) {
             this.updateNote("involvedPartyNotes", invPartyRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param invPartyRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteInvolvedPartyNote(int invPartyRef, int noteRef) throws SQLException, RemoteException {
         if (this.invPartyExists(invPartyRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("involvedPartyNotes", invPartyRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param endReason
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEndReason(Element endReason) throws SQLException, RemoteException {
         if(!this.endReasonExists(endReason.getCode())) {
             this.createElement("endReasons", endReason);
             this.endReasons.put(endReason.getCode(), endReason);
-            this.notes.put(endReason.getNote().getRef(), endReason.getNote());
+            this.notes.put(endReason.getNote().getReference(), endReason.getNote());
         }
     }
     
+    /**
+     * 
+     * @param endReasonCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEndReason(String endReasonCode) throws SQLException, RemoteException {
         if(this.endReasonExists(endReasonCode)) {
             Element endReason = this.getEndReason(endReasonCode);
@@ -3012,14 +3867,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param endReason
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEndReason(String endReason) throws SQLException, RemoteException {
         if(this.endReasonExists(endReason) && this.canDeleteEndReason(endReason)) {
             this.deleteElement("endReasons", endReason);
-            this.deleteNote(this.getEndReason(endReason).getNote().getRef());
+            this.deleteNote(this.getEndReason(endReason).getNote().getReference());
             endReasons.remove(endReason);
         }
     }
     
+    /**
+     * 
+     * @param endReason
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteEndReason(String endReason) throws RemoteException {
         if(this.endReasonExists(endReason) && !this.getEndReason(endReason).hasBeenModified()) {
             for(InvolvedParty invParty : this.getInvolvedParties()) {
@@ -3032,6 +3899,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadEndReasons() throws SQLException, RemoteException {
         this.endReasons.clear();
         List<ElementImpl> loadedEndReasons;
@@ -3040,13 +3912,18 @@ public class Database {
             for (Element temp : loadedEndReasons) {
                 if (temp instanceof Element) {
                     this.endReasons.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("endReasonModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getEndReason(String code) {
         if(this.endReasonExists(code)) {
             return this.endReasons.get(code);
@@ -3054,14 +3931,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param relationship
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createRelationship(Element relationship) throws SQLException, RemoteException {
         if(!this.relationshipExists(relationship.getCode())) {
             this.createElement("relationships", relationship);
             this.relationships.put(relationship.getCode(), relationship);
-            this.notes.put(relationship.getNote().getRef(), relationship.getNote());
+            this.notes.put(relationship.getNote().getReference(), relationship.getNote());
         }
     }
     
+    /**
+     * 
+     * @param relationshipCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateRelationship(String relationshipCode) throws SQLException, RemoteException {
         if(this.relationshipExists(relationshipCode)) {
             Element relationship = this.getRelationship(relationshipCode);
@@ -3070,14 +3959,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param relationship
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteRelationship(String relationship) throws SQLException, RemoteException {
         if(this.relationshipExists(relationship) && this.canDeleteRelationship(relationship)) {
             this.deleteElement("relationships", relationship);
-            this.deleteNote(this.getRelationship(relationship).getNote().getRef());
+            this.deleteNote(this.getRelationship(relationship).getNote().getReference());
             relationships.remove(relationship);
         }
     }
     
+    /**
+     * 
+     * @param relationship
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteRelationship(String relationship) throws RemoteException {
         if(this.relationshipExists(relationship) && !this.getRelationship(relationship).hasBeenModified()) {
             for(InvolvedParty invParty : this.getInvolvedParties()) {
@@ -3090,6 +3991,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadRelationships() throws SQLException, RemoteException {
         this.relationships.clear();
         List<ElementImpl> loadedRelationships;
@@ -3098,13 +4004,18 @@ public class Database {
             for (Element temp : loadedRelationships) {
                 if (temp instanceof Element) {
                     this.relationships.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("relationshipModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getRelationship(String code) {
         if(this.relationshipExists(code)) {
             return this.relationships.get(code);
@@ -3112,6 +4023,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param application
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createApplication(Application application) throws SQLException, RemoteException {
         if(!this.applicationExists(application.getApplicationRef())) {
             String insertSql = "insert into applications (appRef, appCorrName, appStartDate, appStatus, "
@@ -3131,6 +4048,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateApplication(int appRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef)) {
             Application application = this.getApplication(appRef);
@@ -3160,6 +4083,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteApplication(int appRef) throws SQLException, RemoteException {
         if (this.applicationExists(appRef) && this.canDeleteApplication(appRef)) {
             String deleteSql = "delete from applications where appRef=" + appRef;
@@ -3171,6 +4100,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteApplication(int appRef) throws RemoteException {
         if (this.applicationExists(appRef) && this.getApplication(appRef).hasBeenModified()) {
             for(InvolvedPartyInterface invParty : this.getApplication(appRef).getHousehold()) {
@@ -3193,6 +4128,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadApplications() throws SQLException, RemoteException {
         this.applications.clear();
         String sql = "select appRef, appCorrName, appStartDate, appEndDate, appStatus, "
@@ -3233,6 +4173,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param loadedMods 
+     */
     private void loadApplicationMods(int appRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.applicationExists(appRef) && !loadedMods.isEmpty()) {
             Application application = this.getApplication(appRef);
@@ -3248,6 +4193,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @return 
+     */
     public Application getApplication(int appRef) {
         if(this.applicationExists(appRef)) {
             return this.applications.get(appRef);
@@ -3255,6 +4205,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadApplicationDocs(int appRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.applicationExists(appRef) && !loadedDocs.isEmpty()) {
             Application application = this.getApplication(appRef);
@@ -3269,13 +4225,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createApplicationDoc(int appRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.applicationExists(appRef) && !this.documentExists(document.getDocumentRef()) && this.getApplication(appRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("applicationDocuments", appRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteApplicationDoc(int appRef, int documentRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef) && this.documentExists(documentRef) && this.getApplication(appRef).hasDocument(documentRef)) {
             this.deleteDocument("applicationDocuments", appRef, documentRef);
@@ -3283,6 +4253,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadApplicationNotes(int appRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.applicationExists(appRef) && !loadadNotes.isEmpty()) {
             Application application = this.getApplication(appRef);
@@ -3292,30 +4268,58 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 application.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createApplicationNote(int appRef, Note note) throws SQLException, RemoteException {
-        if(this.applicationExists(appRef) && !this.noteExists(note.getRef()) && this.getApplication(appRef).hasNote(note.getRef())) {
+        if(this.applicationExists(appRef) && !this.noteExists(note.getReference()) && this.getApplication(appRef).hasNote(note.getReference())) {
             this.createNote("applicationNotes", appRef, note);
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateApplicationNote(int appRef, int noteRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef) && this.noteExists(noteRef)) {
             this.updateNote("applicationNotes", appRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteApplicationNote(int appRef, int noteRef) throws SQLException, RemoteException {
         if (this.applicationExists(appRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("applicationNotes", appRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createPropertyInterest(int appRef, int propRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef) && this.propertyExists(propRef)) {
             
@@ -3355,7 +4359,13 @@ public class Database {
             }
         }
     }
-
+    
+    /**
+     * 
+     * @param appRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadPropertiesInterestedIn(int appRef) throws SQLException, RemoteException {
         if (this.applicationExists(appRef)) {
             Application application = this.getApplication(appRef);
@@ -3377,6 +4387,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param appRef
+     * @param propRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void endPropertyInterest(int appRef, int propRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef) && this.propertyExists(propRef)) {
             
@@ -3413,7 +4430,13 @@ public class Database {
         }
     }
     
-    public void createLandlord(Landlord landlord) throws SQLException {
+    /**
+     * 
+     * @param landlord
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void createLandlord(Landlord landlord) throws SQLException, RemoteException {
         if(!this.landlordExists(landlord.getLandlordRef())) {
             String insertSql = "insert into landlords (landlordRef, personRef, createdBy, createdDate) values (?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
@@ -3429,6 +4452,12 @@ public class Database {
         }
     }
 
+    /**
+     * 
+     * @param landlordRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLandlord(int landlordRef) throws SQLException, RemoteException {
         if (this.landlordExists(landlordRef)) {
             Landlord landlord = this.getLandlord(landlordRef);
@@ -3436,6 +4465,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLandlord(int landlordRef) throws SQLException, RemoteException {
         if (this.landlordExists(landlordRef) && this.canDeleteApplication(landlordRef)) {
             String deleteSql = "delete from landlords where landlordRef=" + landlordRef;
@@ -3447,7 +4482,13 @@ public class Database {
         }
     }
     
-    public boolean canDeleteLandlord(int landlordRef) {
+    /**
+     * 
+     * @param landlordRef
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean canDeleteLandlord(int landlordRef) throws RemoteException {
         if (this.landlordExists(landlordRef) && this.getLandlord(landlordRef).hasBeenModified()) {
             for(Lease lease : this.getLeases()) {
                 if(lease.isAlreadyLandlord(landlordRef)) {
@@ -3458,7 +4499,12 @@ public class Database {
         }
         return false;
     }
-
+    
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadLandlords() throws SQLException, RemoteException {
         this.landlords.clear();
         String sql = "select landlordRef, personRef, createdBy, createdDate from landlords order by landlordRef";
@@ -3481,6 +4527,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param loadadMods 
+     */
     private void loadLandlordMods(int landlordRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.landlordExists(landlordRef) && !loadadMods.isEmpty()) {
             Landlord landlord = this.getLandlord(landlordRef);
@@ -3495,6 +4546,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @return 
+     */
     public Landlord getLandlord(int landlordRef) {
         if(this.landlordExists(landlordRef)) {
             return this.landlords.get(landlordRef);
@@ -3502,6 +4558,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadLandlordNotes(int landlordRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.landlordExists(landlordRef) && !loadadNotes.isEmpty()) {
             Landlord landlord = this.getLandlord(landlordRef);
@@ -3511,30 +4573,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 landlord.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLandlordNote(int landlordRef, Note note) throws SQLException, RemoteException {
-        if(this.landlordExists(landlordRef) && !this.noteExists(note.getRef()) && this.getLandlord(landlordRef).hasNote(note.getRef())) {
+        if(this.landlordExists(landlordRef) && !this.noteExists(note.getReference()) && this.getLandlord(landlordRef).hasNote(note.getReference())) {
             this.createNote("landlordNotes", landlordRef, note);
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLandlordNote(int landlordRef, int noteRef) throws SQLException, RemoteException {
         if(this.landlordExists(landlordRef) && this.noteExists(noteRef)) {
             this.updateNote("landlordNotes", landlordRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLandlordNote(int landlordRef, int noteRef) throws SQLException, RemoteException {
         if (this.landlordExists(landlordRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("landlordNotes", landlordRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param office
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createOffice(Office office) throws SQLException, RemoteException {
         if(!this.officeExists(office.getOfficeCode())) {
             String insertSql = "insert into Offices (officeCode, addressRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
@@ -3552,6 +4641,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateOffice(String officeCode) throws SQLException, RemoteException {
         if(this.officeExists(officeCode)) {
             Office office = this.getOffice(officeCode);
@@ -3569,7 +4664,13 @@ public class Database {
         }
     }
     
-    public void deleteOffice(String officeCode) throws SQLException {
+    /**
+     * 
+     * @param officeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void deleteOffice(String officeCode) throws SQLException, RemoteException {
         if (this.officeExists(officeCode) && this.canDeleteOffice(officeCode)) {
             String deleteSql = "delete from offices where officeCode=" + officeCode;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -3580,10 +4681,21 @@ public class Database {
         }
     }
     
-    public boolean canDeleteOffice(String officeCode) {
+    /**
+     * 
+     * @param officeCode
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean canDeleteOffice(String officeCode) throws RemoteException {
         return this.officeExists(officeCode) && this.getOffice(officeCode).hasBeenModified() && !this.getOffice(officeCode).hasAgreements();
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadOffices() throws SQLException, RemoteException {
         this.offices.clear();
         String sql = "select officeCode, addressRef, startDate, endDate, createdBy, createdDate from offices order by createdDate";
@@ -3617,6 +4729,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param loadedMods 
+     */
     private void loadOfficeMods(String officeCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
             Office office = this.getOffice(officeCode);
@@ -3632,6 +4749,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Office getOffice(String code) {
         if(this.officeExists(code)) {
             return this.offices.get(code);
@@ -3639,7 +4761,13 @@ public class Database {
         return null;
     }
     
-    private void loadOfficeDocs(String officeCode, Map<Integer, Document> loadedDocs) {
+    /**
+     * 
+     * @param officeCode
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
+    private void loadOfficeDocs(String officeCode, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.officeExists(officeCode) && !loadedDocs.isEmpty()) {
             Office office = this.getOffice(officeCode);
             Iterator it = loadedDocs.entrySet().iterator();
@@ -3653,13 +4781,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createOfficeDoc(String officeCode, DocumentImpl document) throws SQLException, RemoteException {
         if(this.officeExists(officeCode) && !this.documentExists(document.getDocumentRef()) && this.getOffice(officeCode).hasDocument(document.getDocumentRef())) {
             this.createDocument("officeDocuments", officeCode, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteOfficeDoc(String officeCode, int documentRef) throws SQLException, RemoteException {
         if(this.officeExists(officeCode) && this.documentExists(documentRef) && this.getOffice(officeCode).hasDocument(documentRef)) {
             this.deleteDocument("officeDocuments", officeCode, documentRef);
@@ -3667,6 +4809,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadOfficeNotes(String officeCode, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.officeExists(officeCode) && !loadadNotes.isEmpty()) {
             Office office = this.getOffice(officeCode);
@@ -3676,30 +4824,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 office.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createOfficeNote(String officeCode, Note note) throws SQLException, RemoteException {
-        if(this.officeExists(officeCode) && !this.noteExists(note.getRef()) && this.getOffice(officeCode).hasNote(note.getRef())) {
+        if(this.officeExists(officeCode) && !this.noteExists(note.getReference()) && this.getOffice(officeCode).hasNote(note.getReference())) {
             this.createNote("officeNotes", officeCode, note);
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateOfficeNote(String officeCode, int noteRef) throws SQLException, RemoteException {
         if(this.officeExists(officeCode) && this.noteExists(noteRef)) {
             this.updateNote("officeNotes", officeCode, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param officeCode
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteOfficeNote(String officeCode, int noteRef) throws SQLException, RemoteException {
         if (this.officeExists(officeCode) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("officeNotes", officeCode, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param jobRole
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobRole(JobRole jobRole) throws SQLException, RemoteException {
         if(!this.jobRoleExists(jobRole.getJobRoleCode())) {
             String insertSql = "insert into jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
@@ -3730,6 +4905,12 @@ public class Database {
         }
     }
 
+    /**
+     * 
+     * @param jobRoleCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateJobRole(String jobRoleCode) throws SQLException, RemoteException {
         if (this.jobRoleExists(jobRoleCode)) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
@@ -3756,6 +4937,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteJobRole(String jobRoleCode) throws SQLException, RemoteException {
         if (this.jobRoleExists(jobRoleCode) && this.canDeleteJobRole(jobRoleCode)) {
             String deleteSql = "delete from jobRoles where jobRoleCode=" + jobRoleCode;
@@ -3767,6 +4954,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteJobRole(String jobRoleCode) throws RemoteException {
         if (this.jobRoleExists(jobRoleCode) && this.getJobRole(jobRoleCode).hasBeenModified()) {
             for (Contract contract : this.getContracts()) {
@@ -3778,6 +4971,11 @@ public class Database {
         return true;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadJobRoles() throws SQLException, RemoteException {
         this.jobRoles.clear();
         String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, "
@@ -3814,6 +5012,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param loadedMods 
+     */
     private void loadJobRoleMods(String jobRoleCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
@@ -3828,6 +5031,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @return 
+     */
     public JobRole getJobRole(String jobRoleCode) {
         if(this.jobRoleExists(jobRoleCode)) {
             return this.jobRoles.get(jobRoleCode);
@@ -3835,6 +5043,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadJobRoleNotes(String jobRoleCode, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.jobRoleExists(jobRoleCode) && !loadadNotes.isEmpty()) {
             JobRole jobRole = this.getJobRole(jobRoleCode);
@@ -3844,31 +5058,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 jobRole.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobRoleNote(String jobRoleCode, Note note) throws SQLException, RemoteException {
-        if(this.jobRoleExists(jobRoleCode) && !this.noteExists(note.getRef()) && this.getJobRole(jobRoleCode).hasNote(note.getRef())) {
+        if(this.jobRoleExists(jobRoleCode) && !this.noteExists(note.getReference()) && this.getJobRole(jobRoleCode).hasNote(note.getReference())) {
             this.createNote("jobRoleNotes", jobRoleCode, note);
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateJobRoleNote(String jobRoleCode, int noteRef) throws SQLException, RemoteException {
         if(this.jobRoleExists(jobRoleCode) && this.noteExists(noteRef)) {
             this.updateNote("jobRoleNotes", jobRoleCode, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteJobRoleNote(String jobRoleCode, int noteRef) throws SQLException, RemoteException {
         if (this.officeExists(jobRoleCode) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("jobRoleNotes", jobRoleCode, noteRef);
         }
     }
-    
-    // IS THE PRIVATE METHOD USED TO STORE JOB REQUIREMENTS IN BULK WHEN A JOB ROLE IS CREATED
+    /**
+     * // IS THE PRIVATE METHOD USED TO STORE JOB REQUIREMENTS IN BULK WHEN A JOB ROLE IS CREATED
+     * @param code
+     * @param jobRequirements
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createJobRoleRequirements(String code, List<Element> jobRequirements) throws SQLException, RemoteException {
         if (!jobRequirements.isEmpty() && this.jobRoleExists(code)) {
             for (Element temp : jobRequirements) {
@@ -3877,6 +5117,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param requirementCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobRoleRequirement(String jobRoleCode, String requirementCode) throws SQLException, RemoteException {
         if (!requirementCode.isEmpty() && this.jobRoleExists(jobRoleCode) && this.jobRequirementExists(requirementCode)) {
             String insertSql = "insert into jobRoleRequirements (jobRoleCode, requirementCode) values (?, ?)";
@@ -3890,6 +5137,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param requirementCode
+     * @param jobRoleCode
+     * @throws SQLException 
+     */
     public void deleteJobRoleRequirement(String requirementCode, String jobRoleCode) throws SQLException {
         if (this.jobRoleExists(jobRoleCode) && this.jobRequirementExists(requirementCode)) {
             String deleteSql = "delete from jobRoleRequirements where requirementCode=" + requirementCode + "and jobRoleCode=" + jobRoleCode;
@@ -3899,7 +5152,13 @@ public class Database {
         }
     }
     
-    private void loadJobRoleRequirements(String code) throws SQLException {
+    /**
+     * 
+     * @param code
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    private void loadJobRoleRequirements(String code) throws SQLException, RemoteException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = this.getJobRole(code);
             String sql = "select jobRoleCode, requirementCode from jobRoleRequirements";
@@ -3919,7 +5178,14 @@ public class Database {
         }
     }
     
-    // IS THE PRIVATE METHOD USED TO STORE JOB BENEFITS IN BULK WHEN A JOB ROLE IS CREATED
+    
+    /**
+     * // IS THE PRIVATE METHOD USED TO STORE JOB BENEFITS IN BULK WHEN A JOB ROLE IS CREATED
+     * @param code
+     * @param benefits
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void createJobRoleBenefits(String code, List<JobRoleBenefitInterface> benefits) throws SQLException, RemoteException {
         if (!benefits.isEmpty() && this.jobRoleExists(code)) {
             for (JobRoleBenefitInterface benefit : benefits) {
@@ -3929,6 +5195,13 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param jobRoleCode
+     * @param benefit
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException, RemoteException {
         if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode()) && !this.jobRoleBenefitExists(benefit.getBenefitRef())) {
             String insertSql = "";
@@ -3949,7 +5222,7 @@ public class Database {
                 }
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getStartDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getEndDate()));
-                insertStat.setInt(col++, benefit.getNote().getRef());
+                insertStat.setInt(col++, benefit.getNote().getReference());
                 insertStat.setString(col++, benefit.getComment());
                 insertStat.setString(col++, benefit.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getCreatedDate()));
@@ -3957,10 +5230,17 @@ public class Database {
                 insertStat.close();
             }
             this.jobRoleBenefits.put(benefit.getBenefitRef(), benefit);
-            this.notes.put(benefit.getNote().getRef(), benefit.getNote());
+            this.notes.put(benefit.getNote().getReference(), benefit.getNote());
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @param benefitRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateJobRoleBenefit(String code, int benefitRef) throws SQLException, RemoteException {
         if(this.jobRoleExists(code) && this.jobRoleBenefitExists(benefitRef)) {
             JobRoleBenefit benefit = this.getJobRoleBenefit(benefitRef);
@@ -3990,18 +5270,31 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param benefitRef
+     * @param jobRoleCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteJobRoleBenefit(int benefitRef, String jobRoleCode) throws SQLException, RemoteException {
         if (this.jobRoleExists(jobRoleCode) && this.jobRoleBenefitExists(benefitRef) && this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
             String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef + "and jobRoleCode=" + jobRoleCode;
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     this.jobRoleBenefits.remove(benefitRef);
-                    this.deleteNote(this.getJobRoleBenefit(benefitRef).getNote().getRef());
+                    this.deleteNote(this.getJobRoleBenefit(benefitRef).getNote().getReference());
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadJobRoleBenefits(String code) throws SQLException, RemoteException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = this.getJobRole(code);
@@ -4030,7 +5323,7 @@ public class Database {
                                 temp.setEndDate(endDate, null);
                             }
                             this.jobRoleBenefits.put(temp.getBenefitRef(), temp);
-                            this.notes.put(note.getRef(), note);
+                            this.notes.put(note.getReference(), note);
                             this.loadBenefitMods(temp, this.loadModMap("jobRoleBenefitModifications", temp.getBenefitRef()));
                             jobRole.createJobBenefit(temp, null);
                         }
@@ -4040,6 +5333,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param benefit
+     * @param loadedMods
+     * @throws RemoteException 
+     */
     private void loadBenefitMods(JobRoleBenefit benefit, Map<Integer, ModifiedByInterface> loadedMods) throws RemoteException {
         if (benefit != null && this.jobBenefitExists(benefit.getBenefit().getCode()) && !loadedMods.isEmpty()) {
             Iterator it = loadedMods.entrySet().iterator();
@@ -4053,14 +5352,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param requirement
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobRequirement(Element requirement) throws SQLException, RemoteException {
         if(!this.jobRequirementExists(requirement.getCode())) {
             this.createElement("jobRequirements", requirement);
             this.jobRequirements.put(requirement.getCode(), requirement);
-            this.notes.put(requirement.getNote().getRef(), requirement.getNote());
+            this.notes.put(requirement.getNote().getReference(), requirement.getNote());
         }
     }
     
+    /**
+     * 
+     * @param requirementCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateJobRequirement(String requirementCode) throws SQLException, RemoteException {
         if(this.jobRequirementExists(requirementCode)) {
             Element requirement = this.getJobRequirement(requirementCode);
@@ -4069,14 +5380,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param requirementCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteJobRequirement(String requirementCode) throws SQLException, RemoteException {
         if(this.jobRequirementExists(requirementCode) && this.canDeleteJobRequirement(requirementCode)) {
             this.deleteElement("jobRequirements", requirementCode);
-            this.deleteNote(this.getJobRequirement(requirementCode).getNote().getRef());
+            this.deleteNote(this.getJobRequirement(requirementCode).getNote().getReference());
             jobRequirements.remove(requirementCode);
         }
     }
     
+    /**
+     * 
+     * @param requirementCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteJobRequirement(String requirementCode) throws RemoteException {
         if(this.jobRequirementExists(requirementCode) && !this.getJobRequirement(requirementCode).hasBeenModified()) {
             for(JobRole jobRole : this.getJobRoles()) {
@@ -4091,6 +5414,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadJobRequirements() throws SQLException, RemoteException {
         this.jobRequirements.clear();
         List<ElementImpl> loadedJobRequirements;
@@ -4099,13 +5427,18 @@ public class Database {
             for (Element temp : loadedJobRequirements) {
                 if (temp instanceof Element) {
                     this.jobRequirements.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("jobRequirementModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getJobRequirement(String code) {
         if(this.jobRequirementExists(code)) {
             return this.jobRequirements.get(code);
@@ -4113,14 +5446,26 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param benefit
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createJobBenefit(Element benefit) throws SQLException, RemoteException {
         if(!this.jobBenefitExists(benefit.getCode())) {
             this.createElement("jobBenefits", benefit);
             this.jobBenefits.put(benefit.getCode(), benefit);
-            this.notes.put(benefit.getNote().getRef(), benefit.getNote());
+            this.notes.put(benefit.getNote().getReference(), benefit.getNote());
         }
     }
     
+    /**
+     * 
+     * @param benefitCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateJobBenefit(String benefitCode) throws SQLException, RemoteException {
         if(this.jobBenefitExists(benefitCode)) {
             Element benefit = this.getJobBenefit(benefitCode);
@@ -4129,14 +5474,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param benefitCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteJobBenefit(String benefitCode) throws SQLException, RemoteException {
         if(this.jobBenefitExists(benefitCode) && this.canDeleteJobBenefit(benefitCode)) {
             this.deleteElement("jobBenefits", benefitCode);
-            this.deleteNote(this.getJobBenefit(benefitCode).getNote().getRef());
+            this.deleteNote(this.getJobBenefit(benefitCode).getNote().getReference());
             jobBenefits.remove(benefitCode);
         }
     }
     
+    /**
+     * 
+     * @param benefitCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteJobBenefit(String benefitCode) throws RemoteException {
         if (this.jobBenefitExists(benefitCode) && !this.getJobBenefit(benefitCode).hasBeenModified()) {
             for (JobRoleBenefit benefit : this.getJobRoleBenefits()) {
@@ -4149,6 +5506,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadJobBenefits() throws SQLException, RemoteException {
         this.jobBenefits.clear();
         List<ElementImpl> loadedJobBenefits;
@@ -4157,13 +5519,18 @@ public class Database {
             for (Element temp : loadedJobBenefits) {
                 if (temp instanceof Element) {
                     this.jobBenefits.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("jobBenefitModifications", temp.getCode()));
                 }
             }
         }
     }
 
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getJobBenefit(String code) {
         if (this.jobBenefitExists(code)) {
             return this.jobBenefits.get(code);
@@ -4171,6 +5538,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param employee
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEmployee(Employee employee) throws SQLException, RemoteException {
         if (!this.employeeExists(employee.getEmployeeRef())) {
             String insertSql = "insert into employees (employeeRef, personRef, officeCode, createdBy, createdDate) values (?, ?, ?, ?, ?)";
@@ -4188,6 +5561,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEmployee(int employeeRef) throws SQLException, RemoteException {
         if (this.employeeExists(employeeRef)) {
             Employee employee = this.getEmployee(employeeRef);
@@ -4203,6 +5582,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEmployee(int employeeRef) throws SQLException, RemoteException {
         if(this.employeeExists(employeeRef) && this.canDeleteEmployee(employeeRef)) {
             String deleteSql = "delete from employees where employeeRef=" + employeeRef;
@@ -4215,6 +5600,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteEmployee(int employeeRef) throws RemoteException {
         if (this.employeeExists(employeeRef) && !this.getEmployee(employeeRef).hasBeenModified()) {
             for (Contract contract : this.getContracts()) {
@@ -4226,7 +5617,12 @@ public class Database {
         }
         return false;
     }
-
+    
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadEmployees() throws SQLException, RemoteException {
         this.employees.clear();
         String sql = "select employeeRef, personRef, officeCode, createdBy, createdDate from employees order by employeeRef";
@@ -4270,6 +5666,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @param loadadMods 
+     */
     private void loadEmployeeMods(int employeeRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.employeeExists(employeeRef) && !loadadMods.isEmpty()) {
             Employee employee = this.getEmployee(employeeRef);
@@ -4284,6 +5685,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @return 
+     */
     public Employee getEmployee(int employeeRef) {
         if(this.employeeExists(employeeRef)) {
             return this.employees.get(employeeRef);
@@ -4291,6 +5697,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadEmployeeNotes(int employeeRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.employeeExists(employeeRef) && !loadadNotes.isEmpty()) {
             Employee employee = this.getEmployee(employeeRef);
@@ -4300,30 +5712,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 employee.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEmployeeNote(int employeeRef, Note note) throws SQLException, RemoteException {
-        if(this.employeeExists(employeeRef) && !this.noteExists(note.getRef()) && this.getEmployee(employeeRef).hasNote(note.getRef())) {
+        if(this.employeeExists(employeeRef) && !this.noteExists(note.getReference()) && this.getEmployee(employeeRef).hasNote(note.getReference())) {
             this.createNote("employeeNotes", employeeRef, note);
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEmployeeNote(int employeeRef, int noteRef) throws SQLException, RemoteException {
         if(this.employeeExists(employeeRef) && this.noteExists(noteRef)) {
             this.updateNote("employeeNotes", employeeRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param employeeRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEmployeeNote(int employeeRef, int noteRef) throws SQLException, RemoteException {
         if (this.employeeExists(employeeRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("employeeNotes", employeeRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param tenancy
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createTenancy(Tenancy tenancy) throws SQLException, RemoteException {
         if(!this.tenancyExists(tenancy.getAgreementRef())) {
             String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
@@ -4351,6 +5790,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateTenancy(int tenancyRef) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef)) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
@@ -4374,6 +5819,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteTenancy(int tenancyRef) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef) && this.canDeleteTenancy(tenancyRef)) {
             String deleteSql = "delete from tenancies where tenancyRef=" + tenancyRef;
@@ -4386,10 +5837,21 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteTenancy(int tenancyRef) throws RemoteException {
         return this.tenancyExists(tenancyRef) && this.getTenancy(tenancyRef).hasBeenModified() && this.getRentAccount(this.getTenancy(tenancyRef).getAccountRef()).hasBeenModified();
     }
-
+    
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadTenancies() throws SQLException, RemoteException {
         this.tenancies.clear();
         String sql = "select tenancyRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
@@ -4434,6 +5896,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param loadadMods 
+     */
     private void loadTenancyMods(int tenancyRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.tenancyExists(tenancyRef) && !loadadMods.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
@@ -4448,6 +5915,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @return 
+     */
     public Tenancy getTenancy(int tenancyRef) {
         if (tenancies.containsKey(tenancyRef)) {
             return tenancies.get(tenancyRef);
@@ -4455,6 +5927,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadTenancyDocs(int tenancyRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.tenancyExists(tenancyRef) && !loadedDocs.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
@@ -4469,13 +5947,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createTenancyDoc(int tenancyRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef) && !this.documentExists(document.getDocumentRef()) && this.getTenancy(tenancyRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("tenancyDocuments", tenancyRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteTenancyDoc(int tenancyRef, int documentRef) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef) && this.documentExists(documentRef) && this.getTenancy(tenancyRef).hasDocument(documentRef)) {
             this.deleteDocument("tenancyDocuments", tenancyRef, documentRef);
@@ -4483,6 +5975,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadTenancyNotes(int tenancyRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.tenancyExists(tenancyRef) && !loadadNotes.isEmpty()) {
             Tenancy tenancy = this.getTenancy(tenancyRef);
@@ -4492,38 +5990,71 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 tenancy.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createTenancyNote(int tenancyRef, Note note) throws SQLException, RemoteException {
-        if(this.tenancyExists(tenancyRef) && !this.noteExists(note.getRef()) && this.getTenancy(tenancyRef).hasNote(note.getRef())) {
+        if(this.tenancyExists(tenancyRef) && !this.noteExists(note.getReference()) && this.getTenancy(tenancyRef).hasNote(note.getReference())) {
             this.createNote("tenancyNotes", tenancyRef, note);
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateTenancyNote(int tenancyRef, int noteRef) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef) && this.noteExists(noteRef)) {
             this.updateNote("tenancyNotes", tenancyRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteTenancyNote(int tenancyRef, int noteRef) throws SQLException, RemoteException {
         if (this.tenancyExists(tenancyRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("tenancyNotes", tenancyRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param tenType
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createTenancyType(Element tenType) throws SQLException, RemoteException {
         if(!this.tenancyTypeExists(tenType.getCode())) {
             this.createElement("tenancyTypes", tenType);
             this.tenancyTypes.put(tenType.getCode(), tenType);
-            this.notes.put(tenType.getNote().getRef(), tenType.getNote());
+            this.notes.put(tenType.getNote().getReference(), tenType.getNote());
         }
     }
     
+    /**
+     * 
+     * @param tenTypeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateTenancyType(String tenTypeCode) throws SQLException, RemoteException {
         if(this.tenancyTypeExists(tenTypeCode)) {
             Element tenType = this.getTenancyType(tenTypeCode);
@@ -4532,14 +6063,26 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param tenTypeCode
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteTenancyType(String tenTypeCode) throws SQLException, RemoteException {
         if(this.tenancyTypeExists(tenTypeCode) && this.canDeleteTitle(tenTypeCode)) {
             this.deleteElement("tenancyTypes", tenTypeCode);
-            this.deleteNote(this.getTenancyType(tenTypeCode).getNote().getRef());
+            this.deleteNote(this.getTenancyType(tenTypeCode).getNote().getReference());
             this.titles.remove(tenTypeCode);
         }
     }
     
+    /**
+     * 
+     * @param tenTypeCode
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteTenancyType(String tenTypeCode) throws RemoteException {
         if(this.tenancyTypeExists(tenTypeCode) && !this.getTenancyType(tenTypeCode).hasBeenModified()) {
             for(Tenancy tenancy : this.getTenancies()) {
@@ -4552,6 +6095,11 @@ public class Database {
         return false;
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadTenancyTypes() throws SQLException, RemoteException {
         this.tenancyTypes.clear();
         List<ElementImpl> loadedTenancyTypes;
@@ -4560,13 +6108,18 @@ public class Database {
             for (Element temp : loadedTenancyTypes) {
                 if (temp instanceof Element) {
                     this.tenancyTypes.put(temp.getCode(), temp);
-                    this.notes.put(temp.getNote().getRef(), temp.getNote());
+                    this.notes.put(temp.getNote().getReference(), temp.getNote());
                     this.loadElementMods(temp, this.loadModMap("tenancyTypeModifications", temp.getCode()));
                 }
             }
         }
     }
     
+    /**
+     * 
+     * @param code
+     * @return 
+     */
     public Element getTenancyType(String code) {
         if(this.tenancyTypeExists(code)) {
             return this.tenancyTypes.get(code);
@@ -4574,6 +6127,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param lease
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLease(Lease lease) throws SQLException, RemoteException {
         if(!this.leaseExists(lease.getAgreementRef())) {
             String insertSql = "insert into leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, "
@@ -4599,6 +6158,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLease(int leaseRef) throws SQLException, RemoteException {
         if(this.leaseExists(leaseRef)) {
             Lease lease = this.getLease(leaseRef);
@@ -4619,6 +6184,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLease(int leaseRef) throws SQLException, RemoteException {
         if(this.leaseExists(leaseRef) && this.canDeleteLease(leaseRef)) {
             String deleteSql = "delete from leases where leaseRef=" + leaseRef;
@@ -4631,10 +6202,21 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteLease(int leaseRef) throws RemoteException {
         return this.leaseExists(leaseRef) && this.getLease(leaseRef).hasBeenModified() && this.getLeaseAccount(this.getLease(leaseRef).getAccountRef()).hasBeenModified();
     }
-
+    
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadLeases() throws SQLException, RemoteException {
         this.leases.clear();
         String sql = "select leaseRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
@@ -4675,6 +6257,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param loadadMods 
+     */
     private void loadLeaseMods(int leaseRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseExists(leaseRef) && !loadadMods.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
@@ -4689,6 +6276,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @return 
+     */
     public Lease getLease(int leaseRef) {
         if (leases.containsKey(leaseRef)) {
             return leases.get(leaseRef);
@@ -4696,6 +6288,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadLeaseDocs(int leaseRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.leaseExists(leaseRef) && !loadedDocs.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
@@ -4710,13 +6308,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLeaseDoc(int leaseRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.leaseExists(leaseRef) && !this.documentExists(document.getDocumentRef()) && this.getLease(leaseRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("leaseDocuments", leaseRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param tenancyRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLeaseDoc(int tenancyRef, int documentRef) throws SQLException, RemoteException {
         if(this.leaseExists(tenancyRef) && this.documentExists(documentRef) && this.getLease(tenancyRef).hasDocument(documentRef)) {
             this.deleteDocument("leaseDocuments", tenancyRef, documentRef);
@@ -4724,6 +6336,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadLeaseNotes(int leaseRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.leaseExists(leaseRef) && !loadadNotes.isEmpty()) {
             Lease lease = this.getLease(leaseRef);
@@ -4733,30 +6351,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 lease.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLeaseNote(int leaseRef, Note note) throws SQLException, RemoteException {
-        if(this.leaseExists(leaseRef) && !this.noteExists(note.getRef()) && this.getLease(leaseRef).hasNote(note.getRef())) {
+        if(this.leaseExists(leaseRef) && !this.noteExists(note.getReference()) && this.getLease(leaseRef).hasNote(note.getReference())) {
             this.createNote("leaseNotes", leaseRef, note);
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLeaseNote(int leaseRef, int noteRef) throws SQLException, RemoteException {
         if(this.leaseExists(leaseRef) && this.noteExists(noteRef)) {
             this.updateNote("leaseNotes", leaseRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param leaseRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLeaseNote(int leaseRef, int noteRef) throws SQLException, RemoteException {
         if (this.leaseExists(leaseRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("leaseNotes", leaseRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param leaseRef
+     * @throws SQLException 
+     */
     public void createLeaseLandlord(int landlordRef, int leaseRef) throws SQLException {
        if(this.leaseExists(leaseRef) && this.landlordExists(landlordRef)) {
             String checkSql = "select count(landlordRef) as count from leaseLandlord where landlordRef=? and leaseRef=?";
@@ -4796,7 +6441,13 @@ public class Database {
         }
     }
     
-    private void loadLeaseLandlords(int ref) throws SQLException {
+    /**
+     * 
+     * @param ref
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    private void loadLeaseLandlords(int ref) throws SQLException, RemoteException {
         String sql = "select landlordRef, leaseRef, cur from leaseLandlord order by leaseRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -4815,6 +6466,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param landlordRef
+     * @param leaseRef
+     * @throws SQLException 
+     */
     public void endLeaseLandlord(int landlordRef, int leaseRef) throws SQLException  {
         if(this.leaseExists(leaseRef) && this.landlordExists(landlordRef)) {
             String checkSql = "select count(landlordRef) as count from leaseLandlord where landlordRef=? and leaseRef=?";
@@ -4852,6 +6509,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contract
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createContract(Contract contract) throws SQLException, RemoteException {
         if(!this.contractExists(contract.getAgreementRef())) {
             String insertSql = "insert into contracts (contractRef, name, startDate, expectedEndDate, length, "
@@ -4876,6 +6539,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateContract(int contractRef) throws SQLException, RemoteException {
         if(this.contractExists(contractRef)) {
             Contract contract = this.getContract(contractRef);
@@ -4896,6 +6565,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteContract(int contractRef) throws SQLException, RemoteException {
         if(this.contractExists(contractRef) && this.canDeleteContract(contractRef)) {
             String deleteSql = "delete from contracts where contractRef=" + contractRef;
@@ -4908,10 +6583,21 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @return
+     * @throws RemoteException 
+     */
     public boolean canDeleteContract(int contractRef) throws RemoteException {
         return this.contractExists(contractRef) && this.getContract(contractRef).hasBeenModified() && this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified();
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadContracts() throws SQLException, RemoteException {
         this.contracts.clear();
        String sql = "select contractRef, name, startDate, expectedEndDate, actualEndDate, length, accountRef, officeCode, "
@@ -4954,6 +6640,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param loadadMods 
+     */
     private void loadContractMods(int contractRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(contractRef) && !loadadMods.isEmpty()) {
             Contract contract = this.getContract(contractRef);
@@ -4968,6 +6659,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @return 
+     */
     public Contract getContract(int contractRef) {
         if (contracts.containsKey(contractRef)) {
             return contracts.get(contractRef);
@@ -4975,6 +6671,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadContractDocs(int contractRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.contractExists(contractRef) && !loadedDocs.isEmpty()) {
             Contract contract = this.getContract(contractRef);
@@ -4989,13 +6691,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createContractDoc(int contractRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.contractExists(contractRef) && !this.documentExists(document.getDocumentRef()) && this.getContract(contractRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("contractDocuments", contractRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteContractDoc(int contractRef, int documentRef) throws SQLException, RemoteException {
         if(this.leaseExists(contractRef) && this.documentExists(documentRef) && this.getContract(contractRef).hasDocument(documentRef)) {
             this.deleteDocument("contractDocuments", contractRef, documentRef);
@@ -5003,6 +6719,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadContractNotes(int contractRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.contractExists(contractRef) && !loadadNotes.isEmpty()) {
             Contract contract = this.getContract(contractRef);
@@ -5012,30 +6734,57 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 contract.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createContractNote(int contractRef, Note note) throws SQLException, RemoteException {
-        if(this.contractExists(contractRef) && !this.noteExists(note.getRef()) && this.getContract(contractRef).hasNote(note.getRef())) {
+        if(this.contractExists(contractRef) && !this.noteExists(note.getReference()) && this.getContract(contractRef).hasNote(note.getReference())) {
             this.createNote("contractNotes", contractRef, note);
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateContractNote(int contractRef, int noteRef) throws SQLException, RemoteException {
         if(this.contractExists(contractRef) && this.noteExists(noteRef)) {
             this.updateNote("contractNotes", contractRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param contractRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteContractNote(int contractRef, int noteRef) throws SQLException, RemoteException {
         if (this.contractExists(contractRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("contractNotes", contractRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param rentAcc
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createRentAccount(RentAccount rentAcc) throws SQLException, RemoteException {
         if(!this.rentAccountExists(rentAcc.getAccRef())) {
             String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, balance, "
@@ -5058,6 +6807,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @throws SQLException 
+     */
     private void deleteRentAccount(int rentAccRef) throws SQLException {
         if(this.rentAccountExists(rentAccRef)) {
             String deleteSql = "delete from rentAccounts where rentAccRef=" + rentAccRef;
@@ -5069,6 +6823,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateRentAccount(int rentAccRef) throws SQLException, RemoteException {
         if(this.rentAccountExists(rentAccRef)) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
@@ -5089,6 +6849,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadRentAccounts() throws SQLException, RemoteException {
         this.rentAccounts.clear();
         String sql = "select rentAccRef, name, startDate, endDate, balance, officeCode, "
@@ -5122,6 +6887,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param loadadMods 
+     */
     private void loadRentAccountMods(int rentAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.rentAccountExists(rentAccRef) && !loadadMods.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
@@ -5136,6 +6906,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @return 
+     */
     public RentAccount getRentAccount(int rentAccRef) {
         if (rentAccounts.containsKey(rentAccRef)) {
             return rentAccounts.get(rentAccRef);
@@ -5143,6 +6918,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadRentAccountDocs(int rentAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.rentAccountExists(rentAccRef) && !loadedDocs.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
@@ -5157,13 +6938,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createRentAccountDoc(int rentAccRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.rentAccountExists(rentAccRef) && !this.documentExists(document.getDocumentRef()) && this.getRentAccount(rentAccRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("rentAccountDocuments", rentAccRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteRentAccountDoc(int rentAccRef, int documentRef) throws SQLException, RemoteException {
         if(this.rentAccountExists(rentAccRef) && this.documentExists(documentRef) && this.getRentAccount(rentAccRef).hasDocument(documentRef)) {
             this.deleteDocument("rentAccountDocuments", rentAccRef, documentRef);
@@ -5171,6 +6966,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadRentAccountNotes(int rentAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.rentAccountExists(rentAccRef) && !loadadNotes.isEmpty()) {
             RentAccount rentAcc = this.getRentAccount(rentAccRef);
@@ -5180,42 +6981,83 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 rentAcc.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createRentAccountNote(int rentAccRef, Note note) throws SQLException, RemoteException {
-        if(this.rentAccountExists(rentAccRef) && !this.noteExists(note.getRef()) && this.getRentAccount(rentAccRef).hasNote(note.getRef())) {
+        if(this.rentAccountExists(rentAccRef) && !this.noteExists(note.getReference()) && this.getRentAccount(rentAccRef).hasNote(note.getReference())) {
             this.createNote("rentAccountNotes", rentAccRef, note);
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateRentAccountNote(int rentAccRef, int noteRef) throws SQLException, RemoteException {
         if(this.rentAccountExists(rentAccRef) && this.noteExists(noteRef)) {
             this.updateNote("rentAccountNotes", rentAccRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteRentAccountNote(int rentAccRef, int noteRef) throws SQLException, RemoteException {
         if (this.rentAccountExists(rentAccRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("rentAccountNotes", rentAccRef, noteRef);
         }
     }
     
-    public void createRentAccountTransaction(int rentAccRef, Transaction transaction) throws SQLException {
+    /**
+     * 
+     * @param rentAccRef
+     * @param transaction
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void createRentAccountTransaction(int rentAccRef, Transaction transaction) throws SQLException, RemoteException {
         if(transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.rentAccountExists(rentAccRef)) {
             this.createTransaction("rentAccountTransactions", transaction);
         }
     }
     
+    /**
+     * 
+     * @param rentAccRef
+     * @param transactionRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteRentAccountTransaction(int rentAccRef, int transactionRef) throws SQLException, RemoteException {
         if(this.transactionExists(transactionRef) && this.rentAccountExists(rentAccRef)) {
             this.deleteTransaction("rentAccountTransactions", transactionRef, rentAccRef);
         }
     }
     
+    /**
+     * 
+     * @param leaseAcc
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLeaseAccount(LeaseAccount leaseAcc) throws SQLException, RemoteException {
         if(!this.leaseAccountExists(leaseAcc.getAccRef())) {
             String insertSql = "insert into leaseAccounts (leaseAccRef, name, startDate, balance, "
@@ -5237,7 +7079,13 @@ public class Database {
             leaseAccounts.put(leaseAcc.getAccRef(), leaseAcc);
         }
     }
-
+    
+    /**
+     * 
+     * @param leaseAccRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLeaseAccount(int leaseAccRef) throws SQLException, RemoteException {
         if (this.leaseAccountExists(leaseAccRef)) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
@@ -5258,6 +7106,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @throws SQLException 
+     */
     private void deleteLeaseAccount(int leaseAccRef) throws SQLException {
         if(this.leaseAccountExists(leaseAccRef)) {
             String deleteSql = "delete from leaseAccounts where leaseAccRef=" + leaseAccRef;
@@ -5268,7 +7121,12 @@ public class Database {
             }
         }
     }
-
+    
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadLeaseAccounts() throws SQLException, RemoteException {
         this.leaseAccounts.clear();
         String sql = "select leaseAccRef, name, startDate, endDate, balance, officeCode, "
@@ -5302,6 +7160,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param loadadMods 
+     */
     private void loadLeaseAccountMods(int leaseAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseAccountExists(leaseAccRef) && !loadadMods.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
@@ -5316,6 +7179,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @return 
+     */
     public LeaseAccount getLeaseAccount(int leaseAccRef) {
         if (leaseAccounts.containsKey(leaseAccRef)) {
             return leaseAccounts.get(leaseAccRef);
@@ -5323,6 +7191,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadLeaseAccountDocs(int leaseAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.leaseAccountExists(leaseAccRef) && !loadedDocs.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
@@ -5337,13 +7211,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLeaseAccountDoc(int leaseAccRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.leaseAccountExists(leaseAccRef) && !this.documentExists(document.getDocumentRef()) && this.getLeaseAccount(leaseAccRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("leaseAccountDocuments", leaseAccRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLeaseAccountDoc(int leaseAccRef, int documentRef) throws SQLException, RemoteException {
         if(this.leaseAccountExists(leaseAccRef) && this.documentExists(documentRef) && this.getLeaseAccount(leaseAccRef).hasDocument(documentRef)) {
             this.deleteDocument("leaseAccountDocuments", leaseAccRef, documentRef);
@@ -5351,6 +7239,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadLeaseAccountNotes(int leaseAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.leaseAccountExists(leaseAccRef) && !loadadNotes.isEmpty()) {
             LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
@@ -5360,42 +7254,84 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 leaseAcc.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createLeaseAccountNote(int leaseAccRef, Note note) throws SQLException, RemoteException {
-        if(this.leaseAccountExists(leaseAccRef) && !this.noteExists(note.getRef()) && this.getLeaseAccount(leaseAccRef).hasNote(note.getRef())) {
+        if(this.leaseAccountExists(leaseAccRef) && !this.noteExists(note.getReference()) && this.getLeaseAccount(leaseAccRef).hasNote(note.getReference())) {
             this.createNote("leaseAccountNotes", leaseAccRef, note);
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateLeaseAccountNote(int leaseAccRef, int noteRef) throws SQLException, RemoteException {
         if(this.leaseAccountExists(leaseAccRef) && this.noteExists(noteRef)) {
             this.updateNote("leaseAccountNotes", leaseAccRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param leaseAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteLeaseAccountNote(int leaseAccRef, int noteRef) throws SQLException, RemoteException {
         if (this.leaseAccountExists(leaseAccRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("leaseAccountNotes", leaseAccRef, noteRef);
         }
     }
     
-    public void createLeaseAccountTransaction(int leaseAccRef, Transaction transaction) throws SQLException {
+    /**
+     * 
+     * @param leaseAccRef
+     * @param transaction
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void createLeaseAccountTransaction(int leaseAccRef, Transaction transaction) throws SQLException, RemoteException {
         if(transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.leaseAccountExists(leaseAccRef)) {
             this.createTransaction("leaseAccountTransactions", transaction);
         }
     }
     
+    /**
+     * 
+     * 
+     * @param leaseAccRef
+     * @param transactionRef
+     * @throws java.sql.SQLException
+     * @throws java.rmi.RemoteException
+     */
     public void deleteLeaseAccountTransaction(int leaseAccRef, int transactionRef) throws SQLException, RemoteException {
         if(this.transactionExists(transactionRef) && this.leaseAccountExists(leaseAccRef)) {
             this.deleteTransaction("leaseAccountTransactions", transactionRef, leaseAccRef);
         }
     }
     
+    /**
+     * 
+     * @param employeeAcc
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEmployeeAccount(EmployeeAccount employeeAcc) throws SQLException, RemoteException {
         if(!this.employeeAccountExists(employeeAcc.getAccRef())) {
             String insertSql = "insert into employeeAccounts (employeeAccRef, name, startDate, "
@@ -5418,6 +7354,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEmployeeAccount(int employeeAccRef) throws SQLException, RemoteException {
         if(this.employeeAccountExists(employeeAccRef)) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
@@ -5438,6 +7380,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @throws SQLException 
+     */
     private void deleteEmployeeAccount(int employeeAccRef) throws SQLException {
         if(this.employeeAccountExists(employeeAccRef)) {
             String deleteSql = "delete from employeeAccounts where employeeAccRef=" + employeeAccRef;
@@ -5449,6 +7396,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     private void loadEmployeeAccounts() throws SQLException, RemoteException {
         this.employeeAccounts.clear();
        String sql = "select employeeAccRef, name, startDate, endDate, balance, officeCode, "
@@ -5482,6 +7434,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param loadadMods 
+     */
     private void loadEmployeeAccountMods(int employeeAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(employeeAccRef) && !loadadMods.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
@@ -5496,6 +7453,11 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @return 
+     */
     public EmployeeAccount getEmployeeAccount(int employeeAccRef) {
         if (employeeAccounts.containsKey(employeeAccRef)) {
             return employeeAccounts.get(employeeAccRef);
@@ -5503,6 +7465,12 @@ public class Database {
         return null;
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param loadedDocs
+     * @throws RemoteException 
+     */
     private void loadEmployeeAccountDocs(int employeeAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.employeeAccountExists(employeeAccRef) && !loadedDocs.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
@@ -5517,13 +7485,27 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param document
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEmployeeAccountDoc(int employeeAccRef, DocumentImpl document) throws SQLException, RemoteException {
         if(this.employeeAccountExists(employeeAccRef) && !this.documentExists(document.getDocumentRef()) && this.getEmployeeAccount(employeeAccRef).hasDocument(document.getDocumentRef())) {
             this.createDocument("employeeAccountDocuments", employeeAccRef, document);
-            this.notes.put(document.getNote().getRef(), document.getNote());
+            this.notes.put(document.getNote().getReference(), document.getNote());
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param documentRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEmployeeAccountDoc(int employeeAccRef, int documentRef) throws SQLException, RemoteException {
         if(this.employeeAccountExists(employeeAccRef) && this.documentExists(documentRef) && this.getEmployeeAccount(employeeAccRef).hasDocument(documentRef)) {
             this.deleteDocument("employeeAccountDocuments", employeeAccRef, documentRef);
@@ -5531,6 +7513,12 @@ public class Database {
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param loadadNotes
+     * @throws RemoteException 
+     */
     private void loadEmployeeAccountNotes(int employeeAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.employeeAccountExists(employeeAccRef) && !loadadNotes.isEmpty()) {
             EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
@@ -5540,43 +7528,78 @@ public class Database {
                 Map.Entry temp = (Map.Entry) it.next();
                 tempNote = (Note) temp.getValue();
                 employeeAcc.createNote(tempNote, null);
-                notes.put(tempNote.getRef(), tempNote);
+                notes.put(tempNote.getReference(), tempNote);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param note
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void createEmployeeAccountNote(int employeeAccRef, Note note) throws SQLException, RemoteException {
-        if(this.employeeAccountExists(employeeAccRef) && !this.noteExists(note.getRef()) && this.getEmployeeAccount(employeeAccRef).hasNote(note.getRef())) {
+        if(this.employeeAccountExists(employeeAccRef) && !this.noteExists(note.getReference()) && this.getEmployeeAccount(employeeAccRef).hasNote(note.getReference())) {
             this.createNote("employeeAccountNotes", employeeAccRef, note);
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void updateEmployeeAccountNote(int employeeAccRef, int noteRef) throws SQLException, RemoteException {
         if(this.employeeAccountExists(employeeAccRef) && this.noteExists(noteRef)) {
             this.updateNote("employeeAccountNotes", employeeAccRef, noteRef);
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param noteRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEmployeeAccountNote(int employeeAccRef, int noteRef) throws SQLException, RemoteException {
         if (this.employeeAccountExists(employeeAccRef) && this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
             this.deleteNote("employeeAccountNotes", employeeAccRef, noteRef);
         }
     }
     
-    public void createEmployeeAccountTransaction(int employeeAccRef, Transaction transaction) throws SQLException {
+    /**
+     * 
+     * @param employeeAccRef
+     * @param transaction
+     * @throws SQLException
+     * @throws RemoteException 
+     */
+    public void createEmployeeAccountTransaction(int employeeAccRef, Transaction transaction) throws SQLException, RemoteException {
         if(transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.employeeAccountExists(employeeAccRef)) {
             this.createTransaction("employeeAccountTransactions", transaction);
         }
     }
     
+    /**
+     * 
+     * @param employeeAccRef
+     * @param transactionRef
+     * @throws SQLException
+     * @throws RemoteException 
+     */
     public void deleteEmployeeAccountTransaction(int employeeAccRef, int transactionRef) throws SQLException, RemoteException {
         if(this.transactionExists(transactionRef) && this.employeeAccountExists(employeeAccRef)) {
             this.deleteTransaction("employeeAccountTransactions", transactionRef, employeeAccRef);
         }
     }
     
-    private void createTransaction(String from, Transaction transaction) throws SQLException {
+    private void createTransaction(String from, Transaction transaction) throws SQLException, RemoteException {
         if(!this.transactionExists(transaction.getTransactionRef())) {
             String insertSql = "insert into " + from + " (transactionRef, accountRef, fromRef, toRef, amount, "
                     + "isDebit, transactionDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -5604,7 +7627,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     transactions.remove(transactionRef);
-                    this.deleteNote(this.getTransaction(transactionRef).getNote().getRef());
+                    this.deleteNote(this.getTransaction(transactionRef).getNote().getReference());
                 }
             }
         }
@@ -5649,7 +7672,7 @@ public class Database {
         return null;
     }
     
-    public void createUser(UserImpl user) throws SQLException {
+    public void createUser(UserImpl user) throws SQLException, RemoteException {
         if(!this.userExists(user.getUsername()) && this.employeeExists(user.getEmployeeRef())) {
             String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
                     + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -5695,7 +7718,7 @@ public class Database {
         }
     }
     
-    private void deleteUser(int employeeRef, String username) throws SQLException {
+    private void deleteUser(int employeeRef, String username) throws SQLException, RemoteException {
         if(this.userExists(username) && this.getUser(username).getEmployeeRef() == employeeRef) {
             String deleteSql = "delete from users where employeeRef=" + employeeRef + " and username=" + username;
             try(Statement deleteStat = this.con.createStatement()) {
@@ -5803,7 +7826,7 @@ public class Database {
         return this.involvedParties.containsKey(invPartyRef);
     }
     
-    public boolean personInvPartyExists(int personRef) {
+    public boolean personInvPartyExists(int personRef) throws RemoteException {
         for(InvolvedParty invParties : involvedParties.values()) {
             if(invParties.getPersonRef() == personRef) {
                 return true;
@@ -5836,7 +7859,7 @@ public class Database {
         return this.landlords.containsKey(landlordRef);
     }
     
-    public boolean personLandlordExists(int personRef) {
+    public boolean personLandlordExists(int personRef) throws RemoteException {
         for(Landlord landlord : landlords.values()) {
             if(landlord.getPersonRef() == personRef) {
                 return true;
@@ -5869,7 +7892,7 @@ public class Database {
         return this.employees.containsKey(employeeRef);
     }
     
-    public boolean personEmployeeExists(int personRef) {
+    public boolean personEmployeeExists(int personRef) throws RemoteException {
         for(Employee employee : employees.values()) {
             if(employee.getPersonRef() == personRef) {
                 return true;
@@ -6346,7 +8369,7 @@ public class Database {
         return null;
     }
     
-    public Application getInvPartyApplcation(int invPartyRef) {
+    public Application getInvPartyApplcation(int invPartyRef) throws RemoteException {
         if (this.invPartyExists(invPartyRef)) {
             InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
             if(this.applicationExists(invParty.getApplicationRef())) {

@@ -560,7 +560,7 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
     public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -572,7 +572,7 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
     public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }

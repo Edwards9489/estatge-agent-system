@@ -13,6 +13,8 @@ import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.OfficeInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -22,7 +24,7 @@ import java.util.List;
  *
  * @author Dwayne
  */
-public class Office implements OfficeInterface {
+public class Office extends UnicastRemoteObject implements OfficeInterface {
     
     ///   VARIABLES   ///
     
@@ -48,8 +50,9 @@ public class Office implements OfficeInterface {
      * @param startDate
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Office(String officeCode, AddressInterface address, Date startDate, String createdBy, Date createdDate) {
+    public Office(String officeCode, AddressInterface address, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         this.officeCode = officeCode;
         this.address = address;
         this.startDate = startDate;
@@ -81,15 +84,22 @@ public class Office implements OfficeInterface {
      * 
      * @param contact
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
+    public void createContact(ContactInterface contact, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasContact(contact.getContactRef())) {
             this.contacts.add(contact);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteContact(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteContact(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasContact(ref)) {
             ContactInterface contact = this.getContact(ref);
             if(!contact.hasBeenModified()) {
@@ -99,12 +109,23 @@ public class Office implements OfficeInterface {
         }
     }
     
+    /**
+     *
+     * @param note
+     * @param modifiedBy
+     */
     public void createNote(Note note, ModifiedByInterface modifiedBy) {
         notes.add(note);
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -118,15 +139,22 @@ public class Office implements OfficeInterface {
      * 
      * @param agreement
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) {
+    public void createAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasAgreement(agreement.getAgreementRef())) {
             this.agreements.add(agreement);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteAgreement(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteAgreement(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasAgreement(ref)) {
             AgreementInterface agreement = this.getAgreement(ref);
             if(!agreement.hasBeenModified()) {
@@ -140,15 +168,22 @@ public class Office implements OfficeInterface {
      * 
      * @param account
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createAccount(AccountInterface account, ModifiedByInterface modifiedBy) {
+    public void createAccount(AccountInterface account, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasAccount(account.getAccRef())) {
             this.accounts.add(account);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteAccount(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteAccount(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasAccount(ref)) {
             AccountInterface account = this.getAccount(ref);
             if(!account.hasBeenModified()) {
@@ -173,21 +208,32 @@ public class Office implements OfficeInterface {
      * @param endDate
      * @param modifiedBy 
      */
-    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
+    public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) throws RemoteException {
         if (endDate == null || this.canCloseOffice() && endDate.after(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param document
+     * @param modifiedBy
+     */
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws java.rmi.RemoteException
+     */
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -200,43 +246,53 @@ public class Office implements OfficeInterface {
 
     /**
      * @return officeCode
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getOfficeCode() {
+    public String getOfficeCode() throws RemoteException {
         return officeCode;
     }
 
     /**
      * @return address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressInterface getAddress() {
+    public AddressInterface getAddress() throws RemoteException {
         return address;
     }
     
     /**
      * 
      * @return startDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getStartDate() {
+    public Date getStartDate() throws RemoteException {
         return startDate;
     }
     
     /**
      * 
      * @return endDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getEndDate() {
+    public Date getEndDate() throws RemoteException {
         return endDate;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -244,11 +300,17 @@ public class Office implements OfficeInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -256,13 +318,24 @@ public class Office implements OfficeInterface {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasAgreement(int ref) {
+    public boolean hasAgreement(int ref) throws RemoteException {
         if(!agreements.isEmpty()) {
             for(AgreementInterface agreement : agreements) {
                 if(agreement.getAgreementRef() == ref) {
@@ -273,8 +346,14 @@ public class Office implements OfficeInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public AgreementInterface getAgreement(int ref) {
+    public AgreementInterface getAgreement(int ref) throws RemoteException {
         if(this.hasAgreement(ref)) {
             for (AgreementInterface agreement : agreements) {
                 if(agreement.getAgreementRef() == ref) {
@@ -287,14 +366,15 @@ public class Office implements OfficeInterface {
 
     /**
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<AgreementInterface> getAgreements() {
+    public List<AgreementInterface> getAgreements() throws RemoteException {
         return Collections.unmodifiableList(agreements);
     }
     
     @Override
-    public boolean hasAccount(int ref) {
+    public boolean hasAccount(int ref) throws RemoteException {
         if(!accounts.isEmpty()) {
             for(AccountInterface account : accounts) {
                 if(account.getAccRef() == ref) {
@@ -306,7 +386,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public AccountInterface getAccount(int ref) {
+    public AccountInterface getAccount(int ref) throws RemoteException {
         if(this.hasAccount(ref)) {
             for (AccountInterface account : accounts) {
                 if(account.getAccRef() == ref) {
@@ -321,12 +401,12 @@ public class Office implements OfficeInterface {
      * @return contacts
      */
     @Override
-    public List<AccountInterface> getAccounts() {
+    public List<AccountInterface> getAccounts() throws RemoteException {
         return Collections.unmodifiableList(accounts);
     }
     
     @Override
-    public ContactInterface getContact(int ref) {
+    public ContactInterface getContact(int ref) throws RemoteException {
         if(this.hasContact(ref)) {
             for(ContactInterface contact : contacts) {
                 if(contact.getContactRef() == ref) {
@@ -341,12 +421,12 @@ public class Office implements OfficeInterface {
      * @return contacts
      */
     @Override
-    public List<ContactInterface> getContacts() {
+    public List<ContactInterface> getContacts() throws RemoteException {
         return Collections.unmodifiableList(contacts);
     }
     
     @Override
-    public boolean hasContact(int contactRef) {
+    public boolean hasContact(int contactRef) throws RemoteException {
         if(contacts.isEmpty()) {
             return false;
         }
@@ -358,7 +438,7 @@ public class Office implements OfficeInterface {
         return false;
     }
     
-    public boolean canCloseOffice() {
+    public boolean canCloseOffice() throws RemoteException {
         if (agreements.isEmpty() && accounts.isEmpty()) {
             for (AgreementInterface agreement : agreements) {
                 if(agreement.isCurrent()) {
@@ -385,9 +465,10 @@ public class Office implements OfficeInterface {
     /**
      * 
      * @return true if endDate == null || (endDate != null && endDate > TODAY)
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         if(this.endDate == null) {
             return true;
         }
@@ -397,7 +478,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -409,7 +490,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -421,7 +502,7 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -433,17 +514,17 @@ public class Office implements OfficeInterface {
     }
     
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -453,9 +534,10 @@ public class Office implements OfficeInterface {
     /**
      * 
      * @return the date a user last modified the Office
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -465,18 +547,20 @@ public class Office implements OfficeInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the Office
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifiedBy object for the Office
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -486,18 +570,20 @@ public class Office implements OfficeInterface {
     /**
      * 
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
     
     /**
      * 
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
 }

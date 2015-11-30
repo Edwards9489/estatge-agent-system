@@ -7,13 +7,17 @@ package server_application;
 
 import interfaces.Note;
 import interfaces.TransactionInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class Transaction implements TransactionInterface {
+public class Transaction extends UnicastRemoteObject implements TransactionInterface {
     
     ///   VARIABLES   ///
     
@@ -42,8 +46,9 @@ public class Transaction implements TransactionInterface {
      * @param note
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, Note note, String createdBy, Date createdDate) {
+    public Transaction(int transactionRef, int accountRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, Note note, String createdBy, Date createdDate) throws RemoteException {
         this.transactionRef = transactionRef;
         this.accountRef = accountRef;
         this.fromRef = fromRef;
@@ -66,83 +71,102 @@ public class Transaction implements TransactionInterface {
     
     /**
      * @return transactionRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getTransactionRef() {
+    public int getTransactionRef() throws RemoteException {
         return this.transactionRef;
     }
     
     /**
      * @return accountRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getAccountRef() {
+    public int getAccountRef() throws RemoteException {
         return this.accountRef;
     }
 
     /**
      * @return fromRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getFromRef() {
+    public int getFromRef() throws RemoteException {
         return fromRef;
     }
 
     /**
      * @return toRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getToRef() {
+    public int getToRef() throws RemoteException {
         return toRef;
     }
 
     /**
      * @return amount
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getAmount() {
+    public double getAmount() throws RemoteException {
         return amount;
     }
 
     /**
      * @return transactionDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getTransactionDate() {
+    public Date getTransactionDate() throws RemoteException {
         return transactionDate;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
 
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return createdDate;
     }
 
     /**
      * @return debit
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isDebit() {
+    public boolean isDebit() throws RemoteException {
         return debit;
     }
     
@@ -152,9 +176,14 @@ public class Transaction implements TransactionInterface {
      */
     @Override
     public String toString() {
-        String temp = "\nAccount Ref: " + this.getAccountRef() + "\nFrom Ref: " + this.getFromRef() +
-                "\nTo Ref: " + this.getToRef() + "\nAmount: " + this.getAmount() + "\nTransaction Date: " +
-                this.getTransactionDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate;
-        return temp;
+        try {
+            String temp = "\nAccount Ref: " + this.getAccountRef() + "\nFrom Ref: " + this.getFromRef() +
+                    "\nTo Ref: " + this.getToRef() + "\nAmount: " + this.getAmount() + "\nTransaction Date: " +
+                    this.getTransactionDate() + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate;
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Transaction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

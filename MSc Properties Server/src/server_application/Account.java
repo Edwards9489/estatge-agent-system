@@ -148,7 +148,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     }
     
     public void createNote(Note note, ModifiedByInterface modifiedBy) throws RemoteException {
-        if(this.hasNote(note.getRef())) {
+        if(this.hasNote(note.getReference())) {
             notes.add(note);
             this.modifiedBy(modifiedBy);
         }
@@ -280,7 +280,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -292,7 +292,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }

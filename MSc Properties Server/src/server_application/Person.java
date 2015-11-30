@@ -12,12 +12,16 @@ import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.PersonInterface;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Dwayne
  */
-public class Person implements PersonInterface {
+public class Person extends UnicastRemoteObject implements PersonInterface {
     
     ///   VARIABLES   ///
     
@@ -62,9 +66,10 @@ public class Person implements PersonInterface {
      * @param address
      * @param createdBy
      * @param createdDate
+     * @throws java.rmi.RemoteException
      */
     public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,Element maritalStatus, Element ethnicOrigin,
-            Element language, Element nationality, Element sexuality, Element religion, AddressUsageInterface address, String createdBy, Date createdDate) {
+            Element language, Element nationality, Element sexuality, Element religion, AddressUsageInterface address, String createdBy, Date createdDate) throws RemoteException {
         this.personRef = personRef;
         this.setTitle(title);
         this.setForename(forename);
@@ -219,7 +224,13 @@ public class Person implements PersonInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteContact(ContactInterface contact, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param contact
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteContact(ContactInterface contact, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.contacts.isEmpty()) {
             if(contact != null && !contact.hasBeenModified() && this.contacts.contains(contact)) {
                 this.contacts.remove(contact);
@@ -232,8 +243,9 @@ public class Person implements PersonInterface {
      * 
      * @param address
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
+    public void createAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.addresses.isEmpty()) {
             for(AddressUsageInterface addressUsage : this.addresses) {
                 if(addressUsage.isCurrent()) {
@@ -246,7 +258,13 @@ public class Person implements PersonInterface {
         this.addresses.add(address);
     }
     
-    public void deleteAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param address
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteAddress(AddressUsageInterface address, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.addresses.isEmpty()) {
             if(address != null && address.isCurrent() && !address.hasBeenModified() && this.addresses.contains(address)) {
                 this.addresses.remove(address);
@@ -255,12 +273,23 @@ public class Person implements PersonInterface {
         }
     }
     
+    /**
+     *
+     * @param note
+     * @param modifiedBy
+     */
     public void createNote(Note note, ModifiedByInterface modifiedBy) {
         notes.add(note);
         this.modifiedBy(modifiedBy);
     }
     
-    public void deleteNote(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
             if(note.hasBeenModified()) {
@@ -270,14 +299,26 @@ public class Person implements PersonInterface {
         }
     }
     
-    public void createDocument(Document document, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param document
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
             documents.add(document);
             this.modifiedBy(modifiedBy);
         }
     }
     
-    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) {
+    /**
+     *
+     * @param ref
+     * @param modifiedBy
+     * @throws RemoteException
+     */
+    public void deleteDocument(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasDocument(ref)) {
             documents.remove(this.getDocument(ref));
             this.modifiedBy(modifiedBy);
@@ -326,54 +367,60 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return personRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPersonRef() {
+    public int getPersonRef() throws RemoteException {
         return this.personRef;
     }
     
     /**
      * 
      * @return title
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getTitle() {
+    public Element getTitle() throws RemoteException {
         return this.title;
     }
     
     /**
      * 
      * @return forename
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getForename() {
+    public String getForename() throws RemoteException {
         return this.forename;
     }
     
     /**
      * 
      * @return middleNames
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getMiddleNames() {
+    public String getMiddleNames() throws RemoteException {
         return this.middleNames;
     }
     
     /**
      * 
      * @return surname
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getSurname() {
+    public String getSurname() throws RemoteException {
         return this.surname;
     }
     
     /**
      * 
      * @return String representation of Person full name
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getName() {
+    public String getName() throws RemoteException {
         String temp = this.title.getDescription();
         if(!this.forename.isEmpty()) {
             temp = temp + " " + this.forename;
@@ -390,36 +437,40 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return dateOfBirth
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getDateOfBirth() {
+    public Date getDateOfBirth() throws RemoteException {
         return this.dateOfBirth;
     }
     
     /**
      * 
      * @return nationalInsurance
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getNI() {
+    public String getNI() throws RemoteException {
         return this.nationalInsurance;
     }
     
     /**
      * 
      * @return gender
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getGender() {
+    public Element getGender() throws RemoteException {
         return this.gender;
     }
     
     /**
      * 
      * @return true if number of years between dateOfBirth and TODAY >= 18
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isOver18() {
+    public boolean isOver18() throws RemoteException {
         Calendar dob = DateConversion.dateToCalendar(this.dateOfBirth);
         Calendar now = Calendar.getInstance();
         int years = -1;
@@ -433,62 +484,69 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return maritalStatus 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public Element getMaritalStatus() {
+    public Element getMaritalStatus() throws RemoteException {
         return this.maritalStatus;
     }
     
     /**
      * 
      * @return ethnicOrigin
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getEthnicOrigin() {
+    public Element getEthnicOrigin() throws RemoteException {
         return this.ethnicOrigin;
     }
     
     /**
      * 
      * @return language
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getLanguage() {
+    public Element getLanguage() throws RemoteException {
         return this.language;
     }
     
     /**
      * 
      * @return nationality
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getNationality() {
+    public Element getNationality() throws RemoteException {
         return this.nationality;
     }
     
     /**
      * 
      * @return sexuality
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getSexuality() {
+    public Element getSexuality() throws RemoteException {
         return this.sexuality;
     }
     
     /**
      * 
      * @return religion
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getReligion() {
+    public Element getReligion() throws RemoteException {
         return this.religion;
     }
     
     /**
      * @return current AddressUsage
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressUsageInterface getCurrentAddress() {
+    public AddressUsageInterface getCurrentAddress() throws RemoteException {
         if(!this.addresses.isEmpty()) {
             return this.addresses.get(this.addresses.size()-1);
         }
@@ -497,9 +555,10 @@ public class Person implements PersonInterface {
     
     /**
      * @return String of current Address
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCurrentAddressString() {
+    public String getCurrentAddressString() throws RemoteException {
         if(!this.addresses.isEmpty()) {
             return this.addresses.get(this.addresses.size()-1).getAddressString();
         }
@@ -508,23 +567,30 @@ public class Person implements PersonInterface {
     
     /**
      * @return appAddresses
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<AddressUsageInterface> getApplicationAddressess() {
+    public List<AddressUsageInterface> getApplicationAddressess() throws RemoteException {
         return Collections.unmodifiableList((List<AddressUsageInterface>) this.addresses);
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user who modified the Person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedBy();
         }
@@ -534,9 +600,10 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return the date the last user modified the Person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.getLastModification().getModifiedDate();
         }
@@ -546,29 +613,37 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return the list of modifiedBy objects for the Person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     /**
      * 
      * @return the last modifiedBy object for the Person
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
         return null;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasNote(int ref) {
+    public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -576,11 +651,17 @@ public class Person implements PersonInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Note getNote(int ref) {
+    public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }
@@ -588,8 +669,13 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public List<Note> getNotes() {
+    public List<Note> getNotes() throws RemoteException {
         return Collections.unmodifiableList(this.notes);
     }
     
@@ -597,9 +683,10 @@ public class Person implements PersonInterface {
      * 
      * @param contactRef
      * @return true if contacts contains a Contact with ref == contactRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean hasContact(int contactRef) {
+    public boolean hasContact(int contactRef) throws RemoteException {
         for(ContactInterface contact : contacts) {
             if(contact.getContactRef() == contactRef) {
                 return true;
@@ -611,32 +698,41 @@ public class Person implements PersonInterface {
     /**
      * 
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ContactInterface> getContacts() {
+    public List<ContactInterface> getContacts() throws RemoteException {
         return Collections.unmodifiableList(this.contacts);
     }
     
     /**
      * 
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<AddressUsageInterface> getAddresses() {
+    public List<AddressUsageInterface> getAddresses() throws RemoteException {
         return Collections.unmodifiableList(this.addresses);
     }
     
     /**
      * 
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public AddressUsageInterface getLastAddress() {
+    public AddressUsageInterface getLastAddress() throws RemoteException {
         return addresses.get(addresses.size() - 1);
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasDocument(int ref) {
+    public boolean hasDocument(int ref) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -647,8 +743,14 @@ public class Person implements PersonInterface {
         return false;
     }
     
+    /**
+     *
+     * @param fileName
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public boolean hasDocument(String fileName) {
+    public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
                 if(fileName.equals(document.getDocumentName())) {
@@ -659,8 +761,14 @@ public class Person implements PersonInterface {
         return false;
     }
     
+    /**
+     *
+     * @param ref
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public Document getDocument(int ref) {
+    public Document getDocument(int ref) throws RemoteException {
         if(this.hasDocument(ref)) {
             for (Document document : documents) {
                 if(document.getDocumentRef() == ref) {
@@ -671,24 +779,31 @@ public class Person implements PersonInterface {
         return null;
     }
     
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
     @Override
-    public List<Document> getDocuments() {
+    public List<Document> getDocuments() throws RemoteException {
         return Collections.unmodifiableList(this.documents);
     }
     
     /**
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
 
     /**
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
     
@@ -698,10 +813,15 @@ public class Person implements PersonInterface {
      */
     @Override
     public String toString() {
-        String temp = "\n\nPerson Ref: " + this.personRef + "\nName: " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
-                + "\nNI no: " + this.nationalInsurance + "\nGender: " + this.gender.getDescription() + "\nMaritalStatus: " + this.maritalStatus.getDescription()
-                + "\nEthnic Origin: " + this.ethnicOrigin.getDescription() + "\nLanguage: " + this.language.getDescription() + "\nNationality: " + this.nationality.getDescription()
-                + "\nSexuality: " + this.sexuality.getDescription() + "\nReligion: " + this.religion.getDescription();
-        return temp;
+        try {
+            String temp = "\n\nPerson Ref: " + this.personRef + "\nName: " + this.title.getDescription() + " " + this.forename + " " + this.middleNames + " " + this.surname + "\nDOB: " + this.dateOfBirth
+                    + "\nNI no: " + this.nationalInsurance + "\nGender: " + this.gender.getDescription() + "\nMaritalStatus: " + this.maritalStatus.getDescription()
+                    + "\nEthnic Origin: " + this.ethnicOrigin.getDescription() + "\nLanguage: " + this.language.getDescription() + "\nNationality: " + this.nationality.getDescription()
+                    + "\nSexuality: " + this.sexuality.getDescription() + "\nReligion: " + this.religion.getDescription();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(Person.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

@@ -8,16 +8,20 @@ package server_application;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Dwayne
  */
-public class ElementImpl implements Element {
+public class ElementImpl extends UnicastRemoteObject implements Element {
     
     ///   VARIABLES   ///
     
@@ -38,8 +42,9 @@ public class ElementImpl implements Element {
      * @param note
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public ElementImpl(String code, String description, Note note, String createdBy, Date createdDate) {
+    public ElementImpl(String code, String description, Note note, String createdBy, Date createdDate) throws RemoteException {
         this.code = code;
         this.description = description;
         this.note = note;
@@ -79,7 +84,7 @@ public class ElementImpl implements Element {
         }
     }
     
-    private void setComment(String comment, ModifiedByInterface modifiedBy) {
+    private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
         this.modifiedBy(modifiedBy);
@@ -91,8 +96,9 @@ public class ElementImpl implements Element {
      * @param current
      * @param comment
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void updateElement(String description, boolean current, String comment, ModifiedByInterface modifiedBy) {
+    public void updateElement(String description, boolean current, String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         this.setDescription(description);
         this.setCurrent(current);
         this.setComment(comment, modifiedBy);
@@ -106,59 +112,65 @@ public class ElementImpl implements Element {
     /**
      * 
      * @return code
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCode() {
+    public String getCode() throws RemoteException {
         return this.code;
     }
     
     /**
      * 
      * @return description
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getDescription() {
+    public String getDescription() throws RemoteException {
         return this.description;
     }
     
     /**
      * 
      * @return current
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isCurrent() {
+    public boolean isCurrent() throws RemoteException {
         return this.current;
     }
     
     @Override
-    public boolean hasBeenModified() {
+    public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
     }
     
     /**
      * 
      * @return the name of the last user to modify the ElementImpl
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getLastModifiedBy() {
+    public String getLastModifiedBy() throws RemoteException {
         return this.getLastModification().getModifiedBy();
     }
     
     /**
      * 
      * @return the last date the ElementImpl was modified
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getLastModifiedDate() {
+    public Date getLastModifiedDate() throws RemoteException {
         return this.getLastModification().getModifiedDate();
     }
     
     /**
      * 
      * @return the last modifiedBy object for ElementImpl
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ModifiedByInterface getLastModification() {
+    public ModifiedByInterface getLastModification() throws RemoteException {
         if(!this.modifiedBy.isEmpty()) {
             return this.modifiedBy.get(this.modifiedBy.size()-1);
         }
@@ -168,37 +180,40 @@ public class ElementImpl implements Element {
     /**
      * 
      * @return the list of modifiedBy objects for ElementImpl
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<ModifiedByInterface> getModifiedBy() {
+    public List<ModifiedByInterface> getModifiedBy() throws RemoteException {
         return Collections.unmodifiableList(this.modifiedBy);
     }
     
     @Override
-    public Note getNote() {
+    public Note getNote() throws RemoteException {
         return note;
     }
     
     @Override
-    public String getComment() {
+    public String getComment() throws RemoteException {
         return note.getNote();
     }
     
     /**
      * 
      * @return createdBy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public String getCreatedBy() {
+    public String getCreatedBy() throws RemoteException {
         return this.createdBy;
     }
     
     /**
      * 
      * @return createdDate
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Date getCreatedDate() {
+    public Date getCreatedDate() throws RemoteException {
         return this.createdDate;
     }
     
@@ -208,8 +223,13 @@ public class ElementImpl implements Element {
      */
     @Override
     public String toString() {
-        String temp = "Code: " + this.code + "\nDescription: " + this.description + "\nCurrent: " + this.isCurrent()
-                + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate + "\nModifiedBy\n" + this.getModifiedBy();
-        return temp;
+        try {
+            String temp = "Code: " + this.code + "\nDescription: " + this.description + "\nCurrent: " + this.isCurrent()
+                    + "\nCreated By: " + this.createdBy + "\nCreated Date: " + this.createdDate + "\nModifiedBy\n" + this.getModifiedBy();
+            return temp;
+        } catch (RemoteException ex) {
+            Logger.getLogger(ElementImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

@@ -21,6 +21,6 @@ public interface Note extends Remote {
     Date getLastModifiedDate() throws RemoteException;
     List<ModifiedByInterface> getModifiedBy() throws RemoteException;
     String getNote() throws RemoteException;
-    int getRef() throws RemoteException;
+    int getReference() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;
 }

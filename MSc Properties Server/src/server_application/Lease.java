@@ -9,6 +9,7 @@ import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -41,8 +42,9 @@ public class Lease extends Agreement implements LeaseInterface {
      * @param officeCode
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Lease(int leaseRef, Date startDate, int length, int accountRef, Property property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) {
+    public Lease(int leaseRef, Date startDate, int length, int accountRef, Property property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         super(leaseRef, property.getAddress().printAddress(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.landlords = new ArrayList();
         this.property = property;
@@ -58,8 +60,9 @@ public class Lease extends Agreement implements LeaseInterface {
      * 
      * @param landlord
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy) {
+    public void addLandlord(LandlordInterface landlord, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!isAlreadyLandlord(landlord.getLandlordRef())) {
             landlords.add(landlord);
             Property temp = (Property) this.getProperty();
@@ -72,8 +75,9 @@ public class Lease extends Agreement implements LeaseInterface {
      * 
      * @param landlordRef
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
-    public void endLandlord(int landlordRef, ModifiedByInterface modifiedBy) {
+    public void endLandlord(int landlordRef, ModifiedByInterface modifiedBy) throws RemoteException {
         if(isAlreadyLandlord(landlordRef)) {
             landlords.remove(landlordRef);
             Property temp = (Property) this.getProperty();
@@ -88,33 +92,37 @@ public class Lease extends Agreement implements LeaseInterface {
     
     /**
      * @return landlords
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public List<LandlordInterface> getLandlords() {
+    public List<LandlordInterface> getLandlords() throws RemoteException {
         return Collections.unmodifiableList(landlords);
     }
 
     /**
      * @return property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public PropertyInterface getProperty() {
+    public PropertyInterface getProperty() throws RemoteException {
         return property;
     }
     
     /**
      * @return ref of property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPropertyRef() {
+    public int getPropertyRef() throws RemoteException {
         return property.getPropRef();
     }
 
     /**
      * @return fullManagement
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isFullManagement() {
+    public boolean isFullManagement() throws RemoteException {
         return fullManagement;
     }
     
@@ -122,9 +130,10 @@ public class Lease extends Agreement implements LeaseInterface {
      * 
      * @param landlordRef
      * @return true if landlords contain a landlord with ref == landlordRef
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean isAlreadyLandlord(int landlordRef) {
+    public boolean isAlreadyLandlord(int landlordRef) throws RemoteException {
         if (!landlords.isEmpty()) {
             for (LandlordInterface temp : landlords) {
                 if (temp.getLandlordRef() == landlordRef) {
@@ -137,9 +146,10 @@ public class Lease extends Agreement implements LeaseInterface {
 
     /**
      * @return expenditure
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getExpenditure() {
+    public double getExpenditure() throws RemoteException {
         return expenditure;
     }
 }

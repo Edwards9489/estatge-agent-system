@@ -115,7 +115,7 @@ public interface Server extends Remote {
     int deleteApplicationDocument(int aRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadApplicationDocument(int aRef, int dRef, String downloadedBy) throws RemoteException;
     int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException, SQLException;
-    int deleteApplicationAddressUsage(int addrRef, int aRef) throws SQLException;
+    int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException, SQLException;
     int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException, SQLException;
     int deleteEmployee(int eRef) throws RemoteException, SQLException;
     int createEmployeeNote(int eRef, String comment, String createdBy) throws RemoteException, SQLException;
@@ -151,7 +151,7 @@ public interface Server extends Remote {
     int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String createdBy) throws RemoteException, SQLException;
     int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException, SQLException;
     int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate, String modifiedBy) throws RemoteException, SQLException;
-    int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws SQLException;
+    int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws RemoteException, SQLException;
     int createJobRequirement(String code, String description, String comment, String createdBy) throws RemoteException, SQLException;
     int updateJobRequirement(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException;
     int createJobBenefit(String code, String description, String comment, String createdBy) throws RemoteException, SQLException;

@@ -148,7 +148,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return serverStub;
     }
     
-    private Note createNote(String comment, String createdBy) {
+    private Note createNote(String comment, String createdBy) throws RemoteException {
         Note note = new NoteImpl(noteRef++, comment, createdBy, new Date());
         return note;
     }
@@ -645,7 +645,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHOD TO CREATE ADDRESS USAGE     ////////
     
-    private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws SQLException {
+    private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.addressExists(addrRef)) {
             Note note = this.createNote(null, createdBy);
             AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, note, createdBy, new Date());
@@ -656,7 +656,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHOD TO CREATE CONTACT     ////////
     
-    private ContactInterface createContact(String contactTypeCode, String value, Date startDate, String createdBy) throws SQLException {
+    private ContactInterface createContact(String contactTypeCode, String value, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(database.contactTypeExists(contactTypeCode)) {
             Note note = this.createNote(null, createdBy);
             ContactInterface contact = new Contact(this.contactRef++, database.getContactType(contactTypeCode), value, startDate, note, createdBy, new Date());
@@ -747,7 +747,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(person.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) person.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Person Note", new Date(), modifiedBy));
-                this.database.updatePersonNote(pRef, note.getRef());
+                this.database.updatePersonNote(pRef, note.getReference());
                 return 1;
             }
         }
@@ -763,7 +763,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     person.deleteNote(nRef, new ModifiedBy("Deleted Person Note", new Date(), modifiedBy));
                     this.database.updatePerson(pRef);
-                    this.database.deletePersonNote(pRef, note.getRef());
+                    this.database.deletePersonNote(pRef, note.getReference());
                     return 1;
                 }
             }
@@ -934,7 +934,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(office.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) office.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Office Note", new Date(), modifiedBy));
-                this.database.updateOfficeNote(officeCode, note.getRef());
+                this.database.updateOfficeNote(officeCode, note.getReference());
                 return 1;
             }
         }
@@ -950,7 +950,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     office.deleteNote(nRef, new ModifiedBy("Deleted Office Note", new Date(), modifiedBy));
                     this.database.updateOffice(officeCode);
-                    this.database.deleteOfficeNote(officeCode, note.getRef());
+                    this.database.deleteOfficeNote(officeCode, note.getReference());
                     return 1;
                 }
             }
@@ -1093,7 +1093,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(invParty.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) invParty.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Involved Party Note", new Date(), modifiedBy));
-                this.database.updateInvolvedPartyNote(eRef, note.getRef());
+                this.database.updateInvolvedPartyNote(eRef, note.getReference());
                 return 1;
             }
         }
@@ -1109,7 +1109,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     invParty.deleteNote(nRef, new ModifiedBy("Deleted Involved Party Note", new Date(), modifiedBy));
                     this.database.updateInvolvedParty(iRef);
-                    this.database.deleteInvolvedPartyNote(iRef, note.getRef());
+                    this.database.deleteInvolvedPartyNote(iRef, note.getReference());
                     return 1;
                 }
             }
@@ -1290,7 +1290,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(application.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) application.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Application Note", new Date(), modifiedBy));
-                this.database.updateApplicationNote(aRef, note.getRef());
+                this.database.updateApplicationNote(aRef, note.getReference());
                 return 1;
             }
         }
@@ -1306,7 +1306,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     application.deleteNote(nRef, new ModifiedBy("Deleted Application Note", new Date(), modifiedBy));
                     this.database.updateApplication(aRef);
-                    this.database.deleteApplicationNote(aRef, note.getRef());
+                    this.database.deleteApplicationNote(aRef, note.getReference());
                     return 1;
                 }
             }
@@ -1353,7 +1353,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     //////     METHODS TO CREATE, UPDATE AND DELETE APPLICATION ADDRESS USAGES     ////////
     
-    private int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws SQLException {
+    private int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         if(this.database.applicationExists(applicationRef) && this.database.addressExists(addrRef)) {
             AddressUsage addressUsage = (AddressUsage) this.createAddressUsage(addrRef, startDate, createdBy);
             Application application = database.getApplication(applicationRef);
@@ -1366,7 +1366,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    private void createHouseholdAddressUsage(Application application, int addrRef, Date startDate, String createdBy) throws SQLException {
+    private void createHouseholdAddressUsage(Application application, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException {
         for (InvolvedPartyInterface invParty : application.getHousehold()) {
             if (invParty.isCurrent()) {
                 Person person = (Person) invParty.getPerson();
@@ -1389,7 +1389,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
     
-    private void updateHouseholdAddressUsage(Application application, int addrRef, Date startDate, String comment, String modifiedBy) throws SQLException {
+    private void updateHouseholdAddressUsage(Application application, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException, SQLException {
         for (InvolvedPartyInterface invParty : application.getHousehold()) {
             if (invParty.isCurrent()) {
                 Person person = (Person) invParty.getPerson();
@@ -1401,7 +1401,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     @Override
-    public int deleteApplicationAddressUsage(int addrRef, int aRef) throws SQLException {
+    public int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException, SQLException {
         if(this.database.applicationExists(aRef) && this.database.addressUsageExists(addrRef) && this.database.canDeleteAddressUsage(addrRef)) {
             this.database.deleteApplicationAddressUsage(aRef, addrRef);
             return 1;
@@ -1453,7 +1453,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(employee.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) employee.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Employee Note", new Date(), modifiedBy));
-                this.database.updateEmployeeNote(eRef, note.getRef());
+                this.database.updateEmployeeNote(eRef, note.getReference());
                 return 1;
             }
         }
@@ -1469,7 +1469,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     employee.deleteNote(nRef, new ModifiedBy("Deleted Employee Note", new Date(), modifiedBy));
                     this.database.updateEmployee(eRef);
-                    this.database.deleteEmployeeNote(eRef, note.getRef());
+                    this.database.deleteEmployeeNote(eRef, note.getReference());
                     return 1;
                 }
             }
@@ -1520,7 +1520,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(landlord.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) landlord.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Landlord Note", new Date(), modifiedBy));
-                this.database.updateLandlordNote(lRef, note.getRef());
+                this.database.updateLandlordNote(lRef, note.getReference());
                 return 1;
             }
         }
@@ -1536,7 +1536,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     landlord.deleteNote(nRef, new ModifiedBy("Deleted Landlord Note", new Date(), modifiedBy));
                     this.database.updateLandlord(lRef);
-                    this.database.deleteLandlordNote(lRef, note.getRef());
+                    this.database.deleteLandlordNote(lRef, note.getReference());
                     return 1;
                 }
             }
@@ -1598,7 +1598,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(property.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) property.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
-                this.database.updatePropertyNote(pRef, note.getRef());
+                this.database.updatePropertyNote(pRef, note.getReference());
                 return 1;
             }
         }
@@ -1614,7 +1614,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     property.deleteNote(nRef, new ModifiedBy("Deleted Property Note", new Date(), modifiedBy));
                     this.database.updateProperty(pRef);
-                    this.database.deletePropertyNote(pRef, note.getRef());
+                    this.database.deletePropertyNote(pRef, note.getReference());
                     return 1;
                 }
             }
@@ -1760,7 +1760,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(property.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) property.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Property Note", new Date(), modifiedBy));
-                this.database.updatePropertyNote(pRef, note.getRef());
+                this.database.updatePropertyNote(pRef, note.getReference());
                 return 1;
             }
         }
@@ -1776,7 +1776,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     property.deleteNote(nRef, new ModifiedBy("Deleted Property Note", new Date(), modifiedBy));
                     this.database.updateProperty(pRef);
-                    this.database.deletePropertyNote(pRef, note.getRef());
+                    this.database.deletePropertyNote(pRef, note.getReference());
                     return 1;
                 }
             }
@@ -1849,7 +1849,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     @Override
-    public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws SQLException {
+    public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws RemoteException, SQLException {
         if(this.database.jobRoleExists(jobRoleCode) && this.database.jobRoleBenefitExists(benefit)) {
             this.database.deleteJobRoleBenefit(benefit, jobRoleCode);
             return 1;
@@ -2017,7 +2017,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(tenancy.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) tenancy.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Tenancy Note", new Date(), modifiedBy));
-                this.database.updateTenancyNote(tRef, note.getRef());
+                this.database.updateTenancyNote(tRef, note.getReference());
                 return 1;
             }
         }
@@ -2033,7 +2033,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     tenancy.deleteNote(nRef, new ModifiedBy("Deleted Tenancy Note", new Date(), modifiedBy));
                     this.database.updateTenancy(tRef);
-                    this.database.deleteTenancyNote(tRef, note.getRef());
+                    this.database.deleteTenancyNote(tRef, note.getReference());
                     return 1;
                 }
             }
@@ -2173,7 +2173,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(lease.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) lease.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Lease Note", new Date(), modifiedBy));
-                this.database.updateLeaseNote(lRef, note.getRef());
+                this.database.updateLeaseNote(lRef, note.getReference());
                 return 1;
             }
         }
@@ -2188,7 +2188,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     lease.deleteNote(nRef, new ModifiedBy("Deleted Lease Note", new Date(), modifiedBy));
                     this.database.updateLease(lRef);
-                    this.database.deleteLeaseNote(lRef, note.getRef());
+                    this.database.deleteLeaseNote(lRef, note.getReference());
                     return 1;
                 }
             }
@@ -2325,7 +2325,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(contract.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) contract.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Contract Note", new Date(), modifiedBy));
-                this.database.updateContractNote(cRef, note.getRef());
+                this.database.updateContractNote(cRef, note.getReference());
                 return 1;
             }
         }
@@ -2341,7 +2341,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     contract.deleteNote(nRef, new ModifiedBy("Deleted Contract Note", new Date(), modifiedBy));
                     this.database.updateContract(cRef);
-                    this.database.deleteContractNote(cRef, note.getRef());
+                    this.database.deleteContractNote(cRef, note.getReference());
                     return 1;
                 }
             }
@@ -2422,7 +2422,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(rentAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) rentAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Rent Account Note", new Date(), modifiedBy));
-                this.database.updateRentAccountNote(cRef, note.getRef());
+                this.database.updateRentAccountNote(cRef, note.getReference());
                 return 1;
             }
         }
@@ -2438,7 +2438,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     rentAcc.deleteNote(nRef, new ModifiedBy("Deleted Rent Account Note", new Date(), modifiedBy));
                     this.database.updateContract(rRef);
-                    this.database.deleteRentAccountNote(rRef, note.getRef());
+                    this.database.deleteRentAccountNote(rRef, note.getReference());
                     return 1;
                 }
             }
@@ -2521,7 +2521,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(leaseAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) leaseAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Lease Account Note", new Date(), modifiedBy));
-                this.database.updateLeaseAccountNote(lRef, note.getRef());
+                this.database.updateLeaseAccountNote(lRef, note.getReference());
                 return 1;
             }
         }
@@ -2537,7 +2537,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     leaseAcc.deleteNote(nRef, new ModifiedBy("Deleted Lease Account Note", new Date(), modifiedBy));
                     this.database.updateLeaseAccount(lRef);
-                    this.database.deleteLeaseAccountNote(lRef, note.getRef());
+                    this.database.deleteLeaseAccountNote(lRef, note.getReference());
                     return 1;
                 }
             }
@@ -2617,7 +2617,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             if(employeeAcc.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) employeeAcc.getNote(nRef);
                 note.setNote(comment, new ModifiedBy("Updated Employee Account Note", new Date(), modifiedBy));
-                this.database.updateEmployeeAccountNote(eRef, note.getRef());
+                this.database.updateEmployeeAccountNote(eRef, note.getReference());
                 return 1;
             }
         }
@@ -2633,7 +2633,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if(!note.hasBeenModified()) {
                     employeeAcc.deleteNote(nRef, new ModifiedBy("Deleted Employee Account Note", new Date(), modifiedBy));
                     this.database.updateLeaseAccount(eRef);
-                    this.database.deleteEmployeeAccountNote(eRef, note.getRef());
+                    this.database.deleteEmployeeAccountNote(eRef, note.getReference());
                     return 1;
                 }
             }

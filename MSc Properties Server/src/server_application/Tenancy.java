@@ -9,6 +9,7 @@ import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
 import interfaces.TenancyInterface;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -39,8 +40,9 @@ public class Tenancy extends Agreement implements TenancyInterface {
      * @param officeCode
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public Tenancy(int tenRef, Date startDate, int length, int accountRef, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode, String createdBy, Date createdDate) {
+    public Tenancy(int tenRef, Date startDate, int length, int accountRef, PropertyInterface property, ApplicationInterface application, Element tenType, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         super(tenRef, application.getAppCorrName(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.property = property;
         this.application = application;
@@ -82,66 +84,74 @@ public class Tenancy extends Agreement implements TenancyInterface {
     
     /**
      * @return ref of property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getPropertyRef() {
+    public int getPropertyRef() throws RemoteException {
         return property.getPropRef();
     }
             
     /**
      * @return property
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public PropertyInterface getProperty() {
+    public PropertyInterface getProperty() throws RemoteException {
         return property;
     }
     
     /**
      * @return ref of application
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getApplicationRef() {
+    public int getApplicationRef() throws RemoteException {
         return application.getApplicationRef();
     }
     
     /**
      * @return application
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public ApplicationInterface getApplication() {
+    public ApplicationInterface getApplication() throws RemoteException {
         return application;
     }
 
     /**
      * @return tenType
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public Element getTenType() {
+    public Element getTenType() throws RemoteException {
         return tenType;
     }
 
     /**
      * @return rent
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getRent() {
+    public double getRent() throws RemoteException {
         return rent;
     }
 
     /**
      * @return charges
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getCharges() {
+    public double getCharges() throws RemoteException {
         return charges;
     }
     
     /**
      * 
      * @return rent + charges
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getExpectedRevenue() {
+    public double getExpectedRevenue() throws RemoteException {
         return rent + charges;
     }
 }

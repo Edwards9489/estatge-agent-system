@@ -7,6 +7,7 @@ package server_application;
 
 import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -28,8 +29,9 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
      * @param lease
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public LeaseAccount(int leaseAccRef, LeaseInterface lease, String createdBy, Date createdDate) {
+    public LeaseAccount(int leaseAccRef, LeaseInterface lease, String createdBy, Date createdDate) throws RemoteException {
         super(leaseAccRef, lease.getAgreementName(), lease.getOfficeCode(), lease.getStartDate(), createdBy, createdDate);
         this.lease = lease;
         this.expenditure = lease.getExpenditure();
@@ -42,8 +44,9 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
     /**
      * 
      * @param expenditure 
+     * @throws java.rmi.RemoteException 
      */
-    public void setExpenditure(double expenditure) {
+    public void setExpenditure(double expenditure) throws RemoteException {
         this.expenditure = expenditure;
     }
     
@@ -52,27 +55,30 @@ public class LeaseAccount extends Account implements LeaseAccountInterface {
     
     /**
      * @return lease
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public LeaseInterface getLease() {
+    public LeaseInterface getLease() throws RemoteException {
         return lease;
     }
     
     /**
      * 
      * @return ref of lease
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getLeaseRef() {
+    public int getLeaseRef() throws RemoteException {
         return lease.getAgreementRef();
     }
     
     /**
      * 
      * @return expenditure
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getExpenditure() {
+    public double getExpenditure() throws RemoteException {
         return this.expenditure;
     }
 }

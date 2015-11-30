@@ -282,7 +282,7 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
     public boolean hasNote(int ref) throws RemoteException {
         if(!notes.isEmpty()) {
             for(Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return true;
                 }
             }
@@ -344,7 +344,7 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
     public Note getNote(int ref) throws RemoteException {
         if(this.hasNote(ref)) {
             for (Note note : notes) {
-                if(note.getRef() == ref) {
+                if(note.getReference() == ref) {
                     return note;
                 }
             }

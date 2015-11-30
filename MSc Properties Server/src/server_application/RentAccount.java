@@ -6,6 +6,7 @@
 package server_application;
 import interfaces.RentAccountInterface;
 import interfaces.TenancyInterface;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 /**
@@ -27,8 +28,9 @@ public class RentAccount extends Account implements RentAccountInterface {
      * @param tenancy
      * @param createdBy
      * @param createdDate 
+     * @throws java.rmi.RemoteException 
      */
-    public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy, Date createdDate) {
+    public RentAccount(int rentAccRef, TenancyInterface tenancy, String createdBy, Date createdDate) throws RemoteException {
         super(rentAccRef, tenancy.getAgreementName(), tenancy.getOfficeCode(), tenancy.getStartDate(), createdBy, createdDate);
         this.tenancy = tenancy;
         this.rent = tenancy.getRent() + tenancy.getCharges();
@@ -52,26 +54,29 @@ public class RentAccount extends Account implements RentAccountInterface {
     
     /**
      * @return rent
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public double getRent() {
+    public double getRent() throws RemoteException {
         return rent;
     }
 
     /**
      * @return tenancy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public TenancyInterface getTenancy() {
+    public TenancyInterface getTenancy() throws RemoteException {
         return tenancy;
     }
     
     /**
      * 
      * @return ref of tenancy
+     * @throws java.rmi.RemoteException
      */
     @Override
-    public int getTenancyRef() {
+    public int getTenancyRef() throws RemoteException {
         return tenancy.getAgreementRef();
     }
 }
