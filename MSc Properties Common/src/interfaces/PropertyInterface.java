@@ -35,7 +35,10 @@ public interface PropertyInterface extends Remote {
     boolean hasNote(int ref) throws RemoteException;
     Note getNote(int ref) throws RemoteException;
     List<Note> getNotes() throws RemoteException;
+    PropertyElementInterface getPropElement(int ref) throws RemoteException;
     boolean hasDocument(int ref) throws RemoteException;
+    boolean hasPropElement(String elementCode)throws RemoteException;
+    boolean hasPropElement(int ref)throws RemoteException;
     boolean hasDocument(String fileName) throws RemoteException;
     Document getDocument(int ref) throws RemoteException;
     List<Document> getDocuments() throws RemoteException;

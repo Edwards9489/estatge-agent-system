@@ -7,14 +7,28 @@ package server_application;
 
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
+import interfaces.ApplicationInterface;
+import interfaces.ContactInterface;
+import interfaces.ContractInterface;
 import interfaces.Document;
 import interfaces.Element;
+import interfaces.EmployeeAccountInterface;
+import interfaces.EmployeeInterface;
 import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleBenefitInterface;
+import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
+import interfaces.LeaseAccountInterface;
+import interfaces.LeaseInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
+import interfaces.OfficeInterface;
+import interfaces.PersonInterface;
 import interfaces.PropertyElementInterface;
+import interfaces.PropertyInterface;
+import interfaces.RentAccountInterface;
+import interfaces.TenancyInterface;
+import interfaces.TransactionInterface;
 import interfaces.User;
 import java.io.File;
 import java.rmi.RemoteException;
@@ -46,24 +60,24 @@ public class Database {
     private Connection con;
 
     // List of business data
-    private final Map<String, Office> offices;
+    private final Map<String, OfficeInterface> offices;
 
-    private final Map<Integer, Person> people;
+    private final Map<Integer, PersonInterface> people;
 
-    private final Map<Integer, InvolvedParty> involvedParties;
-    private final Map<Integer, Landlord> landlords;
-    private final Map<Integer, Employee> employees;
+    private final Map<Integer, InvolvedPartyInterface> involvedParties;
+    private final Map<Integer, LandlordInterface> landlords;
+    private final Map<Integer, EmployeeInterface> employees;
 
-    private final Map<Integer, Application> applications;
-    private final Map<Integer, Property> properties;
+    private final Map<Integer, ApplicationInterface> applications;
+    private final Map<Integer, PropertyInterface> properties;
 
-    private final Map<Integer, Tenancy> tenancies;
-    private final Map<Integer, Lease> leases;
-    private final Map<Integer, Contract> contracts;
+    private final Map<Integer, TenancyInterface> tenancies;
+    private final Map<Integer, LeaseInterface> leases;
+    private final Map<Integer, ContractInterface> contracts;
 
-    private final Map<Integer, RentAccount> rentAccounts;
-    private final Map<Integer, LeaseAccount> leaseAccounts;
-    private final Map<Integer, EmployeeAccount> employeeAccounts;
+    private final Map<Integer, RentAccountInterface> rentAccounts;
+    private final Map<Integer, LeaseAccountInterface> leaseAccounts;
+    private final Map<Integer, EmployeeAccountInterface> employeeAccounts;
 
     // List of People details
     private final Map<String, Element> titles;
@@ -86,24 +100,24 @@ public class Database {
     private final Map<String, Element> tenancyTypes;
 
     // List of contract details
-    private final Map<String, JobRole> jobRoles;
+    private final Map<String, JobRoleInterface> jobRoles;
     private final Map<String, Element> jobBenefits;
     private final Map<String, Element> jobRequirements;
-    private final Map<Integer, JobRoleBenefit> jobRoleBenefits;
+    private final Map<Integer, JobRoleBenefitInterface> jobRoleBenefits;
 
     // Lists of Property details
-    private final Map<Integer, Address> addresses;
+    private final Map<Integer, AddressInterface> addresses;
     private final Map<String, Element> propertyTypes; // House, Flat, Bungalow
     private final Map<String, Element> propertySubTypes; // Terraced, Semi-detached
     private final Map<String, Element> propertyElements;
-    private final Map<Integer, PropertyElement> propertyElementValues;
+    private final Map<Integer, PropertyElementInterface> propertyElementValues;
     
     // List of Account Transactions
-    private final Map<Integer, Transaction> transactions;
+    private final Map<Integer, TransactionInterface> transactions;
     
-    private final Map<Integer, AddressUsage> addressUsages;
-    private final Map<Integer, Contact> contacts;
-    private final Map<String, UserImpl> users;
+    private final Map<Integer, AddressUsageInterface> addressUsages;
+    private final Map<Integer, ContactInterface> contacts;
+    private final Map<String, User> users;
     private final Map<Integer, Note> notes;
     private final Map<Integer, Document> documents;
     
@@ -1004,7 +1018,7 @@ public class Database {
      */
     public boolean canDeleteContactType(String contactTypeCode) throws RemoteException {
         if (this.contactTypeExists(contactTypeCode) && !this.getContactType(contactTypeCode).hasBeenModified()) {
-            for (Contact contact : this.getContacts()) {
+            for (ContactInterface contact : this.getContacts()) {
                 if (contactTypeCode.equals(contact.getContactType().getCode())) {
                     return false;
                 }
@@ -1082,7 +1096,7 @@ public class Database {
      */
     public void updatePersonContact(int contactRef, int personRef) throws SQLException, RemoteException {
         if(this.contactExists(contactRef) && this.personExists(personRef)) {
-            Contact contact = this.getContact(contactRef);
+            ContactInterface contact = this.getContact(contactRef);
             String updateSql = "update personContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=?, comment=? where contactRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -1131,7 +1145,7 @@ public class Database {
 
             while (results.next()) {
                 if (this.personExists(reference)) {
-                    Person person = this.getPerson(reference);
+                    Person person = (Person) this.getPerson(reference);
                     int contactRef = results.getInt("contactRef");
                     int personRef = results.getInt("personRef");
                     if (reference == personRef) {
@@ -1167,7 +1181,7 @@ public class Database {
      */
     private void loadPersonContactMods(int contactRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
-            Contact contact = this.getContact(contactRef);
+            Contact contact = (Contact) this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -1217,7 +1231,7 @@ public class Database {
      */
     public void updateOfficeContact(int contactRef, String officeCode) throws SQLException, RemoteException {
         if(this.contactExists(contactRef) && this.officeExists(officeCode)) {
-            Contact contact = this.getContact(contactRef);
+            Contact contact = (Contact) this.getContact(contactRef);
             String updateSql = "update officeContacts set contactTypeCode=?, contactValue=?, startDate=?, endDate=?, comment=? where contactRef=? and officeCode=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -1266,7 +1280,7 @@ public class Database {
 
             while (results.next()) {
                 if (this.officeExists(code)) {
-                    Office office = this.getOffice(code);
+                    Office office = (Office) this.getOffice(code);
                     int contactRef = results.getInt("contactRef");
                     String officeCode = results.getString("officeCode");
                     if (code.equals(officeCode)) {
@@ -1302,14 +1316,13 @@ public class Database {
      */
     private void loadOfficeContactMods(int contactRef, String code, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.contactExists(contactRef) && this.officeExists(code) && !loadedMods.isEmpty()) {
-            Contact contact = this.getContact(contactRef);
+            Contact contact = (Contact) this.getContact(contactRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
                 tempMod = (ModifiedByInterface) temp.getValue();
-                Contact tempContact = (Contact) contact;
-                tempContact.modifiedBy(tempMod);
+                contact.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1356,7 +1369,7 @@ public class Database {
      */
     public void updatePersonAddressUsage(int addressRef, int personRef) throws SQLException, RemoteException {
         if(this.addressUsageExists(addressRef) && this.personExists(personRef)) {
-            AddressUsage address = this.getAddressUsage(addressRef);
+            AddressUsageInterface address = this.getAddressUsage(addressRef);
             String updateSql = "update personAddresses set addressRef=?, startDate=?, endDate=?, comment=? where addressUsageRef=? and personRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -1404,7 +1417,7 @@ public class Database {
             
             while (results.next()) {
                 if (this.personExists(reference)) {
-                    Person person = this.getPerson(reference);
+                    Person person = (Person) this.getPerson(reference);
                     int addressUsageRef = results.getInt("addressUsageRef");
                     
                     AddressInterface address;
@@ -1445,14 +1458,13 @@ public class Database {
      */
     private void loadPersonAddressMods(int addressRef, int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.personExists(personRef) && !loadedMods.isEmpty()) {
-            AddressUsage address = this.getAddressUsage(addressRef);
+            AddressUsage address = (AddressUsage) this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
                 tempMod = (ModifiedByInterface) temp.getValue();
-                AddressUsage tempAddress = (AddressUsage) address;
-                tempAddress.modifiedBy(tempMod);
+                address.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1495,7 +1507,7 @@ public class Database {
      */
     public void updateApplicationAddressUsage(int addressRef, int appRef) throws SQLException, RemoteException {
         if(this.addressUsageExists(addressRef) && this.applicationExists(appRef)) {
-            AddressUsage address = this.getAddressUsage(addressRef);
+            AddressUsage address = (AddressUsage) this.getAddressUsage(addressRef);
             String updateSql = "update applicationAddresses set addressRef=?, startDate=?, endDate=?, comment=? where addressUsageRef=? and appRef=?";
         try (PreparedStatement updateStat = this.con.prepareStatement(updateSql)) {
             int col = 1;
@@ -1543,7 +1555,7 @@ public class Database {
 
             while (results.next()) {
                 if (this.applicationExists(reference)) {
-                    Application application = this.getApplication(reference);
+                    Application application = (Application) this.getApplication(reference);
                     int addressUsageRef = results.getInt("addressUsageRef");
                     
                     AddressInterface address;
@@ -1584,14 +1596,13 @@ public class Database {
      */
     private void loadApplicationAddressMods(int addressRef, int applicationRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressUsageExists(addressRef) && this.applicationExists(applicationRef) && !loadedMods.isEmpty()) {
-            AddressUsage address = this.getAddressUsage(addressRef);
+            AddressUsage address = (AddressUsage) this.getAddressUsage(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
                 Map.Entry temp = (Map.Entry) it.next();
                 tempMod = (ModifiedByInterface) temp.getValue();
-                AddressUsage tempAddress = address;
-                tempAddress.modifiedBy(tempMod);
+                address.modifiedBy(tempMod);
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
@@ -1657,7 +1668,7 @@ public class Database {
      */
     public boolean canDeleteTitle(String titleCode) throws RemoteException {
         if(this.titleExists(titleCode) && !this.getTitle(titleCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(titleCode.equals(person.getTitle().getCode())) {
                     return false;
                 }
@@ -1748,7 +1759,7 @@ public class Database {
      */
     public boolean canDeleteGender(String genderCode) throws RemoteException {
         if(this.genderExists(genderCode) && !this.getGender(genderCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(genderCode.equals(person.getGender().getCode())) {
                     return false;
                 }
@@ -1839,7 +1850,7 @@ public class Database {
      */
     public boolean canDeleteMaritalStatus(String statusCode) throws RemoteException {
         if(this.maritalStatusExists(statusCode) && !this.getMaritalStatus(statusCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(statusCode.equals(person.getMaritalStatus().getCode())) {
                     return false;
                 }
@@ -1931,7 +1942,7 @@ public class Database {
      */
     public boolean canDeleteEthnicOrigin(String originCode) throws RemoteException {
         if(this.ethnicOriginExists(originCode) && !this.getEthnicOrigin(originCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(originCode.equals(person.getEthnicOrigin().getCode())) {
                     return false;
                 }
@@ -2023,7 +2034,7 @@ public class Database {
      */
     public boolean canDeleteLanguage(String languageCode) throws RemoteException {
         if(this.languageExists(languageCode) && !this.getLanguage(languageCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(languageCode.equals(person.getLanguage().getCode())) {
                     return false;
                 }
@@ -2115,7 +2126,7 @@ public class Database {
      */
     public boolean canDeleteNationality(String nationalityCode) throws RemoteException {
         if(this.nationalityExists(nationalityCode) && !this.getNationality(nationalityCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(nationalityCode.equals(person.getNationality().getCode())) {
                     return false;
                 }
@@ -2207,7 +2218,7 @@ public class Database {
      */
     public boolean canDeleteSexuality(String sexualityCode) throws RemoteException {
         if(this.sexualityExists(sexualityCode) && !this.getSexuality(sexualityCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(sexualityCode.equals(person.getSexuality().getCode())) {
                     return false;
                 }
@@ -2299,7 +2310,7 @@ public class Database {
      */
     public boolean canDeleteReligion(String religionCode) throws RemoteException {
         if(this.religionExists(religionCode) && !this.getReligion(religionCode).hasBeenModified()) {
-            for(Person person : this.getPeople()) {
+            for(PersonInterface person : this.getPeople()) {
                 if(religionCode.equals(person.getReligion().getCode())) {
                     return false;
                 }
@@ -2384,7 +2395,7 @@ public class Database {
      */
     public void updateAddress(int addressRef) throws SQLException, RemoteException {
         if(this.addressExists(addressRef)) {
-            Address address = this.getAddress(addressRef);
+            AddressInterface address = this.getAddress(addressRef);
             String updateSql = "update addresses set buildingNumber=?, buildingName=?, subStreetNumber=?, subStreet=?, "
                     + "streetNumber=?, street=?, area=?, town=?, country=?, postcode=?, comment=? where addressRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -2434,7 +2445,7 @@ public class Database {
      */
     public boolean canDeleteAddress(int addressRef) throws RemoteException {
         if (this.addressExists(addressRef) && !this.getAddress(addressRef).hasBeenModified()) {
-            for(AddressUsage address : this.getAddressUsages()) {
+            for(AddressUsageInterface address : this.getAddressUsages()) {
                 if(address.getAddress().getAddressRef() == addressRef) {
                     return false;
                 }
@@ -2488,7 +2499,7 @@ public class Database {
      */
     private void loadAddressMods(int addressRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.addressExists(addressRef) && !loadedMods.isEmpty()) {
-            Address address = this.getAddress(addressRef);
+            Address address = (Address) this.getAddress(addressRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2506,7 +2517,7 @@ public class Database {
      * @param addressRef
      * @return 
      */
-    public Address getAddress(int addressRef) {
+    public AddressInterface getAddress(int addressRef) {
         if(this.addressExists(addressRef)) {
             return this.addresses.get(addressRef);
         }
@@ -2550,7 +2561,7 @@ public class Database {
      */
     public void updateProperty(int propRef) throws SQLException, RemoteException {
         if(this.propertyExists(propRef)) {
-            Property property = this.getProperty(propRef);
+            PropertyInterface property = this.getProperty(propRef);
             String updateSql = "update properties set addressRef=?, acquiredDate=?, leaseEndDate=?, "
                     + "propTypeCode=?, propSubTypeCode=?, propStatus=? where propertyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -2594,12 +2605,12 @@ public class Database {
      */
     public boolean canDeleteProperty(int propRef) throws RemoteException{
         if (this.propertyExists(propRef) && !this.getProperty(propRef).hasBeenModified()) {
-            for(Lease lease : this.getLeases()) {
+            for(LeaseInterface lease : this.getLeases()) {
                 if(lease.getPropertyRef() == propRef) {
                     return false;
                 }
             }
-            for(Tenancy tenancy : this.getTenancies()) {
+            for(TenancyInterface tenancy : this.getTenancies()) {
                 if(tenancy.getPropertyRef() == propRef) {
                     return false;
                 }
@@ -2623,7 +2634,7 @@ public class Database {
             while (results.next()) {
                 int propertyRef = results.getInt("propertyRef");
                 int addressRef = results.getInt("addressRef");
-                Address address;
+                AddressInterface address;
                 if(this.addressExists(addressRef)) {
                     address = this.getAddress(addressRef);
                 } else {
@@ -2668,7 +2679,7 @@ public class Database {
      */
     private void loadPropertyMods(int propRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.propertyExists(propRef) && !loadadMods.isEmpty()) {
-            Property property = this.getProperty(propRef);
+            Property property = (Property) this.getProperty(propRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -2685,7 +2696,7 @@ public class Database {
      * @param propRef
      * @return 
      */
-    public Property getProperty(int propRef) {
+    public PropertyInterface getProperty(int propRef) {
         if (properties.containsKey(propRef)) {
             return properties.get(propRef);
         }
@@ -2700,7 +2711,7 @@ public class Database {
      */
     private void loadPropertyDocs(int propertyRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.propertyExists(propertyRef) && !loadedDocs.isEmpty()) {
-            Property property = this.getProperty(propertyRef);
+            Property property = (Property) this.getProperty(propertyRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -2748,7 +2759,7 @@ public class Database {
      */
     private void loadPropertyNotes(int propRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.propertyExists(propRef) && !loadadNotes.isEmpty()) {
-            Property property = this.getProperty(propRef);
+            Property property = (Property) this.getProperty(propRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -2850,7 +2861,7 @@ public class Database {
      */
     public boolean canDeletePropertyType(String typeCode) throws RemoteException {
         if(this.propTypeExists(typeCode) && !this.getPropertyType(typeCode).hasBeenModified()) {
-            for(Property property : this.getProperties()) {
+            for(PropertyInterface property : this.getProperties()) {
                 if(typeCode.equals(property.getPropType().getCode())) {
                     return false;
                 }
@@ -2942,7 +2953,7 @@ public class Database {
      */
     public boolean canDeletePropertySubType(String typeCode) throws RemoteException {
         if(this.propSubTypeExists(typeCode) && !this.getPropertySubType(typeCode).hasBeenModified()) {
-            for(Property property : this.getProperties()) {
+            for(PropertyInterface property : this.getProperties()) {
                 if(typeCode.equals(property.getPropSubType().getCode())) {
                     return false;
                 }
@@ -3114,7 +3125,7 @@ public class Database {
      */
     private void loadPropertyElementValues(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef)) {
-            Property property = this.getProperty(propRef);
+            Property property = (Property) this.getProperty(propRef);
             String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate from propertyElementValues order by createdDate";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
@@ -3175,7 +3186,7 @@ public class Database {
      * @param propElementRef
      * @return 
      */
-    public PropertyElement getPropertyElementValue(int propElementRef) {
+    public PropertyElementInterface getPropertyElementValue(int propElementRef) {
         if(this.propertyElementValueExists(propElementRef)) {
             return this.propertyElementValues.get(propElementRef);
         }
@@ -3226,7 +3237,7 @@ public class Database {
      */
     public boolean canDeletePropertyElement(String elementCode) throws RemoteException {
         if(this.propElementExists(elementCode) && !this.getPropElement(elementCode).hasBeenModified()) {
-            for(Property property : this.getProperties()) {
+            for(PropertyInterface property : this.getProperties()) {
                 if(property.hasPropElement(elementCode)) {
                     return false;
                 }
@@ -3312,7 +3323,7 @@ public class Database {
      */
     public void updatePerson(int personRef) throws SQLException, RemoteException {
         if(this.personExists(personRef)) {
-            Person person = this.getPerson(personRef);
+            PersonInterface person = this.getPerson(personRef);
             String updateSql = "update people set titleCode=?, forename=?, middleNames=?, surname=?, dateOfBirth=?, nationalInsurance=?, "
                     + "genderCode=?, maritalStatusCode=?, ethnicOriginCode=?, languageCode=?, nationalityCode=?, sexualityCode=?, "
                     + "religionCode=? where personRef=?";
@@ -3466,7 +3477,7 @@ public class Database {
      */
     private void loadPersonMods(int personRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.personExists(personRef) && !loadedMods.isEmpty()) {
-            Person person = this.getPerson(personRef);
+            Person person = (Person) this.getPerson(personRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -3484,7 +3495,7 @@ public class Database {
      * @param personRef
      * @return 
      */
-    public Person getPerson(int personRef) {
+    public PersonInterface getPerson(int personRef) {
         if(this.personExists(personRef)) {
             return this.people.get(personRef);
         }
@@ -3499,7 +3510,7 @@ public class Database {
      */
     private void loadPersonDocs(int personRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.personExists(personRef) && !loadedDocs.isEmpty()) {
-            Person person = this.getPerson(personRef);
+            Person person = (Person) this.getPerson(personRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -3547,7 +3558,7 @@ public class Database {
      */
     private void loadPersonNotes(int personRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.personExists(personRef) && !loadadNotes.isEmpty()) {
-            Person person = this.getPerson(personRef);
+            Person person = (Person) this.getPerson(personRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -3635,7 +3646,7 @@ public class Database {
      */
     public void updateInvolvedParty(int invPartyRef) throws SQLException, RemoteException {
         if (this.invPartyExists(invPartyRef)) {
-            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
+            InvolvedPartyInterface invParty = this.getInvolvedParty(invPartyRef);
             String updateSql = "update involvedParties set jointApplicantInd=?, mainApplicantInd=?, startDate=?, "
                     + "endDate=?, endReasonCode=?, relationshipCode=? where invPartyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -3701,12 +3712,12 @@ public class Database {
             while (results.next()) {
                 int appRef = results.getInt("appRef");
                 if (this.applicationExists(reference) && appRef == reference) {
-                    Application application = this.getApplication(reference);
+                    Application application = (Application) this.getApplication(reference);
                     int invPartyRef = results.getInt("invPartyRef");
 
                     if (this.personExists(results.getInt("personRef")));
                     {
-                        Person person = this.getPerson(results.getInt("personRef"));
+                        PersonInterface person = this.getPerson(results.getInt("personRef"));
                         boolean jointApplicantInd = results.getBoolean("jointApplicantInd");
                         boolean mainApplicantInd = results.getBoolean("mainApplicantInd");
                         Date startDate = results.getDate("startDate");
@@ -3753,7 +3764,7 @@ public class Database {
      */
     private void loadInvolvedPartyMods(int invPartyRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.invPartyExists(invPartyRef) && !loadedMods.isEmpty()) {
-            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
+            InvolvedParty invParty = (InvolvedParty) this.getInvolvedParty(invPartyRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -3771,12 +3782,11 @@ public class Database {
      * @param invPartyRef
      * @return 
      */
-    public InvolvedParty getInvolvedParty(int invPartyRef) {
-        InvolvedParty invParty = null;
+    public InvolvedPartyInterface getInvolvedParty(int invPartyRef) {
         if(this.invPartyExists(invPartyRef)) {
-            invParty = this.involvedParties.get(invPartyRef);
+            return this.involvedParties.get(invPartyRef);
         }
-        return invParty;
+        return null;
     }
     
     /**
@@ -3787,7 +3797,7 @@ public class Database {
      */
     private void loadInvolvedPartyNotes(int invPartyRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.invPartyExists(invPartyRef) && !loadadNotes.isEmpty()) {
-            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
+            InvolvedParty invParty = (InvolvedParty) this.getInvolvedParty(invPartyRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -3889,7 +3899,7 @@ public class Database {
      */
     public boolean canDeleteEndReason(String endReason) throws RemoteException {
         if(this.endReasonExists(endReason) && !this.getEndReason(endReason).hasBeenModified()) {
-            for(InvolvedParty invParty : this.getInvolvedParties()) {
+            for(InvolvedPartyInterface invParty : this.getInvolvedParties()) {
                 if(invParty.getEndReason() != null && endReason.equals(invParty.getEndReason().getCode())) {
                     return false;
                 }
@@ -3981,7 +3991,7 @@ public class Database {
      */
     public boolean canDeleteRelationship(String relationship) throws RemoteException {
         if(this.relationshipExists(relationship) && !this.getRelationship(relationship).hasBeenModified()) {
-            for(InvolvedParty invParty : this.getInvolvedParties()) {
+            for(InvolvedPartyInterface invParty : this.getInvolvedParties()) {
                 if(relationship.equals(invParty.getRelationship().getCode())) {
                     return false;
                 }
@@ -4056,7 +4066,7 @@ public class Database {
      */
     public void updateApplication(int appRef) throws SQLException, RemoteException {
         if(this.applicationExists(appRef)) {
-            Application application = this.getApplication(appRef);
+            ApplicationInterface application = this.getApplication(appRef);
             String updateSql;
             if(application.hasTenancyRef()) {
                 updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
@@ -4118,7 +4128,7 @@ public class Database {
                     return false;
                 }
             }
-            for(Tenancy tenancy : this.getTenancies()) {
+            for(TenancyInterface tenancy : this.getTenancies()) {
                 if(tenancy.getApplicationRef() == appRef) {
                     return false;
                 }
@@ -4180,7 +4190,7 @@ public class Database {
      */
     private void loadApplicationMods(int appRef, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.applicationExists(appRef) && !loadedMods.isEmpty()) {
-            Application application = this.getApplication(appRef);
+            Application application = (Application) this.getApplication(appRef);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -4198,7 +4208,7 @@ public class Database {
      * @param appRef
      * @return 
      */
-    public Application getApplication(int appRef) {
+    public ApplicationInterface getApplication(int appRef) {
         if(this.applicationExists(appRef)) {
             return this.applications.get(appRef);
         }
@@ -4213,7 +4223,7 @@ public class Database {
      */
     private void loadApplicationDocs(int appRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.applicationExists(appRef) && !loadedDocs.isEmpty()) {
-            Application application = this.getApplication(appRef);
+            Application application = (Application) this.getApplication(appRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -4261,7 +4271,7 @@ public class Database {
      */
     private void loadApplicationNotes(int appRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.applicationExists(appRef) && !loadadNotes.isEmpty()) {
-            Application application = this.getApplication(appRef);
+            Application application = (Application) this.getApplication(appRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -4368,7 +4378,7 @@ public class Database {
      */
     private void loadPropertiesInterestedIn(int appRef) throws SQLException, RemoteException {
         if (this.applicationExists(appRef)) {
-            Application application = this.getApplication(appRef);
+            Application application = (Application) this.getApplication(appRef);
             String sql = "select propRef from propertyInterest where appRef=? and cur=?";
             try (PreparedStatement selectStat = con.prepareStatement(sql)) {
                 selectStat.setInt(1, appRef);
@@ -4379,7 +4389,7 @@ public class Database {
                 while (results.next()) {
                     int propRef = results.getInt("propRef");
                     if (this.propertyExists(propRef)) {
-                        Property temp = this.getProperty(propRef);
+                        PropertyInterface temp = this.getProperty(propRef);
                         application.addInterestedProperty(temp, null);
                     }
                 }
@@ -4460,7 +4470,7 @@ public class Database {
      */
     public void updateLandlord(int landlordRef) throws SQLException, RemoteException {
         if (this.landlordExists(landlordRef)) {
-            Landlord landlord = this.getLandlord(landlordRef);
+            Landlord landlord = (Landlord) this.getLandlord(landlordRef);
             this.createModifiedBy("landlordModifications", landlord.getLastModification(), landlord.getLandlordRef());
         }
     }
@@ -4490,7 +4500,7 @@ public class Database {
      */
     public boolean canDeleteLandlord(int landlordRef) throws RemoteException {
         if (this.landlordExists(landlordRef) && this.getLandlord(landlordRef).hasBeenModified()) {
-            for(Lease lease : this.getLeases()) {
+            for(LeaseInterface lease : this.getLeases()) {
                 if(lease.isAlreadyLandlord(landlordRef)) {
                     return false;
                 }
@@ -4515,7 +4525,7 @@ public class Database {
                 int landlordRef = results.getInt("landlordRef");
                 int personRef = results.getInt("personRef");
                 if (this.personExists(personRef)) {
-                    Person person = this.getPerson(personRef);
+                    PersonInterface person = this.getPerson(personRef);
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
                     Landlord temp = new Landlord(landlordRef, person, createdBy, createdDate);
@@ -4534,7 +4544,7 @@ public class Database {
      */
     private void loadLandlordMods(int landlordRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.landlordExists(landlordRef) && !loadadMods.isEmpty()) {
-            Landlord landlord = this.getLandlord(landlordRef);
+            Landlord landlord = (Landlord) this.getLandlord(landlordRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -4551,9 +4561,20 @@ public class Database {
      * @param landlordRef
      * @return 
      */
-    public Landlord getLandlord(int landlordRef) {
+    public LandlordInterface getLandlord(int landlordRef) {
         if(this.landlordExists(landlordRef)) {
             return this.landlords.get(landlordRef);
+        }
+        return null;
+    }
+    
+    public LandlordInterface getPersonLandlord(int personRef) throws RemoteException {
+        if(this.personLandlordExists(personRef)) {
+            for(LandlordInterface temp : this.getLandlords()) {
+                if(personRef == temp.getPersonRef()) {
+                    return temp;
+                }
+            }
         }
         return null;
     }
@@ -4566,7 +4587,7 @@ public class Database {
      */
     private void loadLandlordNotes(int landlordRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.landlordExists(landlordRef) && !loadadNotes.isEmpty()) {
-            Landlord landlord = this.getLandlord(landlordRef);
+            Landlord landlord = (Landlord) this.getLandlord(landlordRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -4649,7 +4670,7 @@ public class Database {
      */
     public void updateOffice(String officeCode) throws SQLException, RemoteException {
         if(this.officeExists(officeCode)) {
-            Office office = this.getOffice(officeCode);
+            OfficeInterface office = this.getOffice(officeCode);
             String updateSql = "update Offices set addressRef=?, startDate=?, endDate=? where officeCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -4736,7 +4757,7 @@ public class Database {
      */
     private void loadOfficeMods(String officeCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.officeExists(officeCode) && !loadedMods.isEmpty()) {
-            Office office = this.getOffice(officeCode);
+            Office office = (Office) this.getOffice(officeCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -4754,7 +4775,7 @@ public class Database {
      * @param code
      * @return 
      */
-    public Office getOffice(String code) {
+    public OfficeInterface getOffice(String code) {
         if(this.officeExists(code)) {
             return this.offices.get(code);
         }
@@ -4769,7 +4790,7 @@ public class Database {
      */
     private void loadOfficeDocs(String officeCode, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.officeExists(officeCode) && !loadedDocs.isEmpty()) {
-            Office office = this.getOffice(officeCode);
+            Office office = (Office) this.getOffice(officeCode);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -4817,7 +4838,7 @@ public class Database {
      */
     private void loadOfficeNotes(String officeCode, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.officeExists(officeCode) && !loadadNotes.isEmpty()) {
-            Office office = this.getOffice(officeCode);
+            Office office = (Office) this.getOffice(officeCode);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -4913,7 +4934,7 @@ public class Database {
      */
     public void updateJobRole(String jobRoleCode) throws SQLException, RemoteException {
         if (this.jobRoleExists(jobRoleCode)) {
-            JobRole jobRole = this.getJobRole(jobRoleCode);
+            JobRoleInterface jobRole = this.getJobRole(jobRoleCode);
             String updateSql = "update jobRoles set jobTitle=?, jobDescription=?, salary=?, cur=?, "
                     + "otherRead=?, otherWrite=?, otherUpdate=?, employeeRead=?, employeeWrite=?, "
                     + "employeeUpdate=? where jobRoleCode=?";
@@ -4962,7 +4983,7 @@ public class Database {
      */
     public boolean canDeleteJobRole(String jobRoleCode) throws RemoteException {
         if (this.jobRoleExists(jobRoleCode) && this.getJobRole(jobRoleCode).hasBeenModified()) {
-            for (Contract contract : this.getContracts()) {
+            for (ContractInterface contract : this.getContracts()) {
                 if (jobRoleCode.equals(contract.getJobRoleCode())) {
                     return false;
                 }
@@ -5019,7 +5040,7 @@ public class Database {
      */
     private void loadJobRoleMods(String jobRoleCode, Map<Integer, ModifiedByInterface> loadedMods) {
         if (this.jobRoleExists(jobRoleCode) && !loadedMods.isEmpty()) {
-            JobRole jobRole = this.getJobRole(jobRoleCode);
+            JobRole jobRole = (JobRole) this.getJobRole(jobRoleCode);
             Iterator it = loadedMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -5036,7 +5057,7 @@ public class Database {
      * @param jobRoleCode
      * @return 
      */
-    public JobRole getJobRole(String jobRoleCode) {
+    public JobRoleInterface getJobRole(String jobRoleCode) {
         if(this.jobRoleExists(jobRoleCode)) {
             return this.jobRoles.get(jobRoleCode);
         }
@@ -5051,7 +5072,7 @@ public class Database {
      */
     private void loadJobRoleNotes(String jobRoleCode, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.jobRoleExists(jobRoleCode) && !loadadNotes.isEmpty()) {
-            JobRole jobRole = this.getJobRole(jobRoleCode);
+            JobRole jobRole = (JobRole) this.getJobRole(jobRoleCode);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -5160,7 +5181,7 @@ public class Database {
      */
     private void loadJobRoleRequirements(String code) throws SQLException, RemoteException {
         if (this.jobRoleExists(code)) {
-            JobRole jobRole = this.getJobRole(code);
+            JobRole jobRole = (JobRole) this.getJobRole(code);
             String sql = "select jobRoleCode, requirementCode from jobRoleRequirements";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
@@ -5243,7 +5264,7 @@ public class Database {
      */
     public void updateJobRoleBenefit(String code, int benefitRef) throws SQLException, RemoteException {
         if(this.jobRoleExists(code) && this.jobRoleBenefitExists(benefitRef)) {
-            JobRoleBenefit benefit = this.getJobRoleBenefit(benefitRef);
+            JobRoleBenefitInterface benefit = this.getJobRoleBenefit(benefitRef);
             String updateSql = "";
             if (benefit.isSalaryBenefit()) {
                 updateSql = "update jobRoleBenefits set benefitCode=?, doubleValue=?, startDate=?, endDate=?, comment=? where jobBenefitRef=? and jobRoleCode=?";
@@ -5297,7 +5318,7 @@ public class Database {
      */
     private void loadJobRoleBenefits(String code) throws SQLException, RemoteException {
         if (this.jobRoleExists(code)) {
-            JobRole jobRole = this.getJobRole(code);
+            JobRole jobRole = (JobRole) this.getJobRole(code);
             String sql = "select jobBenefitRef, jobRoleCode, benefitCode, doubleValue, stringValue, startDate, endDate, noteRef, comment, createdBy, createdDate from jobRoleBenefits order by createdDate";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
@@ -5402,7 +5423,7 @@ public class Database {
      */
     public boolean canDeleteJobRequirement(String requirementCode) throws RemoteException {
         if(this.jobRequirementExists(requirementCode) && !this.getJobRequirement(requirementCode).hasBeenModified()) {
-            for(JobRole jobRole : this.getJobRoles()) {
+            for(JobRoleInterface jobRole : this.getJobRoles()) {
                 for(Element requirement : jobRole.getJobRequirements()) {
                     if(requirementCode.equals(requirement.getCode())) {
                         return false;
@@ -5496,7 +5517,7 @@ public class Database {
      */
     public boolean canDeleteJobBenefit(String benefitCode) throws RemoteException {
         if (this.jobBenefitExists(benefitCode) && !this.getJobBenefit(benefitCode).hasBeenModified()) {
-            for (JobRoleBenefit benefit : this.getJobRoleBenefits()) {
+            for (JobRoleBenefitInterface benefit : this.getJobRoleBenefits()) {
                 if (benefitCode.equals(benefit.getBenefitCode())) {
                     return false;
                 }
@@ -5569,7 +5590,7 @@ public class Database {
      */
     public void updateEmployee(int employeeRef) throws SQLException, RemoteException {
         if (this.employeeExists(employeeRef)) {
-            Employee employee = this.getEmployee(employeeRef);
+            Employee employee = (Employee) this.getEmployee(employeeRef);
             String updateSql = "update employees set officeCode=? where employeeRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -5608,7 +5629,7 @@ public class Database {
      */
     public boolean canDeleteEmployee(int employeeRef) throws RemoteException {
         if (this.employeeExists(employeeRef) && !this.getEmployee(employeeRef).hasBeenModified()) {
-            for (Contract contract : this.getContracts()) {
+            for (ContractInterface contract : this.getContracts()) {
                 if (contract.getEmployeeRef() == employeeRef) {
                     return false;
                 }
@@ -5635,7 +5656,7 @@ public class Database {
                 int employeeRef = results.getInt("employeeRef");
                 int personRef = results.getInt("personRef");
                 if (this.personExists(personRef)) {
-                    Person person = this.getPerson(personRef);
+                    PersonInterface person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
                     if ((officeCode == null || this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
@@ -5673,7 +5694,7 @@ public class Database {
      */
     private void loadEmployeeMods(int employeeRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.employeeExists(employeeRef) && !loadadMods.isEmpty()) {
-            Employee employee = this.getEmployee(employeeRef);
+            Employee employee = (Employee) this.getEmployee(employeeRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -5690,9 +5711,20 @@ public class Database {
      * @param employeeRef
      * @return 
      */
-    public Employee getEmployee(int employeeRef) {
+    public EmployeeInterface getEmployee(int employeeRef) {
         if(this.employeeExists(employeeRef)) {
             return this.employees.get(employeeRef);
+        }
+        return null;
+    }
+    
+    public EmployeeInterface getPersonEmployee(int personRef) throws RemoteException {
+        if(this.personEmployeeExists(personRef)) {
+            for(EmployeeInterface temp : this.getEmployees()) {
+                if(personRef == temp.getPersonRef()) {
+                    return temp;
+                }
+            }
         }
         return null;
     }
@@ -5705,7 +5737,7 @@ public class Database {
      */
     private void loadEmployeeNotes(int employeeRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.employeeExists(employeeRef) && !loadadNotes.isEmpty()) {
-            Employee employee = this.getEmployee(employeeRef);
+            Employee employee = (Employee)this.getEmployee(employeeRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -5798,7 +5830,7 @@ public class Database {
      */
     public void updateTenancy(int tenancyRef) throws SQLException, RemoteException {
         if(this.tenancyExists(tenancyRef)) {
-            Tenancy tenancy = this.getTenancy(tenancyRef);
+            Tenancy tenancy = (Tenancy) this.getTenancy(tenancyRef);
             String updateSql = "update tenancies set name=?, startDate=?, expectedEndDate=?, actualEndDate=?, "
                     + "length=?, tenTypeCode=?, rent=?, charges=? where tenancyRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -5871,10 +5903,10 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int appRef = results.getInt("appRef");
                     if (this.applicationExists(appRef)) {
-                        Application application = this.getApplication(appRef);
+                        ApplicationInterface application = this.getApplication(appRef);
                         int propRef = results.getInt("propRef");
                         if (this.propertyExists(propRef)) {
-                            Property property = this.getProperty(propRef);
+                            PropertyInterface property = this.getProperty(propRef);
                             String tenTypeCode = results.getString("tenTypeCode");
                             if (this.tenancyTypeExists(tenTypeCode)) {
                                 Element tenType = this.getTenancyType(tenTypeCode);
@@ -5903,7 +5935,7 @@ public class Database {
      */
     private void loadTenancyMods(int tenancyRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.tenancyExists(tenancyRef) && !loadadMods.isEmpty()) {
-            Tenancy tenancy = this.getTenancy(tenancyRef);
+            Tenancy tenancy = (Tenancy) this.getTenancy(tenancyRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -5920,7 +5952,7 @@ public class Database {
      * @param tenancyRef
      * @return 
      */
-    public Tenancy getTenancy(int tenancyRef) {
+    public TenancyInterface getTenancy(int tenancyRef) {
         if (tenancies.containsKey(tenancyRef)) {
             return tenancies.get(tenancyRef);
         }
@@ -5935,7 +5967,7 @@ public class Database {
      */
     private void loadTenancyDocs(int tenancyRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.tenancyExists(tenancyRef) && !loadedDocs.isEmpty()) {
-            Tenancy tenancy = this.getTenancy(tenancyRef);
+            Tenancy tenancy = (Tenancy) this.getTenancy(tenancyRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -5983,7 +6015,7 @@ public class Database {
      */
     private void loadTenancyNotes(int tenancyRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.tenancyExists(tenancyRef) && !loadadNotes.isEmpty()) {
-            Tenancy tenancy = this.getTenancy(tenancyRef);
+            Tenancy tenancy = (Tenancy) this.getTenancy(tenancyRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -6085,7 +6117,7 @@ public class Database {
      */
     public boolean canDeleteTenancyType(String tenTypeCode) throws RemoteException {
         if(this.tenancyTypeExists(tenTypeCode) && !this.getTenancyType(tenTypeCode).hasBeenModified()) {
-            for(Tenancy tenancy : this.getTenancies()) {
+            for(TenancyInterface tenancy : this.getTenancies()) {
                 if(tenTypeCode.equals(tenancy.getTenType().getCode())) {
                     return false;
                 }
@@ -6166,7 +6198,7 @@ public class Database {
      */
     public void updateLease(int leaseRef) throws SQLException, RemoteException {
         if(this.leaseExists(leaseRef)) {
-            Lease lease = this.getLease(leaseRef);
+            Lease lease = (Lease) this.getLease(leaseRef);
             String updateSql = "update leases set name=?, startDate=?, expectedEndDate=?, "
                     + "actualEndDate=?, length=? where leaseRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -6236,7 +6268,7 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int propRef = results.getInt("propRef");
                     if (this.propertyExists(propRef)) {
-                        Property property = this.getProperty(propRef);
+                        Property property = (Property) this.getProperty(propRef);
                         boolean fullManagement = results.getBoolean("fullManagement");
                         double expenditure = results.getDouble("expenditure");
                         String createdBy = results.getString("createdBy");
@@ -6264,7 +6296,7 @@ public class Database {
      */
     private void loadLeaseMods(int leaseRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseExists(leaseRef) && !loadadMods.isEmpty()) {
-            Lease lease = this.getLease(leaseRef);
+            Lease lease = (Lease) this.getLease(leaseRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -6281,7 +6313,7 @@ public class Database {
      * @param leaseRef
      * @return 
      */
-    public Lease getLease(int leaseRef) {
+    public LeaseInterface getLease(int leaseRef) {
         if (leases.containsKey(leaseRef)) {
             return leases.get(leaseRef);
         }
@@ -6296,7 +6328,7 @@ public class Database {
      */
     private void loadLeaseDocs(int leaseRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.leaseExists(leaseRef) && !loadedDocs.isEmpty()) {
-            Lease lease = this.getLease(leaseRef);
+            Lease lease = (Lease) this.getLease(leaseRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -6344,7 +6376,7 @@ public class Database {
      */
     private void loadLeaseNotes(int leaseRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.leaseExists(leaseRef) && !loadadNotes.isEmpty()) {
-            Lease lease = this.getLease(leaseRef);
+            Lease lease = (Lease) this.getLease(leaseRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -6457,9 +6489,9 @@ public class Database {
                 int landlordRef = results.getInt("landlordRef");
                 boolean current = results.getBoolean("cur");
                 if(leaseRef == ref && this.leaseExists(leaseRef) && this.landlordExists(landlordRef) && current) {
-                    Lease lease = this.getLease(leaseRef);
+                    Lease lease = (Lease) this.getLease(leaseRef);
                     lease.addLandlord(this.getLandlord(landlordRef), null);
-                    Landlord landlord = this.getLandlord(landlordRef);
+                    Landlord landlord = (Landlord) this.getLandlord(landlordRef);
                     landlord.createLease(lease, null);
                 }
             }
@@ -6547,7 +6579,7 @@ public class Database {
      */
     public void updateContract(int contractRef) throws SQLException, RemoteException {
         if(this.contractExists(contractRef)) {
-            Contract contract = this.getContract(contractRef);
+            ContractInterface contract = this.getContract(contractRef);
             String updateSql = "update contracts set name=?, startDate=?, expectedEndDate=?, "
                     + "actualEndDate=?, length=? where contractRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -6616,10 +6648,10 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int employeeRef = results.getInt("employeeRef");
                     if (this.employeeExists(employeeRef)) {
-                        Employee employee = this.getEmployee(employeeRef);
+                        Employee employee = (Employee) this.getEmployee(employeeRef);
                         String jobRoleCode = results.getString("jobRoleCode");
                         if (this.jobRoleExists(jobRoleCode)) {
-                            JobRole jobRole = this.getJobRole(jobRoleCode);
+                            JobRoleInterface jobRole = this.getJobRole(jobRoleCode);
                             String createdBy = results.getString("createdBy");
                             Date createdDate = results.getDate("createdDate");
                             Contract temp = new Contract(contractRef, accountRef, startDate, length, employee, jobRole, officeCode, createdBy, createdDate);
@@ -6647,7 +6679,7 @@ public class Database {
      */
     private void loadContractMods(int contractRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(contractRef) && !loadadMods.isEmpty()) {
-            Contract contract = this.getContract(contractRef);
+            Contract contract = (Contract) this.getContract(contractRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -6664,7 +6696,7 @@ public class Database {
      * @param contractRef
      * @return 
      */
-    public Contract getContract(int contractRef) {
+    public ContractInterface getContract(int contractRef) {
         if (contracts.containsKey(contractRef)) {
             return contracts.get(contractRef);
         }
@@ -6679,7 +6711,7 @@ public class Database {
      */
     private void loadContractDocs(int contractRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.contractExists(contractRef) && !loadedDocs.isEmpty()) {
-            Contract contract = this.getContract(contractRef);
+            Contract contract = (Contract) this.getContract(contractRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -6727,7 +6759,7 @@ public class Database {
      */
     private void loadContractNotes(int contractRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.contractExists(contractRef) && !loadadNotes.isEmpty()) {
-            Contract contract = this.getContract(contractRef);
+            Contract contract = (Contract) this.getContract(contractRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -6831,7 +6863,7 @@ public class Database {
      */
     public void updateRentAccount(int rentAccRef) throws SQLException, RemoteException {
         if(this.rentAccountExists(rentAccRef)) {
-            RentAccount rentAcc = this.getRentAccount(rentAccRef);
+            RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             String updateSql = "update rentAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, rent=? where rentAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -6869,7 +6901,7 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int tenancyRef = results.getInt("tenancyRef");
                     if (this.tenancyExists(tenancyRef)) {
-                        Tenancy tenancy = this.getTenancy(tenancyRef);
+                        TenancyInterface tenancy = this.getTenancy(tenancyRef);
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
                         RentAccount temp = new RentAccount(rentAccRef, tenancy, createdBy, createdDate);
@@ -6894,7 +6926,7 @@ public class Database {
      */
     private void loadRentAccountMods(int rentAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.rentAccountExists(rentAccRef) && !loadadMods.isEmpty()) {
-            RentAccount rentAcc = this.getRentAccount(rentAccRef);
+            RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -6911,7 +6943,7 @@ public class Database {
      * @param rentAccRef
      * @return 
      */
-    public RentAccount getRentAccount(int rentAccRef) {
+    public RentAccountInterface getRentAccount(int rentAccRef) {
         if (rentAccounts.containsKey(rentAccRef)) {
             return rentAccounts.get(rentAccRef);
         }
@@ -6926,7 +6958,7 @@ public class Database {
      */
     private void loadRentAccountDocs(int rentAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.rentAccountExists(rentAccRef) && !loadedDocs.isEmpty()) {
-            RentAccount rentAcc = this.getRentAccount(rentAccRef);
+            RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -6974,7 +7006,7 @@ public class Database {
      */
     private void loadRentAccountNotes(int rentAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.rentAccountExists(rentAccRef) && !loadadNotes.isEmpty()) {
-            RentAccount rentAcc = this.getRentAccount(rentAccRef);
+            RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -7088,7 +7120,7 @@ public class Database {
      */
     public void updateLeaseAccount(int leaseAccRef) throws SQLException, RemoteException {
         if (this.leaseAccountExists(leaseAccRef)) {
-            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
+            LeaseAccountInterface leaseAcc = this.getLeaseAccount(leaseAccRef);
             String updateSql = "update leaseAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, expenditure=? where leaseAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -7142,7 +7174,7 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int leaseRef = results.getInt("leaseRef");
                     if (this.leaseExists(leaseRef)) {
-                        Lease lease = this.getLease(leaseRef);
+                        LeaseInterface lease = this.getLease(leaseRef);
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
                         LeaseAccount temp = new LeaseAccount(leaseAccRef, lease, createdBy, createdDate);
@@ -7167,7 +7199,7 @@ public class Database {
      */
     private void loadLeaseAccountMods(int leaseAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.leaseAccountExists(leaseAccRef) && !loadadMods.isEmpty()) {
-            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
+            LeaseAccount leaseAcc = (LeaseAccount) this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -7184,7 +7216,7 @@ public class Database {
      * @param leaseAccRef
      * @return 
      */
-    public LeaseAccount getLeaseAccount(int leaseAccRef) {
+    public LeaseAccountInterface getLeaseAccount(int leaseAccRef) {
         if (leaseAccounts.containsKey(leaseAccRef)) {
             return leaseAccounts.get(leaseAccRef);
         }
@@ -7199,7 +7231,7 @@ public class Database {
      */
     private void loadLeaseAccountDocs(int leaseAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.leaseAccountExists(leaseAccRef) && !loadedDocs.isEmpty()) {
-            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
+            LeaseAccount leaseAcc = (LeaseAccount) this.getLeaseAccount(leaseAccRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -7247,7 +7279,7 @@ public class Database {
      */
     private void loadLeaseAccountNotes(int leaseAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.leaseAccountExists(leaseAccRef) && !loadadNotes.isEmpty()) {
-            LeaseAccount leaseAcc = this.getLeaseAccount(leaseAccRef);
+            LeaseAccount leaseAcc = (LeaseAccount) this.getLeaseAccount(leaseAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -7362,7 +7394,7 @@ public class Database {
      */
     public void updateEmployeeAccount(int employeeAccRef) throws SQLException, RemoteException {
         if(this.employeeAccountExists(employeeAccRef)) {
-            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
+            EmployeeAccount employeeAcc = (EmployeeAccount) this.getEmployeeAccount(employeeAccRef);
             String updateSql = "update employeeAccounts set name=?, startDate=?, endDate=?, "
                     + "balance=?, salary=? where employeeAccRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -7416,7 +7448,7 @@ public class Database {
                 if (this.officeExists(officeCode)) {
                     int contractRef = results.getInt("contractRef");
                     if (this.contractExists(contractRef)) {
-                        Contract contract = this.getContract(contractRef);
+                        ContractInterface contract = this.getContract(contractRef);
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
                         EmployeeAccount temp = new EmployeeAccount(employeeAccRef, contract, createdBy, createdDate);
@@ -7441,7 +7473,7 @@ public class Database {
      */
     private void loadEmployeeAccountMods(int employeeAccRef, Map<Integer, ModifiedByInterface> loadadMods) {
         if (this.contractExists(employeeAccRef) && !loadadMods.isEmpty()) {
-            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
+            EmployeeAccount employeeAcc = (EmployeeAccount) this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadMods.entrySet().iterator();
             while (it.hasNext()) {
                 ModifiedByInterface tempMod;
@@ -7458,7 +7490,7 @@ public class Database {
      * @param employeeAccRef
      * @return 
      */
-    public EmployeeAccount getEmployeeAccount(int employeeAccRef) {
+    public EmployeeAccountInterface getEmployeeAccount(int employeeAccRef) {
         if (employeeAccounts.containsKey(employeeAccRef)) {
             return employeeAccounts.get(employeeAccRef);
         }
@@ -7473,7 +7505,7 @@ public class Database {
      */
     private void loadEmployeeAccountDocs(int employeeAccRef, Map<Integer, Document> loadedDocs) throws RemoteException {
         if (this.employeeAccountExists(employeeAccRef) && !loadedDocs.isEmpty()) {
-            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
+            EmployeeAccount employeeAcc = (EmployeeAccount) this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadedDocs.entrySet().iterator();
             while (it.hasNext()) {
                 Document tempDoc;
@@ -7521,7 +7553,7 @@ public class Database {
      */
     private void loadEmployeeAccountNotes(int employeeAccRef, Map<Integer, Note> loadadNotes) throws RemoteException {
         if (this.employeeAccountExists(employeeAccRef) && !loadadNotes.isEmpty()) {
-            EmployeeAccount employeeAcc = this.getEmployeeAccount(employeeAccRef);
+            EmployeeAccount employeeAcc = (EmployeeAccount) this.getEmployeeAccount(employeeAccRef);
             Iterator it = loadadNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Note tempNote;
@@ -7665,7 +7697,7 @@ public class Database {
         }
     }
     
-    public Transaction getTransaction(int ref) {
+    public TransactionInterface getTransaction(int ref) {
         if(this.transactions.containsKey(ref)) {
             return this.transactions.get(ref);
         }
@@ -7696,7 +7728,7 @@ public class Database {
     
     public void updateUser(String username) throws SQLException, RemoteException {
         if(this.userExists(username)) {
-            UserImpl user = this.getUser(username);
+            User user = this.getUser(username);
             String updateSql = "update users set password=?, otherRead=?, otherWrite=?, otherUpdate=?, "
                     + "employeeRead=?, employeeWrite=?, employeeUpdate=? where username=? and employeeRef=?";
             try(PreparedStatement updateStat = con.prepareStatement(updateSql)) {
@@ -7713,7 +7745,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            Employee employee = this.getEmployee(user.getEmployeeRef());
+            EmployeeInterface employee = this.getEmployee(user.getEmployeeRef());
             this.createModifiedBy("employeeModifications", employee.getLastModification(), employee.getEmployeeRef());
         }
     }
@@ -7729,28 +7761,28 @@ public class Database {
         }
     }
     
-    public JobRoleBenefit getJobRoleBenefit(int benRef) {
+    public JobRoleBenefitInterface getJobRoleBenefit(int benRef) {
         if(this.jobRoleBenefitExists(benRef)) {
             return jobRoleBenefits.get(benRef);
         }
         return null;
     }
     
-    public Contact getContact(int contactRef) {
+    public ContactInterface getContact(int contactRef) {
         if(this.contactExists(contactRef)) {
             return contacts.get(contactRef);
         }
         return null;
     }
     
-    public AddressUsage getAddressUsage(int addressUsageRef) {
+    public AddressUsageInterface getAddressUsage(int addressUsageRef) {
         if(this.addressUsageExists(addressUsageRef)) {
             return this.addressUsages.get(addressUsageRef);
         }
         return null;
     }
     
-    public UserImpl getUser(String username) {
+    public User getUser(String username) {
         if(this.userExists(username)) {
             return this.users.get(username);
         }
@@ -7827,7 +7859,7 @@ public class Database {
     }
     
     public boolean personInvPartyExists(int personRef) throws RemoteException {
-        for(InvolvedParty invParties : involvedParties.values()) {
+        for(InvolvedPartyInterface invParties : involvedParties.values()) {
             if(invParties.getPersonRef() == personRef) {
                 return true;
             }
@@ -7860,7 +7892,7 @@ public class Database {
     }
     
     public boolean personLandlordExists(int personRef) throws RemoteException {
-        for(Landlord landlord : landlords.values()) {
+        for(LandlordInterface landlord : landlords.values()) {
             if(landlord.getPersonRef() == personRef) {
                 return true;
             }
@@ -7893,7 +7925,7 @@ public class Database {
     }
     
     public boolean personEmployeeExists(int personRef) throws RemoteException {
-        for(Employee employee : employees.values()) {
+        for(EmployeeInterface employee : employees.values()) {
             if(employee.getPersonRef() == personRef) {
                 return true;
             }
@@ -7953,7 +7985,7 @@ public class Database {
         return this.users.containsKey(username);
     }
     
-    public boolean isUser(String username, String password) {
+    public boolean isUser(String username, String password) throws RemoteException {
         if(this.userExists(username)) {
             return this.getUser(username).isUser(username, password);
         }
@@ -8052,59 +8084,59 @@ public class Database {
         }
     }
     
-    public List<Office> getOffices() {
+    public List<OfficeInterface> getOffices() {
         return Collections.unmodifiableList(new ArrayList<>(offices.values()));
     }
     
-    public List<Address> getAddresses() {
+    public List<AddressInterface> getAddresses() {
         return Collections.unmodifiableList(new ArrayList<>(addresses.values()));
     }
     
-    public List<Person> getPeople() {
+    public List<PersonInterface> getPeople() {
         return Collections.unmodifiableList(new ArrayList<>(people.values()));
     }
     
-    public List<InvolvedParty> getInvolvedParties() {
+    public List<InvolvedPartyInterface> getInvolvedParties() {
         return Collections.unmodifiableList(new ArrayList<>(involvedParties.values()));
     }
     
-    public List<Landlord> getLandlords() {
+    public List<LandlordInterface> getLandlords() {
         return Collections.unmodifiableList(new ArrayList<>(landlords.values()));
     }
     
-    public List<Employee> getEmployees() {
+    public List<EmployeeInterface> getEmployees() {
         return Collections.unmodifiableList(new ArrayList<>(employees.values()));
     }
     
-    public List<Application> getApplications() {
+    public List<ApplicationInterface> getApplications() {
         return Collections.unmodifiableList(new ArrayList<>(applications.values()));
     }
     
-    public List<Property> getProperties() {
+    public List<PropertyInterface> getProperties() {
         return Collections.unmodifiableList(new ArrayList<>(properties.values()));
     }
     
-    public List<Tenancy> getTenancies() {
+    public List<TenancyInterface> getTenancies() {
         return Collections.unmodifiableList(new ArrayList<>(tenancies.values()));
     }
     
-    public List<Lease> getLeases() {
+    public List<LeaseInterface> getLeases() {
         return Collections.unmodifiableList(new ArrayList<>(leases.values()));
     }
     
-    public List<Contract> getContracts() {
+    public List<ContractInterface> getContracts() {
         return Collections.unmodifiableList(new ArrayList<>(contracts.values()));
     }
     
-    public List<RentAccount> getRentAccounts() {
+    public List<RentAccountInterface> getRentAccounts() {
         return Collections.unmodifiableList(new ArrayList<>(rentAccounts.values()));
     }
     
-    public List<LeaseAccount> getLeaseAccounts() {
+    public List<LeaseAccountInterface> getLeaseAccounts() {
         return Collections.unmodifiableList(new ArrayList<>(leaseAccounts.values()));
     }
     
-    public List<EmployeeAccount> getEmployeeAccounts() {
+    public List<EmployeeAccountInterface> getEmployeeAccounts() {
         return Collections.unmodifiableList(new ArrayList<>(employeeAccounts.values()));
     }
     
@@ -8160,7 +8192,7 @@ public class Database {
         return Collections.unmodifiableList(new ArrayList<>(endReasons.values()));
     }
     
-    public List<JobRole> getJobRoles() {
+    public List<JobRoleInterface> getJobRoles() {
         return Collections.unmodifiableList(new ArrayList<>(jobRoles.values()));
     }
     
@@ -8180,31 +8212,33 @@ public class Database {
         return Collections.unmodifiableList(new ArrayList<>(tenancyTypes.values()));
     }
     
-    public List<Transaction> getTransactions() {
+    public List<TransactionInterface> getTransactions() {
         return Collections.unmodifiableList(new ArrayList<>(transactions.values()));
     }
     
-    public List<JobRoleBenefit> getJobRoleBenefits() {
+    public List<JobRoleBenefitInterface> getJobRoleBenefits() {
         return Collections.unmodifiableList(new ArrayList<>(jobRoleBenefits.values()));
     }
     
-    public List<Contact> getContacts() {
+    public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(new ArrayList<>(contacts.values()));
     }
     
-    public List<AddressUsage> getAddressUsages() {
+    public List<AddressUsageInterface> getAddressUsages() {
         return Collections.unmodifiableList(new ArrayList<>(addressUsages.values()));
     }
     
-    private List<UserImpl> getUsers() {
+    private List<User> getUsers() {
         return Collections.unmodifiableList(new ArrayList<>(users.values()));
     }
     
-    public List<Person> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
+    
+    
+    public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
-        List<Person> tempPeople = new ArrayList<>(this.getPeople());
+        List<PersonInterface> tempPeople = new ArrayList<>(this.getPeople());
         if(!tempPeople.isEmpty()) {
-            for(Person temp : tempPeople) {
+            for(PersonInterface temp : tempPeople) {
                 if(titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
                     tempPeople.remove(temp);
                 } else if(forename != null && !forename.isEmpty() && !forename.equals(temp.getForename())) {
@@ -8240,12 +8274,12 @@ public class Database {
         return null;
     }
     
-    public List<Address> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
+    public List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
-        List<Address> tempAddresses = new ArrayList<>(this.getAddresses());
+        List<AddressInterface> tempAddresses = new ArrayList<>(this.getAddresses());
         if(!tempAddresses.isEmpty()) {
-            for(Address temp : tempAddresses) {
+            for(AddressInterface temp : tempAddresses) {
                 if(buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
                     tempAddresses.remove(temp);
                 } else if(buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
@@ -8277,10 +8311,11 @@ public class Database {
         return null;
     }
     
-    public List<Application> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<Application> tempApplications = new ArrayList<>(this.getApplications());
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, 
+            Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
         if(!tempApplications.isEmpty()) {
-            for(Application temp : tempApplications) {
+            for(ApplicationInterface temp : tempApplications) {
                 if(corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
                     tempApplications.remove(temp);
                 } else if(appStartDate != null && appStartDate.compareTo(temp.getAppStartDate()) != 0) {
@@ -8302,14 +8337,14 @@ public class Database {
         return null;
     }
     
-    public List<Application> getPeopleApplications(List<Person> tempPeople) throws RemoteException {
-        List<Application> tempApplications = new ArrayList<>(this.getApplications());
+    public List<ApplicationInterface> getPeopleApplications(List<PersonInterface> tempPeople) throws RemoteException {
+        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
         if (!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
-            for (Application temp : tempApplications) {
+            for (ApplicationInterface temp : tempApplications) {
                 boolean cont = true;
                 int i = 0;
                 while (cont && i < tempPeople.size()) {
-                    Person tempPerson = tempPeople.get(i);
+                    PersonInterface tempPerson = tempPeople.get(i);
                     if (temp.isPersonHouseholdMember(tempPerson.getPersonRef())) {
                         cont = false;
                     }
@@ -8324,10 +8359,10 @@ public class Database {
         return null;
     }
 
-    public List<Application> getAddressApplications(List<Address> tempAddresses) throws RemoteException {
-        List<Application> tempApplications = new ArrayList<>(this.getApplications());
+    public List<ApplicationInterface> getAddressApplications(List<AddressInterface> tempAddresses) throws RemoteException {
+        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
         if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
-            for (Application temp : tempApplications) {
+            for (ApplicationInterface temp : tempApplications) {
                 boolean cont = true;
                 List<AddressUsageInterface> appAddresses = temp.getApplicationAddressess();
                 if (appAddresses.isEmpty()) {
@@ -8335,10 +8370,10 @@ public class Database {
                 } else {
                     int i = 0;
                     while (cont && i < tempAddresses.size()) {
-                        Address tempAddress = tempAddresses.get(i);
+                        AddressInterface tempAddress = tempAddresses.get(i);
                         int ind = 0;
                         while (cont && ind < appAddresses.size()) {
-                            AddressUsage appAddress = (AddressUsage) appAddresses.get(ind);
+                            AddressUsageInterface appAddress = appAddresses.get(ind);
                             if (tempAddress.getAddressRef() == appAddress.getAddress().getAddressRef()) {
                                 cont = false;
                             }
@@ -8356,10 +8391,10 @@ public class Database {
         return null;
     }
 
-    public List<Application> getCorrNameApplcations(String name) throws RemoteException {
-        List<Application> tempApplications = new ArrayList<>(this.getApplications());
+    public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
+        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
         if (name != null && !name.isEmpty() && !tempApplications.isEmpty()) {
-            for (Application tempApp : tempApplications) {
+            for (ApplicationInterface tempApp : tempApplications) {
                 if (!name.equals(tempApp.getAppCorrName())) {
                     tempApplications.remove(tempApp);
                 }
@@ -8369,9 +8404,9 @@ public class Database {
         return null;
     }
     
-    public Application getInvPartyApplcation(int invPartyRef) throws RemoteException {
+    public ApplicationInterface getInvPartyApplcation(int invPartyRef) throws RemoteException {
         if (this.invPartyExists(invPartyRef)) {
-            InvolvedParty invParty = this.getInvolvedParty(invPartyRef);
+            InvolvedPartyInterface invParty = this.getInvolvedParty(invPartyRef);
             if(this.applicationExists(invParty.getApplicationRef())) {
                 return this.getApplication(invParty.getApplicationRef());
             }
@@ -8379,10 +8414,66 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<EmployeeInterface> getPeopleEmployees(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+        List<EmployeeInterface> tempEmployees = new ArrayList();
+        if(!tempPeople.isEmpty()) {
+            for (PersonInterface temp : tempPeople) {
+                if(this.personEmployeeExists(temp.getPersonRef())) {
+                    tempEmployees.add(this.getPersonEmployee(temp.getPersonRef()));
+                }
+            }
+            return tempEmployees;
+        }
+        return null;
+    }
+    
+    public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+        List<LandlordInterface> tempLandlords = new ArrayList();
+        if(!tempPeople.isEmpty()) {
+            for (PersonInterface temp : tempPeople) {
+                if(this.personEmployeeExists(temp.getPersonRef())) {
+                    tempLandlords.add(this.getPersonLandlord(temp.getPersonRef()));
+                }
+            }
+            return tempLandlords;
+        }
+        return null;
+    }
+    
+    public List<PropertyInterface> getProperties(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
+        List<PropertyInterface> tempProperties = new ArrayList<>(this.getProperties());
+        if (!tempProperties.isEmpty()) {
+            for(PropertyInterface temp : tempProperties) {
+                if(acquiredDate != null && acquiredDate.compareTo(temp.getAcquiredDate()) != 0) {
+                    tempProperties.remove(temp);
+                } else if(leaseEndDate != null && leaseEndDate.compareTo(temp.getLeaseEndDate()) != 0) {
+                    tempProperties.remove(temp);
+                } else if (propTypeCode != null && this.propTypeExists(propTypeCode) && propTypeCode.equals(temp.getPropType().getCode())) {
+                    tempProperties.remove(temp);
+                } else if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && propSubTypeCode.equals(temp.getPropSubType().getCode())) {
+                    tempProperties.remove(temp);
+                } else if (propStatus != null && propStatus.equals(temp.getPropStatus())) {
+                    tempProperties.remove(temp);
+                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                    tempProperties.remove(temp);
+                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                    tempProperties.remove(temp);
+                }
+            }
+            return tempProperties;
+        }
+        return null;
+    }
+    
+    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, 
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if (!tempTenancies.isEmpty()) {
-            for(Tenancy temp : tempTenancies) {
+            for(TenancyInterface temp : tempTenancies) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
                     tempTenancies.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8416,14 +8507,14 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getApplicationTenancies(List<Application> tempApplications) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getApplicationTenancies(List<ApplicationInterface> tempApplications) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
-            for(Tenancy temp : tempTenancies) {
+            for(TenancyInterface temp : tempTenancies) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempApplications.size()) {
-                    Application tempApp = tempApplications.get(i);
+                    ApplicationInterface tempApp = tempApplications.get(i);
                     if(temp.getApplication().getApplicationRef() == tempApp.getApplicationRef()) {
                         cont = false;
                     }
@@ -8438,11 +8529,11 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getApplcationTenancies(int appRef) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getApplicationTenancies(int appRef) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if (this.applicationExists(appRef) && !tempTenancies.isEmpty()) {
-            Application tempApp = this.getApplication(appRef);
-            for (Tenancy temp : tempTenancies) {
+            ApplicationInterface tempApp = this.getApplication(appRef);
+            for (TenancyInterface temp : tempTenancies) {
                 if (temp.getApplication().getApplicationRef() != tempApp.getApplicationRef()) {
                     tempTenancies.remove(temp);
                 }
@@ -8452,14 +8543,14 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getPropertyTenancies(List<Property> tempProperties) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getPropertyTenancies(List<PropertyInterface> tempProperties) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempProperties.isEmpty()) {
-            for(Tenancy temp : tempTenancies) {
+            for(TenancyInterface temp : tempTenancies) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempProperties.size()) {
-                    Property tempProperty = tempProperties.get(i);
+                    PropertyInterface tempProperty = tempProperties.get(i);
                     if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
                         cont = false;
                     }
@@ -8474,12 +8565,12 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getPropertyTenancies(int propRef) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getPropertyTenancies(int propRef) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if (this.propertyExists(propRef) && !tempTenancies.isEmpty()) {
-            Property tempApp = this.getProperty(propRef);
-            for (Tenancy temp : tempTenancies) {
-                if (temp.getProperty().getPropRef() != tempApp.getPropRef()) {
+            PropertyInterface tempProp = this.getProperty(propRef);
+            for (TenancyInterface temp : tempTenancies) {
+                if (temp.getProperty().getPropRef() != tempProp.getPropRef()) {
                     tempTenancies.remove(temp);
                 }
             }
@@ -8488,10 +8579,10 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getNameTenancies(String name) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getNameTenancies(String name) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if(!tempTenancies.isEmpty()) {
-            for(Tenancy temp : tempTenancies) {
+            for(TenancyInterface temp : tempTenancies) {
                 if(!name.equals(temp.getAgreementName())) {
                     tempTenancies.remove(temp);
                 }
@@ -8501,10 +8592,10 @@ public class Database {
         return null;
     }
     
-    public List<Tenancy> getOfficeTenancies(String office) throws RemoteException {
-        List<Tenancy> tempTenancies = new ArrayList<>(this.getTenancies());
+    public List<TenancyInterface> getOfficeTenancies(String office) throws RemoteException {
+        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
         if(this.officeExists(office) && !tempTenancies.isEmpty()) {
-            for(Tenancy temp : tempTenancies) {
+            for(TenancyInterface temp : tempTenancies) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempTenancies.remove(temp);
                 }
@@ -8514,10 +8605,10 @@ public class Database {
         return null;
     }
     
-    public List<Lease> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if (!tempLeases.isEmpty()) {
-            for(Lease temp : tempLeases) {
+            for(LeaseInterface temp : tempLeases) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
                     tempLeases.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8549,14 +8640,14 @@ public class Database {
         return null;
     }
     
-    public List<Lease> getPropertyLeases(List<Property> tempProperties) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getPropertyLeases(List<PropertyInterface> tempProperties) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if(!tempProperties.isEmpty() && !tempLeases.isEmpty()) {
-            for(Lease temp : tempLeases) {
+            for(LeaseInterface temp : tempLeases) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempProperties.size()) {
-                    Property tempProperty = tempProperties.get(i);
+                    PropertyInterface tempProperty = tempProperties.get(i);
                     if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
                         cont = false;
                     }
@@ -8571,11 +8662,11 @@ public class Database {
         return null;
     }
     
-    public List<Lease> getPropertyLeases(int propRef) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getPropertyLeases(int propRef) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if (this.propertyExists(propRef) && !tempLeases.isEmpty()) {
-            Property tempProperty = this.getProperty(propRef);
-            for (Lease temp : tempLeases) {
+            PropertyInterface tempProperty = this.getProperty(propRef);
+            for (LeaseInterface temp : tempLeases) {
                 if (temp.getProperty().getPropRef() != tempProperty.getPropRef()) {
                     tempLeases.remove(temp);
                 }
@@ -8585,10 +8676,10 @@ public class Database {
         return null;
     }
     
-    public List<Lease> getNameLeases(String name) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getNameLeases(String name) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if(!tempLeases.isEmpty()) {
-            for(Lease temp : tempLeases) {
+            for(LeaseInterface temp : tempLeases) {
                 if(!name.equals(temp.getAgreementName())) {
                     tempLeases.remove(temp);
                 }
@@ -8598,10 +8689,10 @@ public class Database {
         return null;
     }
     
-    public List<Lease> getOfficeLeases(String office) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getOfficeLeases(String office) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if(this.officeExists(office) && !tempLeases.isEmpty()) {
-            for(Lease temp : tempLeases) {
+            for(LeaseInterface temp : tempLeases) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempLeases.remove(temp);
                 }
@@ -8611,10 +8702,10 @@ public class Database {
         return null;
     }
 
-    public List<Lease> getLandlordLeases(int landlordRef) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getLandlordLeases(int landlordRef) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if (this.landlordExists(landlordRef) && !tempLeases.isEmpty()) {
-            for (Lease temp : tempLeases) {
+            for (LeaseInterface temp : tempLeases) {
                 List<LandlordInterface> tempLandlords = temp.getLandlords();
                 boolean cont = true;
                 int i = 0;
@@ -8634,10 +8725,10 @@ public class Database {
         return null;
     }
 
-    public List<Lease> getLandlordLeases(List<Landlord> tempLandlords) throws RemoteException {
-        List<Lease> tempLeases = new ArrayList<>(this.getLeases());
+    public List<LeaseInterface> getLandlordLeases(List<LandlordInterface> tempLandlords) throws RemoteException {
+        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
         if (!tempLandlords.isEmpty() && !tempLeases.isEmpty()) {
-            for (Lease temp : tempLeases) {
+            for (LeaseInterface temp : tempLeases) {
                 List<LandlordInterface> leaseLandlords = temp.getLandlords();
                 boolean cont = true;
                 int i = 0;
@@ -8645,7 +8736,7 @@ public class Database {
                 while (cont && i < leaseLandlords.size()) {
                     LandlordInterface tempLeaseLandlord = leaseLandlords.get(i);
                     while (cont && ind < tempLandlords.size()) {
-                        Landlord tempLandlord = tempLandlords.get(ind);
+                        LandlordInterface tempLandlord = tempLandlords.get(ind);
                         if (tempLandlord.getLandlordRef() == tempLeaseLandlord.getLandlordRef()) {
                             cont = false;
                         }
@@ -8662,10 +8753,10 @@ public class Database {
         return null;
     }
     
-    public List<Contract> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
         if (!tempContracts.isEmpty()) {
-            for(Contract temp : tempContracts) {
+            for(ContractInterface temp : tempContracts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
                     tempContracts.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8694,10 +8785,10 @@ public class Database {
         return tempContracts;
     }
     
-    public List<Contract> getNameContracts(String name) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
+    public List<ContractInterface> getNameContracts(String name) throws RemoteException {
+        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
         if(!tempContracts.isEmpty()) {
-            for(Contract temp : tempContracts) {
+            for(ContractInterface temp : tempContracts) {
                 if(!name.equals(temp.getAgreementName())) {
                     tempContracts.remove(temp);
                 }
@@ -8706,10 +8797,10 @@ public class Database {
         return tempContracts;
     }
     
-    public List<Contract> getOfficeContracts(String office) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
+    public List<ContractInterface> getOfficeContracts(String office) throws RemoteException {
+        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
         if(this.officeExists(office) && !tempContracts.isEmpty()) {
-            for(Contract temp : tempContracts) {
+            for(ContractInterface temp : tempContracts) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempContracts.remove(temp);
                 }
@@ -8718,10 +8809,10 @@ public class Database {
         return tempContracts;
     }
     
-    public List<Contract> getEmployeeContracts(int ref) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
+    public List<ContractInterface> getEmployeeContracts(int ref) throws RemoteException {
+        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
         if (this.employeeExists(ref) && !tempContracts.isEmpty()) {
-            for (Contract temp : tempContracts) {
+            for (ContractInterface temp : tempContracts) {
                 if (temp.getEmployeeRef() != ref) {
                     tempContracts.remove(temp);
                 }
@@ -8731,10 +8822,10 @@ public class Database {
         return null;
     }
     
-    public List<Contract> getJobRoleContracts(String code) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
+    public List<ContractInterface> getJobRoleContracts(String code) throws RemoteException {
+        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
         if (this.jobRoleExists(code) && !tempContracts.isEmpty()) {
-            for (Contract temp : tempContracts) {
+            for (ContractInterface temp : tempContracts) {
                 if (!code.equals(temp.getJobRole().getJobRoleCode())) {
                     tempContracts.remove(temp);
                 }
@@ -8744,31 +8835,10 @@ public class Database {
         return null;
     }
     
-    public List<Contract> getJobRoleContracts(List<JobRole> tempJobRoles) throws RemoteException {
-        List<Contract> tempContracts = new ArrayList<>(this.getContracts());
-        if(!tempJobRoles.isEmpty()) {
-            for(Contract temp : tempContracts) {
-                boolean cont = true;
-                int i = 0;
-                while(cont && i < tempJobRoles.size()) {
-                    JobRole tempJobRole = tempJobRoles.get(i);
-                    if(tempJobRole.getJobRoleCode().equals(temp.getJobRoleCode())) {
-                        cont = false;
-                    }
-                    i++;
-                }
-                if(cont) {
-                    tempContracts.remove(temp);
-                }
-            }
-        }
-        return tempContracts;
-    }
-    
-    public List<RentAccount> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<RentAccount> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<RentAccountInterface> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
         if (!tempRentAccounts.isEmpty()) {
-            for(RentAccount temp : tempRentAccounts) {
+            for(RentAccountInterface temp : tempRentAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
                     tempRentAccounts.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8795,10 +8865,10 @@ public class Database {
         return tempRentAccounts;
     }
     
-    public List<RentAccount> getNameRentAcc(String name) throws RemoteException {
-        List<RentAccount> tempRentAcc = new ArrayList<>(this.getRentAccounts());
+    g-THIS IS WHERE YOU NEED TO START OFF TOMORROWpublic List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
+        List<RentAccountInterface> tempRentAcc = new ArrayList<>(this.getRentAccounts());
         if(!tempRentAcc.isEmpty()) {
-            for(RentAccount temp : tempRentAcc) {
+            for(RentAccountInterface temp : tempRentAcc) {
                 if(!name.equals(temp.getAccName())) {
                     tempRentAcc.remove(temp);
                 }
@@ -8807,10 +8877,10 @@ public class Database {
         return tempRentAcc;
     }
     
-    public List<RentAccount> getOfficeRentAcc(String office) throws RemoteException {
-        List<RentAccount> tempRentAcc = new ArrayList<>(this.getRentAccounts());
+    public List<RentAccountInterface> getOfficeRentAcc(String office) throws RemoteException {
+        List<RentAccountInterface> tempRentAcc = new ArrayList<>(this.getRentAccounts());
         if(this.officeExists(office) && !tempRentAcc.isEmpty()) {
-            for(RentAccount temp : tempRentAcc) {
+            for(RentAccountInterface temp : tempRentAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempRentAcc.remove(temp);
                 }
@@ -8819,14 +8889,14 @@ public class Database {
         return tempRentAcc;
     }
     
-    public List<RentAccount> getTenanciesRentAccounts(List<Tenancy> tempTenancies) throws RemoteException {
-        List<RentAccount> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
+    public List<RentAccountInterface> getTenanciesRentAccounts(List<TenancyInterface> tempTenancies) throws RemoteException {
+        List<RentAccountInterface> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
         if(!tempTenancies.isEmpty()) {
-            for(RentAccount temp : tempRentAccounts) {
+            for(RentAccountInterface temp : tempRentAccounts) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempTenancies.size()) {
-                    Tenancy tempTenancy = tempTenancies.get(i);
+                    TenancyInterface tempTenancy = tempTenancies.get(i);
                     if(tempTenancy.getAgreementRef() == temp.getTenancyRef()) {
                         cont = false;
                     }
@@ -8840,9 +8910,9 @@ public class Database {
         return tempRentAccounts;
     }
     
-    public RentAccount getTenancyRentAcc(int ref) throws RemoteException {
-        if (this.tenancyExists(ref)) {
-            Tenancy temp = this.getTenancy(ref);
+    public RentAccountInterface getTenancyRentAcc(int tenancyRef) throws RemoteException {
+        if (this.tenancyExists(tenancyRef)) {
+            TenancyInterface temp = this.getTenancy(tenancyRef);
             if(this.rentAccountExists(temp.getAccountRef())) {
                 return this.getRentAccount(temp.getAccountRef());
             }
@@ -8850,10 +8920,10 @@ public class Database {
         return null;
     }
     
-    public List<LeaseAccount> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
         if (!tempLeaseAccounts.isEmpty()) {
-            for(LeaseAccount temp : tempLeaseAccounts) {
+            for(LeaseAccountInterface temp : tempLeaseAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
                     tempLeaseAccounts.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8880,10 +8950,10 @@ public class Database {
         return tempLeaseAccounts;
     }
     
-    public List<LeaseAccount> getNameLeaseAcc(String name) throws RemoteException {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
+    public List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException {
+        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
         if(!tempLeaseAcc.isEmpty()) {
-            for(LeaseAccount temp : tempLeaseAcc) {
+            for(LeaseAccountInterface temp : tempLeaseAcc) {
                 if(!name.equals(temp.getAccName())) {
                     tempLeaseAcc.remove(temp);
                 }
@@ -8892,10 +8962,10 @@ public class Database {
         return tempLeaseAcc;
     }
     
-    public List<LeaseAccount> getOfficeLeaseAcc(String office) throws RemoteException {
-        List<LeaseAccount> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
+    public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
+        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
         if(this.officeExists(office) && !tempLeaseAcc.isEmpty()) {
-            for(LeaseAccount temp : tempLeaseAcc) {
+            for(LeaseAccountInterface temp : tempLeaseAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempLeaseAcc.remove(temp);
                 }
@@ -8904,14 +8974,14 @@ public class Database {
         return tempLeaseAcc;
     }
     
-    public List<LeaseAccount> getLeasesLeaseAccounts(List<Lease> tempTenancies) throws RemoteException {
-        List<LeaseAccount> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(List<LeaseInterface> tempTenancies) throws RemoteException {
+        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
         if(!tempTenancies.isEmpty()) {
-            for(LeaseAccount temp : tempLeaseAccounts) {
+            for(LeaseAccountInterface temp : tempLeaseAccounts) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempTenancies.size()) {
-                    Lease tempLease = tempTenancies.get(i);
+                    LeaseInterface tempLease = tempTenancies.get(i);
                     if(tempLease.getAgreementRef() == temp.getLeaseRef()) {
                         cont = false;
                     }
@@ -8925,9 +8995,9 @@ public class Database {
         return tempLeaseAccounts;
     }
     
-    public LeaseAccount getLeaseLeaseAcc(int ref) throws RemoteException {
-        if (this.leaseExists(ref)) {
-            Lease temp = this.getLease(ref);
+    public LeaseAccountInterface getLeaseLeaseAcc(int leaseRef) throws RemoteException {
+        if (this.leaseExists(leaseRef)) {
+            LeaseInterface temp = this.getLease(leaseRef);
             if(this.rentAccountExists(temp.getAccountRef())) {
                 return this.getLeaseAccount(temp.getAccountRef());
             }
@@ -8935,10 +9005,10 @@ public class Database {
         return null;
     }
     
-    public List<EmployeeAccount> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
         if (!tempEmployeeAccounts.isEmpty()) {
-            for(EmployeeAccount temp : tempEmployeeAccounts) {
+            for(EmployeeAccountInterface temp : tempEmployeeAccounts) {
                 if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
                     tempEmployeeAccounts.remove(temp);
                 } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
@@ -8965,10 +9035,10 @@ public class Database {
         return tempEmployeeAccounts;
     }
     
-    public List<EmployeeAccount> getNameEmployeeAcc(String name) throws RemoteException {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
+    public List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
         if(!tempEmployeeAcc.isEmpty()) {
-            for(EmployeeAccount temp : tempEmployeeAcc) {
+            for(EmployeeAccountInterface temp : tempEmployeeAcc) {
                 if(!name.equals(temp.getAccName())) {
                     tempEmployeeAcc.remove(temp);
                 }
@@ -8977,10 +9047,10 @@ public class Database {
         return tempEmployeeAcc;
     }
     
-    public List<EmployeeAccount> getOfficeEmployeeAcc(String office) throws RemoteException {
-        List<EmployeeAccount> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
+    public List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
         if(this.officeExists(office) && !tempEmployeeAcc.isEmpty()) {
-            for(EmployeeAccount temp : tempEmployeeAcc) {
+            for(EmployeeAccountInterface temp : tempEmployeeAcc) {
                 if(!office.equals(temp.getOfficeCode())) {
                     tempEmployeeAcc.remove(temp);
                 }
@@ -8989,14 +9059,14 @@ public class Database {
         return tempEmployeeAcc;
     }
     
-    public List<EmployeeAccount> getContractsEmployeeAccounts(List<Contract> tempTenancies) throws RemoteException {
-        List<EmployeeAccount> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(List<ContractInterface> tempTenancies) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
         if(!tempTenancies.isEmpty()) {
-            for(EmployeeAccount temp : tempEmployeeAccounts) {
+            for(EmployeeAccountInterface temp : tempEmployeeAccounts) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempTenancies.size()) {
-                    Contract tempContract = tempTenancies.get(i);
+                    ContractInterface tempContract = tempTenancies.get(i);
                     if(tempContract.getAgreementRef() == temp.getContractRef()) {
                         cont = false;
                     }
@@ -9010,9 +9080,9 @@ public class Database {
         return tempEmployeeAccounts;
     }
     
-    public EmployeeAccount getContractEmployeeAcc(int ref) throws RemoteException {
-        if (this.contractExists(ref)) {
-            Contract temp = this.getContract(ref);
+    public EmployeeAccountInterface getContractEmployeeAcc(int contractRef) throws RemoteException {
+        if (this.contractExists(contractRef)) {
+            ContractInterface temp = this.getContract(contractRef);
             if(this.employeeAccountExists(temp.getAccountRef())) {
                 return this.getEmployeeAccount(temp.getAccountRef());
             }
@@ -9020,10 +9090,10 @@ public class Database {
         return null;
     }
     
-    public List<Office> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<Office> tempOffices = new ArrayList<>(this.getOffices());
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<OfficeInterface> tempOffices = new ArrayList<>(this.getOffices());
         if(!tempOffices.isEmpty()) {
-            for(Office temp : tempOffices) {
+            for(OfficeInterface temp : tempOffices) {
                 if(addrRef != null && addrRef == temp.getAddress().getAddressRef()) {
                     tempOffices.remove(temp);
                 } else if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {

@@ -23,7 +23,9 @@ public interface ApplicationInterface extends Remote {
     AddressUsageInterface getCurrentApplicationAddress() throws RemoteException;
     String getCurrentApplicationAddressString() throws RemoteException;
     List<AddressUsageInterface> getApplicationAddressess() throws RemoteException;
+    boolean isPersonHouseholdMember(int personRef) throws RemoteException;
     boolean isAppInterestedFlag() throws RemoteException;
+    boolean hasTenancyRef() throws RemoteException;
     List<InvolvedPartyInterface> getHousehold() throws RemoteException;
     List<PropertyInterface> getPropertiesInterestedIn() throws RemoteException;
     Integer getTenancyRef() throws RemoteException;

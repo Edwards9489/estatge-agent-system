@@ -22,8 +22,15 @@ public interface JobRoleInterface extends Remote {
     boolean isFullTime() throws RemoteException;
     double getSalary() throws RemoteException;
     boolean isCurrent() throws RemoteException;
+    boolean hasBenefit(int benefitRef) throws RemoteException;
     List<JobRoleBenefitInterface> getBenefits() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;
+    boolean getRead() throws RemoteException;
+    boolean getWrite() throws RemoteException;
+    boolean getUpdate() throws RemoteException;
+    boolean getEmployeeRead() throws RemoteException;
+    boolean getEmployeeWrite() throws RemoteException;
+    boolean getEmployeeUpdate() throws RemoteException;
     String getLastModifiedBy() throws RemoteException;
     Date getLastModifiedDate() throws RemoteException;
     ModifiedByInterface getLastModification() throws RemoteException;

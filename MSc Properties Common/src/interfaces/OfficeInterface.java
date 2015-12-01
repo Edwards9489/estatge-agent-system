@@ -20,9 +20,11 @@ public interface OfficeInterface extends Remote {
     Date getStartDate() throws RemoteException;
     Date getEndDate() throws RemoteException;
     boolean hasAgreement(int ref) throws RemoteException;
+    boolean hasAgreements() throws RemoteException;
     AgreementInterface getAgreement(int ref) throws RemoteException;
     List<AgreementInterface> getAgreements() throws RemoteException;
     boolean hasAccount(int ref) throws RemoteException;
+    boolean hasAccounts() throws RemoteException;
     AccountInterface getAccount(int ref) throws RemoteException;
     List<AccountInterface> getAccounts() throws RemoteException;
     ContactInterface getContact(int ref) throws RemoteException;

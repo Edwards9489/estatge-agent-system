@@ -29,6 +29,7 @@ public interface EmployeeInterface extends Remote {
     List<Note> getNotes() throws RemoteException;
     String getCreatedBy() throws RemoteException;
     Date getCreatedDate() throws RemoteException;
+    User getUser() throws RemoteException;
     ContractInterface getContract() throws RemoteException;
     List<ContractInterface> getContracts() throws RemoteException;
 }

@@ -264,6 +264,12 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
         }
     }
     
+    public void deleteJobBenefit(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
+        if(this.hasBenefit(ref)) {
+            this.benefits.remove(ref);
+        }
+    }
+    
     
     
     ///   ACCESSOR METHODS   ///

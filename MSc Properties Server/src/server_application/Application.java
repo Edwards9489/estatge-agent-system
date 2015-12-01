@@ -331,6 +331,7 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
      * @return true if household contains a current InvolvedParty instance with a person ref ==  personRef
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean isPersonHouseholdMember(int personRef) throws RemoteException {
         if(!this.household.isEmpty()) {
             for(InvolvedPartyInterface invParty : this.household) {
