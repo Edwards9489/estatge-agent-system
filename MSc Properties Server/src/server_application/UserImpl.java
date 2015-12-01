@@ -17,6 +17,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
     ///   VARIABLES   ///
         
     private final int employeeRef;
+    private final int personRef;
     private final String username;
     private String password;
     private String officeCode;
@@ -33,13 +34,15 @@ public class UserImpl extends UnicastRemoteObject implements User {
     /**
      * Constructor for objects of class UserImpl
      * @param employeeRef
+     * @param personRef
      * @param username
      * @param password
      * @param officeCode
      * @throws RemoteException 
      */
-    public UserImpl(int employeeRef, String username, String password, String officeCode) throws RemoteException {
+    public UserImpl(int employeeRef, int personRef, String username, String password, String officeCode) throws RemoteException {
         this.employeeRef = employeeRef;
+        this.personRef = personRef;
         this.username = username;
         this.password = password;
         this.officeCode = officeCode;
@@ -107,6 +110,16 @@ public class UserImpl extends UnicastRemoteObject implements User {
     @Override
     public int getEmployeeRef() throws RemoteException {
         return this.employeeRef;
+    }
+    
+    /**
+     * 
+     * @return employeeRef
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public int getPersonRef() throws RemoteException {
+        return this.personRef;
     }
     
     /**

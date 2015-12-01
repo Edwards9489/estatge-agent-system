@@ -55,7 +55,7 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
         this.createdDate = createdDate;
-        this.user = new UserImpl(employeeRef, username, password, null);
+        this.user = new UserImpl(employeeRef, person.getPersonRef(), username, password, null);
     }
     
     
@@ -90,10 +90,16 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         this.modifiedBy(modifiedBy);
     }
     
+    public void updatePermissions(boolean read, boolean write, boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, ModifiedByInterface modifiedBy) {
+        user.setUserPermissions(read, write, update, employeeRead, employeeWrite, employeeUpdate);
+        this.modifiedBy(modifiedBy);
+    }
+    
     /**
      * 
      * @param contract
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
     public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!contracts.isEmpty()) {

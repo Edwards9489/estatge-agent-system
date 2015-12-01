@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 public interface User extends Remote {
     boolean isUser(String username, String password) throws RemoteException;
     int getEmployeeRef() throws RemoteException;
+    int getPersonRef() throws RemoteException;
     String getUsername() throws RemoteException;
     String getPassword() throws RemoteException;
     String getOfficeCode() throws RemoteException;

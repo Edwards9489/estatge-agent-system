@@ -161,7 +161,7 @@ public interface Server extends Remote {
     int deleteJobBenefit(String benefit) throws RemoteException, SQLException;
     int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode, String createdBy) throws RemoteException, SQLException;
     int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws SQLException, RemoteException;
-    int deleteTenancy(int tRef) throws RemoteException, SQLException;
+    int deleteTenancy(int tRef, String deletedBy) throws RemoteException, SQLException;
     int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteTenancyNote(int tRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
@@ -172,8 +172,9 @@ public interface Server extends Remote {
     int updateTenancyType(String code, String description, boolean current, String comment, String modifiedBy) throws  RemoteException, SQLException;
     int deleteTenancyType(String code) throws RemoteException, SQLException;
     int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode, String createdBy) throws RemoteException, SQLException;
+    int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, List<LandlordInterface> landlords, String officeCode, String createdBy) throws RemoteException, SQLException;
     int updateLease(int lRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException;
-    int deleteLease(int lRef) throws RemoteException, SQLException;
+    int deleteLease(int lRef, String deletedBy) throws RemoteException, SQLException;
     int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteLeaseNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
@@ -184,7 +185,7 @@ public interface Server extends Remote {
     int endLeaseLandlord(int lRef, int landRef, String modifiedBy) throws RemoteException, SQLException;
     int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode, String createdBy) throws RemoteException, SQLException;
     int updateContract(int cRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException;
-    int deleteContract(int cRef) throws RemoteException, SQLException;
+    int deleteContract(int cRef, String deletedBy) throws RemoteException, SQLException;
     int createContractNote(int cRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteContractNote(int cRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
@@ -210,11 +211,11 @@ public interface Server extends Remote {
     int deleteEmployeeAccDocument(int eRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadEmployeeAccDocument(int eRef, int dRef, String downloadedBy) throws RemoteException;
     int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException, SQLException;
-    int deleteRentAccTransaction(int tRef, int rAccRef) throws RemoteException, SQLException;
+    int deleteRentAccTransaction(int tRef, int rAccRef, String deletedBy) throws RemoteException, SQLException;
     int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException, SQLException;
-    int deleteLeaseAccTransaction(int tRef, int lAccRef) throws RemoteException, SQLException;
+    int deleteLeaseAccTransaction(int tRef, int lAccRef, String deletedBy) throws RemoteException, SQLException;
     int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException, SQLException;
-    int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws RemoteException, SQLException;
+    int deleteEmployeeAccTransaction(int tRef, int eAccRef, String deletedBy) throws RemoteException, SQLException;
     List<Element> getTitles() throws RemoteException;
     List<Element> getGenders() throws RemoteException;
     List<Element> getMaritalStatuses() throws RemoteException;
@@ -252,29 +253,28 @@ public interface Server extends Remote {
     boolean personEmployeeExists(int pRef) throws RemoteException;
     boolean personLandlordExists(int pRef) throws RemoteException;
     
-    // REPORTING METHODS
     
     
     // SEARCH METHODS
     
     List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException;
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException;
     List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, 
             String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     List<ApplicationInterface> getPeopleApplications(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException;
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<ApplicationInterface> getAddressApplications(String buildingNumber, String buildingName, 
             String subStreetNumber, String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException;
     List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException;
     ApplicationInterface getInvPartyApplcation(int invPartyRef) throws RemoteException;
     List<EmployeeInterface> getPeopleEmployees(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException;
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException;
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<PropertyInterface> getProperties(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException;
     List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, 
             Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
@@ -291,7 +291,7 @@ public interface Server extends Remote {
     List<LeaseInterface> getOfficeLeases(String office) throws RemoteException;
     List<LeaseInterface> getLandlordLeases(int landlordRef) throws RemoteException;
     List<LeaseInterface> getLandlordLeases(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException;
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, 
             String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     List<ContractInterface> getNameContracts(String name) throws RemoteException;
@@ -299,7 +299,40 @@ public interface Server extends Remote {
     List<ContractInterface> getEmployeeContracts(int ref) throws RemoteException;
     List<ContractInterface> getJobRoleContracts(String code) throws RemoteException;
     List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException;
+    List<RentAccountInterface> getOfficeRentAcc(String office) throws RemoteException;
+    List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    RentAccountInterface getTenancyRentAcc(int tenancyRef) throws RemoteException;
+    List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException;
+    List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException;
+    List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    LeaseAccountInterface getLeaseLeaseAcc(int leaseRef) throws RemoteException;
+    List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException;
+    List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException;
+    List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, 
+            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    EmployeeAccountInterface getContractEmployeeAcc(int contractRef) throws RemoteException;
+    List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     
+    
+    
+    // REPORTING METHODS
+    
+    List<TenancyInterface> getTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException;
+    List<TenancyInterface> getTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException;
+    List<LeaseInterface> getLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException;
+    List<LeaseInterface> getLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException;
+    List<ContractInterface> getContractsByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException;
+    List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException;
+    double getRevenueForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException;
+    double getExpenditureForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException;
+    double getProfitForOffice(String officCode, Date startDate, Date endDate) throws RemoteException;
+    double getRevenueOverall(Date startDate, Date endDate) throws RemoteException;
+    double getExpenditureOverall(Date startDate, Date endDate) throws RemoteException;
+    double getProfitOverall(Date startDate, Date endDate) throws RemoteException;
     
     
     

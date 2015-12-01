@@ -10,9 +10,12 @@ import interfaces.ApplicationInterface;
 import interfaces.Client;
 import interfaces.ContractInterface;
 import interfaces.Element;
+import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
 import interfaces.LandlordInterface;
+import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
+import interfaces.OfficeInterface;
 import interfaces.PersonInterface;
 import interfaces.PropertyInterface;
 import interfaces.RMISecurityPolicyLoader;
@@ -1164,7 +1167,7 @@ public class ClientImpl implements Client {
 
     public int deleteTenancy(int tRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteTenancy(tRef);
+            return server.deleteTenancy(tRef, user.getUsername());
         }
         return 0;
     }
@@ -1261,7 +1264,7 @@ public class ClientImpl implements Client {
 
     public int deleteLease(int lRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteLease(lRef);
+            return server.deleteLease(lRef, user.getUsername());
         }
         return 0;
     }
@@ -1351,7 +1354,7 @@ public class ClientImpl implements Client {
 
     public int deleteContract(int cRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteContract(cRef);
+            return server.deleteContract(cRef, user.getUsername());
         }
         return 0;
     }
@@ -1585,7 +1588,7 @@ public class ClientImpl implements Client {
 
     public int deleteRentAccTransaction(int tRef, int rAccRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteRentAccTransaction(tRef, rAccRef);
+            return server.deleteRentAccTransaction(tRef, rAccRef, user.getUsername());
         }
         return 0;
     }
@@ -1599,7 +1602,7 @@ public class ClientImpl implements Client {
 
     public int deleteLeaseAccTransaction(int tRef, int lAccRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteLeaseAccTransaction(tRef, lAccRef);
+            return server.deleteLeaseAccTransaction(tRef, lAccRef, user.getUsername());
         }
         return 0;
     }
@@ -1613,7 +1616,7 @@ public class ClientImpl implements Client {
 
     public int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.deleteRentAccTransaction(tRef, eAccRef);
+            return server.deleteRentAccTransaction(tRef, eAccRef, user.getUsername());
         }
         return 0;
     }
@@ -2081,9 +2084,9 @@ public class ClientImpl implements Client {
     /// SEARCH METHODS
 
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
-            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (server.isAlive()) {
-            return server.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            return server.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2105,10 +2108,10 @@ public class ClientImpl implements Client {
     }
     
     public List<ApplicationInterface> getPeopleApplications(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (server.isAlive()) {
             return this.server.getPeopleApplications(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, 
-                sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+                sexualityCode, religionCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2138,10 +2141,10 @@ public class ClientImpl implements Client {
     }
     
     public List<EmployeeInterface> getPeopleEmployees(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (server.isAlive()) {
-            return this.server.getPeopleEmployees(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, 
-                sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            return this.server.getPeopleEmployees(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, 
+                languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2149,8 +2152,8 @@ public class ClientImpl implements Client {
     public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
             String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
         if (server.isAlive()) {
-            return this.server.getPeopleLandlords(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, 
-                sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            return this.server.getPeopleLandlords(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode,
+                 languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2252,9 +2255,9 @@ public class ClientImpl implements Client {
     }
     
     public List<LeaseInterface> getLandlordLeases(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (server.isAlive()) {
-            return this.server.getLandlordLeases(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            return this.server.getLandlordLeases(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2295,9 +2298,244 @@ public class ClientImpl implements Client {
         return null;
     }
     
+    public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getNameRentAcc(name);
+        }
+        return null;
+    }
+    
+    public List<RentAccountInterface> getOfficeRentAcc(String office) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getOfficeRentAcc(office);
+        }
+        return null;
+    }
+    
+    public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getTenanciesRentAccounts(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public RentAccountInterface getTenancyRentAcc(int tenancyRef) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getTenancyRentAcc(tenancyRef);
+        }
+        return null;
+    }
+    
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getNameLeaseAcc(name);
+        }
+        return null;
+    }
+    
+    public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getOfficeLeaseAcc(office);
+        }
+        return null;
+    }
+    
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getLeasesLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public LeaseAccountInterface getLeaseLeaseAcc(int leaseRef) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getLeaseLeaseAcc(leaseRef);
+        }
+        return null;
+    }
+    
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getNameEmployeeAcc(name);
+        }
+        return null;
+    }
+    
+    public List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getOfficeEmployeeAcc(office);
+        }
+        return null;
+    }
+    
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, 
+            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getContractsEmployeeAccounts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public EmployeeAccountInterface getContractEmployeeAcc(int contractRef) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getContractEmployeeAcc(contractRef);
+        }
+        return null;
+    }
+    
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getOffices(addrRef, startDate, current, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    
+    /// REPORTING METHODS
     
     
     
+    public List<TenancyInterface> getTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getTenanciesByEmployee(eRef, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getTenanciesByEmployee(eRef, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    public List<TenancyInterface> getTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getTenanciesByOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getTenanciesByOffice(officeCode, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    
+    public List<LeaseInterface> getLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getLeasesByEmployee(eRef, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getLeasesByEmployee(eRef, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    public List<LeaseInterface> getLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getLeasesByOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getLeasesByOffice(officeCode, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    public List<ContractInterface> getContractsByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getContractsByEmployee(eRef, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfContractsByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getContractsByEmployee(eRef, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    public List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getContractsByOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Integer getNumberOfContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.getContractsByOffice(officeCode, startDate, endDate).size();
+        }
+        return null;
+    }
+    
+    public Double getRevenueForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getRevenueForOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Double getExpenditureForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getExpenditureForOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Double getProfitForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getProfitForOffice(officeCode, startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Double getRevenueOverall(Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getRevenueOverall(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Double getExpenditureOverall(Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getExpenditureOverall(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public Double getProfitOverall(Date startDate, Date endDate) throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getProfitOverall(startDate, endDate);
+        }
+        return null;
+    }
     
     
     

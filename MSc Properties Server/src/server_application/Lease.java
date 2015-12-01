@@ -44,7 +44,7 @@ public class Lease extends Agreement implements LeaseInterface {
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
-    public Lease(int leaseRef, Date startDate, int length, int accountRef, Property property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+    public Lease(int leaseRef, Date startDate, int length, int accountRef, PropertyInterface property, boolean management, double expenditure, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         super(leaseRef, property.getAddress().printAddress(), startDate, length, accountRef, createdBy, createdDate, officeCode);
         this.landlords = new ArrayList();
         this.property = property;

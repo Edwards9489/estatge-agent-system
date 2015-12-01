@@ -419,6 +419,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
 
     /**
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
     public List<ContactInterface> getContacts() throws RemoteException {

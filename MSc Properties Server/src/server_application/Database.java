@@ -131,9 +131,8 @@ public class Database {
      * @param username
      * @param password
      * @param port 
-     * @throws java.rmi.RemoteException 
      */
-    public Database(String environment, String addr, String username, String password, Integer port) throws RemoteException {
+    public Database(String environment, String addr, String username, String password, Integer port) {
         this.offices = new HashMap<>();
 
         this.people = new HashMap<>();
@@ -204,7 +203,7 @@ public class Database {
                 
         try {
             this.load();
-        } catch (SQLException ex) {
+        } catch (SQLException | RemoteException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -314,13 +313,13 @@ public class Database {
                 
                 this.loadTenancies();
                 this.loadRentAccounts();
-                
                 this.loadLeases();
                 this.loadLeaseAccounts();
                 
                 this.loadContracts();
                 this.loadEmployeeAccounts();
             } catch (SQLException ex) {
+                ex.printStackTrace();
                 System.out.println("Cant load System data");
             }
         } else if(this.con == null) {
@@ -381,6 +380,7 @@ public class Database {
         String deleteSql = "delete from " + from + " where code=" + code;
         try (Statement deleteStat = this.con.createStatement()) {
             deleteStat.executeUpdate(deleteSql);
+            deleteStat.close();
         }
     }
     
@@ -411,6 +411,7 @@ public class Database {
                 
                 elements.add(temp);
             }
+            selectStat.close();
         }
         return elements;
     }
@@ -463,6 +464,7 @@ public class Database {
                     modifiedByMap.put(modificationRef, temp);
                 }
             }
+            selectStat.close();
         }
         return modifiedByMap;
     }
@@ -513,6 +515,7 @@ public class Database {
                     modifiedByMap.put(modificationRef, temp);
                 }
             }
+            selectStat.close();
         }
         return modifiedByMap;
     }
@@ -567,6 +570,7 @@ public class Database {
                     fileMap.put(documentRef, temp);
                 }
             }
+            selectStat.close();
         }
         return fileMap;
     }
@@ -604,6 +608,7 @@ public class Database {
                     fileMap.put(documentRef, temp);
                 }
             }
+            selectStat.close();
         }
         return fileMap;
     }
@@ -649,6 +654,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.documents.remove(documentRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -695,6 +701,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.documents.remove(documentRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -749,6 +756,7 @@ public class Database {
                     noteMap.put(noteRef, temp);
                 }
             }
+            selectStat.close();
         }
         return noteMap;
     }
@@ -780,6 +788,7 @@ public class Database {
                     noteMap.put(noteRef, temp);
                 }
             }
+            selectStat.close();
         }
         return noteMap;
     }
@@ -856,6 +865,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.notes.remove(noteRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -922,6 +932,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.notes.remove(noteRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -1128,6 +1139,7 @@ public class Database {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.deleteNote(this.getContact(contactRef).getNote().getReference());
                     this.contacts.remove(contactRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -1170,6 +1182,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -1263,6 +1276,7 @@ public class Database {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.deleteNote(this.getContact(contactRef).getNote().getReference());
                     this.contacts.remove(contactRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -1305,6 +1319,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -1400,6 +1415,7 @@ public class Database {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.deleteNote(this.getAddressUsage(addrRef).getNote().getReference());
                     this.addressUsages.remove(addrRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -1447,6 +1463,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -1538,6 +1555,7 @@ public class Database {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.deleteNote(this.getAddressUsage(addrRef).getNote().getReference());
                     this.addressUsages.remove(addrRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -1585,6 +1603,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -2432,6 +2451,7 @@ public class Database {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.deleteNote(this.getAddress(addrRef).getNote().getReference());
                     this.addresses.remove(addrRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -2489,6 +2509,7 @@ public class Database {
                 this.notes.put(note.getReference(), note);
                 this.loadAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));
             }
+            selectStat.close();
         }
     }
     
@@ -2592,6 +2613,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.properties.remove(propRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -2669,6 +2691,7 @@ public class Database {
                 temp.setLeaseEndDate(leaseEndDate, null);
                 temp.setPropStatus(propStatus, null);
             }
+            selectStat.close();
         }
     }
     
@@ -3101,6 +3124,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >= 1) {
                     propertyElementValues.remove(propElementRef);
                     this.deleteNote(this.getPropertyElementValue(propElementRef).getNote().getReference());
+                    deleteStat.close();
                 }
             }
         }
@@ -3158,6 +3182,7 @@ public class Database {
                         }
                     }
                 }
+                selectStat.close();
             }
         }
     }
@@ -3362,6 +3387,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.people.remove(personRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -3467,6 +3493,7 @@ public class Database {
                 this.loadPersonContacts(temp.getPersonRef());
                 this.loadPersonAddresses(temp.getPersonRef());
             }
+            selectStat.close();
         }
     }
     
@@ -3681,6 +3708,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.people.remove(invPartyRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -3707,8 +3735,8 @@ public class Database {
         String sql = "select invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
                 + "relationshipCode, createdBy, createdDate from involvedParties order by invPartyRef";
 
-        try (Statement selectInvStat = con.createStatement()) {
-            ResultSet results = selectInvStat.executeQuery(sql);
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
             while (results.next()) {
                 int appRef = results.getInt("appRef");
                 if (this.applicationExists(reference) && appRef == reference) {
@@ -3754,6 +3782,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -4105,6 +4134,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.applications.remove(appRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -4180,6 +4210,7 @@ public class Database {
                 this.loadInvolvedParties(temp.getApplicationRef());
                 this.loadPropertiesInterestedIn(temp.getApplicationRef());
             }
+            selectStat.close();
         }
     }
     
@@ -4393,6 +4424,7 @@ public class Database {
                         application.addInterestedProperty(temp, null);
                     }
                 }
+                selectStat.close();
             }
         }
     }
@@ -4425,6 +4457,7 @@ public class Database {
                     } else if (count > 1) {
                         System.out.println("ERROR IN DATABASE - Updating appliction " + appRef + " : Ending property " + propRef + " for appliction " + appRef);
                     }
+                updateStat.close();
                 } else if (count == 0) {
                     String insertSql = "insert into propertyInterest (appRef, propRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
@@ -4487,6 +4520,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.landlords.remove(landlordRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -4534,6 +4568,7 @@ public class Database {
                     this.loadLandlordNotes(temp.getLandlordRef(), this.loadNoteMap("landlordNotes", temp.getLandlordRef()));
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -4697,6 +4732,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.offices.remove(officeCode);
+                    deleteStat.close();
                 }
             }
         }
@@ -4747,6 +4783,7 @@ public class Database {
                 this.loadOfficeDocs(temp.getOfficeCode(), this.loadDocMap("officeDocuments", temp.getOfficeCode()));
                 this.loadOfficeContacts(temp.getOfficeCode());
             }
+            selectStat.close();
         }
     }
     
@@ -4970,6 +5007,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.jobRoles.remove(jobRoleCode);
+                    deleteStat.close();
                 }
             }
         }
@@ -5030,6 +5068,7 @@ public class Database {
                 this.loadJobRoleRequirements(temp.getJobRoleCode());
                 this.loadJobRoleBenefits(temp.getJobRoleCode());
             }
+            selectStat.close();
         }
     }
     
@@ -5169,6 +5208,7 @@ public class Database {
             String deleteSql = "delete from jobRoleRequirements where requirementCode=" + requirementCode + "and jobRoleCode=" + jobRoleCode;
             try(Statement deleteStat = this.con.createStatement()) {
                 deleteStat.executeUpdate(deleteSql);
+                deleteStat.close();
             }
         }
     }
@@ -5195,6 +5235,7 @@ public class Database {
                         jobRole.createJobRequirement(temp, null);
                     }
                 }
+                selectStat.close();
             }
         }
     }
@@ -5305,6 +5346,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     this.jobRoleBenefits.remove(benefitRef);
                     this.deleteNote(this.getJobRoleBenefit(benefitRef).getNote().getReference());
+                    deleteStat.close();
                 }
             }
         }
@@ -5350,6 +5392,7 @@ public class Database {
                         }
                     }
                 }
+                selectStat.close();
             }
         }
     }
@@ -5616,16 +5659,17 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     this.deleteUser(employeeRef, this.getUser(employeeRef).getUsername());
                     employees.remove(employeeRef);
+                    deleteStat.close();
                 }
             }
         }
     }
     
     /**
-     * 
+     *
      * @param employeeRef
      * @return
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     public boolean canDeleteEmployee(int employeeRef) throws RemoteException {
         if (this.employeeExists(employeeRef) && !this.getEmployee(employeeRef).hasBeenModified()) {
@@ -5638,11 +5682,11 @@ public class Database {
         }
         return false;
     }
-    
+
     /**
-     * 
+     *
      * @throws SQLException
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     private void loadEmployees() throws SQLException, RemoteException {
         this.employees.clear();
@@ -5651,7 +5695,7 @@ public class Database {
         String sql2 = "select username, password from users where employeeRef=?";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-            
+
             while (results.next()) {
                 int employeeRef = results.getInt("employeeRef");
                 int personRef = results.getInt("personRef");
@@ -5666,24 +5710,27 @@ public class Database {
                             ResultSet results1 = selectStat1.executeQuery();
                             results1.next();
                             int count = results1.getInt("count");
-                            if(count == 1) {
+                            if (count == 1) {
                                 try (PreparedStatement selectStat2 = con.prepareStatement(sql2)) {
-                                selectStat2.setInt(1, employeeRef);
-                                ResultSet results2 = selectStat2.executeQuery();
-                                results2.next();
-                                String username = results2.getString("username");
-                                String password =  results2.getString("password");
-                                Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
-                                employees.put(temp.getEmployeeRef(), temp);
-                                users.put(temp.getUser().getUsername(), temp.getUser());
-                                this.loadEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));
-                                this.loadEmployeeNotes(temp.getEmployeeRef(), this.loadNoteMap("employeeNotes", temp.getEmployeeRef()));
+                                    selectStat2.setInt(1, employeeRef);
+                                    ResultSet results2 = selectStat2.executeQuery();
+                                    results2.next();
+                                    String username = results2.getString("username");
+                                    String password = results2.getString("password");
+                                    Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
+                                    employees.put(temp.getEmployeeRef(), temp);
+                                    users.put(temp.getUser().getUsername(), temp.getUser());
+                                    this.loadEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));
+                                    this.loadEmployeeNotes(temp.getEmployeeRef(), this.loadNoteMap("employeeNotes", temp.getEmployeeRef()));
+                                    selectStat2.close();
                                 }
                             }
+                            selectStat1.close();
                         }
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -5864,6 +5911,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     tenancies.remove(tenancyRef);
                     this.deleteRentAccount(this.getTenancy(tenancyRef).getAccountRef());
+                    deleteStat.close();
                 }
             }
         }
@@ -5925,6 +5973,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -6229,6 +6278,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     leases.remove(leaseRef);
                     this.deleteLeaseAccount(this.getLease(leaseRef).getAccountRef());
+                    deleteStat.close();
                 }
             }
         }
@@ -6286,6 +6336,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -6495,6 +6546,7 @@ public class Database {
                     landlord.createLease(lease, null);
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -6526,6 +6578,7 @@ public class Database {
                     } else if (count > 1) {
                         System.out.println("ERROR IN DATABASE - MORE THAN ONE ENTRY FOR LANDLORD " + landlordRef + " - LEASE" + leaseRef);
                     }
+                    updateStat.close();
                 } else if (count == 0) {
                     String insertSql = "insert into leaseLandlord (landlordRef, leaseRef, cur) values (?, ?, ?)";
                     insertStat = con.prepareStatement(insertSql);
@@ -6610,6 +6663,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     contracts.remove(contractRef);
                     this.deleteEmployeeAccount(this.getContract(contractRef).getAccountRef());
+                    deleteStat.close();
                 }
             }
         }
@@ -6669,6 +6723,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -6850,6 +6905,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     rentAccounts.remove(rentAccRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -6916,6 +6972,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -7149,6 +7206,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     leaseAccounts.remove(leaseAccRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -7189,6 +7247,7 @@ public class Database {
                     }
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -7423,6 +7482,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     employeeAccounts.remove(employeeAccRef);
+                    deleteStat.close();
                 }
             }
         }
@@ -7459,7 +7519,7 @@ public class Database {
                         this.employeeAccounts.put(temp.getAccRef(), temp);
                         this.loadEmployeeAccountMods(temp.getAccRef(), this.loadModMap("employeeAccountModifications", temp.getAccRef()));
                         this.loadEmployeeAccountNotes(temp.getAccRef(), this.loadNoteMap("employeeAccountNotes", temp.getAccRef()));
-                        this.loadEmployeeAccountDocs(temp.getAccRef(), this.loadDocMap("employeeAccountNotes", temp.getAccRef()));
+                        this.loadEmployeeAccountDocs(temp.getAccRef(), this.loadDocMap("employeeAccountDocuments", temp.getAccRef()));
                     }
                 }
             }
@@ -7660,6 +7720,7 @@ public class Database {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     transactions.remove(transactionRef);
                     this.deleteNote(this.getTransaction(transactionRef).getNote().getReference());
+                    deleteStat.close();
                 }
             }
         }
@@ -7694,6 +7755,7 @@ public class Database {
                     account.createTransaction(temp, null);
                 }
             }
+            selectStat.close();
         }
     }
     
@@ -7756,6 +7818,7 @@ public class Database {
             try(Statement deleteStat = this.con.createStatement()) {
                 if(deleteStat.executeUpdate(deleteSql) >=1) {
                     users.remove(username);
+                    deleteStat.close();
                 }
             }
         }
@@ -8070,6 +8133,7 @@ public class Database {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
             int checkSum = results.getInt(1);
+            statement.close();
             return checkSum;
         }
     }
@@ -8080,6 +8144,7 @@ public class Database {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
             int checkSum = results.getInt(1);
+            statement.close();
             return checkSum;
         }
     }
@@ -8235,7 +8300,7 @@ public class Database {
     
     
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
-            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         List<PersonInterface> tempPeople = new ArrayList<>(this.getPeople());
         if(!tempPeople.isEmpty()) {
             for(PersonInterface temp : tempPeople) {
@@ -8415,8 +8480,8 @@ public class Database {
     }
     
     public List<EmployeeInterface> getPeopleEmployees(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
-        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
+        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         List<EmployeeInterface> tempEmployees = new ArrayList();
         if(!tempPeople.isEmpty()) {
             for (PersonInterface temp : tempPeople) {
@@ -8430,8 +8495,8 @@ public class Database {
     }
     
     public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
-        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, addrRef, addressStartDate, createdBy, createdDate);
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
+        List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         List<LandlordInterface> tempLandlords = new ArrayList();
         if(!tempPeople.isEmpty()) {
             for (PersonInterface temp : tempPeople) {
@@ -8865,7 +8930,7 @@ public class Database {
         return tempRentAccounts;
     }
     
-    g-THIS IS WHERE YOU NEED TO START OFF TOMORROWpublic List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
+    public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
         List<RentAccountInterface> tempRentAcc = new ArrayList<>(this.getRentAccounts());
         if(!tempRentAcc.isEmpty()) {
             for(RentAccountInterface temp : tempRentAcc) {
@@ -8974,14 +9039,14 @@ public class Database {
         return tempLeaseAcc;
     }
     
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(List<LeaseInterface> tempTenancies) throws RemoteException {
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(List<LeaseInterface> tempLeases) throws RemoteException {
         List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
-        if(!tempTenancies.isEmpty()) {
+        if(!tempLeases.isEmpty()) {
             for(LeaseAccountInterface temp : tempLeaseAccounts) {
                 boolean cont = true;
                 int i = 0;
-                while(cont && i < tempTenancies.size()) {
-                    LeaseInterface tempLease = tempTenancies.get(i);
+                while(cont && i < tempLeases.size()) {
+                    LeaseInterface tempLease = tempLeases.get(i);
                     if(tempLease.getAgreementRef() == temp.getLeaseRef()) {
                         cont = false;
                     }
@@ -9059,14 +9124,14 @@ public class Database {
         return tempEmployeeAcc;
     }
     
-    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(List<ContractInterface> tempTenancies) throws RemoteException {
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(List<ContractInterface> tempContracts) throws RemoteException {
         List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
-        if(!tempTenancies.isEmpty()) {
+        if(!tempContracts.isEmpty()) {
             for(EmployeeAccountInterface temp : tempEmployeeAccounts) {
                 boolean cont = true;
                 int i = 0;
-                while(cont && i < tempTenancies.size()) {
-                    ContractInterface tempContract = tempTenancies.get(i);
+                while(cont && i < tempContracts.size()) {
+                    ContractInterface tempContract = tempContracts.get(i);
                     if(tempContract.getAgreementRef() == temp.getContractRef()) {
                         cont = false;
                     }

@@ -6,7 +6,10 @@
 package client_gui;
 
 import interfaces.AgreementInterface;
+import java.rmi.RemoteException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -43,19 +46,24 @@ public class AgreementTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        AgreementInterface agreement = db.get(rowIndex);
-        
-        switch(columnIndex) {
-            case 0:
-                return agreement.getAgreementRef();
-            case 1:
-                return agreement.getAgreementName();
-            case 2:
-                return agreement.getStartDate();
-            case 3:
-                return agreement.getExpectedEndDate();
-            case 4:
-                return agreement.getOfficeCode();
+        try {
+            AgreementInterface agreement = db.get(rowIndex);
+            
+            switch(columnIndex) {
+                case 0:
+                    return agreement.getAgreementRef();
+                case 1:
+                    return agreement.getAgreementName();
+                case 2:
+                    return agreement.getStartDate();
+                case 3:
+                    return agreement.getExpectedEndDate();
+                case 4:
+                    return agreement.getOfficeCode();
+            }
+            return null;
+        } catch (RemoteException ex) {
+            Logger.getLogger(AgreementTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
