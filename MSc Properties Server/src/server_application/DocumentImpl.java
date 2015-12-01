@@ -44,7 +44,7 @@ public class DocumentImpl extends File implements Document {
      */
     @Override
     public String getDocumentName() throws RemoteException {
-        return getName();
+        return super.getName();
     }
     
     @Override
