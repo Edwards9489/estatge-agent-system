@@ -45,7 +45,7 @@ public class TestDatabase {
     public static void main(String[] args) throws RemoteException {
         System.out.println("Running database test\n");
         
-        Database db = new Database("LIVE", "127.0.0.1", "root", "Toxic9489!999", 3306);
+        Database db = new Database("LIVE2", "127.0.0.1", "root", "Toxic9489!999", 3306);
         
         Note note = new NoteImpl(1, "TEST", "DEDWARDS", new Date());
         Note note2 = new NoteImpl(2, "TEST", "DEDWARDS", new Date());

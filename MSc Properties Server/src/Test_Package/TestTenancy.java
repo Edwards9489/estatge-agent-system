@@ -14,9 +14,13 @@ import interfaces.LandlordInterface;
 import interfaces.TenancyInterface;
 import interfaces.ApplicationInterface;
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server_application.Address;
 import server_application.AddressUsage;
 import server_application.Application;
@@ -24,6 +28,7 @@ import server_application.ElementImpl;
 import server_application.InvolvedParty;
 import server_application.Landlord;
 import server_application.ModifiedBy;
+import server_application.NoteImpl;
 import server_application.Person;
 import server_application.Property;
 import server_application.Tenancy;
@@ -34,44 +39,41 @@ import server_application.Tenancy;
  */
 public class TestTenancy {
     public static void main(String[] args) {
-        System.out.println("********************Running Tenancy Test********************");
-        
-        // Person - int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,
-        //              Element maritalStatus, Element ethnicOrigin, Element language, Element nationality, Element sexuality, Element religion, String getCreatedBy
-        
-        // Tenancy - int tenRef, Date startDate, int length, String getCreatedBy, PropertyInterface property, Application application, Element tenType
-        
-        // Property - int propRef, Address address, ArrayList<Landlord> landlords, boolean management, Date acquiredDate, Element propType, Element propSubType
-        
-        // Lanlord - int landlordRef, Person person, String getCreatedBy
-        
-        // Application - int appRef, String corrName, Date startDate, ArrayList<InvolvedPartyInterface> household, AddressUsageInterface address, String getCreatedBy
-        
-        AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", "DEDWARDS", new Date());
-        Element element = new ElementImpl("TEST", "test", "DEDWARDS", new Date());
-        PersonInterface person = new Person(1, element, "Dwayne", "Leroy", "Edwards", new Date(), "JL 81 61 90 C", element, 
-                                            element, element, element, element, element, element, null, "DEDWARDS", new Date());
-        LandlordInterface landlord = new Landlord(1, person, "DEDWARDS", new Date());
-        InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-        ArrayList<LandlordInterface> landlords = new ArrayList();
-        landlords.add(landlord);
-        
-        AddressUsageInterface addressUsage = new AddressUsage(1, address, new Date(), "DEDWARDS", new Date());
-        
-        ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
-        Property prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
-        ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", new Date(), "DEDWARDS");
-        prop.setLandlords(landlords, modTest);
-        TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, prop, application, element, "NEWOFFICE", "DEDWARDS", new Date());
-        
-        System.out.println(test1.toString());
-        System.out.println(test1.getAgreementRef());
-        
-        String temp = "";
-        for(InvolvedPartyInterface invParty1 : (List<InvolvedPartyInterface>) test1.getApplication().getHousehold()) {
-            temp = invParty1.getPerson().toString();
+        try {
+            System.out.println("********************Running Tenancy Test********************");
+            
+            Note note = new NoteImpl(1, "TEST", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST", "DEDWARDS", new Date());
+            Note note3 = new NoteImpl(3, "TEST", "DEDWARDS", new Date());
+            
+            AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
+            Element element = new ElementImpl("TEST", "test", note2, "DEDWARDS", new Date());
+            PersonInterface person = new Person(1, element, "Dwayne", "Leroy", "Edwards", new Date(), "JL 81 61 90 C", element,
+                    element, element, element, element, element, element, null, "DEDWARDS", new Date());
+            LandlordInterface landlord = new Landlord(1, person, "DEDWARDS", new Date());
+            InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
+            ArrayList<LandlordInterface> landlords = new ArrayList();
+            landlords.add(landlord);
+            
+            AddressUsageInterface addressUsage = new AddressUsage(1, address, new Date(), note3, "DEDWARDS", new Date());
+            
+            ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
+            Property prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
+            ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", new Date(), "DEDWARDS");
+            prop.setLandlords(landlords, modTest);
+            TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, prop, application, element, "NEWOFFICE", "DEDWARDS", new Date());
+            
+            System.out.println(test1.toString());
+            System.out.println(test1.getAgreementRef());
+            
+            String temp = "";
+            for(InvolvedPartyInterface invParty1 : (List<InvolvedPartyInterface>) test1.getApplication().getHousehold()) {
+                temp = invParty1.getPerson().toString();
+            }
+            
+            System.out.println(temp);
+        } catch (RemoteException ex) {
+            Logger.getLogger(TestTenancy.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        System.out.println(temp);
     }
 }

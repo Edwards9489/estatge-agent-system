@@ -1729,26 +1729,26 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLE NOTES     ////////
     @Override
-    public int createJobRoleNote(String officeCode, String comment, String createdBy) throws RemoteException, SQLException {
-        if (this.database.officeExists(officeCode)) {
+    public int createJobRoleNote(String jobRoleCode, String comment, String createdBy) throws RemoteException, SQLException {
+        if (this.database.jobRoleExists(jobRoleCode)) {
             Note note = this.createNote(comment, createdBy);
-            Office office = (Office) this.database.getOffice(officeCode);
-            office.createNote(note, new ModifiedBy("Created Office Note", new Date(), createdBy));
-            this.database.updateOffice(officeCode);
-            this.database.createOfficeNote(officeCode, note);
+            JobRole jobRole = (JobRole) this.database.getJobRole(jobRoleCode);
+            jobRole.createNote(note, new ModifiedBy("Created JobRole Note", new Date(), createdBy));
+            this.database.updateJobRole(jobRoleCode);
+            this.database.createJobRoleNote(jobRoleCode, note);
             return 1;
         }
         return 0;
     }
 
     @Override
-    public int updateJobRoleNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
-        if (this.database.officeExists(officeCode)) {
-            Office office = (Office) this.database.getOffice(officeCode);
-            if (office.hasNote(nRef)) {
-                NoteImpl note = (NoteImpl) office.getNote(nRef);
-                note.setNote(comment, new ModifiedBy("Updated Office Note", new Date(), modifiedBy));
-                this.database.updateOfficeNote(officeCode, note.getReference());
+    public int updateJobRoleNote(String jobRoleCode, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.jobRoleExists(jobRoleCode)) {
+            JobRole jobRole = (JobRole) this.database.getJobRole(jobRoleCode);
+            if (jobRole.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) jobRole.getNote(nRef);
+                note.setNote(comment, new ModifiedBy("Updated JobRole Note", new Date(), modifiedBy));
+                this.database.updateJobRoleNote(jobRoleCode, note.getReference());
                 return 1;
             }
         }
@@ -1756,15 +1756,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int deleteJobRoleNote(String officeCode, int nRef, String modifiedBy) throws RemoteException, SQLException {
-        if (this.database.officeExists(officeCode)) {
-            Office office = (Office) this.database.getOffice(officeCode);
-            if (office.hasNote(nRef)) {
-                NoteImpl note = (NoteImpl) office.getNote(nRef);
+    public int deleteJobRoleNote(String jobRoleCode, int nRef, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.officeExists(jobRoleCode)) {
+            JobRole jobRole = (JobRole) this.database.getJobRole(jobRoleCode);
+            if (jobRole.hasNote(nRef)) {
+                NoteImpl note = (NoteImpl) jobRole.getNote(nRef);
                 if (!note.hasBeenModified()) {
-                    office.deleteNote(nRef, new ModifiedBy("Deleted Office Note", new Date(), modifiedBy));
-                    this.database.updateOffice(officeCode);
-                    this.database.deleteOfficeNote(officeCode, note.getReference());
+                    jobRole.deleteNote(nRef, new ModifiedBy("Deleted JobRole Note", new Date(), modifiedBy));
+                    this.database.updateJobRole(jobRoleCode);
+                    this.database.deleteJobRoleNote(jobRoleCode, note.getReference());
                     return 1;
                 }
             }
@@ -2105,7 +2105,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (!this.database.tenancyTypeExists(code)) {
             Note note = this.createNote(comment, createdBy);
             Element tenancyType = new ElementImpl(code, description, note, createdBy, new Date());
-            this.database.createContactType(tenancyType);
+            this.database.createTenancyType(tenancyType);
             return 1;
         }
         return 0;
@@ -2401,20 +2401,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ContractInterface contract = this.database.getContract(cRef);
             Employee employee = (Employee) contract.getEmployee();
             Office office = (Office) this.database.getOffice(contract.getOfficeCode());
-            
-            
+
             // ROLL BACK EMPLOYEE DETAILS
-            
             employee.deleteContract(cRef, new ModifiedBy("Deleted Contract", new Date(), deletedBy));
             this.database.updateEmployee(employee.getEmployeeRef());
             List<ContractInterface> contracts = employee.getContracts();
-            if(!contracts.isEmpty()) {
-                ContractInterface oldContract = contracts.get(contracts.size()-1);
+            if (!contracts.isEmpty()) {
+                ContractInterface oldContract = contracts.get(contracts.size() - 1);
                 JobRoleInterface jobRole = oldContract.getJobRole();
                 employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), null);
                 this.database.updateUser(employee.getUser().getUsername());
             }
-            
+
             // ROLL BACK OFFICE DETAILS
             
             office.deleteAgreement(cRef, new ModifiedBy("Deleted Contract", new Date(), deletedBy));
@@ -2959,6 +2957,46 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<Element> getTenancyTypes() throws RemoteException {
         return this.database.getTenancyTypes();
     }
+    
+    
+    //// NEED TO ADD THESE TO CLIENT
+    g
+    
+    
+    @Override
+    public List<OfficeInterface> getOffices() throws RemoteException {
+        return this.database.getOffices();
+    }
+    
+    @Override
+    public List<AddressInterface> getAddresses() throws RemoteException {
+        return this.database.getAddresses();
+    }
+    
+    @Override
+    public List<User> getUsers() throws RemoteException {
+        return this.database.getUsers();
+    }
+    
+    @Override
+    public List<LandlordInterface> getLandlords() throws RemoteException {
+        return this.database.getLandlords();
+    }
+    
+    @Override
+    public List<EmployeeInterface> getEmployees() throws RemoteException {
+        return this.database.getEmployees();
+    }
+    
+    @Override
+    public List<JobRoleInterface> getJobRoles() throws RemoteException {
+        return this.database.getJobRoles();
+    }
+    
+    
+    
+    
+    ///// METHODS TO CHECK IF OBJECT ALREADY EXISTS
 
     @Override
     public boolean titleExists(String code) throws RemoteException {
@@ -3054,8 +3092,119 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public boolean personLandlordExists(int pRef) throws RemoteException {
         return this.database.personLandlordExists(personRef);
     }
+    
+    
 
     // SEARCH METHODS
+    
+    // NEED TO ADD THESE TO CLIENT
+    
+    @Override
+    public AddressInterface getAddress(int aRef) throws RemoteException {
+        if(this.database.addressExists(aRef)) {
+            return this.database.getAddress(aRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public JobRoleInterface getJobRole(String jobRoleCode) throws RemoteException {
+        if(this.database.jobRoleExists(jobRoleCode)) {
+            return this.database.getJobRole(jobRoleCode);
+        }
+        return null;
+    }
+    
+    @Override
+    public OfficeInterface getOffice(String officeCode) throws RemoteException {
+        if(this.database.officeExists(officeCode)) {
+            return this.database.getOffice(officeCode);
+        }
+        return null;
+    }
+    
+    @Override
+    public ApplicationInterface getApplication(int aRef) throws RemoteException {
+        if(this.database.applicationExists(aRef)) {
+            return this.database.getApplication(aRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public PropertyInterface getProperty(int pRef) throws RemoteException {
+        if(this.database.propertyExists(pRef)) {
+            return this.database.getProperty(pRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public EmployeeInterface getEmployee(int eRef) throws RemoteException {
+        if(this.database.employeeExists(eRef)) {
+            return this.database.getEmployee(eRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public LandlordInterface getLandlord(int lRef) throws RemoteException {
+        if(this.database.landlordExists(lRef)) {
+            return this.database.getLandlord(lRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public TenancyInterface getTenancy(int tRef) throws RemoteException {
+        if(this.database.tenancyExists(tRef)) {
+            return this.database.getTenancy(tRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public LeaseInterface getLease(int lRef) throws RemoteException {
+        if(this.database.leaseExists(lRef)) {
+            return this.database.getLease(lRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public ContractInterface getContract(int cRef) throws RemoteException {
+        if(this.database.contractExists(cRef)) {
+            return this.database.getContract(cRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public RentAccountInterface getRentAccounts(int rAccRef) throws RemoteException {
+        if(this.database.rentAccountExists(rAccRef)) {
+            return this.database.getRentAccount(rAccRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public LeaseAccountInterface getLeaseAccount(int lAccRef) throws RemoteException {
+        if(this.database.leaseAccountExists(lAccRef)) {
+            return this.database.getLeaseAccount(lAccRef);
+        }
+        return null;
+    }
+    
+    @Override
+    public EmployeeAccountInterface getEmployeeAccount(int eAccRef) throws RemoteException {
+        if(this.database.employeeAccountExists(eAccRef)) {
+            return this.database.getEmployeeAccount(eAccRef);
+        }
+        return null;
+    }
+    
+    /// NEED TO ADD ABOVE METHODS TO CLIENT
+    
     @Override
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
@@ -3305,7 +3454,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     
-      /// REPORTINMG METHODS
+      /// REPORTING METHODS
     
     @Override
     public List<TenancyInterface> getTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {

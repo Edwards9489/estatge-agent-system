@@ -6,13 +6,16 @@
 package Test_Package;
 
 import interfaces.ModifiedByInterface;
+import interfaces.Note;
 import interfaces.TransactionInterface;
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server_application.Account;
 import server_application.ModifiedBy;
+import server_application.NoteImpl;
 import server_application.Transaction;
 
 /**
@@ -25,10 +28,9 @@ public class TestAccount {
             System.out.println("********************Running Account Test********************");
             
             System.out.println("\n****** Creating Test Account ******\n");
-            Date date = new Date();
-            date.setMonth(0);
-            date.setDate(1);
-            Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date, "DEDWARDS", new Date());
+            Calendar dob = Calendar.getInstance();
+            dob.set(2015, 1, 10);
+            Account test1 = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", dob.getTime(), "DEDWARDS", new Date());
             
             System.out.println("****** Testing Accessor Methods ******");
             
@@ -65,15 +67,30 @@ public class TestAccount {
             
             System.out.println("\n****** Creating Transactions ******");
             
-            TransactionInterface tran1 = new Transaction(1, test1.getAccRef(), 2, 3, 123.35, true, new Date(), "DEDWARDS", new Date());
-            TransactionInterface tran2 = new Transaction(2, test1.getAccRef(), 2, 3, 210.98, true, new Date(), "DEDWARDS", new Date());
-            TransactionInterface tran3 = new Transaction(3, test1.getAccRef(), 3, 2, 323.98, false, new Date(), "JBLOOGS", new Date());
-            TransactionInterface tran4 = new Transaction(4, test1.getAccRef(), 2, 3, -78.00, true, new Date(), "DEDWARDS", new Date());
-            TransactionInterface tran5 = new Transaction(5, test1.getAccRef(), 2, 3, 379.10, true, new Date(), "DEDWARDS", new Date());
-            TransactionInterface tran6 = new Transaction(6, test1.getAccRef(), 3, 2, 323.97, false, new Date(), "JBLOOGS", new Date());
-            TransactionInterface tran7 = new Transaction(7, test1.getAccRef(), 2, 3, 237.21, true, new Date(), "DEDWARDS", new Date());
-            TransactionInterface tran8 = new Transaction(8, test1.getAccRef(), 3, 2, 1000.00, false, new Date(), "JBLOOGS", new Date());
-            TransactionInterface tran9 = new Transaction(9, test1.getAccRef(), 3, 2, 500.00, true, new Date(), "DEDWARDS", new Date());
+            Note note = new NoteImpl(1, "TEST", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST", "DEDWARDS", new Date());
+            Note note3 = new NoteImpl(3, "TEST", "DEDWARDS", new Date());
+            Note note4 = new NoteImpl(4, "TEST", "DEDWARDS", new Date());
+            Note note5 = new NoteImpl(5, "TEST", "DEDWARDS", new Date());
+            Note note6 = new NoteImpl(6, "TEST", "DEDWARDS", new Date());
+            Note note7 = new NoteImpl(7, "TEST", "DEDWARDS", new Date());
+            Note note8 = new NoteImpl(8, "TEST", "DEDWARDS", new Date());
+            Note note9 = new NoteImpl(9, "TEST", "DEDWARDS", new Date());
+            Note note10 = new NoteImpl(10, "TEST", "DEDWARDS", new Date());
+            Note note11 = new NoteImpl(11, "TEST", "DEDWARDS", new Date());
+            Note note12 = new NoteImpl(12, "TEST", "DEDWARDS", new Date());
+            Note note13 = new NoteImpl(13, "TEST", "DEDWARDS", new Date());
+            Note note14 = new NoteImpl(14, "TEST", "DEDWARDS", new Date());
+            Note note15 = new NoteImpl(15, "TEST", "DEDWARDS", new Date());
+            TransactionInterface tran1 = new Transaction(1, test1.getAccRef(), 2, 3, 123.35, true, new Date(), note, "DEDWARDS", new Date());
+            TransactionInterface tran2 = new Transaction(2, test1.getAccRef(), 2, 3, 210.98, true, new Date(), note2, "DEDWARDS", new Date());
+            TransactionInterface tran3 = new Transaction(3, test1.getAccRef(), 3, 2, 323.98, false, new Date(), note3, "JBLOOGS", new Date());
+            TransactionInterface tran4 = new Transaction(4, test1.getAccRef(), 2, 3, -78.00, true, new Date(), note4, "DEDWARDS", new Date());
+            TransactionInterface tran5 = new Transaction(5, test1.getAccRef(), 2, 3, 379.10, true, new Date(), note5, "DEDWARDS", new Date());
+            TransactionInterface tran6 = new Transaction(6, test1.getAccRef(), 3, 2, 323.97, false, new Date(), note6, "JBLOOGS", new Date());
+            TransactionInterface tran7 = new Transaction(7, test1.getAccRef(), 2, 3, 237.21, true, new Date(), note7, "DEDWARDS", new Date());
+            TransactionInterface tran8 = new Transaction(8, test1.getAccRef(), 3, 2, 1000.00, false, new Date(), note8, "JBLOOGS", new Date());
+            TransactionInterface tran9 = new Transaction(9, test1.getAccRef(), 3, 2, 500.00, true, new Date(), note9, "DEDWARDS", new Date());
             
             
             test1.createTransaction(tran1, new ModifiedBy("JBLOGGS", new Date(), "Created Transaction"));

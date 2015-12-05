@@ -233,6 +233,13 @@ public interface Server extends Remote {
     List<Element> getJobBenefits() throws RemoteException;
     List<Element> getJobRequirements() throws RemoteException;
     List<Element> getTenancyTypes() throws RemoteException;
+    List<OfficeInterface> getOffices() throws RemoteException;
+    List<AddressInterface> getAddresses() throws RemoteException;
+    List<User> getUsers() throws RemoteException;
+    List<LandlordInterface> getLandlords() throws RemoteException;
+    List<EmployeeInterface> getEmployees() throws RemoteException;
+    List<JobRoleInterface> getJobRoles() throws RemoteException;
+    
     boolean titleExists(String code) throws RemoteException;
     boolean genderExists(String code) throws RemoteException;
     boolean maritalStatusExists(String code) throws RemoteException;
@@ -257,6 +264,20 @@ public interface Server extends Remote {
     
     // SEARCH METHODS
     
+    
+    AddressInterface getAddress(int aRef) throws RemoteException;
+    JobRoleInterface getJobRole(String jobRoleCode) throws RemoteException;
+    OfficeInterface getOffice(String officeCode) throws RemoteException;
+    ApplicationInterface getApplication(int aRef) throws RemoteException;
+    PropertyInterface getProperty(int pRef) throws RemoteException;
+    EmployeeInterface getEmployee(int eRef) throws RemoteException;
+    LandlordInterface getLandlord(int lRef) throws RemoteException;
+    TenancyInterface getTenancy(int tRef) throws RemoteException;
+    LeaseInterface getLease(int lRef) throws RemoteException;
+    ContractInterface getContract(int cRef) throws RemoteException;
+    RentAccountInterface getRentAccounts(int rAccRef) throws RemoteException;
+    LeaseAccountInterface getLeaseAccount(int lAccRef) throws RemoteException;
+    EmployeeAccountInterface getEmployeeAccount(int eAccRef) throws RemoteException;
     List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
             String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException;
     List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,

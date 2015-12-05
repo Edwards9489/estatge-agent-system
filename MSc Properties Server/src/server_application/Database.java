@@ -238,7 +238,7 @@ public class Database {
         }
         
 
-        String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env + "2";
+        String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env;
         // jdbc: database type : localhost because it is on my machine : 3306 for port 3306 : msc_properties(+ enviornment) for database name
         this.con = DriverManager.getConnection(url, user, passw);
 
@@ -8056,79 +8056,239 @@ public class Database {
     }
     
     public int countPeople() {
-        return this.people.size();
+        String selectSql = "select max(personRef) as count from people";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countInvolvedParties() {
-        return this.involvedParties.size();
+        String selectSql = "select max(invPartyRef) as count from involvedParties";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countLandords() {
-        return this.landlords.size();
+        String selectSql = "select max(landlordRef) as count from landlords";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countEmployees() {
-        return this.employees.size();
+        String selectSql = "select max(employeeRef) as count from employees";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countApplications() {
-        return this.applications.size();
+        String selectSql = "select max(appRef) as count from applications";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countProperties() {
-        return this.properties.size();
+        String selectSql = "select max(propertyRef) as count from properties";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countTenancies() {
-        return this.tenancies.size();
+        String selectSql = "select max(tenancyRef) as count from tenancies";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countLeases() {
-        return this.leases.size();
+        String selectSql = "select max(leaseRef) as count from leases";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countContracts() {
-        return this.contracts.size();
+        String selectSql = "select max(contractRef) as count from contracts";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countRentAccounts() {
-        return this.rentAccounts.size();
+        String selectSql = "select max(rentAccRef) as count from rentAccounts";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countLeaseAccounts() {
-        return this.leaseAccounts.size();
+        String selectSql = "select max(leaseAccRef) as count from leaseAccounts";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countEmployeeAccounts() {
-        return this.employeeAccounts.size();
+        String selectSql = "select max(employeeAccRef) as count from employeeAccounts";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public int countAddresses() {
-        return this.addresses.size();
+        String selectSql = "select max(addressRef) as count from addresses";
+        try(Statement statement = con.createStatement()) {
+            ResultSet results = statement.executeQuery(selectSql);
+            results.next();
+            int checkSum = results.getInt(1);
+            statement.close();
+            return checkSum;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
-    public int countTransactions() {
-        return this.transactions.size();
+    public int countTransactions() throws RemoteException {
+        int temp = 1;
+        for(TransactionInterface transaction : this.getTransactions()) {
+            if(transaction.getTransactionRef() > temp) {
+                temp = transaction.getTransactionRef();
+            }
+        }
+        return temp;
     }
     
-    public int countAddressUsages() {
-        return this.addressUsages.size();
+    public int countAddressUsages() throws RemoteException {
+        int temp = 1;
+        for(AddressUsageInterface address : this.getAddressUsages()) {
+            if(address.getAddressUsageRef() > temp) {
+                temp = address.getAddressUsageRef();
+            }
+        }
+        return temp;
     }
     
-    public int countContacts() {
-        return this.contacts.size();
+    public int countContacts() throws RemoteException {
+        int temp = 1;
+        for(ContactInterface contact : this.getContacts()) {
+            if(contact.getContactRef() > temp) {
+                temp = contact.getContactRef();
+            }
+        }
+        return temp;
     }
     
-    public int countNotes() {
-        return this.notes.size();
+    public int countNotes() throws RemoteException {
+        int temp = 1;
+        for(Note note : this.getNotes()) {
+            if(note.getReference() > temp) {
+                temp = note.getReference();
+            }
+        }
+        return temp;
     }
     
-    public int countDocuments() {
-        return this.documents.size();
+    public int countDocuments() throws RemoteException {
+        int temp = 1;
+        for(Document document : this.getDocuments()) {
+            if(document.getDocumentRef() > temp) {
+                temp = document.getDocumentRef();
+            }
+        }
+        return temp;
     }
     
     public int getPropElementCount() throws SQLException {
-        String selectSql = "select count(propertyElementRef) as count from propertyElementValues";
+        String selectSql = "select max(propertyElementRef) as count from propertyElementValues";
         try(Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
@@ -8139,7 +8299,7 @@ public class Database {
     }
     
     public int getJobBenefitCount() throws SQLException {
-        String selectSql = "select count(jobBenefitRef) as count from jobRoleBenefits";
+        String selectSql = "select max(jobBenefitRef) as count from jobRoleBenefits";
         try(Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
@@ -8171,6 +8331,10 @@ public class Database {
     
     public List<EmployeeInterface> getEmployees() {
         return Collections.unmodifiableList(new ArrayList<>(employees.values()));
+    }
+    
+    public List<User> getUsers() {
+        return Collections.unmodifiableList(new ArrayList<>(users.values()));
     }
     
     public List<ApplicationInterface> getApplications() {
@@ -8284,139 +8448,173 @@ public class Database {
     public List<JobRoleBenefitInterface> getJobRoleBenefits() {
         return Collections.unmodifiableList(new ArrayList<>(jobRoleBenefits.values()));
     }
-    
+
     public List<ContactInterface> getContacts() {
         return Collections.unmodifiableList(new ArrayList<>(contacts.values()));
     }
-    
+
     public List<AddressUsageInterface> getAddressUsages() {
         return Collections.unmodifiableList(new ArrayList<>(addressUsages.values()));
     }
-    
-    private List<User> getUsers() {
-        return Collections.unmodifiableList(new ArrayList<>(users.values()));
+
+    public List<Note> getNotes() {
+        return Collections.unmodifiableList(new ArrayList<>(notes.values()));
     }
-    
-    
-    
+
+    public List<Document> getDocuments() {
+        return Collections.unmodifiableList(new ArrayList<>(documents.values()));
+    }
+
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
-        List<PersonInterface> tempPeople = new ArrayList<>(this.getPeople());
-        if(!tempPeople.isEmpty()) {
-            for(PersonInterface temp : tempPeople) {
-                if(titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
-                    tempPeople.remove(temp);
-                } else if(forename != null && !forename.isEmpty() && !forename.equals(temp.getForename())) {
-                    tempPeople.remove(temp);
-                } else if(middleNames != null && !middleNames.isEmpty() && !middleNames.equals(temp.getMiddleNames())) {
-                    tempPeople.remove(temp);
-                } else if(surname != null && !surname.isEmpty() && !surname.equals(temp.getSurname())) {
-                    tempPeople.remove(temp);
-                } else if(dateOfBirth != null && dateOfBirth.compareTo(temp.getDateOfBirth()) != 0) {
-                    tempPeople.remove(temp);
-                } else if(nationalInsurance != null && !nationalInsurance.isEmpty() && nationalInsurance.equals(temp.getNI())) {
-                    tempPeople.remove(temp);
-                } else if (maritalStatusCode != null && !maritalStatusCode.isEmpty() && this.maritalStatusExists(maritalStatusCode) && !maritalStatusCode.equals(temp.getMaritalStatus().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && this.ethnicOriginExists(ethnicOriginCode) && !ethnicOriginCode.equals(temp.getEthnicOrigin().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (languageCode != null && !languageCode.isEmpty() && this.languageExists(languageCode) && !languageCode.equals(temp.getLanguage().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (nationalityCode != null && !nationalityCode.isEmpty() && this.nationalityExists(nationalityCode) && !nationalityCode.equals(temp.getNationality().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (sexualityCode != null && !sexualityCode.isEmpty() && this.sexualityExists(sexualityCode) && !sexualityCode.equals(temp.getSexuality().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (religionCode != null && !religionCode.isEmpty() && this.religionExists(religionCode) && !religionCode.equals(temp.getReligion().getCode())) {
-                    tempPeople.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempPeople.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempPeople.remove(temp);
-                }
+        List<PersonInterface> tempPeople = new ArrayList();
+        for (PersonInterface temp : this.getPeople()) {
+            boolean add = true;
+            if (titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
+                add = false;
             }
-            return tempPeople;
+            if (forename != null && !forename.isEmpty() && !forename.equals(temp.getForename())) {
+                add = false;
+            }
+            if (middleNames != null && !middleNames.isEmpty() && !middleNames.equals(temp.getMiddleNames())) {
+                add = false;
+            }
+            if (surname != null && !surname.isEmpty() && !surname.equals(temp.getSurname())) {
+                add = false;
+            }
+            if (dateOfBirth != null && dateOfBirth.compareTo(temp.getDateOfBirth()) != 0) {
+                add = false;
+            }
+            if (nationalInsurance != null && !nationalInsurance.isEmpty() && !nationalInsurance.equals(temp.getNI())) {
+                add = false;
+            }
+            if (maritalStatusCode != null && !maritalStatusCode.isEmpty() && this.maritalStatusExists(maritalStatusCode) && !maritalStatusCode.equals(temp.getMaritalStatus().getCode())) {
+                add = false;
+            }
+            if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && this.ethnicOriginExists(ethnicOriginCode) && !ethnicOriginCode.equals(temp.getEthnicOrigin().getCode())) {
+                add = false;
+            }
+            if (languageCode != null && !languageCode.isEmpty() && this.languageExists(languageCode) && !languageCode.equals(temp.getLanguage().getCode())) {
+                add = false;
+            }
+            if (nationalityCode != null && !nationalityCode.isEmpty() && this.nationalityExists(nationalityCode) && !nationalityCode.equals(temp.getNationality().getCode())) {
+                add = false;
+            }
+            if (sexualityCode != null && !sexualityCode.isEmpty() && this.sexualityExists(sexualityCode) && !sexualityCode.equals(temp.getSexuality().getCode())) {
+                add = false;
+            }
+            if (religionCode != null && !religionCode.isEmpty() && this.religionExists(religionCode) && !religionCode.equals(temp.getReligion().getCode())) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempPeople.add(temp);
+            }
         }
-        return null;
+        return tempPeople;
     }
-    
+
+    /////  NEED TO AMEND ALL BELOW SEARCH METHODS TO THE SAME AS ABOVE
     public List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
-        List<AddressInterface> tempAddresses = new ArrayList<>(this.getAddresses());
-        if(!tempAddresses.isEmpty()) {
-            for(AddressInterface temp : tempAddresses) {
-                if(buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
-                    tempAddresses.remove(temp);
-                } else if(buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
-                    tempAddresses.remove(temp);
-                } else if(subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
-                    tempAddresses.remove(temp);
-                } else if(subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
-                    tempAddresses.remove(temp);
-                } else if(streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
-                    tempAddresses.remove(temp);
-                } else if(street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
-                    tempAddresses.remove(temp);
-                } else if(area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
-                    tempAddresses.remove(temp);
-                } else if(town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
-                    tempAddresses.remove(temp);
-                } else if(country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
-                    tempAddresses.remove(temp);
-                } else if(postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode())) {
-                    tempAddresses.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempAddresses.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempAddresses.remove(temp);
-                }
+        List<AddressInterface> tempAddresses = new ArrayList<>();
+        for (AddressInterface temp : this.getAddresses()) {
+            boolean add = true;
+            if (buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
+                add = false;
             }
-            return tempAddresses;
+            if (buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
+                add = false;
+            }
+            if (subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
+                add = false;
+            }
+            if (subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
+                add = false;
+            }
+            if (streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
+                add = false;
+            }
+            if (street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
+                add = false;
+            }
+            if (area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
+                add = false;
+            }
+            if (town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
+                add = false;
+            }
+            if (country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
+                add = false;
+            }
+            if (postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode()) && !postcode.equals(temp.getCountry())) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempAddresses.add(temp);
+            }
         }
-        return null;
+        return tempAddresses;
     }
-    
-    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, 
+  
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode,
             Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
-        if(!tempApplications.isEmpty()) {
-            for(ApplicationInterface temp : tempApplications) {
-                if(corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
-                    tempApplications.remove(temp);
-                } else if(appStartDate != null && appStartDate.compareTo(temp.getAppStartDate()) != 0) {
-                    tempApplications.remove(temp);
-                } else if (endDate != null && endDate.compareTo(temp.getAppEndDate()) != 0) {
-                    tempApplications.remove(temp);
-                } else if (statusCode != null && !statusCode.isEmpty() && !statusCode.equals(temp.getAppStatusCode())) {
-                    tempApplications.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempApplications.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempApplications.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempApplications.remove(temp);
-                }
+        List<ApplicationInterface> tempApplications = new ArrayList<>();
+        for (ApplicationInterface temp : this.getApplications()) {
+            boolean add = true;
+            if (corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
+                add = false;
             }
-            return tempApplications;
+            if (appStartDate != null && appStartDate.compareTo(temp.getAppStartDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getAppEndDate()) != 0) {
+                add = false;
+            }
+            if (statusCode != null && !statusCode.isEmpty() && !statusCode.equals(temp.getAppStatusCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempApplications.add(temp);
+            }
         }
-        return null;
+        return tempApplications;
     }
     
     public List<ApplicationInterface> getPeopleApplications(List<PersonInterface> tempPeople) throws RemoteException {
-        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
-        if (!tempPeople.isEmpty() && !tempApplications.isEmpty()) {
-            for (ApplicationInterface temp : tempApplications) {
+        List<ApplicationInterface> tempApplications = new ArrayList<>();
+        if (!tempPeople.isEmpty()) {
+            for (ApplicationInterface temp : this.getApplications()) {
                 boolean cont = true;
                 int i = 0;
                 while (cont && i < tempPeople.size()) {
                     PersonInterface tempPerson = tempPeople.get(i);
                     if (temp.isPersonHouseholdMember(tempPerson.getPersonRef())) {
+                        tempApplications.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if (cont) {
-                    tempApplications.remove(temp);
                 }
             }
             return tempApplications;
@@ -8425,14 +8623,12 @@ public class Database {
     }
 
     public List<ApplicationInterface> getAddressApplications(List<AddressInterface> tempAddresses) throws RemoteException {
-        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
-        if (!tempAddresses.isEmpty() && !tempApplications.isEmpty()) {
-            for (ApplicationInterface temp : tempApplications) {
+        List<ApplicationInterface> tempApplications = new ArrayList<>();
+        if (!tempAddresses.isEmpty()) {
+            for (ApplicationInterface temp : this.getApplications()) {
                 boolean cont = true;
                 List<AddressUsageInterface> appAddresses = temp.getApplicationAddressess();
-                if (appAddresses.isEmpty()) {
-                    cont = false;
-                } else {
+                if (!appAddresses.isEmpty()) {
                     int i = 0;
                     while (cont && i < tempAddresses.size()) {
                         AddressInterface tempAddress = tempAddresses.get(i);
@@ -8440,15 +8636,13 @@ public class Database {
                         while (cont && ind < appAddresses.size()) {
                             AddressUsageInterface appAddress = appAddresses.get(ind);
                             if (tempAddress.getAddressRef() == appAddress.getAddress().getAddressRef()) {
+                                tempApplications.add(temp);
                                 cont = false;
                             }
                             ind++;
                         }
                         i++;
                     }
-                }
-                if (cont) {
-                    tempApplications.remove(temp);
                 }
             }
             return tempApplications;
@@ -8457,11 +8651,11 @@ public class Database {
     }
 
     public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
-        List<ApplicationInterface> tempApplications = new ArrayList<>(this.getApplications());
-        if (name != null && !name.isEmpty() && !tempApplications.isEmpty()) {
-            for (ApplicationInterface tempApp : tempApplications) {
-                if (!name.equals(tempApp.getAppCorrName())) {
-                    tempApplications.remove(tempApp);
+        List<ApplicationInterface> tempApplications = new ArrayList();
+        if (name != null && !name.isEmpty()) {
+            for (ApplicationInterface tempApp : this.getApplications()) {
+                if (name.equals(tempApp.getAppCorrName())) {
+                    tempApplications.add(tempApp);
                 }
             }
             return tempApplications;
@@ -8493,14 +8687,14 @@ public class Database {
         }
         return null;
     }
-    
-    public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
+
+    public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode,
             String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         List<PersonInterface> tempPeople = this.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
         List<LandlordInterface> tempLandlords = new ArrayList();
-        if(!tempPeople.isEmpty()) {
+        if (!tempPeople.isEmpty()) {
             for (PersonInterface temp : tempPeople) {
-                if(this.personEmployeeExists(temp.getPersonRef())) {
+                if (this.personEmployeeExists(temp.getPersonRef())) {
                     tempLandlords.add(this.getPersonLandlord(temp.getPersonRef()));
                 }
             }
@@ -8508,85 +8702,103 @@ public class Database {
         }
         return null;
     }
-    
+
     public List<PropertyInterface> getProperties(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
-        List<PropertyInterface> tempProperties = new ArrayList<>(this.getProperties());
-        if (!tempProperties.isEmpty()) {
-            for(PropertyInterface temp : tempProperties) {
-                if(acquiredDate != null && acquiredDate.compareTo(temp.getAcquiredDate()) != 0) {
-                    tempProperties.remove(temp);
-                } else if(leaseEndDate != null && leaseEndDate.compareTo(temp.getLeaseEndDate()) != 0) {
-                    tempProperties.remove(temp);
-                } else if (propTypeCode != null && this.propTypeExists(propTypeCode) && propTypeCode.equals(temp.getPropType().getCode())) {
-                    tempProperties.remove(temp);
-                } else if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && propSubTypeCode.equals(temp.getPropSubType().getCode())) {
-                    tempProperties.remove(temp);
-                } else if (propStatus != null && propStatus.equals(temp.getPropStatus())) {
-                    tempProperties.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempProperties.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempProperties.remove(temp);
-                }
+        List<PropertyInterface> tempProperties = new ArrayList();
+        for (PropertyInterface temp : this.getProperties()) {
+            boolean add = true;
+            if (acquiredDate != null && acquiredDate.compareTo(temp.getAcquiredDate()) != 0) {
+                add = false;
             }
-            return tempProperties;
+            if (leaseEndDate != null && leaseEndDate.compareTo(temp.getLeaseEndDate()) != 0) {
+                add = false;
+            }
+            if (propTypeCode != null && this.propTypeExists(propTypeCode) && propTypeCode.equals(temp.getPropType().getCode())) {
+                add = false;
+            }
+            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && propSubTypeCode.equals(temp.getPropSubType().getCode())) {
+                add = false;
+            }
+            if (propStatus != null && propStatus.equals(temp.getPropStatus())) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempProperties.add(temp);
+            }
         }
-        return null;
+        return tempProperties;
     }
     
-    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, 
+    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
             Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if (!tempTenancies.isEmpty()) {
-            for(TenancyInterface temp : tempTenancies) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
-                    tempTenancies.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempTenancies.remove(temp);
-                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
-                    tempTenancies.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
-                    tempTenancies.remove(temp);
-                } else if(length != null && length != temp.getLength()) {
-                    tempTenancies.remove(temp);
-                } else if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
-                    tempTenancies.remove(temp);
-                } else if (appRef != null && this.applicationExists(appRef) && appRef != temp.getApplication().getApplicationRef()) {
-                    tempTenancies.remove(temp);
-                } else if (tenTypeCode != null && !tenTypeCode.isEmpty() && this.tenancyTypeExists(tenTypeCode) && !tenTypeCode.equals(temp.getTenType().getCode())) {
-                    tempTenancies.remove(temp);
-                } else if(accountRef != null && this.rentAccountExists(accountRef) && accountRef != temp.getAccountRef()) {
-                    tempTenancies.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempTenancies.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempTenancies.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempTenancies.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempTenancies.remove(temp);
-                }
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        for (TenancyInterface temp : this.getTenancies()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+                add = false;
             }
-            return tempTenancies;
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                add = false;
+            }
+            if (length != null && length != temp.getLength()) {
+                add = false;
+            }
+            if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+                add = false;
+            }
+            if (appRef != null && this.applicationExists(appRef) && appRef != temp.getApplication().getApplicationRef()) {
+                add = false;
+            }
+            if (tenTypeCode != null && !tenTypeCode.isEmpty() && this.tenancyTypeExists(tenTypeCode) && !tenTypeCode.equals(temp.getTenType().getCode())) {
+                add = false;
+            }
+            if (accountRef != null && this.rentAccountExists(accountRef) && accountRef != temp.getAccountRef()) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempTenancies.add(temp);
+            }
         }
-        return null;
+        return tempTenancies;
     }
-    
+
     public List<TenancyInterface> getApplicationTenancies(List<ApplicationInterface> tempApplications) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if(!tempApplications.isEmpty() && !tempTenancies.isEmpty()) {
-            for(TenancyInterface temp : tempTenancies) {
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        if (!tempApplications.isEmpty()) {
+            for (TenancyInterface temp : this.getTenancies()) {
                 boolean cont = true;
                 int i = 0;
-                while(cont && i < tempApplications.size()) {
+                while (cont && i < tempApplications.size()) {
                     ApplicationInterface tempApp = tempApplications.get(i);
-                    if(temp.getApplication().getApplicationRef() == tempApp.getApplicationRef()) {
+                    if (temp.getApplication().getApplicationRef() == tempApp.getApplicationRef()) {
+                        tempTenancies.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempTenancies.remove(temp);
                 }
             }
             return tempTenancies;
@@ -8595,12 +8807,11 @@ public class Database {
     }
     
     public List<TenancyInterface> getApplicationTenancies(int appRef) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if (this.applicationExists(appRef) && !tempTenancies.isEmpty()) {
-            ApplicationInterface tempApp = this.getApplication(appRef);
-            for (TenancyInterface temp : tempTenancies) {
-                if (temp.getApplication().getApplicationRef() != tempApp.getApplicationRef()) {
-                    tempTenancies.remove(temp);
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        if (this.applicationExists(appRef)) {
+            for (TenancyInterface temp : this.getTenancies()) {
+                if (temp.getApplication().getApplicationRef() == appRef) {
+                    tempTenancies.add(temp);
                 }
             }
             return tempTenancies;
@@ -8609,20 +8820,18 @@ public class Database {
     }
     
     public List<TenancyInterface> getPropertyTenancies(List<PropertyInterface> tempProperties) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
+        List<TenancyInterface> tempTenancies = new ArrayList();
         if(!tempProperties.isEmpty()) {
-            for(TenancyInterface temp : tempTenancies) {
+            for(TenancyInterface temp : this.getTenancies()) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempProperties.size()) {
                     PropertyInterface tempProperty = tempProperties.get(i);
                     if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
+                        tempTenancies.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempTenancies.remove(temp);
                 }
             }
             return tempTenancies;
@@ -8631,12 +8840,12 @@ public class Database {
     }
     
     public List<TenancyInterface> getPropertyTenancies(int propRef) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if (this.propertyExists(propRef) && !tempTenancies.isEmpty()) {
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        if (this.propertyExists(propRef)) {
             PropertyInterface tempProp = this.getProperty(propRef);
-            for (TenancyInterface temp : tempTenancies) {
-                if (temp.getProperty().getPropRef() != tempProp.getPropRef()) {
-                    tempTenancies.remove(temp);
+            for (TenancyInterface temp : this.getTenancies()) {
+                if (temp.getProperty().getPropRef() == tempProp.getPropRef()) {
+                    tempTenancies.add(temp);
                 }
             }
             return tempTenancies;
@@ -8645,24 +8854,21 @@ public class Database {
     }
     
     public List<TenancyInterface> getNameTenancies(String name) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if(!tempTenancies.isEmpty()) {
-            for(TenancyInterface temp : tempTenancies) {
-                if(!name.equals(temp.getAgreementName())) {
-                    tempTenancies.remove(temp);
-                }
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        for (TenancyInterface temp : this.getTenancies()) {
+            if (name.equals(temp.getAgreementName())) {
+                tempTenancies.add(temp);
             }
-            return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
     
     public List<TenancyInterface> getOfficeTenancies(String office) throws RemoteException {
-        List<TenancyInterface> tempTenancies = new ArrayList<>(this.getTenancies());
-        if(this.officeExists(office) && !tempTenancies.isEmpty()) {
-            for(TenancyInterface temp : tempTenancies) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempTenancies.remove(temp);
+        List<TenancyInterface> tempTenancies = new ArrayList();
+        if(this.officeExists(office)) {
+            for(TenancyInterface temp : this.getTenancies()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempTenancies.add(temp);
                 }
             }
             return tempTenancies;
@@ -8671,55 +8877,65 @@ public class Database {
     }
     
     public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if (!tempLeases.isEmpty()) {
-            for(LeaseInterface temp : tempLeases) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
-                    tempLeases.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempLeases.remove(temp);
-                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
-                    tempLeases.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
-                    tempLeases.remove(temp);
-                }  else if(length != null && length != temp.getLength()) {
-                    tempLeases.remove(temp);
-                } else if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
-                    tempLeases.remove(temp);
-                } else if (management != null && management != temp.isFullManagement()) {
-                    tempLeases.remove(temp);
-                } else if (expenditure != null && expenditure != temp.getExpenditure()) {
-                    tempLeases.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempLeases.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempLeases.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempLeases.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempLeases.remove(temp);
-                }
+        List<LeaseInterface> tempLeases = new ArrayList();
+        for (LeaseInterface temp : this.getLeases()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+                add = false;
             }
-            return tempLeases;
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                add = false;
+            }
+            if (length != null && length != temp.getLength()) {
+                add = false;
+            }
+            if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+                add = false;
+            }
+            if (management != null && management != temp.isFullManagement()) {
+                add = false;
+            }
+            if (expenditure != null && expenditure != temp.getExpenditure()) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempLeases.add(temp);
+            }
         }
-        return null;
+        return tempLeases;
     }
     
     public List<LeaseInterface> getPropertyLeases(List<PropertyInterface> tempProperties) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if(!tempProperties.isEmpty() && !tempLeases.isEmpty()) {
-            for(LeaseInterface temp : tempLeases) {
+        List<LeaseInterface> tempLeases = new ArrayList();
+        if(!tempProperties.isEmpty()) {
+            for(LeaseInterface temp : this.getLeases()) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempProperties.size()) {
                     PropertyInterface tempProperty = tempProperties.get(i);
                     if(temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
+                        tempLeases.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempLeases.remove(temp);
                 }
             }
             return tempLeases;
@@ -8728,12 +8944,12 @@ public class Database {
     }
     
     public List<LeaseInterface> getPropertyLeases(int propRef) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if (this.propertyExists(propRef) && !tempLeases.isEmpty()) {
+        List<LeaseInterface> tempLeases = new ArrayList();
+        if (this.propertyExists(propRef)) {
             PropertyInterface tempProperty = this.getProperty(propRef);
-            for (LeaseInterface temp : tempLeases) {
-                if (temp.getProperty().getPropRef() != tempProperty.getPropRef()) {
-                    tempLeases.remove(temp);
+            for (LeaseInterface temp : this.getLeases()) {
+                if (temp.getProperty().getPropRef() == tempProperty.getPropRef()) {
+                    tempLeases.add(temp);
                 }
             }
             return tempLeases;
@@ -8742,24 +8958,21 @@ public class Database {
     }
     
     public List<LeaseInterface> getNameLeases(String name) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if(!tempLeases.isEmpty()) {
-            for(LeaseInterface temp : tempLeases) {
-                if(!name.equals(temp.getAgreementName())) {
-                    tempLeases.remove(temp);
+        List<LeaseInterface> tempLeases = new ArrayList();
+            for(LeaseInterface temp : this.getLeases()) {
+                if(name.equals(temp.getAgreementName())) {
+                    tempLeases.add(temp);
                 }
             }
             return tempLeases;
-        }
-        return null;
     }
     
     public List<LeaseInterface> getOfficeLeases(String office) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if(this.officeExists(office) && !tempLeases.isEmpty()) {
-            for(LeaseInterface temp : tempLeases) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempLeases.remove(temp);
+        List<LeaseInterface> tempLeases = new ArrayList();
+        if(this.officeExists(office)) {
+            for(LeaseInterface temp : this.getLeases()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempLeases.add(temp);
                 }
             }
             return tempLeases;
@@ -8768,21 +8981,19 @@ public class Database {
     }
 
     public List<LeaseInterface> getLandlordLeases(int landlordRef) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if (this.landlordExists(landlordRef) && !tempLeases.isEmpty()) {
-            for (LeaseInterface temp : tempLeases) {
+        List<LeaseInterface> tempLeases = new ArrayList();
+        if (this.landlordExists(landlordRef)) {
+            for (LeaseInterface temp : this.getLeases()) {
                 List<LandlordInterface> tempLandlords = temp.getLandlords();
                 boolean cont = true;
                 int i = 0;
                 while (cont && i < tempLandlords.size()) {
                     LandlordInterface tempLandlord = tempLandlords.get(i);
                     if (tempLandlord.getLandlordRef() == landlordRef) {
+                        tempLeases.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if (cont) {
-                    tempLeases.remove(temp);
                 }
             }
             return tempLeases;
@@ -8791,9 +9002,9 @@ public class Database {
     }
 
     public List<LeaseInterface> getLandlordLeases(List<LandlordInterface> tempLandlords) throws RemoteException {
-        List<LeaseInterface> tempLeases = new ArrayList<>(this.getLeases());
-        if (!tempLandlords.isEmpty() && !tempLeases.isEmpty()) {
-            for (LeaseInterface temp : tempLeases) {
+        List<LeaseInterface> tempLeases = new ArrayList();
+        if (!tempLandlords.isEmpty()) {
+            for (LeaseInterface temp : this.getLeases()) {
                 List<LandlordInterface> leaseLandlords = temp.getLandlords();
                 boolean cont = true;
                 int i = 0;
@@ -8803,14 +9014,12 @@ public class Database {
                     while (cont && ind < tempLandlords.size()) {
                         LandlordInterface tempLandlord = tempLandlords.get(ind);
                         if (tempLandlord.getLandlordRef() == tempLeaseLandlord.getLandlordRef()) {
+                            tempLeases.add(temp);
                             cont = false;
                         }
                         ind++;
                     }
                     i++;
-                }
-                if (cont) {
-                    tempLeases.remove(temp);
                 }
             }
             return tempLeases;
@@ -8819,55 +9028,65 @@ public class Database {
     }
     
     public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
-        if (!tempContracts.isEmpty()) {
-            for(ContractInterface temp : tempContracts) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAgreementName())) {
-                    tempContracts.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempContracts.remove(temp);
-                } else if(expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
-                    tempContracts.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
-                    tempContracts.remove(temp);
-                }  else if(length != null && length != temp.getLength()) {
-                    tempContracts.remove(temp);
-                } else if (employeeRef != null && this.employeeExists(employeeRef) && employeeRef != temp.getEmployee().getEmployeeRef()) {
-                    tempContracts.remove(temp);
-                } else if (jobRoleCode != null && this.jobRoleExists(jobRoleCode) && jobRoleCode.equals(temp.getJobRole().getJobRoleCode())) {
-                    tempContracts.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempContracts.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempContracts.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempContracts.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempContracts.remove(temp);
-                }
+        List<ContractInterface> tempContracts = new ArrayList();
+        for (ContractInterface temp : this.getContracts()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+                add = false;
+            }
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+                add = false;
+            }
+            if (length != null && length != temp.getLength()) {
+                add = false;
+            }
+            if (employeeRef != null && this.employeeExists(employeeRef) && employeeRef != temp.getEmployee().getEmployeeRef()) {
+                add = false;
+            }
+            if (jobRoleCode != null && this.jobRoleExists(jobRoleCode) && !jobRoleCode.equals(temp.getJobRole().getJobRoleCode())) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempContracts.add(temp);
             }
         }
         return tempContracts;
     }
     
     public List<ContractInterface> getNameContracts(String name) throws RemoteException {
-        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
-        if(!tempContracts.isEmpty()) {
-            for(ContractInterface temp : tempContracts) {
-                if(!name.equals(temp.getAgreementName())) {
-                    tempContracts.remove(temp);
-                }
+        List<ContractInterface> tempContracts = new ArrayList();
+        for (ContractInterface temp : this.getContracts()) {
+            if (name.equals(temp.getAgreementName())) {
+                tempContracts.add(temp);
             }
         }
         return tempContracts;
     }
     
     public List<ContractInterface> getOfficeContracts(String office) throws RemoteException {
-        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
-        if(this.officeExists(office) && !tempContracts.isEmpty()) {
-            for(ContractInterface temp : tempContracts) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempContracts.remove(temp);
+        List<ContractInterface> tempContracts = new ArrayList();
+        if(this.officeExists(office)) {
+            for(ContractInterface temp : this.getContracts()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempContracts.add(temp);
                 }
             }
         }
@@ -8875,11 +9094,11 @@ public class Database {
     }
     
     public List<ContractInterface> getEmployeeContracts(int ref) throws RemoteException {
-        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
-        if (this.employeeExists(ref) && !tempContracts.isEmpty()) {
-            for (ContractInterface temp : tempContracts) {
-                if (temp.getEmployeeRef() != ref) {
-                    tempContracts.remove(temp);
+        List<ContractInterface> tempContracts = new ArrayList();
+        if (this.employeeExists(ref)) {
+            for (ContractInterface temp : this.getContracts()) {
+                if (temp.getEmployeeRef() == ref) {
+                    tempContracts.add(temp);
                 }
             }
             return tempContracts;
@@ -8888,11 +9107,11 @@ public class Database {
     }
     
     public List<ContractInterface> getJobRoleContracts(String code) throws RemoteException {
-        List<ContractInterface> tempContracts = new ArrayList<>(this.getContracts());
-        if (this.jobRoleExists(code) && !tempContracts.isEmpty()) {
-            for (ContractInterface temp : tempContracts) {
-                if (!code.equals(temp.getJobRole().getJobRoleCode())) {
-                    tempContracts.remove(temp);
+        List<ContractInterface> tempContracts = new ArrayList();
+        if (this.jobRoleExists(code)) {
+            for (ContractInterface temp : this.getContracts()) {
+                if (code.equals(temp.getJobRole().getJobRoleCode())) {
+                    tempContracts.add(temp);
                 }
             }
             return tempContracts;
@@ -8900,54 +9119,63 @@ public class Database {
         return null;
     }
     
-    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<RentAccountInterface> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
-        if (!tempRentAccounts.isEmpty()) {
-            for(RentAccountInterface temp : tempRentAccounts) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
-                    tempRentAccounts.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempRentAccounts.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
-                    tempRentAccounts.remove(temp);
-                } else if(balance != null && balance != temp.getBalance()) {
-                    tempRentAccounts.remove(temp);
-                } else if (rent != null && rent != temp.getRent()) {
-                    tempRentAccounts.remove(temp);
-                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getTenancyRef()) {
-                    tempRentAccounts.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempRentAccounts.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempRentAccounts.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempRentAccounts.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempRentAccounts.remove(temp);
-                }
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<RentAccountInterface> tempRentAccounts = new ArrayList();
+        for (RentAccountInterface temp : this.getRentAccounts()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+                add = false;
+            }
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                add = false;
+            }
+            if (balance != null && balance != temp.getBalance()) {
+                add = false;
+            }
+            if (rent != null && rent != temp.getRent()) {
+                add = false;
+            }
+            if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getTenancyRef()) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempRentAccounts.add(temp);
             }
         }
         return tempRentAccounts;
     }
     
     public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
-        List<RentAccountInterface> tempRentAcc = new ArrayList<>(this.getRentAccounts());
-        if(!tempRentAcc.isEmpty()) {
-            for(RentAccountInterface temp : tempRentAcc) {
-                if(!name.equals(temp.getAccName())) {
-                    tempRentAcc.remove(temp);
-                }
+        List<RentAccountInterface> tempRentAcc = new ArrayList();
+        for (RentAccountInterface temp : this.getRentAccounts()) {
+            if (name.equals(temp.getAccName())) {
+                tempRentAcc.add(temp);
             }
         }
         return tempRentAcc;
     }
     
     public List<RentAccountInterface> getOfficeRentAcc(String office) throws RemoteException {
-        List<RentAccountInterface> tempRentAcc = new ArrayList<>(this.getRentAccounts());
-        if(this.officeExists(office) && !tempRentAcc.isEmpty()) {
-            for(RentAccountInterface temp : tempRentAcc) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempRentAcc.remove(temp);
+        List<RentAccountInterface> tempRentAcc = new ArrayList();
+        if(this.officeExists(office)) {
+            for(RentAccountInterface temp : this.getRentAccounts()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempRentAcc.add(temp);
                 }
             }
         }
@@ -8955,20 +9183,18 @@ public class Database {
     }
     
     public List<RentAccountInterface> getTenanciesRentAccounts(List<TenancyInterface> tempTenancies) throws RemoteException {
-        List<RentAccountInterface> tempRentAccounts = new ArrayList<>(this.getRentAccounts());
+        List<RentAccountInterface> tempRentAccounts = new ArrayList();
         if(!tempTenancies.isEmpty()) {
-            for(RentAccountInterface temp : tempRentAccounts) {
+            for(RentAccountInterface temp : this.getRentAccounts()) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempTenancies.size()) {
                     TenancyInterface tempTenancy = tempTenancies.get(i);
                     if(tempTenancy.getAgreementRef() == temp.getTenancyRef()) {
+                        tempRentAccounts.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempRentAccounts.remove(temp);
                 }
             }
         }
@@ -8985,54 +9211,63 @@ public class Database {
         return null;
     }
     
-    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
-        if (!tempLeaseAccounts.isEmpty()) {
-            for(LeaseAccountInterface temp : tempLeaseAccounts) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
-                    tempLeaseAccounts.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempLeaseAccounts.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
-                    tempLeaseAccounts.remove(temp);
-                } else if(balance != null && balance != temp.getBalance()) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (expenditure != null && expenditure != temp.getExpenditure()) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getLeaseRef()) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempLeaseAccounts.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempLeaseAccounts.remove(temp);
-                }
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList();
+        for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+                add = false;
+            }
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                add = false;
+            }
+            if (balance != null && balance != temp.getBalance()) {
+                add = false;
+            }
+            if (expenditure != null && expenditure != temp.getExpenditure()) {
+                add = false;
+            }
+            if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getLeaseRef()) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempLeaseAccounts.add(temp);
             }
         }
         return tempLeaseAccounts;
     }
-    
+  
     public List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException {
-        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
-        if(!tempLeaseAcc.isEmpty()) {
-            for(LeaseAccountInterface temp : tempLeaseAcc) {
-                if(!name.equals(temp.getAccName())) {
-                    tempLeaseAcc.remove(temp);
-                }
+        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList();
+        for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
+            if (name.equals(temp.getAccName())) {
+                tempLeaseAcc.add(temp);
             }
         }
         return tempLeaseAcc;
     }
     
     public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
-        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList<>(this.getLeaseAccounts());
-        if(this.officeExists(office) && !tempLeaseAcc.isEmpty()) {
-            for(LeaseAccountInterface temp : tempLeaseAcc) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempLeaseAcc.remove(temp);
+        List<LeaseAccountInterface> tempLeaseAcc = new ArrayList();
+        if(this.officeExists(office)) {
+            for(LeaseAccountInterface temp : this.getLeaseAccounts()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempLeaseAcc.add(temp);
                 }
             }
         }
@@ -9040,20 +9275,18 @@ public class Database {
     }
     
     public List<LeaseAccountInterface> getLeasesLeaseAccounts(List<LeaseInterface> tempLeases) throws RemoteException {
-        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList<>(this.getLeaseAccounts());
+        List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList();
         if(!tempLeases.isEmpty()) {
-            for(LeaseAccountInterface temp : tempLeaseAccounts) {
+            for(LeaseAccountInterface temp : this.getLeaseAccounts()) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempLeases.size()) {
                     LeaseInterface tempLease = tempLeases.get(i);
                     if(tempLease.getAgreementRef() == temp.getLeaseRef()) {
+                        tempLeaseAccounts.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempLeaseAccounts.remove(temp);
                 }
             }
         }
@@ -9070,54 +9303,63 @@ public class Database {
         return null;
     }
     
-    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
-        if (!tempEmployeeAccounts.isEmpty()) {
-            for(EmployeeAccountInterface temp : tempEmployeeAccounts) {
-                if(name != null && name.isEmpty() && name.equals(temp.getAccName())) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if(startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if(endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if(balance != null && balance != temp.getBalance()) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (salary != null && salary != temp.getSalary()) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getContractRef()) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempEmployeeAccounts.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempEmployeeAccounts.remove(temp);
-                }
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList();
+        for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
+            boolean add = true;
+            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+                add = false;
+            }
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            }
+            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+                add = false;
+            }
+            if (balance != null && balance != temp.getBalance()) {
+                add = false;
+            }
+            if (salary != null && salary != temp.getSalary()) {
+                add = false;
+            }
+            if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getContractRef()) {
+                add = false;
+            }
+            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+                add = false;
+            }
+            if (current != null && current != temp.isCurrent()) {
+                add = false;
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            }
+            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempEmployeeAccounts.add(temp);
             }
         }
         return tempEmployeeAccounts;
     }
     
     public List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException {
-        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
-        if(!tempEmployeeAcc.isEmpty()) {
-            for(EmployeeAccountInterface temp : tempEmployeeAcc) {
-                if(!name.equals(temp.getAccName())) {
-                    tempEmployeeAcc.remove(temp);
-                }
+        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
+        for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
+            if (name.equals(temp.getAccName())) {
+                tempEmployeeAcc.add(temp);
             }
         }
         return tempEmployeeAcc;
     }
     
     public List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException {
-        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList<>(this.getEmployeeAccounts());
-        if(this.officeExists(office) && !tempEmployeeAcc.isEmpty()) {
-            for(EmployeeAccountInterface temp : tempEmployeeAcc) {
-                if(!office.equals(temp.getOfficeCode())) {
-                    tempEmployeeAcc.remove(temp);
+        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
+        if(this.officeExists(office)) {
+            for(EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
+                if(office.equals(temp.getOfficeCode())) {
+                    tempEmployeeAcc.add(temp);
                 }
             }
         }
@@ -9125,20 +9367,18 @@ public class Database {
     }
     
     public List<EmployeeAccountInterface> getContractsEmployeeAccounts(List<ContractInterface> tempContracts) throws RemoteException {
-        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList<>(this.getEmployeeAccounts());
+        List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList();
         if(!tempContracts.isEmpty()) {
-            for(EmployeeAccountInterface temp : tempEmployeeAccounts) {
+            for(EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
                 boolean cont = true;
                 int i = 0;
                 while(cont && i < tempContracts.size()) {
                     ContractInterface tempContract = tempContracts.get(i);
                     if(tempContract.getAgreementRef() == temp.getContractRef()) {
+                        tempEmployeeAccounts.add(temp);
                         cont = false;
                     }
                     i++;
-                }
-                if(cont) {
-                    tempEmployeeAccounts.remove(temp);
                 }
             }
         }
@@ -9156,20 +9396,23 @@ public class Database {
     }
     
     public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<OfficeInterface> tempOffices = new ArrayList<>(this.getOffices());
-        if(!tempOffices.isEmpty()) {
-            for(OfficeInterface temp : tempOffices) {
-                if(addrRef != null && addrRef == temp.getAddress().getAddressRef()) {
-                    tempOffices.remove(temp);
-                } else if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
-                    tempOffices.remove(temp);
-                } else if (current != null && current != temp.isCurrent()) {
-                    tempOffices.remove(temp);
-                } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                    tempOffices.remove(temp);
-                } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
-                    tempOffices.remove(temp);
-                }
+        List<OfficeInterface> tempOffices = new ArrayList();
+        for (OfficeInterface temp : this.getOffices()) {
+            boolean add = true;
+            if (addrRef != null && addrRef != temp.getAddress().getAddressRef()) {
+                add = false;
+            }
+            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+                add = false;
+            } else if (current != null && current != temp.isCurrent()) {
+                add = false;
+            } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+                add = false;
+            } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+                add = false;
+            }
+            if (add) {
+                tempOffices.add(temp);
             }
         }
         return tempOffices;
