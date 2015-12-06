@@ -19,6 +19,7 @@ public interface EmployeeInterface extends Remote {
     PersonInterface getPerson() throws RemoteException;
     int getPersonRef() throws RemoteException;
     String getOfficeCode() throws RemoteException;
+    boolean isCurrent() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;
     String getLastModifiedBy() throws RemoteException;
     Date getLastModifiedDate() throws RemoteException;

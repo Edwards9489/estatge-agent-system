@@ -1418,6 +1418,17 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    @Override
+    public int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException, SQLException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = (Employee) this.database.getEmployee(eRef);
+            employee.updatePassword(password, new ModifiedBy("Updated Password", new Date(), modifiedBy));
+            this.database.updateEmployee(eRef);
+            return 1;
+        }
+        return 0;
+    }
 
     @Override
     public int deleteEmployee(int eRef) throws RemoteException, SQLException {
@@ -1540,8 +1551,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHODS TO CREATE, UPDATE AND DELETE A PROPERTY     ////////
     @Override
-    public int createProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String createdBy) throws RemoteException, SQLException {
-        if (!this.database.propertyExists(pRef) && this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
+    public int createProperty(int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String createdBy) throws RemoteException, SQLException {
+        if (this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
             Property property = new Property(propRef++, this.database.getAddress(addrRef), startDate, this.database.getPropertyType(propTypeCode), this.database.getPropertySubType(propSubTypeCode), createdBy, new Date());
             this.database.createProperty(property);
             return property.getPropRef();
@@ -1653,13 +1664,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHODS TO CREATE, UPDATE AND DELETE PROPERTY ELEMENTS     ////////
     @Override
-    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, double doubleValue, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment, String createdBy) throws RemoteException, SQLException {
         if (this.database.propertyExists(pRef) && this.database.propElementExists(elementCode)) {
             Note note = this.createNote(comment, createdBy);
             PropertyElement propElement = new PropertyElement(propertyElementRef++, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, note, createdBy, new Date());
             Property property = (Property) this.database.getProperty(pRef);
             property.createPropertyElement(propElement, new ModifiedBy("Created Property Element", new Date(), createdBy));
             this.database.createPropertyElementValue(pRef, propElement);
+            this.database.updateProperty(pRef);
             return 1;
         }
         return 0;
@@ -2953,15 +2965,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     //////     METHODS TO RETURN TENANCY TYPES LIST     ////////
+    
     @Override
     public List<Element> getTenancyTypes() throws RemoteException {
         return this.database.getTenancyTypes();
     }
     
-    
-    //// NEED TO ADD THESE TO CLIENT
-    g
-    
+    ///// METHODS TO RETURN LISTS OF OBJECTS
     
     @Override
     public List<OfficeInterface> getOffices() throws RemoteException {
@@ -3085,19 +3095,17 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public boolean personEmployeeExists(int pRef) throws RemoteException {
-        return this.database.personEmployeeExists(personRef);
+        return this.database.personEmployeeExists(pRef);
     }
 
     @Override
     public boolean personLandlordExists(int pRef) throws RemoteException {
-        return this.database.personLandlordExists(personRef);
+        return this.database.personLandlordExists(pRef);
     }
     
     
 
     // SEARCH METHODS
-    
-    // NEED TO ADD THESE TO CLIENT
     
     @Override
     public AddressInterface getAddress(int aRef) throws RemoteException {
@@ -3180,7 +3188,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
     
     @Override
-    public RentAccountInterface getRentAccounts(int rAccRef) throws RemoteException {
+    public RentAccountInterface getRentAccount(int rAccRef) throws RemoteException {
         if(this.database.rentAccountExists(rAccRef)) {
             return this.database.getRentAccount(rAccRef);
         }
@@ -3202,8 +3210,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return null;
     }
-    
-    /// NEED TO ADD ABOVE METHODS TO CLIENT
     
     @Override
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,

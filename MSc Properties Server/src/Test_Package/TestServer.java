@@ -6,9 +6,15 @@
 package Test_Package;
 
 import interfaces.AddressInterface;
+import interfaces.EmployeeInterface;
 import interfaces.JobRoleInterface;
+import interfaces.LandlordInterface;
 import interfaces.Note;
+import interfaces.OfficeInterface;
 import interfaces.PersonInterface;
+import interfaces.PropertyElementInterface;
+import interfaces.PropertyInterface;
+import interfaces.User;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -279,15 +285,15 @@ public class TestServer {
             Calendar dob3 = Calendar.getInstance();
             dob3.set(2009, 7, 4);
         
-//            test.createPerson("ERR", "Dwayne", "Leroy", "Edwards", dob.getTime(), "JL 81 61 90 C", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS");
-//            test.createPerson("ERR", "Penny", "Kay", "Brindle", dob2.getTime(), "TEST", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS");
-//            test.createPerson("ERR", "TEST", "TEST", "TEST", dob3.getTime(), "TEST", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS");
+//            System.out.println(test.createPerson("ERR", "Dwayne", "Leroy", "Edwards", dob.getTime(), "JL 81 61 90 C", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS"));
+//            System.out.println(test.createPerson("ERR", "Penny", "Kay", "Brindle", dob2.getTime(), "TEST", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS"));
+//            System.out.println(test.createPerson("ERR", "TEST", "TEST", "TEST", dob3.getTime(), "TEST", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "ERR", "DEDWARDS"));
             
-//            test.createPersonAddressUsage(1, 3, janBeg.getTime(), "DEDWARDS");
-//            test.createPersonAddressUsage(2, 3, janBeg.getTime(), "DEDWARDS");
-//            test.createPersonAddressUsage(3, 3, janBeg.getTime(), "DEDWARDS");
+//            System.out.println(test.createPersonAddressUsage(1, 3, janBeg.getTime(), "DEDWARDS"));
+//            System.out.println(test.createPersonAddressUsage(2, 3, janBeg.getTime(), "DEDWARDS"));
+//            System.out.println(test.createPersonAddressUsage(3, 3, janBeg.getTime(), "DEDWARDS"));
             
-            List<PersonInterface> people = test.getPeople(null, "Ben", null, null, null, "JL 81 61 90 C", "ERR", null, null, null, null, null, null, null, null);
+            List<PersonInterface> people = test.getPeople(null, "Dwayne", null, null, null, "JL 81 61 90 C", "ERR", null, null, null, null, null, null, null, null);
             if(people.size() == 1) {
                 PersonInterface person = people.get(0);
                 System.out.println("Person Ref: " + person.getPersonRef());
@@ -298,6 +304,83 @@ public class TestServer {
             }
             
             System.out.println("System People: " + test.getPeople("ERR", null, null, null, null, null, null, null, null, null, null, null, null, null, null).size() + "\n");
+            
+            
+            // Office methods -- Tested commented Office methods
+            System.out.println(test.createOffice("EDM", 1, janBeg.getTime(), "DEDWARDS"));
+//            System.out.println(test.updateOffice("EDM", janEnd.getTime(), "DEDWARDS"));
+//            System.out.println(test.createOfficeContact("EDM", "ERR", "test@test.com", febBeg.getTime(), "DEDWARDS"));
+            OfficeInterface office = test.getOffice("EDM");
+            System.out.println("Office Code: " + office.getOfficeCode());
+            System.out.println("Modifications: " + office.getModifiedBy().size());
+            System.out.println("Office Contacts: " + office.getContacts().size());
+            System.out.println("Office Address: " + office.getAddress().printAddress() + "\n");
+            
+            
+            // Landlord methods -- Tested commented Landlord methods
+            System.out.println(test.createLandlord(1, "DEDWARDS"));
+            System.out.println(test.createLandlord(2, "DEDWARDS"));
+            LandlordInterface landlord = test.getLandlord(1);
+            System.out.println("Landlord Ref: " + landlord.getLandlordRef());
+            System.out.println("Modifications: " + landlord.getModifiedBy().size());
+            System.out.println("Landlord Leases: " + landlord.getLeases().size() + "(no leases added yet)" + "\n");
+            
+            System.out.println("System Landlords: " + test.getLandlords().size() + "\n");
+            
+            
+            // Employee methods -- Tested commented Employee methods
+            System.out.println(test.createEmployee(1, "DEDWARDS", "test12345", "DEDWARDS"));
+            EmployeeInterface employee = test.getEmployee(1);
+            User user = employee.getUser();
+            System.out.println("Modifications: " + employee.getModifiedBy().size());
+            System.out.println("Employee Contracts: " + employee.getContracts().size() + "(no contracts added yet)" + "\n");
+            
+            System.out.println("System Employees: " + test.getEmployees().size() + "\n");
+            
+            
+            // Property methods -- Tested commented Property methods
+//            System.out.println(test.createProperty(1, febBeg.getTime(), "ERR", "ERR", "DEDWARDS"));
+            
+            PropertyInterface property = test.getProperty(1);
+            
+            System.out.println("Property Ref: " + property.getPropRef());
+            System.out.println("Modifications: " + property.getModifiedBy().size());
+            System.out.println("Property Rent: " + property.getRent());
+            System.out.println("Property Charges: " + property.getCharges());
+            System.out.println("Property Landlords: " + property.getLandlords().size());
+            System.out.println("PropertyElements: " + property.getPropertyElements().size() + "\n");
+            
+            System.out.println("System Properties: " + test.getProperties(null, null, "ERR", null, null, null, null).size() + "\n");
+            
+            
+            // PropertyElementValue methods -- Tested commented PropertyElementValue methods
+            System.out.println("System Property Elements: " + test.getPropElements().size());
+//            System.out.println(test.createPropertyElement(1, "ERR", febBeg.getTime(), false, "2 BED", null, "COMMENT", "DEDWARDS"));
+//            System.out.println(test.createPropertyElement(1, "TEST", febBeg.getTime(), true, null, 36.00, "COMMENT", "DEDWARDS"));
+//            System.out.println(test.createPropertyElement(1, "RENT", febBeg.getTime(), true, "2 BED", 300.00, "COMMENT", "DEDWARDS"));
+            PropertyElementInterface propElement = property.getPropElement(1);
+            PropertyElementInterface propElement2 = property.getPropElement(2);
+            PropertyElementInterface propElement3 = property.getPropElement(3);
+//            System.out.println(test.updatePropertyElement(propElement.getPropertyElementRef(), 1, propElement.getStartDate(), "3 BED - AMENDED", null, false, propElement.getComment(), "DEDWARDS"));
+//            System.out.println(test.updatePropertyElement(propElement2.getPropertyElementRef(), 1, propElement.getStartDate(), null, 99.99, true, propElement2.getComment(), "DEDWARDS"));
+            System.out.println("\nProperty Element 1: " + propElement);
+            System.out.println("\nProperty Element 2: " + propElement2 + "\n");
+            
+            
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            
+            
+            
             
             
         } catch (RemoteException ex) {

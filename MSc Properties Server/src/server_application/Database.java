@@ -8713,10 +8713,10 @@ public class Database {
             if (leaseEndDate != null && leaseEndDate.compareTo(temp.getLeaseEndDate()) != 0) {
                 add = false;
             }
-            if (propTypeCode != null && this.propTypeExists(propTypeCode) && propTypeCode.equals(temp.getPropType().getCode())) {
+            if (propTypeCode != null && this.propTypeExists(propTypeCode) && !propTypeCode.equals(temp.getPropType().getCode())) {
                 add = false;
             }
-            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && propSubTypeCode.equals(temp.getPropSubType().getCode())) {
+            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && !propSubTypeCode.equals(temp.getPropSubType().getCode())) {
                 add = false;
             }
             if (propStatus != null && propStatus.equals(temp.getPropStatus())) {

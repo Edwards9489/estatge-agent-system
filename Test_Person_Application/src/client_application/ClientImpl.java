@@ -12,6 +12,7 @@ import interfaces.ContractInterface;
 import interfaces.Element;
 import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
+import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
@@ -926,9 +927,9 @@ public class ClientImpl implements Client {
         return 0;
     }
 
-    public int createProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException, SQLException {
+    public int createProperty(int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException, SQLException {
         if (server.isAlive()) {
-            return server.createProperty(pRef, addrRef, startDate, propTypeCode, propSubTypeCode, user.getUsername());
+            return server.createProperty(addrRef, startDate, propTypeCode, propSubTypeCode, user.getUsername());
         }
         return 0;
     }
@@ -1002,7 +1003,7 @@ public class ClientImpl implements Client {
         return 0;
     }
 
-    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, double doubleValue, String comment) throws RemoteException, SQLException {
+    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment) throws RemoteException, SQLException {
         if (server.isAlive()) {
             return server.createPropertyElement(pRef, elementCode, startDate, charge, stringValue, doubleValue, comment, user.getUsername());
         }
@@ -1960,6 +1961,60 @@ public class ClientImpl implements Client {
         }
         return null;
     }
+    
+    public List<OfficeInterface> getOffices() throws RemoteException {
+        return this.server.getOffices();
+    }
+    
+    public List<OfficeInterface> getCurrentOffices() throws RemoteException {
+        List<OfficeInterface> tempOffices = new ArrayList();
+        for(OfficeInterface temp : this.getOffices()) {
+            if (temp.isCurrent()) {
+                tempOffices.add(temp);
+            }
+        }
+        return tempOffices;
+    }
+    
+    public List<AddressInterface> getAddresses() throws RemoteException {
+        return this.server.getAddresses();
+    }
+    
+    public List<User> getUsers() throws RemoteException {
+        return this.server.getUsers();
+    }
+    
+    public List<LandlordInterface> getLandlords() throws RemoteException {
+        return this.server.getLandlords();
+    }
+    
+    public List<EmployeeInterface> getEmployees() throws RemoteException {
+        return this.server.getEmployees();
+    }
+    
+    public List<EmployeeInterface> getCurrentEmployees() throws RemoteException {
+        List<EmployeeInterface> tempEmployees = new ArrayList();
+        for (EmployeeInterface temp : this.getEmployees()) {
+            if (temp.isCurrent()) {
+                tempEmployees.add(temp);
+            }
+        }
+        return tempEmployees;
+    }
+    
+    public List<JobRoleInterface> getJobRoles() throws RemoteException {
+        return this.server.getJobRoles();
+    }
+    
+    public List<JobRoleInterface> getCurrentJobRoles() throws RemoteException {
+        List<JobRoleInterface> tempJobRoles = new ArrayList();
+        for (JobRoleInterface temp : this.getJobRoles()) {
+            if (temp.isCurrent()) {
+                tempJobRoles.add(temp);
+            }
+        }
+        return tempJobRoles;
+    }
 
     public Boolean titleExists(String code) throws RemoteException {
         if (server.isAlive()) {
@@ -2080,8 +2135,69 @@ public class ClientImpl implements Client {
         return null;
     }
     
+    public boolean personEmployeeExists(int pRef) throws RemoteException {
+        return this.server.personEmployeeExists(pRef);
+    }
+
+    
+    public boolean personLandlordExists(int pRef) throws RemoteException {
+        return this.server.personLandlordExists(pRef);
+    }
+    
     
     /// SEARCH METHODS
+    
+    public AddressInterface getAddress(int aRef) throws RemoteException {
+        return this.server.getAddress(aRef);
+    }
+    
+    public JobRoleInterface getJobRole(String jobRoleCode) throws RemoteException {
+        return this.server.getJobRole(jobRoleCode);
+    }
+    
+    public OfficeInterface getOffice(String officeCode) throws RemoteException {
+        return this.server.getOffice(officeCode);
+    }
+    
+    public ApplicationInterface getApplication(int aRef) throws RemoteException {
+        return this.server.getApplication(aRef);
+    }
+    
+    public PropertyInterface getProperty(int pRef) throws RemoteException {
+        return this.server.getProperty(pRef);
+    }
+    
+    public EmployeeInterface getEmployee(int eRef) throws RemoteException {
+        return this.server.getEmployee(eRef);
+    }
+    
+    public LandlordInterface getLandlord(int lRef) throws RemoteException {
+        return this.server.getLandlord(lRef);
+    }
+    
+    public TenancyInterface getTenancy(int tRef) throws RemoteException {
+        return this.server.getTenancy(tRef);
+    }
+    
+    public LeaseInterface getLease(int lRef) throws RemoteException {
+        return this.server.getLease(lRef);
+    }
+    
+    public ContractInterface getContract(int cRef) throws RemoteException {
+        return this.server.getContract(cRef);
+    }
+    
+    public RentAccountInterface getRentAccount(int rAccRef) throws RemoteException {
+        return this.server.getRentAccount(rAccRef);
+    }
+    
+    public LeaseAccountInterface getLeaseAccount(int lAccRef) throws RemoteException {
+        return this.server.getLeaseAccount(lAccRef);
+    }
+    
+    public EmployeeAccountInterface getEmployeeAccount(int eAccRef) throws RemoteException {
+        return this.server.getEmployeeAccount(eAccRef);
+    }
 
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
@@ -2090,6 +2206,7 @@ public class ClientImpl implements Client {
         }
         return null;
     }
+    
 
     public List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
