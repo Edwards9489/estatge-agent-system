@@ -6,6 +6,7 @@
 package interfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,7 @@ import java.rmi.RemoteException;
 public interface Client extends Remote {
     String getName() throws RemoteException;
     boolean isAlive() throws RemoteException;
+    String getOfficeCode() throws RemoteException;
+    void updateUserAgreements(List<AgreementInterface> agreements) throws RemoteException;
+    void updateUserRentAccounts(List<RentAccountInterface> rentAccounts) throws RemoteException;
 }

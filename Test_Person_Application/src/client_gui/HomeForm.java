@@ -6,12 +6,19 @@
 package client_gui;
 
 import client_application.ClientImpl;
+import interfaces.AgreementInterface;
 import interfaces.ContractInterface;
 import interfaces.LeaseInterface;
+import interfaces.RentAccountInterface;
 import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -20,7 +27,7 @@ import javax.swing.JMenuBar;
  *
  * @author Dwayne
  */
-public class HomeForm extends JFrame {
+public class HomeForm extends JFrame implements Observer {
 
     private JLabel title;
     private ButtonPanel buttonPanel;
@@ -99,6 +106,31 @@ public class HomeForm extends JFrame {
         setSize(900, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        try {
+            if(arg instanceof List<?>) {
+                if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
+                    List<AgreementInterface> agreements = (List<AgreementInterface>) arg;
+                    this.updateAgreementsList(agreements);
+                } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
+                    List<RentAccountInterface> accounts = (List<RentAccountInterface>) arg;
+                    this.updateRentAccountsList(accounts);
+                    }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void updateAgreementsList(List<AgreementInterface> agreements) {
+        // Method to update Agreements List Table
+    }
+    
+    private void updateRentAccountsList(List<RentAccountInterface> accounts) {
+        // Method to update Rent Accounts List Table
     }
 
     public void setClient(ClientImpl model) {

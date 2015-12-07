@@ -6,6 +6,7 @@
 package client_application;
 
 import interfaces.AddressInterface;
+import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Client;
 import interfaces.ContractInterface;
@@ -42,6 +43,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @author Dwayne
  */
-public class ClientImpl implements Client {
+public class ClientImpl extends Observable implements Client {
 
     String name;
     Server server = null;
@@ -137,6 +139,7 @@ public class ClientImpl implements Client {
         }
     }
 
+    @Override
     public String getOfficeCode() throws RemoteException {
         return user.getOfficeCode();
     }
@@ -147,6 +150,18 @@ public class ClientImpl implements Client {
 
     public boolean isUser(String username, String password) throws RemoteException {
         return server.isUser(username, password);
+    }
+    
+    @Override
+    public void updateUserAgreements(List<AgreementInterface> agreements) throws RemoteException {
+        this.setChanged();
+        this.notifyObservers(agreements);
+    }
+    
+    @Override
+    public void updateUserRentAccounts(List<RentAccountInterface> accounts) throws RemoteException {
+        this.setChanged();
+        this.notifyObservers(accounts);
     }
 
     public int createTitle(String code, String description, String comment) throws RemoteException, SQLException {

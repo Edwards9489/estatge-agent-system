@@ -8,6 +8,7 @@ package server_application;
 import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
+import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Server;
 import interfaces.RegistryLoader;
@@ -1970,6 +1971,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             tenancy.setTenType(this.database.getTenancyType(tenTypeCode), new ModifiedBy("Updated Tenancy", new Date(), modifiedBy));
             this.updateRentAccount(tenancy.getAccountRef(), name, startDate, (tenancy.getRent() + tenancy.getCharges()), modifiedBy);
             this.database.updateTenancy(tenancy.getAgreementRef());
+            this.updateUserAgreements(tenancy.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2024,6 +2026,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             this.database.updateOffice(office.getOfficeCode());
             
             this.database.deleteTenancy(tenancy.getAgreementRef());
+            this.updateUserAgreements(tenancy.getOfficeCode());
+            this.updateUserRentAccounts(tenancy.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2200,6 +2204,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             lease.updateAgreement(name, startDate, length, new ModifiedBy("Updated Lease", new Date(), modifiedBy));
             this.database.updateLease(lease.getAgreementRef());
             this.updateLeaseAccount(lease.getAccountRef(), name, startDate, lease.getExpenditure(), modifiedBy);
+            this.updateUserAgreements(lease.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2234,7 +2239,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             office.deleteAgreement(lease.getAgreementRef(), new ModifiedBy("Deleted LeaseAccount", new Date(), deletedBy));
             this.database.updateOffice(office.getOfficeCode());
             
-            this.database.deleteLease(lRef);
+            this.database.deleteLease(lease.getAgreementRef());
+            this.updateUserAgreements(lease.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2402,6 +2408,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             contract.updateAgreement(name, startDate, length, new ModifiedBy("Updated Contract", new Date(), modifiedBy));
             this.database.updateLease(contract.getAgreementRef());
             this.updateEmployeeAccount(contract.getAccountRef(), name, startDate, modifiedBy);
+            this.updateUserAgreements(contract.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2431,7 +2438,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             this.database.updateOffice(office.getOfficeCode());
             office.deleteAccount(contract.getAccountRef(), new ModifiedBy("Deleted Employee Account", new Date(), deletedBy));
             this.database.updateOffice(office.getOfficeCode());
-            this.database.deleteContract(cRef);
+            
+            this.database.deleteContract(contract.getAgreementRef());
+            this.updateUserAgreements(contract.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2808,10 +2817,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
             Note note = this.createNote(comment, createdBy);
             Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
-            RentAccount account = (RentAccount) this.database.getRentAccount(rAccRef);
-            account.createTransaction(transaction, new ModifiedBy("Created Rent Transaction", new Date(), createdBy));
+            RentAccount rentAcc = (RentAccount) this.database.getRentAccount(rAccRef);
+            rentAcc.createTransaction(transaction, new ModifiedBy("Created Rent Transaction", new Date(), createdBy));
             this.database.updateRentAccount(rAccRef);
-            this.database.createRentAccountTransaction(account.getAccRef(), transaction);
+            this.database.createRentAccountTransaction(rentAcc.getAccRef(), transaction);
+            this.updateUserRentAccounts(rentAcc.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2823,6 +2833,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             this.database.deleteRentAccountTransaction(rAccRef, tRef);
             RentAccount rentAcc = (RentAccount) this.database.getRentAccount(rAccRef);
             rentAcc.deleteTransaction(tRef, new ModifiedBy("Deleted Transaction", new Date(), deletedBy));
+            this.updateUserRentAccounts(rentAcc.getOfficeCode());
             return 1;
         }
         return 0;
@@ -3689,6 +3700,66 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public boolean isAlive() throws RemoteException {
         return true;
+    }
+    
+    private void updateUserAgreements(String officeCode) throws RemoteException {
+        if (this.database.officeExists(officeCode)) {
+            List<AgreementInterface> agreements = new ArrayList();
+            List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
+            int i = 0;
+            AgreementInterface tempAgreement = null;
+            while (i < 15 && !tempAgreements.isEmpty()) {
+                for (AgreementInterface temp : tempAgreements) {
+                    if (tempAgreement != null) {
+                        if(tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
+                            tempAgreement = temp;
+                        }
+                    } else { // tempAgreement == null
+                        tempAgreement = temp;
+                    }
+                }
+                agreements.add(tempAgreement);
+                tempAgreements.remove(tempAgreement);
+            }
+            
+            for (Client client : users.values()) {
+                if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    client.updateUserAgreements(agreements);
+                } else if (!client.isAlive()) {
+                    users.remove(client.getName());
+                }
+            }
+        }
+    }
+  
+    private void updateUserRentAccounts(String officeCode) throws RemoteException {
+        if (this.database.officeExists(officeCode)) {
+            List<RentAccountInterface> accounts = new ArrayList();
+            List<AccountInterface> tempAccounts = this.getOffice(officeCode).getAccounts();
+            int i = 0;
+            AccountInterface tempAccount = null;
+            while (i < 15 && !tempAccounts.isEmpty()) {
+                for (AccountInterface temp : tempAccounts) {
+                    if (temp instanceof RentAccountInterface && tempAccount != null) {
+                        if (tempAccount.getBalance() > temp.getBalance()) {
+                            tempAccount = temp;
+                        }
+                    } else if (temp instanceof RentAccountInterface && tempAccount == null) {
+                        tempAccount = temp;
+                    }
+                }
+                accounts.add((RentAccountInterface) tempAccount);
+                tempAccounts.remove(tempAccount);
+                i++;
+            }
+            for (Client client : users.values()) {
+                if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    client.updateUserRentAccounts(accounts);
+                } else if (!client.isAlive()) {
+                    users.remove(client.getName());
+                }
+            }
+        }
     }
 
     private byte[] downloadDocument(int dRef) {

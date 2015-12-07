@@ -370,7 +370,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      */
     @Override
     public List<AgreementInterface> getAgreements() throws RemoteException {
-        return Collections.unmodifiableList(agreements);
+        return Collections.unmodifiableList(new ArrayList(agreements));
     }
     
     @Override
@@ -402,7 +402,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      */
     @Override
     public List<AccountInterface> getAccounts() throws RemoteException {
-        return Collections.unmodifiableList(accounts);
+        return Collections.unmodifiableList(new ArrayList(accounts));
     }
     
     @Override
@@ -423,7 +423,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      */
     @Override
     public List<ContactInterface> getContacts() throws RemoteException {
-        return Collections.unmodifiableList(contacts);
+        return Collections.unmodifiableList(new ArrayList(contacts));
     }
     
     @Override
@@ -455,10 +455,12 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
         return true;
     }
     
+    @Override
     public boolean hasAgreements() {
         return !agreements.isEmpty();
     }
     
+    @Override
     public boolean hasAccounts() {
         return !accounts.isEmpty();
     }
