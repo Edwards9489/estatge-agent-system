@@ -8602,6 +8602,12 @@ public class Database {
         return tempApplications;
     }
     
+    /**
+     * returns a list of applications with an InvolvedParty that is associated to any Person within the tempPeople list
+     * @param tempPeople
+     * @return
+     * @throws RemoteException 
+     */
     public List<ApplicationInterface> getPeopleApplications(List<PersonInterface> tempPeople) throws RemoteException {
         List<ApplicationInterface> tempApplications = new ArrayList<>();
         if (!tempPeople.isEmpty()) {
