@@ -241,13 +241,6 @@ public class Database {
         String url = "jdbc:mysql://" + address + ":" + port + "/msc_properties" + env;
         // jdbc: database type : localhost because it is on my machine : 3306 for port 3306 : msc_properties(+ enviornment) for database name
         this.con = DriverManager.getConnection(url, user, passw);
-
-        /**
-         * To add a library to the project (MySQL Library) : 1. Right-mouse
-         * click on the Libraries folder in your project 2. Select Add Library
-         * 3. Scroll down and find the Library you need 4. Select it, and click
-         * on the Add button
-         */
     }
     
     /**
@@ -271,9 +264,6 @@ public class Database {
     private void load() throws SQLException, RemoteException {
         if (this.con != null) {
             try {
-                
-                // NEED TO ADD MODIFICATIONS TO OBJECTS FOR ALL LOAD METHODS;
-                
                 this.loadTitles();
                 this.loadGenders();
                 this.loadMaritalStatuses();
@@ -2380,7 +2370,8 @@ public class Database {
     public void createAddress(Address address) throws SQLException, RemoteException {
         if(!this.addressExists(address.getAddressRef())) {
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
-                    + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) "
+                    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, address.getAddressRef());
@@ -2504,7 +2495,8 @@ public class Database {
                 Date createdDate = results.getDate("createdDate");
                 
                 Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, createdDate);
+                Address temp = new Address(addressRef, buildingNumber, buildingName, subStreetNumber, 
+                        subStreet, streetNumber, street, area, town, country, postcode, note, createdBy, createdDate);
                 this.addresses.put(temp.getAddressRef(), temp);
                 this.notes.put(note.getReference(), note);
                 this.loadAddressMods(temp.getAddressRef(), this.loadModMap("addressModifications", temp.getAddressRef()));

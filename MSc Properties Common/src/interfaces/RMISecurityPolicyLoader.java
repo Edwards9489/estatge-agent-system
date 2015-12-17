@@ -1,6 +1,5 @@
 package interfaces;
 
-
 import java.net.URL;
 
 /*
@@ -16,15 +15,19 @@ import java.rmi.RMISecurityManager;
 public class RMISecurityPolicyLoader {
 
     private static boolean loaded = false;
-    public static void LoadDefaultPolicy()
-    {
-        LoadPolicy("RMISecurity.policy");
+
+    public static void LoadDefaultPolicy() {
+        loadPolicy("RMISecurity.policy");
     }
-    public static void LoadPolicy(String policy) {
-        if (loaded) {    return;     }
+
+    public static void loadPolicy(String policy) {
+        if (loaded) {
+            return;
+        }
+        
         loaded = true;
         ClassLoader cl = RMISecurityPolicyLoader.class.getClassLoader();
-        URL url = cl.getResource( policy) ;
+        URL url = cl.getResource(policy);
         if (url == null) {
             System.out.println("Policy not found null (Have you included it in the jar file? (Don't forget to clean and build))");
         } else {

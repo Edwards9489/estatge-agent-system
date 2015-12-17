@@ -75,7 +75,7 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public static Client createClient(String[] args) throws RemoteException, NotBoundException, UnknownHostException, MalformedURLException {
-        RMISecurityPolicyLoader.LoadPolicy("RMISecurity.policy");
+        RMISecurityPolicyLoader.loadPolicy("RMISecurity.policy");
 
         ClientImpl c = new ClientImpl();
         //if the command line has at least one argument, the first one is the name
