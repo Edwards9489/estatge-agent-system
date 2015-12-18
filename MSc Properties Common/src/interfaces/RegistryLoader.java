@@ -1,12 +1,13 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package interfaces;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author dwayne
@@ -25,6 +26,6 @@ public class RegistryLoader {
     }
 
     private RegistryLoader() {
-
+        
     }
 }

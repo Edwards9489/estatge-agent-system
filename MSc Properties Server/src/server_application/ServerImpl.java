@@ -11,7 +11,6 @@ import interfaces.AddressUsageInterface;
 import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Server;
-import interfaces.RegistryLoader;
 import interfaces.Client;
 import interfaces.ContactInterface;
 import interfaces.ContractInterface;
