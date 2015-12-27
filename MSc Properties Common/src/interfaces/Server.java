@@ -74,6 +74,7 @@ public interface Server extends Remote {
     int updatePersonNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deletePersonNote(int pRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createPersonDocument(int pRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updatePersonDocument(int pRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deletePersonDocument(int pRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadPersonDocument(int pRef, int dRef, String downloadedBy) throws RemoteException;
     int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException;
@@ -89,6 +90,7 @@ public interface Server extends Remote {
     int updateOfficeNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteOfficeNote(String officeCode, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createOfficeDocument(String oCode, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateOfficeDocument(String oCode, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteOfficeDocument(String oCode, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadOfficeDocument(String oCode, int dRef, String downloadedBy) throws RemoteException;
     int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException, SQLException;
@@ -112,6 +114,7 @@ public interface Server extends Remote {
     int updateApplicationNote(int aRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteApplicationNote(int aRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createApplicationDocument(int aRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateApplicationDocument(int aRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteApplicationDocument(int aRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadApplicationDocument(int aRef, int dRef, String downloadedBy) throws RemoteException;
     int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException, SQLException;
@@ -135,6 +138,7 @@ public interface Server extends Remote {
     int updatePropertyNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deletePropertyNote(int pRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createPropertyDocument(int pRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updatePropertyDocument(int pRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deletePropertyDocument(int pRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadPropertyDocument(int pRef, int dRef, String downloadedBy) throws RemoteException;
     int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment, String createdBy) throws RemoteException, SQLException;
@@ -167,6 +171,7 @@ public interface Server extends Remote {
     int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteTenancyNote(int tRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createTenancyDocument(int tRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateTenancyDocument(int tRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteTenancyDocument(int tRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadTenancyDocument(int tRef, int dRef, String downloadedBy) throws RemoteException;
     int createTenancyType(String code, String description, String comment, String createdBy) throws RemoteException, SQLException;
@@ -180,6 +185,7 @@ public interface Server extends Remote {
     int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteLeaseNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createLeaseDocument(int lRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateLeaseDocument(int lRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteLeaseDocument(int lRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadLeaseDocument(int tRef, int dRef, String downloadedBy) throws RemoteException;
     int createLeaseLandlord(int lRef, int landRef, String modifiedBy) throws SQLException, RemoteException;
@@ -191,24 +197,28 @@ public interface Server extends Remote {
     int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteContractNote(int cRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createContractDocument(int cRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateContractDocument(int cRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteContractDocument(int cRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadContractDocument(int tRef, int dRef, String downloadedBy) throws RemoteException;
     int createRentAccNote(int rRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateRentAccNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteRentAccNote(int rRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createRentAccDocument(int rRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateRentAccDocument(int rRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteRentAccDocument(int rRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadRentAccDocument(int rRef, int dRef, String downloadedBy) throws RemoteException;
     int createLeaseAccNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateLeaseAccNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteLeaseAccNote(int lRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createLeaseAccDocument(int lRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateLeaseAccDocument(int lRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteLeaseAccDocument(int lRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadLeaseAccDocument(int lRef, int dRef, String downloadedBy) throws RemoteException;
     int createEmployeeAccNote(int eRef, String comment, String createdBy) throws RemoteException, SQLException;
     int updateEmployeeAccNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException;
     int deleteEmployeeAccNote(int eRef, int nRef, String modifiedBy) throws RemoteException, SQLException;
     int createEmployeeAccDocument(int eRef, String fileName, byte[] buffer, String comment, String createdBy) throws RemoteException, SQLException;
+    int updateEmployeeAccDocument(int eRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteEmployeeAccDocument(int eRef, int dRef, String modifiedBy) throws RemoteException, SQLException;
     byte[] downloadEmployeeAccDocument(int eRef, int dRef, String downloadedBy) throws RemoteException;
     int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException, SQLException;

@@ -34,7 +34,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     private final List<ModifiedByInterface> modifiedBy;
     private final List<TransactionInterface> transactions;
     private final List<Note> notes;
-    private final ArrayList<Document> documents;
+    private final List<Document> documents;
     
     ///   CONSTRUCTORS ///
     
@@ -128,7 +128,11 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) throws RemoteException {
         if (this.isCurrent()) {
             transactions.add(transaction);
-            this.setBalance(this.balance + transaction.getAmount());
+            if(transaction.isDebit()) {
+                this.setBalance(this.balance - transaction.getAmount());
+            } else {
+                this.setBalance(this.balance + transaction.getAmount());
+            }            
             this.modifiedBy(modifiedBy);
         }
     }
@@ -142,7 +146,11 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
         if(this.hasTransaction(ref)) {
             TransactionInterface transaction = this.getTransaction(ref);
             this.transactions.remove(transaction);
-            this.setBalance(this.balance - transaction.getAmount());
+            if(transaction.isDebit()) {
+                this.setBalance(this.balance + transaction.getAmount());
+            } else {
+                this.setBalance(this.balance - transaction.getAmount());
+            }            
             this.modifiedBy(modifiedBy);
         }
     }

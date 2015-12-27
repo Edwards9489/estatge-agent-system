@@ -246,7 +246,6 @@ public class TestServer {
 //            System.out.println(test.createTenancyType("TEST", "TEST", "COMMENT", "DEDWARDS"));
 //            System.out.println(test.createTitle("TEST", "TEST", "COMMENT", "DEDWARDS"));
             
-            
             // Job Role Methods  -- Tested commented Job Role methods
             System.out.println(test.createJobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, "DEDWARDS"));
 //            System.out.println(test.updateJobRole("MNGR", "Manager", "Managerial Duties", true, 30000.00, true, true, true, true, true, true, false, "DEDWARDS"));

@@ -26,4 +26,36 @@ public class Utils {
         return name.substring(pointIndex+1, name.length());
         // returns the String from the "." onwards
     }
+    
+    public static String getFileName(String name) {
+        int pointIndex = name.lastIndexOf(".");
+        
+        if(pointIndex == -1) {
+            return null;
+            // returns null if "." is not found in String
+        }
+        
+        if(pointIndex == name.length()-1) {
+            return null;
+            // returns null if "." is last charecter in String
+        }
+        
+        return name.substring(0, pointIndex);
+    }
+    
+    public static String getFileNameWithoutVersion(String name) {
+        int pointIndex = name.lastIndexOf("v");
+        
+        if(pointIndex == -1) {
+            return null;
+            // returns null if "." is not found in String
+        }
+        
+        if(pointIndex == name.length()-1) {
+            return null;
+            // returns null if "." is last charecter in String
+        }
+        
+        return name.substring(0, pointIndex+1);
+    }
 }

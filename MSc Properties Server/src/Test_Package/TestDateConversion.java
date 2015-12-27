@@ -7,7 +7,7 @@ package Test_Package;
 
 import java.util.Calendar;
 import java.util.Date;
-import server_application.DateConversion;
+import classes.DateConversion;
 
 /**
  *
@@ -19,7 +19,8 @@ public class TestDateConversion {
     
     public TestDateConversion() {
         //DateConversion.utilDateToSQLDate(date);
-        System.out.println(DateConversion.dateToCalendar(date));
+        //System.out.println(DateConversion.dateToCalendar(date));
+        System.out.println(DateConversion.dateToString(date));
     }
     
     public static void main(String[] args) {

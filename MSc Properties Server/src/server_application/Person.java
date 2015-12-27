@@ -5,6 +5,7 @@
  */
 
 package server_application;
+import classes.DateConversion;
 import interfaces.AddressUsageInterface;
 import interfaces.ContactInterface;
 import interfaces.Document;

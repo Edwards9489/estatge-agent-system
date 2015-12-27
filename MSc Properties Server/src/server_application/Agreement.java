@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.DateConversion;
 import interfaces.AgreementInterface;
 import interfaces.Document;
 import interfaces.ModifiedByInterface;

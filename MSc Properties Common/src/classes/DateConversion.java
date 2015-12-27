@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package classes;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,7 +14,7 @@ import java.util.Date;
  * @author Dwayne
  */
 public class DateConversion {
-
+    
     /**
      * 
      * @param date
@@ -35,18 +35,9 @@ public class DateConversion {
      * @return 
      */
     public static String dateToString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-YYYY");
         String currentTime = sdf.format(date);
         return currentTime;
-    }
-    
-    /**
-     * 
-     * @param date
-     * @param numMonths 
-     */
-    public static void addMonths(Date date, int numMonths){
-    date.setMonth((date.getMonth() - 1 + numMonths) % 12 + 1);
     }
     
     /**
