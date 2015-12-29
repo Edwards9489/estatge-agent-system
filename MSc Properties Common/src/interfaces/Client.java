@@ -13,8 +13,8 @@ import java.util.List;
  * @author Dwayne
  */
 public interface Client extends Remote {
-    String getName() throws RemoteException;
     boolean isAlive() throws RemoteException;
+    String getUsername() throws RemoteException;
     String getOfficeCode() throws RemoteException;
     void updateUserAgreements(List<AgreementInterface> agreements) throws RemoteException;
     void updateUserRentAccounts(List<RentAccountInterface> rentAccounts) throws RemoteException;

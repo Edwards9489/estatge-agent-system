@@ -6,13 +6,9 @@
 package server_application;
 
 import interfaces.Server;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,12 +25,21 @@ public class TaskGenerator extends TimerTask {
         this.timer = new Timer();
         this.date = Calendar.getInstance();
         this.setDate();
-        setSchedule(time);
+        this.setSchedule(time);
     }
 
     @Override
     public void run() {
-        System.out.println("Generating Monthly report");
+        System.out.println("Daily Tasks");   
+        //server.processRentTransactions();
+        //server.processLeaseTransactions();
+        //server.cloneDatabase();
+        Calendar today = Calendar.getInstance();
+        if(today.get(Calendar.DAY_OF_MONTH) == 1) {
+            //server.generateReports();
+            //server.processSalaryTransactions();
+            System.out.println("Monthly Tasks");
+        }
     }
     
     private void setDate() {
@@ -46,6 +51,5 @@ public class TaskGenerator extends TimerTask {
     
     private void setSchedule(int time) {
         timer.schedule(this, date.getTime(), time);
-        //Schedule to run every Day at midnight
     }
 }

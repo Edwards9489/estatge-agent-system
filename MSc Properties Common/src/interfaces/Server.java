@@ -368,6 +368,11 @@ public interface Server extends Remote {
     
     
     
+    public List<RentAccountInterface> getUserRentAccounts(String officeCode) throws RemoteException;
+    public List<AgreementInterface> getUserAgreements(String officeCode) throws RemoteException;
+    
+    
+    
     // SERVER METHODS
     
     void   register(Client c) throws RemoteException;

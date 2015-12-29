@@ -21,6 +21,7 @@ public interface Document extends Remote {
     File getDocument() throws RemoteException;
     List<File> getPreviousVersions() throws RemoteException;
     String getDocumentPath() throws RemoteException;
+    String getFilePath() throws RemoteException;
     Note getNote() throws RemoteException;
     String getComment() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;

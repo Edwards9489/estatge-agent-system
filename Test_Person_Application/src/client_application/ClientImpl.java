@@ -53,7 +53,6 @@ import java.util.logging.Logger;
  */
 public class ClientImpl extends Observable implements Client {
 
-    String name;
     Server server = null;
     User user = null;
 
@@ -69,8 +68,8 @@ public class ClientImpl extends Observable implements Client {
      */
     public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException, NotBoundException {
 
-        ClientImpl c1 = (ClientImpl) createClient(new String[]{"arnold"});//server
-        ClientImpl c2 = (ClientImpl) createClient(new String[]{"donald", "127.0.0.1"});
+        ClientImpl c1 = (ClientImpl) createClient(new String[]{"dwayne"});//server
+        ClientImpl c2 = (ClientImpl) createClient(new String[]{"penny", "127.0.0.1"});
 
     }
 
@@ -78,7 +77,6 @@ public class ClientImpl extends Observable implements Client {
         RMISecurityPolicyLoader.loadPolicy("RMISecurity.policy");
 
         ClientImpl c = new ClientImpl();
-        //if the command line has at least one argument, the first one is the name
         if (args.length == 5) {
             c.registerWithServer(args[1], args[0]);
         } else {//we are on the same machine as the server
@@ -118,15 +116,6 @@ public class ClientImpl extends Observable implements Client {
         return stub;
     }
 
-    @Override
-    public String getName() throws RemoteException {
-        return name;
-    }
-
-    private void setName(String string) {
-        name = string;
-    }
-
     //if i have died i won't reply!
     @Override
     public boolean isAlive() throws RemoteException {
@@ -143,7 +132,8 @@ public class ClientImpl extends Observable implements Client {
     public String getOfficeCode() throws RemoteException {
         return user.getOfficeCode();
     }
-
+    
+    @Override
     public String getUsername() throws RemoteException {
         return user.getUsername();
     }
@@ -2665,6 +2655,21 @@ public class ClientImpl extends Observable implements Client {
     public Double getProfitOverall(Date startDate, Date endDate) throws RemoteException {
         if (server.isAlive()) {
             return this.server.getProfitOverall(startDate, endDate);
+        }
+        return null;
+    }
+    
+    
+    public List<RentAccountInterface> getUserRentAccounts() throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getUserRentAccounts(user.getOfficeCode());
+        }
+        return null;
+    }
+    
+    public List<AgreementInterface> getUserAgreements() throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getUserAgreements(user.getOfficeCode());
         }
         return null;
     }

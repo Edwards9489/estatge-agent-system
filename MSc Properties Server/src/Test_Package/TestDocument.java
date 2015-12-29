@@ -39,7 +39,7 @@ public class TestDocument {
             System.out.println(Utils.getFileName(test1.getDocumentName()));
             System.out.println(Utils.getFileNameWithoutVersion(test1.getDocumentName()));
             
-            System.out.println(test1.getDocumentPath() + "\\" + Utils.getFileNameWithoutVersion(test1.getDocumentName()) + (test1.getPreviousVersions().size() + 2));
+            System.out.println(test1.getDocumentPath() + "\\" + Utils.getFileNameWithoutVersion(test1.getDocumentName()) + (test1.getPreviousVersions().size() + 2) + "." + Utils.getFileExtension(test1.getDocumentName()));
         } catch (RemoteException ex) {
             Logger.getLogger(TestDocument.class.getName()).log(Level.SEVERE, null, ex);
         }

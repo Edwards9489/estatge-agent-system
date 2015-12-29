@@ -81,6 +81,11 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
     }
     
     @Override
+    public String getFilePath() throws RemoteException {
+        return this.getDocumentPath() + "\\" + this.getDocumentName();
+    }
+    
+    @Override
     public File getDocument() throws RemoteException {
         return files.get(files.size() - 1).getParentFile();
     }

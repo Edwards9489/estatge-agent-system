@@ -67,8 +67,8 @@ public class ListPanel extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
     
-    public void setData(List<AgreementInterface> tenancies) {
-        tableModel.setData(tenancies);
+    public void setData(List<AgreementInterface> agreements) {
+        tableModel.setData(agreements);
     }
     
     public void refresh() {

@@ -14,6 +14,7 @@ import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -82,7 +83,11 @@ public class HomeForm extends JFrame implements Observer {
         
         
         
-        //listsPanel.setData(client.getTenanciesEnding(client.getOfficeCode()));
+        try {
+            this.updateAgreementsList(client.getUserAgreements());
+        } catch (RemoteException ex) {
+            Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         listsPanel.setTableListener(new TableListener() {
             @Override
@@ -92,6 +97,16 @@ public class HomeForm extends JFrame implements Observer {
 //                    TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
 //                    tenancyForm.setClient(client);
 //                    tenancyForm.setTenancy(tenancy);
+                } else if(agreement instanceof LeaseInterface) {
+                    LeaseInterface lease = (LeaseInterface) agreement;
+//                    LeaseDetailsForm leaseForm = new LeaseDetailsForm();
+//                    leaseForm.setClient(client);
+//                    leaseForm.setLease(lease);
+                } else if(agreement instanceof ContractInterface) {
+                    ContractInterface contract = (ContractInterface) agreement;
+//                    ContractDetailsForm contractForm = new ContractDetailsForm();
+//                    contractForm.setClient(client);
+//                    contractForm.setContract(contract);
                 }
             }
         });
@@ -115,7 +130,7 @@ public class HomeForm extends JFrame implements Observer {
                 if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
                     List<AgreementInterface> agreements = (List<AgreementInterface>) arg;
                     this.updateAgreementsList(agreements);
-                } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
+                } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof RentAccountInterface) {
                     List<RentAccountInterface> accounts = (List<RentAccountInterface>) arg;
                     this.updateRentAccountsList(accounts);
                     }
@@ -126,13 +141,15 @@ public class HomeForm extends JFrame implements Observer {
     }
     
     private void updateAgreementsList(List<AgreementInterface> agreements) {
-        // Method to update Agreements List Table
+        System.out.println("Agreements Updated");
+        listsPanel.setData(agreements);
+        listsPanel.refresh();
     }
     
     private void updateRentAccountsList(List<RentAccountInterface> accounts) {
-        // Method to update Rent Accounts List Table
+        System.out.println("Rent Accounts Updated");
     }
-
+    
     public void setClient(ClientImpl model) {
         if (client == null) {
             this.client = model;

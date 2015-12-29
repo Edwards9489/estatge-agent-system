@@ -84,8 +84,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int noteRef;
     private int documentRef;
 
-    private TaskGenerator scheduler;
-
+    private final TaskGenerator scheduler;
+    
     private final String documentsLocation;
 
     ///   CONSTRUCTORS ///
@@ -122,7 +122,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         } catch (SQLException ex) {
             Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24 * 7); // SET FOR A WEEK
+        
+        //Schedule to run every Day at midnight
+        scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24);
+        
+        //Location on Server where documents can be saved
         documentsLocation = "D:\\DOCUMENTS\\";
     }
 
@@ -3781,13 +3785,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //add a client to the users list
     @Override
     public void register(Client c) throws RemoteException {
-        users.put(c.getName(), c);
+        users.put(c.getUsername(), c);
     }
 
     //remove a client from the users list
     @Override
     public void unregister(Client c) throws RemoteException {
-        users.remove(c.getName());
+        users.remove(c.getUsername());
     }
 
     // returns true if the server is still running
@@ -3798,69 +3802,78 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     private void updateUserAgreements(String officeCode) throws RemoteException {
         if (this.database.officeExists(officeCode)) {
-            List<AgreementInterface> agreements = new ArrayList();
-            List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
-            int i = 0;
-            AgreementInterface tempAgreement = null;
-            while (i < 15 && !tempAgreements.isEmpty()) {
-                for (AgreementInterface temp : tempAgreements) {
-                    if (tempAgreement != null) {
-                        if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
-                            tempAgreement = temp;
-                        }
-                    } else { // tempAgreement == null
-                        tempAgreement = temp;
-                    }
-                }
-                agreements.add(tempAgreement);
-                tempAgreements.remove(tempAgreement);
-            }
-
+            List<AgreementInterface> agreements = this.getUserAgreements(officeCode);
             for (Client client : users.values()) {
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
                     client.updateUserAgreements(agreements);
                 } else if (!client.isAlive()) {
-                    users.remove(client.getName());
+                    users.remove(client.getUsername());
                 }
             }
         }
     }
+    
+    public List<AgreementInterface> getUserAgreements(String officeCode) throws RemoteException {
+        List<AgreementInterface> agreements = new ArrayList();
+        List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
+        int i = 0;
+        AgreementInterface tempAgreement = null;
+        while (i < 15 && !tempAgreements.isEmpty()) {
+            for (AgreementInterface temp : tempAgreements) {
+                if (tempAgreement != null) {
+                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
+                        tempAgreement = temp;
+                    }
+                } else { // tempAgreement == null
+                    tempAgreement = temp;
+                }
+            }
+            agreements.add(tempAgreement);
+            tempAgreements.remove(tempAgreement);
+        }
+        return agreements;
+    }
 
     private void updateUserRentAccounts(String officeCode) throws RemoteException {
         if (this.database.officeExists(officeCode)) {
-            List<RentAccountInterface> accounts = new ArrayList();
-            List<AccountInterface> tempAccounts = this.getOffice(officeCode).getAccounts();
-            int i = 0;
-            AccountInterface tempAccount = null;
-            while (i < 15 && !tempAccounts.isEmpty()) {
-                for (AccountInterface temp : tempAccounts) {
-                    if (temp instanceof RentAccountInterface && tempAccount != null) {
-                        if (tempAccount.getBalance() > temp.getBalance()) {
-                            tempAccount = temp;
-                        }
-                    } else if (temp instanceof RentAccountInterface && tempAccount == null) {
-                        tempAccount = temp;
-                    }
-                }
-                accounts.add((RentAccountInterface) tempAccount);
-                tempAccounts.remove(tempAccount);
-                i++;
-            }
+            List<RentAccountInterface> accounts = this.getUserRentAccounts(officeCode);
             for (Client client : users.values()) {
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
                     client.updateUserRentAccounts(accounts);
                 } else if (!client.isAlive()) {
-                    users.remove(client.getName());
+                    users.remove(client.getUsername());
                 }
             }
         }
+    }
+    
+    public List<RentAccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
+        List<RentAccountInterface> accounts = new ArrayList();
+        List<AccountInterface> tempAccounts = this.getOffice(officeCode).getAccounts();
+        int i = 0;
+        AccountInterface tempAccount = null;
+        while (i < 15 && !tempAccounts.isEmpty()) {
+            for (AccountInterface temp : tempAccounts) {
+                if (temp instanceof RentAccountInterface && tempAccount != null) {
+                    if (tempAccount.getBalance() > temp.getBalance()) {
+                        tempAccount = temp;
+                    }
+                } else if (temp instanceof RentAccountInterface && tempAccount == null) {
+                    tempAccount = temp;
+                }
+            }
+            accounts.add((RentAccountInterface) tempAccount);
+            tempAccounts.remove(tempAccount);
+            i++;
+        }
+        return accounts;
     }
 
     private byte[] downloadDocument(int dRef) {
         if (this.database.documentExists(dRef)) {
             try {
                 Document document = this.database.getDocument(dRef);
-                File file = new File(document.getDocumentPath());
+                File file = new File(document.getFilePath());
                 byte buffer[] = new byte[(int) file.length()];
                 try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(document.getDocumentPath()))) {
                     input.read(buffer, 0, buffer.length);
@@ -3872,10 +3885,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return (null);
     }
-
+    
     private DocumentImpl uploadDocument(String fileName, byte[] buffer, String comment, String createdBy) {
         try {
-            fileName = fileName;
             File file = new File(fileName);
             try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileName))) {
                 output.write(buffer, 0, buffer.length);
@@ -3894,7 +3906,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.documentExists(docRef)) {
             try {
                 DocumentImpl document = (DocumentImpl) this.database.getDocument(docRef);
-                String fileName = document.getDocumentPath() + "\\" + Utils.getFileNameWithoutVersion(document.getDocumentName()) + (document.getPreviousVersions().size() + 2);
+                String fileName = document.getDocumentPath() + "\\" + Utils.getFileNameWithoutVersion(document.getDocumentName()) + 
+                        (document.getPreviousVersions().size() + 2) + "." + Utils.getFileExtension(document.getDocumentName());
                 File file = new File(fileName);
                 try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(fileName))) {
                     output.write(buffer, 0, buffer.length);
