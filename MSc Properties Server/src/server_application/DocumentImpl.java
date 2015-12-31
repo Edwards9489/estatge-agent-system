@@ -72,7 +72,7 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
      */
     @Override
     public String getDocumentName() throws RemoteException {
-        return files.get(files.size() - 1).getName();
+        return this.getDocument().getName();
     }
     
     @Override
@@ -87,7 +87,7 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
     
     @Override
     public File getDocument() throws RemoteException {
-        return files.get(files.size() - 1).getParentFile();
+        return files.get(files.size() - 1);
     }
     
     
@@ -95,7 +95,7 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
     public List<File> getPreviousVersions() throws RemoteException {
         List<File> pVersions = new ArrayList();
         if(files.size() > 1) {
-            for(int i = 0; i < files.size() - 2; i++) {
+            for(int i = 0; i < (files.size() - 1); i++) {
                 pVersions.add(files.get(i));
             }
         }

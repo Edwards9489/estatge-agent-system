@@ -529,6 +529,21 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updatePersonDocument(int pRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updatePersonDocument(pRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
 
     public int deletePersonDocument(int pRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
@@ -643,6 +658,21 @@ public class ClientImpl extends Observable implements Client {
             }
             if (documentData != null && documentData.length >= 1) {
                 return server.createOfficeDocument(officeCode, fileName, documentData, comment, user.getUsername());
+            }
+        }
+        return 0;
+    }
+    
+    public int updateOfficeDocument(String oCode, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateOfficeDocument(oCode, dRef, documentData, user.getUsername());
             }
         }
         return 0;
@@ -821,6 +851,21 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateApplicationDocument(int aRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateApplicationDocument(aRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
 
     public int deleteApplicationDocument(int aRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
@@ -984,6 +1029,21 @@ public class ClientImpl extends Observable implements Client {
             }
             if (documentData != null && documentData.length >= 1) {
                 return server.createPropertyDocument(pRef, fileName, documentData, comment, user.getUsername());
+            }
+        }
+        return 0;
+    }
+    
+    public int updatePropertyDocument(int pRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updatePropertyDocument(pRef, dRef, documentData, user.getUsername());
             }
         }
         return 0;
@@ -1213,6 +1273,21 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateTenancyDocument(int tRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateTenancyDocument(tRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
 
     public int deleteTenancyDocument(int tRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
@@ -1310,7 +1385,22 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
-
+    
+    public int updateLeaseDocument(int lRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateLeaseDocument(lRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
+    
     public int deleteLeaseDocument(int lRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
             return server.deleteLeaseDocument(lRef, dRef, user.getUsername());
@@ -1400,6 +1490,21 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateContractDocument(int cRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateContractDocument(cRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
 
     public int deleteContractDocument(int cRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
@@ -1451,6 +1556,21 @@ public class ClientImpl extends Observable implements Client {
             }
             if (documentData != null && documentData.length >= 1) {
                 return server.createRentAccDocument(rAccRef, fileName, documentData, comment, user.getUsername());
+            }
+        }
+        return 0;
+    }
+    
+    public int updateRentAccDocument(int rAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateRentAccDocument(rAccRef, dRef, documentData, user.getUsername());
             }
         }
         return 0;
@@ -1510,6 +1630,21 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateLeaseAccDocument(int lAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateLeaseAccDocument(lAccRef, dRef, documentData, user.getUsername());
+            }
+        }
+        return 0;
+    }
 
     public int deleteLeaseAccDocument(int lAccRef, int dRef) throws RemoteException, SQLException {
         if (server.isAlive()) {
@@ -1561,6 +1696,21 @@ public class ClientImpl extends Observable implements Client {
             }
             if (documentData != null && documentData.length >= 1) {
                 return server.createEmployeeAccDocument(eAccRef, fileName, documentData, comment, user.getUsername());
+            }
+        }
+        return 0;
+    }
+    
+    public int updateEmployeeAccDocument(int eAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+        if(server.isAlive()) {
+            byte[] documentData = null;
+            try {
+                documentData = this.uploadDocument(fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (documentData != null && documentData.length >= 1) {
+                return server.updateEmployeeAccDocument(eAccRef, dRef, documentData, user.getUsername());
             }
         }
         return 0;
@@ -2677,7 +2827,7 @@ public class ClientImpl extends Observable implements Client {
     
     
 
-    private byte[] uploadDocument(String fileName) throws SQLException, IOException {
+    private byte[] uploadDocument(String fileName) throws IOException {
         File file = new File(fileName);
         byte documentData[] = new byte[(int) file.length()];
         try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(file.getName()))) {
@@ -2686,7 +2836,7 @@ public class ClientImpl extends Observable implements Client {
         return documentData;
     }
 
-    private File openDocument(byte[] documentData) throws SQLException, IOException {
+    private File openDocument(byte[] documentData) throws IOException {
         File file = File.createTempFile("msctmp", ".pdf", new File("D:/"));
         try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()))) {
             output.write(documentData, 0, documentData.length);

@@ -7,6 +7,7 @@ package Test_Package;
 
 import interfaces.Note;
 import interfaces.User;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -19,6 +20,7 @@ import server_application.Application;
 import server_application.Contact;
 import server_application.Contract;
 import server_application.Database;
+import server_application.DocumentImpl;
 import server_application.ElementImpl;
 import server_application.Employee;
 import server_application.EmployeeAccount;
@@ -112,6 +114,25 @@ public class TestDatabase {
         AddressUsage addressUsage8 = new AddressUsage(8, address, new Date(), note13, "DEDWARDS", new Date());
         AddressUsage addressUsage9 = new AddressUsage(9, address, new Date(), note14, "DEDWARDS", new Date());
         AddressUsage addressUsage10 = new AddressUsage(10, address, new Date(), note15, "DEDWARDS", new Date());
+        
+        File file = new File("D:\\TESTING\\TEST.pdf");
+        File file2 = new File("D:\\TESTING\\TEST.pdf");
+        File file3 = new File("D:\\TESTING\\TEST.pdf");
+        File file4 = new File("D:\\TESTING\\TEST.pdf");
+        File file5 = new File("D:\\TESTING\\TEST.pdf");
+        File file6 = new File("D:\\TESTING\\TEST.pdf");
+        File file7 = new File("D:\\TESTING\\TEST.pdf");
+        File file8 = new File("D:\\TESTING\\TEST.pdf");
+        File file9 = new File("D:\\TESTING\\TEST.pdf");
+        File file10 = new File("D:\\TESTING\\TEST.pdf");
+        
+        DocumentImpl document = new DocumentImpl(1, file, note22, "DEDWARDS", new Date());
+        DocumentImpl document2 = new DocumentImpl(2, file2, note23, "DEDWARDS", new Date());
+        DocumentImpl document3 = new DocumentImpl(3, file3, note24, "DEDWARDS", new Date());
+        DocumentImpl document4 = new DocumentImpl(4, file4, note25, "DEDWARDS", new Date());
+        DocumentImpl document5 = new DocumentImpl(5, file5, note26, "DEDWARDS", new Date());
+        
+        
         
         Calendar dob = Calendar.getInstance();
         dob.set(1989, 9, 4);
@@ -247,17 +268,24 @@ public class TestDatabase {
 //            db.updatePerson(person.getPersonRef());
 //            person.createContact(contact, modTest);
 //            db.createPersonContact(contact, person.getPersonRef());
-            person.createNote(note23, modTest);
-            db.createPersonNote(person.getPersonRef(), note23);
+//            person.createNote(note23, modTest);
+//            db.createPersonNote(person.getPersonRef(), note23);
+//            person.createDocument(document, modTest);
+//            db.createPersonDoc(person.getPersonRef(), document);
+            document = (DocumentImpl) person.getDocument(document.getDocumentRef());
+//            document.createNewVersion(file3, modTest);
+//            db.updatePersonDoc(person.getPersonRef(), document.getDocumentRef());
+            
             System.out.println("Person Ref: " + person.getPersonRef());
             System.out.println("Modifications: " + person.getModifiedBy().size());
             System.out.println("Person Notes: " + person.getNotes().size());
             System.out.println("Person Contacts: " + person.getContacts().size());
+            System.out.println("Person Documents: " + person.getDocuments().size());
             System.out.println("Person Addresses: " + person.getAddresses().size() + "\n");
 //            
             System.out.println("System People: " + db.countPeople() + "\n");
             
-            
+            System.out.println("Document previous versions: " + document.getPreviousVersions().size());
             // Office methods -- Tested commented Office methods
 //            db.createOffice(office);
             office = (Office) db.getOffice(office.getOfficeCode());
@@ -318,11 +346,14 @@ public class TestDatabase {
 //            db.updateProperty(property.getPropRef());
 //            property.createPropertyElement(propElement3, modTest);
 //            db.updateProperty(property.getPropRef());
+//            property.createDocument(document2, modTest);
+//            db.createPropertyDoc(property.getPropRef(), document2);
             System.out.println("Property Ref: " + property.getPropRef());
             System.out.println("Modifications: " + property.getModifiedBy().size());
             System.out.println("Property Rent: " + property.getRent());
             System.out.println("Property Charges: " + property.getCharges());
             System.out.println("Property Landlords: " + property.getLandlords().size());
+            System.out.println("Property Documents: " + property.getDocuments().size());
             System.out.println("PropertyElements: " + property.getPropertyElements().size() + "\n");
             
             System.out.println("System Properties: " + db.countProperties() + "\n");

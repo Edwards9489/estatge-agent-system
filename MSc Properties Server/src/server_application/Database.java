@@ -432,7 +432,7 @@ public class Database {
      * @throws SQLException
      */
     private Map<Integer, ModifiedByInterface> loadModMap(String from, int reference) throws SQLException, RemoteException {
-        String sql = "select modificationRef, ref, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
+        String sql = "select modificationRef, ref, modifiedBy, modifiedDate, description from " + from + " order by modificationRef";
         Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -485,7 +485,7 @@ public class Database {
      * @throws SQLException
      */
     private Map<Integer, ModifiedByInterface> loadModMap(String from, String uniqueCode) throws SQLException, RemoteException {
-        String sql = "select modificationRef, code, modifiedBy, modifiedDate, description from " + from + " order by modifiedDate";
+        String sql = "select modificationRef, code, modifiedBy, modifiedDate, description from " + from + " order by modificationRef";
         Map<Integer, ModifiedByInterface> modifiedByMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -533,7 +533,7 @@ public class Database {
      * @throws SQLException
      */
     private Map<Integer, Document> loadDocMap(String from, int reference) throws SQLException, RemoteException {
-        String sql = "select documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
+        String sql = "select uniqueRef, documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by uniqueRef";
         Map<Integer, Document> fileMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -548,12 +548,20 @@ public class Database {
                     String comment = results.getString("comment");
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
+                    
+                    //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
 
-                    File document = new File(documentPath); // Possibly might not work once File is used, may need to use getResouceAsStream
-                    Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                    Document temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
-
-                    fileMap.put(documentRef, temp);
+                    File document = new File(documentPath + "\\" + documentName); // Possibly might not work once File is used, may need to use getResourceAsStream
+                    if (!this.documentExists(documentRef)) {
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        DocumentImpl temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
+                        documents.put(temp.getDocumentRef(), temp);
+                        this.createDocumentMods(temp, this.loadModMap("documentModifications", documentRef));
+                        fileMap.put(documentRef, temp);
+                    } else if (this.documentExists(documentRef)) {
+                        DocumentImpl temp = (DocumentImpl) this.getDocument(ref);
+                        temp.createNewVersion(document, null);
+                    }
                 }
             }
             selectStat.close();
@@ -569,7 +577,7 @@ public class Database {
      * @throws SQLException
      */
     private Map<Integer, Document> loadDocMap(String from, String uniqueCode) throws SQLException, RemoteException {
-        String sql = "select documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by documentRef";
+        String sql = "select uniqueRef, documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by uniqueRef";
         Map<Integer, Document> fileMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -586,11 +594,17 @@ public class Database {
                     Date createdDate = results.getDate("createdDate");
 
                     //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
-                    File document = new File(documentPath);
-                    Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                    Document temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
-
-                    fileMap.put(documentRef, temp);
+                    File document = new File(documentPath + "\\" + documentName); // Possibly might not work once File is used, may need to use getResourceAsStream
+                    if (!this.documentExists(documentRef)) {
+                        Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
+                        DocumentImpl temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
+                        documents.put(temp.getDocumentRef(), temp);
+                        this.createDocumentMods(temp, this.loadModMap("documentModifications", documentRef));
+                        fileMap.put(documentRef, temp);
+                    } else if (this.documentExists(documentRef)) {
+                        DocumentImpl temp = (DocumentImpl) this.getDocument(documentRef);
+                        temp.createNewVersion(document, null);
+                    }
                 }
             }
             selectStat.close();
@@ -613,7 +627,7 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName());
+                insertStat.setString(col++, document.getDocumentName() + ".pdf");   
                 insertStat.setString(col++, document.getDocumentPath());
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
@@ -642,7 +656,7 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName());
+                insertStat.setString(col++, document.getDocumentName() + ".pdf");
                 insertStat.setString(col++, document.getDocumentPath());
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
@@ -651,6 +665,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.createModifiedBy("documentModifications", document.getLastModification(), document.getDocumentRef());
         }
     }
 
@@ -717,7 +732,7 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setString(col++, code);
-                insertStat.setString(col++, document.getDocumentName());
+                insertStat.setString(col++, document.getDocumentName() + ".pdf");
                 insertStat.setString(col++, document.getDocumentPath());
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
@@ -726,6 +741,7 @@ public class Database {
                 insertStat.executeUpdate();
                 insertStat.close();
             }
+            this.createModifiedBy("documentModifications", document.getLastModification(), document.getDocumentRef());
         }
     }
 
@@ -756,6 +772,19 @@ public class Database {
     public boolean canDeleteDocument(int documentRef) {
         return (this.documentExists(documentRef));
     }
+    
+    private void createDocumentMods(DocumentImpl doc, Map<Integer, ModifiedByInterface> loadadMods) throws RemoteException {
+        if (doc != null && this.documentExists(doc.getDocumentRef()) && !loadadMods.isEmpty()) {
+            Iterator it = loadadMods.entrySet().iterator();
+            while (it.hasNext()) {
+                ModifiedByInterface tempMod;
+                Map.Entry temp = (Map.Entry) it.next();
+                tempMod = (ModifiedByInterface) temp.getValue();
+                doc.modifiedBy(tempMod);
+                it.remove(); // avoids a ConcurrentModificationException
+            }
+        }
+    }
 
     /**
      *
@@ -778,7 +807,7 @@ public class Database {
      * @throws RemoteException
      */
     private Map<Integer, Note> loadNoteMap(String from, int reference) throws SQLException, RemoteException {
-        String sql = "select noteRef, ref, comment, createdBy, createdDate from " + from + " order by createdDate";
+        String sql = "select noteRef, ref, comment, createdBy, createdDate from " + from + " order by noteRef";
         Map<Integer, Note> noteMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -793,7 +822,7 @@ public class Database {
 
                     NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
                     this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
-
+                    
                     noteMap.put(noteRef, temp);
                 }
             }
@@ -811,7 +840,7 @@ public class Database {
      * @throws RemoteException
      */
     private Map<Integer, Note> loadNoteMap(String from, String uniqueCode) throws SQLException, RemoteException {
-        String sql = "select noteRef, code, comment, createdBy, createdDate from " + from + " order by createdDate";
+        String sql = "select noteRef, code, comment, createdBy, createdDate from " + from + " order by noteRef";
         Map<Integer, Note> noteMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -3207,7 +3236,7 @@ public class Database {
     private void loadPropertyElementValues(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef)) {
             Property property = (Property) this.getProperty(propRef);
-            String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate from propertyElementValues order by createdDate";
+            String sql = "select propertyElementRef, propRef, elementCode, stringValue, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate from propertyElementValues order by propertyElementRef";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
                 while (results.next()) {
@@ -5461,7 +5490,7 @@ public class Database {
     private void loadJobRoleBenefits(String code) throws SQLException, RemoteException {
         if (this.jobRoleExists(code)) {
             JobRole jobRole = (JobRole) this.getJobRole(code);
-            String sql = "select jobBenefitRef, jobRoleCode, benefitCode, doubleValue, stringValue, startDate, endDate, noteRef, comment, createdBy, createdDate from jobRoleBenefits order by createdDate";
+            String sql = "select jobBenefitRef, jobRoleCode, benefitCode, doubleValue, stringValue, startDate, endDate, noteRef, comment, createdBy, createdDate from jobRoleBenefits order by jobBenefitRef";
             try (Statement selectStat = con.createStatement()) {
                 ResultSet results = selectStat.executeQuery(sql);
 
@@ -6657,7 +6686,7 @@ public class Database {
      * @throws RemoteException
      */
     private void loadLeaseLandlords(int ref) throws SQLException, RemoteException {
-        String sql = "select landlordRef, leaseRef, cur from leaseLandlord order by leaseRef";
+        String sql = "select landlordRef, leaseRef, cur from leaseLandlord order by leaseRef, landlordRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
