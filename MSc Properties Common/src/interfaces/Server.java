@@ -378,4 +378,5 @@ public interface Server extends Remote {
     void   register(Client c) throws RemoteException;
     void unregister(Client c) throws RemoteException;
     boolean isAlive() throws RemoteException;
+    User getUser(String username) throws RemoteException;
 }

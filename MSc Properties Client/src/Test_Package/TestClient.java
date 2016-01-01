@@ -20,14 +20,14 @@ import java.util.List;
 public class TestClient {
     public static void main(String[] args) throws RemoteException, NotBoundException, UnknownHostException, MalformedURLException {
         System.out.println("********************Running Client Test********************");
-        ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"Dwayne", "127.0.0.1"});
         
+        ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "TEST2", "ADMIN", "MScProperties"});
         List<Element> titles = client.getTitles();
         if(!titles.isEmpty()) {
             for(Element temp : titles) {
                 System.out.println(temp.getCode() + "\n");
             }
         }
-        
+        System.out.println(client.getUsers().size());
     }
 }

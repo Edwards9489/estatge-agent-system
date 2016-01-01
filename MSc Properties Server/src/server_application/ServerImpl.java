@@ -114,20 +114,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.documentRef = this.database.countDocuments() + 1;
         try {
             this.propertyElementRef = this.database.getPropElementCount() + 1;
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
             this.jobBenefitRef = this.database.getJobBenefitCount() + 1;
         } catch (SQLException ex) {
             Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         //Schedule to run every Day at midnight
-        scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24);
+        this.scheduler = new TaskGenerator(this, 1000 * 60 * 60 * 24);
         
         //Location on Server where documents can be saved
-        documentsLocation = "D:\\DOCUMENTS\\";
+        this.documentsLocation = "D:\\DOCUMENTS\\";
+        
+        this.createSuperUser();
     }
 
     /**
@@ -137,7 +135,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws java.net.MalformedURLException
      */
     public static void main(String[] args) throws RemoteException, UnknownHostException, MalformedURLException {
-        // TODO code application logic here
         // start a registry on this machine
         ServerImpl server = (ServerImpl) createServer(new String[]{"LIVE", "127.0.0.1", "root", "Toxic9489!999", "3306"});
     }
@@ -163,12 +160,24 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // register RMI object
         ServerImpl serv = new ServerImpl(environment, addr, username, password, port);
         Server serverStub = (Server) serv;
-
+        
         //NB rebind will replace any stub with the given name 'Server'
         System.out.println(myName);
         Naming.rebind(myName, serverStub);
         System.out.println("Server started");
         return serverStub;
+    }
+    
+    private void createSuperUser() {
+//        if(!this.database.userExists("ADMIN")) {
+//            try {
+//                UserImpl user = new UserImpl(-1, -1, "ADMIN", "MScProperties", null);
+//                user.setUserPermissions(true, true, true, true, true, true);
+//                this.database.createUser(user);
+//            } catch (RemoteException | SQLException ex) {
+//                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
     }
 
     private Note createNote(String comment, String createdBy) throws RemoteException {
@@ -1451,7 +1460,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
-
+    
     //////     METHODS TO CREATE AND DELETE EMPLOYEES     ////////
     @Override
     public int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException, SQLException {
@@ -3904,6 +3913,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public boolean isAlive() throws RemoteException {
         return true;
+    }
+    
+    /**
+     * 
+     * @param username
+     * @return 
+     * @throws java.rmi.RemoteException 
+     */
+    @Override
+    public User getUser(String username) throws RemoteException {
+        if(this.database.userExists(username)) {
+            return this.database.getUser(username);
+        }
+        return null;
     }
 
     /**

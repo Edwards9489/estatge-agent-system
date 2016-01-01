@@ -261,6 +261,7 @@ public class Database {
     private void load() throws SQLException, RemoteException {
         if (this.con != null) {
             try {
+                this.loadSuperUser();
                 this.loadTitles();
                 this.loadGenders();
                 this.loadMaritalStatuses();
@@ -311,6 +312,30 @@ public class Database {
             }
         } else if (this.con == null) {
             System.out.println("Connection is null");
+        }
+    }
+    
+    private void loadSuperUser() throws RemoteException, SQLException {
+        String sql = "select username, employeeRef, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate from users where username='ADMIN'";
+        try (Statement selectStat = con.createStatement()) {
+            ResultSet results = selectStat.executeQuery(sql);
+            
+            while (results.next()) {
+                int employeeRef = results.getInt("employeeRef");
+                String username = results.getString("username");
+                String password = results.getString("password");
+                boolean read = results.getBoolean("otherRead");
+                boolean write = results.getBoolean("otherWrite");
+                boolean update = results.getBoolean("otherUpdate");
+                boolean employeeRead = results.getBoolean("employeeRead");
+                boolean employeeWrite = results.getBoolean("employeeWrite");
+                boolean employeeUpdate = results.getBoolean("employeeUpdate");
+                UserImpl temp = new UserImpl(employeeRef, -1, username, password, null);
+                temp.setUserPermissions(read, write, update, employeeRead, employeeWrite, employeeUpdate);
+                
+                users.put(username, temp);
+            }
+            selectStat.close();
         }
     }
 
@@ -7974,7 +7999,7 @@ public class Database {
     }
 
     public void createUser(UserImpl user) throws SQLException, RemoteException {
-        if (!this.userExists(user.getUsername()) && this.employeeExists(user.getEmployeeRef())) {
+        if (!this.userExists(user.getUsername()) && (this.employeeExists(user.getEmployeeRef()) || user.getUsername().equals("ADMIN"))) {
             String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
                     + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
