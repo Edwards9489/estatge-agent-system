@@ -17,11 +17,13 @@ import java.util.List;
  */
 public interface Document extends Remote {
     int getDocumentRef() throws RemoteException;
-    String getDocumentName() throws RemoteException;
-    File getDocument() throws RemoteException;
+    String getCurrentDocumentName() throws RemoteException;
+    String getDocumentName(int version) throws RemoteException;
+    File getDocument(int version) throws RemoteException;
     List<File> getPreviousVersions() throws RemoteException;
-    String getDocumentPath() throws RemoteException;
-    String getFilePath() throws RemoteException;
+    boolean hasVersion(int version) throws RemoteException;
+    String getDocumentPath(int version) throws RemoteException;
+    String getFilePath(int version) throws RemoteException;
     Note getNote() throws RemoteException;
     String getComment() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;

@@ -754,7 +754,7 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getDocumentName())) {
+                if(fileName.equals(document.getCurrentDocumentName())) {
                     return true;
                 }
             }

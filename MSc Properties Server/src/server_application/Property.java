@@ -561,7 +561,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getDocumentName())) {
+                if(fileName.equals(document.getCurrentDocumentName())) {
                     return true;
                 }
             }

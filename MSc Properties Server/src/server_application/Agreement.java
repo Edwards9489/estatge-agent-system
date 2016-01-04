@@ -374,7 +374,7 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getDocumentName())) {
+                if(fileName.equals(document.getCurrentDocumentName())) {
                     return true;
                 }
             }

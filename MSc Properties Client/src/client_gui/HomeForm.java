@@ -150,6 +150,7 @@ public class HomeForm extends JFrame implements Observer {
         System.out.println("Rent Accounts Updated");
     }
     
+    // Use of singleton pattern to ensure only one Client is initiated
     public void setClient(ClientImpl model) {
         if (client == null) {
             this.client = model;

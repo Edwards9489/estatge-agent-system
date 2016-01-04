@@ -171,294 +171,294 @@ public class ClientImpl extends Observable implements Client {
         this.notifyObservers(accounts);
     }
 
-    public int createTitle(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createTitle(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createTitle(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateTitle(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateTitle(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTitle(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteTitle(String code) throws RemoteException, SQLException {
+    public int deleteTitle(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteTitle(code);
         }
         return 0;
     }
 
-    public int createGender(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createGender(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createGender(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateGender(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateGender(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateGender(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteGender(String code) throws RemoteException, SQLException {
+    public int deleteGender(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteGender(code);
         }
         return 0;
     }
 
-    public int createMaritalStatus(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createMaritalStatus(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createMaritalStatus(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateMaritalStatus(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateMaritalStatus(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateMaritalStatus(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteMaritalStatus(String code) throws RemoteException, SQLException {
+    public int deleteMaritalStatus(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteMaritalStatus(code);
         }
         return 0;
     }
 
-    public int createEthnicOrigin(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createEthnicOrigin(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createEthnicOrigin(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateEthnicOrigin(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateEthnicOrigin(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEthnicOrigin(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEthnicOrigin(String code) throws RemoteException, SQLException {
+    public int deleteEthnicOrigin(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEthnicOrigin(code);
         }
         return 0;
     }
 
-    public int createLanguage(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createLanguage(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createLanguage(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLanguage(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateLanguage(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLanguage(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLanguage(String code) throws RemoteException, SQLException {
+    public int deleteLanguage(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLanguage(code);
         }
         return 0;
     }
 
-    public int createNationality(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createNationality(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createNationality(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateNationality(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateNationality(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateNationality(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteNationality(String code) throws RemoteException, SQLException {
+    public int deleteNationality(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteNationality(code);
         }
         return 0;
     }
 
-    public int createSexuality(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createSexuality(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createSexuality(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateSexuality(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateSexuality(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateSexuality(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteSexuality(String code) throws RemoteException, SQLException {
+    public int deleteSexuality(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteSexuality(code);
         }
         return 0;
     }
 
-    public int createReligion(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createReligion(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createReligion(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateReligion(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateReligion(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateReligion(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteReligion(String code) throws RemoteException, SQLException {
+    public int deleteReligion(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteReligion(code);
         }
         return 0;
     }
 
-    public int createPropertyType(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createPropertyType(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertyType(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertyType(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updatePropertyType(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertyType(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePropertyType(String code) throws RemoteException, SQLException {
+    public int deletePropertyType(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertyType(code);
         }
         return 0;
     }
 
-    public int createPropertySubType(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createPropertySubType(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertySubType(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertySubType(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updatePropertySubType(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertySubType(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePropertySubType(String code) throws RemoteException, SQLException {
+    public int deletePropertySubType(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertySubType(code);
         }
         return 0;
     }
 
-    public int createPropertyElement(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createPropertyElement(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertyElement(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertyElement(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updatePropertyElement(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertyElement(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePropertyElement(String code) throws RemoteException, SQLException {
+    public int deletePropertyElement(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertyElement(code);
         }
         return 0;
     }
 
-    public int createContactType(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createContactType(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createContactType(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateContactType(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateContactType(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateContactType(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteContactType(String code) throws RemoteException, SQLException {
+    public int deleteContactType(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteContactType(code);
         }
         return 0;
     }
 
-    public int createEndReason(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createEndReason(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createEndReason(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateEndReason(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateEndReason(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEndReason(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEndReason(String code) throws RemoteException, SQLException {
+    public int deleteEndReason(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEndReason(code);
         }
         return 0;
     }
 
-    public int createRelationship(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createRelationship(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createRelationship(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateRelationship(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateRelationship(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateRelationship(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteRelationship(String code) throws RemoteException, SQLException {
+    public int deleteRelationship(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteRelationship(code);
         }
@@ -466,7 +466,7 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int createAddress(String buildingNumber, String buildingName, String subStreetNumber, String subStreet, String streetNumber,
-            String street, String area, String town, String country, String postcode, String comment) throws RemoteException, SQLException {
+            String street, String area, String town, String country, String postcode, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createAddress(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, comment, this.getUsername());
         }
@@ -474,14 +474,14 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int updateAddress(int aRef, String buildingNumber, String buildingName, String subStreetNumber, String subStreet, String streetNumber, String street,
-            String area, String town, String country, String postcode, String comment) throws RemoteException, SQLException {
+            String area, String town, String country, String postcode, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateAddress(aRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteAddress(int addrRef) throws RemoteException, SQLException {
+    public int deleteAddress(int addrRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteAddress(addrRef);
         }
@@ -489,7 +489,7 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int createPerson(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode,
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate) throws RemoteException, SQLException {
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate) throws RemoteException {
         if (server.isAlive()) {
             return server.createPerson(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, this.getUsername());
         }
@@ -497,42 +497,42 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int updatePerson(int pRef, String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
-            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode) throws RemoteException, SQLException {
+            String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePerson(pRef, titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePerson(int pRef) throws RemoteException, SQLException {
+    public int deletePerson(int pRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePerson(pRef);
         }
         return 0;
     }
 
-    public int createPersonNote(int pRef, String comment) throws RemoteException, SQLException {
+    public int createPersonNote(int pRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPersonNote(pRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePersonNote(int pRef, int nRef, String comment) throws RemoteException, SQLException {
+    public int updatePersonNote(int pRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePersonNote(pRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePersonNote(int pRef, int nRef) throws RemoteException, SQLException {
+    public int deletePersonNote(int pRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePersonNote(pRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createPersonDocument(int pRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createPersonDocument(int pRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -562,17 +562,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deletePersonDocument(int pRef, int dRef) throws RemoteException, SQLException {
+    public int deletePersonDocument(int pRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePersonDocument(pRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadPersonDocument(int pRef, int dRef) throws RemoteException, SQLException {
+    public int downloadPersonDocument(int pRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadPersonDocument(pRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadPersonDocument(pRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -581,91 +581,91 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date) throws RemoteException, SQLException {
+    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date) throws RemoteException {
         if (server.isAlive()) {
             return server.createPersonContact(pRef, contactTypeCode, value, date, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePersonContact(int pRef, int cRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException, SQLException {
+    public int updatePersonContact(int pRef, int cRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePersonContact(pRef, cRef, contactTypeCode, value, date, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePersonContact(int pRef, int cRef) throws RemoteException, SQLException {
+    public int deletePersonContact(int pRef, int cRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePersonContact(pRef, cRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate) throws RemoteException, SQLException {
+    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate) throws RemoteException {
         if (server.isAlive()) {
             return server.createPersonAddressUsage(pRef, addrRef, startDate, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException, SQLException {
+    public int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePersonAddressUsage(pRef, addrUsageRef, addrRef, startDate, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePersonAddressUsage(int pRef, int aRef) throws RemoteException, SQLException {
+    public int deletePersonAddressUsage(int pRef, int aRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePersonAddressUsage(pRef, aRef);
         }
         return 0;
     }
 
-    public int createOffice(String officeCode, int addrRef, Date startDate) throws RemoteException, SQLException {
+    public int createOffice(String officeCode, int addrRef, Date startDate) throws RemoteException {
         if (server.isAlive()) {
             return server.createOffice(officeCode, addrRef, startDate, this.getUsername());
         }
         return 0;
     }
 
-    public int updateOffice(String officeCode, Date startDate) throws RemoteException, SQLException {
+    public int updateOffice(String officeCode, Date startDate) throws RemoteException {
         if (server.isAlive()) {
             return server.updateOffice(officeCode, startDate, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteOffice(String code) throws RemoteException, SQLException {
+    public int deleteOffice(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteOffice(code);
         }
         return 0;
     }
 
-    public int createOfficeNote(String officeCode, String comment) throws RemoteException, SQLException {
+    public int createOfficeNote(String officeCode, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createOfficeNote(officeCode, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateOfficeNote(String officeCode, int nRef, String comment) throws RemoteException, SQLException {
+    public int updateOfficeNote(String officeCode, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateOfficeNote(officeCode, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteOfficeNote(String officeCode, int nRef) throws RemoteException, SQLException {
+    public int deleteOfficeNote(String officeCode, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteOfficeNote(officeCode, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createOfficeDocument(String officeCode, String fileName, String comment) throws RemoteException, SQLException {
+    public int createOfficeDocument(String officeCode, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -695,17 +695,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteOfficeDocument(String officeCode, int dRef) throws RemoteException, SQLException {
+    public int deleteOfficeDocument(String officeCode, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteOfficeDocument(officeCode, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadOfficeDocument(String officeCode, int dRef) throws RemoteException, SQLException {
+    public int downloadOfficeDocument(String officeCode, int version, int dRef) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadOfficeDocument(officeCode, dRef, this.getUsername()));
+                this.openDocument(server.downloadOfficeDocument(officeCode, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -714,147 +714,147 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date) throws RemoteException, SQLException {
+    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date) throws RemoteException {
         if (server.isAlive()) {
             return server.createOfficeContact(oCode, contactTypeCode, value, date, this.getUsername());
         }
         return 0;
     }
 
-    public int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException, SQLException {
+    public int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateOfficeContact(oCode, cRef, contactTypeCode, value, date, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteOfficeContact(String code, int cRef) throws RemoteException, SQLException {
+    public int deleteOfficeContact(String code, int cRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteOfficeContact(code, cRef);
         }
         return 0;
     }
 
-    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, int address) throws RemoteException, SQLException {
+    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, int address) throws RemoteException {
         if (server.isAlive()) {
             return server.createInvolvedParty(pRef, aRef, joint, main, start, relationshipCode, address, this.getUsername());
         }
         return 0;
     }
 
-    public int updateInvolvedParty(int iRef, boolean joint, boolean main, Date start, String relationshipCode) throws RemoteException, SQLException {
+    public int updateInvolvedParty(int iRef, boolean joint, boolean main, Date start, String relationshipCode) throws RemoteException {
         if (server.isAlive()) {
             return server.updateInvolvedParty(iRef, joint, main, start, relationshipCode, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteInvolvedParty(int iRef) throws RemoteException, SQLException {
+    public int deleteInvolvedParty(int iRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteInvolvedParty(iRef);
         }
         return 0;
     }
 
-    public int createInvovedPartyNote(int iRef, String comment) throws RemoteException, SQLException {
+    public int createInvovedPartyNote(int iRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createInvolvedPartyNote(iRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateInvolvedPartyNote(int eRef, int nRef, String comment) throws RemoteException, SQLException {
+    public int updateInvolvedPartyNote(int eRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateInvolvedPartyNote(eRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteInvolvedPartyNote(int iRef, int nRef) throws RemoteException, SQLException {
+    public int deleteInvolvedPartyNote(int iRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteInvolvedPartyNote(iRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate) throws RemoteException, SQLException {
+    public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate) throws RemoteException {
         if (server.isAlive()) {
             return server.createApplication(corrName, appStartDate, pRef, relationshipCode, addrRef, addressStartDate, this.getUsername());
         }
         return 0;
     }
 
-    public int updateApplication(int aRef, String corrName, Date appStartDate) throws RemoteException, SQLException {
+    public int updateApplication(int aRef, String corrName, Date appStartDate) throws RemoteException {
         if (server.isAlive()) {
             return server.updateApplication(aRef, corrName, appStartDate, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteApplication(int aRef) throws RemoteException, SQLException {
+    public int deleteApplication(int aRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteApplication(aRef, this.getUsername());
         }
         return 0;
     }
 
-    public int addInvolvedParty(int aRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException, SQLException {
+    public int addInvolvedParty(int aRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.addInvolvedParty(aRef, pRef, joint, start, relationshipCode, createdBy);
         }
         return 0;
     }
 
-    public int changeMainApp(int aRef, int iRef, Date end, String endReasonCode) throws RemoteException, SQLException {
+    public int changeMainApp(int aRef, int iRef, Date end, String endReasonCode) throws RemoteException {
         if (server.isAlive()) {
             return server.changeMainApp(aRef, iRef, end, endReasonCode, this.getUsername());
         }
         return 0;
     }
 
-    public int endInvolvedParty(int aRef, int iRef, Date end, String endReasonCode) throws RemoteException, SQLException {
+    public int endInvolvedParty(int aRef, int iRef, Date end, String endReasonCode) throws RemoteException {
         if (server.isAlive()) {
             return server.endInvolvedParty(aRef, iRef, end, endReasonCode, this.getUsername());
         }
         return 0;
     }
 
-    public int addInterestedProperty(int aRef, int pRef) throws RemoteException, SQLException {
+    public int addInterestedProperty(int aRef, int pRef) throws RemoteException {
         if (server.isAlive()) {
             return server.addInterestedProperty(aRef, pRef, this.getUsername());
         }
         return 0;
     }
 
-    public int endInterestInProperty(int aRef, int pRef) throws RemoteException, SQLException {
+    public int endInterestInProperty(int aRef, int pRef) throws RemoteException {
         if (server.isAlive()) {
             return server.endInterestInProperty(aRef, pRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createApplicationNote(int aRef, String comment) throws RemoteException, SQLException {
+    public int createApplicationNote(int aRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createApplicationNote(aRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateApplicationNote(int aRef, int nRef, String comment) throws RemoteException, SQLException {
+    public int updateApplicationNote(int aRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateApplicationNote(aRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteApplicationNote(int aRef, int nRef) throws RemoteException, SQLException {
+    public int deleteApplicationNote(int aRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteApplicationNote(aRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createApplicationDocument(int aRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createApplicationDocument(int aRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -884,17 +884,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteApplicationDocument(int aRef, int dRef) throws RemoteException, SQLException {
+    public int deleteApplicationDocument(int aRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteApplicationDocument(aRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadApplicationDocument(int aRef, int dRef) throws RemoteException, SQLException {
+    public int downloadApplicationDocument(int aRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadApplicationDocument(aRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadApplicationDocument(aRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -903,140 +903,140 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException, SQLException {
+    public int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateApplicationAddressUsage(aRef, addrUsageRef, addrRef, startDate, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException, SQLException {
+    public int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteApplicationAddressUsage(addrRef, aRef);
         }
         return 0;
     }
 
-    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate) throws RemoteException, SQLException {
+    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate) throws RemoteException {
         if (server.isAlive()) {
             return server.createApplicationAddressUsage(applicationRef, addrRef, startDate, this.getUsername());
         }
         return 0;
     }
 
-    public int createEmployee(int pRef, String username, String password) throws RemoteException, SQLException {
+    public int createEmployee(int pRef, String username, String password) throws RemoteException {
         if (server.isAlive()) {
             return server.createEmployee(pRef, username, password, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEmployee(int eRef) throws RemoteException, SQLException {
+    public int deleteEmployee(int eRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEmployee(eRef);
         }
         return 0;
     }
 
-    public int createEmployeeNote(int eRef, String comment) throws RemoteException, SQLException {
+    public int createEmployeeNote(int eRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createEmployeeNote(eRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEmployeeNote(eRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEmployeeNote(int eRef, int nRef) throws RemoteException, SQLException {
+    public int deleteEmployeeNote(int eRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEmployeeNote(eRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createLandlord(int lRef) throws RemoteException, SQLException {
+    public int createLandlord(int lRef) throws RemoteException {
         if (server.isAlive()) {
             return server.createLandlord(lRef, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLandlord(int lRef) throws RemoteException, SQLException {
+    public int deleteLandlord(int lRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLandlord(lRef);
         }
         return 0;
     }
 
-    public int createLandlordNote(int lRef, String comment) throws RemoteException, SQLException {
+    public int createLandlordNote(int lRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createLandlordNote(lRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLandlordNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateLandlordNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLandlordNote(lRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLandlordNote(int lRef, int nRef) throws RemoteException, SQLException {
+    public int deleteLandlordNote(int lRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLandlordNote(lRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createProperty(int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException, SQLException {
+    public int createProperty(int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.createProperty(addrRef, startDate, propTypeCode, propSubTypeCode, this.getUsername());
         }
         return 0;
     }
 
-    public int updateProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException, SQLException {
+    public int updateProperty(int pRef, int addrRef, Date startDate, String propTypeCode, String propSubTypeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.updateProperty(pRef, addrRef, startDate, propTypeCode, propSubTypeCode, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteProperty(int pRef) throws RemoteException, SQLException {
+    public int deleteProperty(int pRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteProperty(pRef);
         }
         return 0;
     }
 
-    public int createPropertyNote(int pRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createPropertyNote(int pRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertyNote(pRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertyNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updatePropertyNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertyNote(pRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
-
-    public int deletePropertyNote(int pRef, int nRef) throws RemoteException, SQLException {
+    
+    public int deletePropertyNote(int pRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertyNote(pRef, nRef, this.getUsername());
         }
         return 0;
     }
-
-    public int createPropertyDocument(int pRef, String fileName, String comment) throws RemoteException, SQLException {
+    
+    public int createPropertyDocument(int pRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1066,17 +1066,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deletePropertyDocument(int pRef, int dRef) throws RemoteException, SQLException {
+    public int deletePropertyDocument(int pRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertyDocument(pRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadPropertyDocument(int pRef, int dRef) throws RemoteException, SQLException {
+    public int downloadPropertyDocument(int pRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadPropertyDocument(pRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadPropertyDocument(pRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1085,21 +1085,21 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment) throws RemoteException, SQLException {
+    public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertyElement(pRef, elementCode, startDate, charge, stringValue, doubleValue, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment) throws RemoteException, SQLException {
+    public int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertyElement(eRef, pRef, startDate, stringValue, doubleValue, charge, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deletePropertyElement(int eRef, int pRef) throws RemoteException, SQLException {
+    public int deletePropertyElement(int eRef, int pRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deletePropertyElement(eRef, pRef);
         }
@@ -1107,7 +1107,7 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write,
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate) throws RemoteException, SQLException {
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRole(code, jobTitle, jobDescription, fullTime, salary, read, write, update, employeeRead, employeeWrite, employeeUpdate, this.getUsername());
         }
@@ -1115,84 +1115,84 @@ public class ClientImpl extends Observable implements Client {
     }
 
     public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write,
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate) throws RemoteException, SQLException {
+            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobRole(code, jobTitle, jobDescription, fullTime, salary, current, read, write, update, employeeRead, employeeWrite, employeeUpdate, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteJobRole(String officeCode) throws RemoteException, SQLException {
+    public int deleteJobRole(String officeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobRole(officeCode);
         }
         return 0;
     }
 
-    public int createJobRoleNote(String officeCode, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createJobRoleNote(String officeCode, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRoleNote(officeCode, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateJobRoleNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateJobRoleNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobRoleNote(officeCode, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteJobRoleNote(String officeCode, int nRef) throws RemoteException, SQLException {
+    public int deleteJobRoleNote(String officeCode, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobRoleNote(officeCode, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createJobRoleRequirement(String jobRoleCode, String requirement) throws RemoteException, SQLException {
+    public int createJobRoleRequirement(String jobRoleCode, String requirement) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRoleRequirement(jobRoleCode, requirement, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteJobRoleRequirement(String jobRoleCode, String requirement) throws RemoteException, SQLException {
+    public int deleteJobRoleRequirement(String jobRoleCode, String requirement) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobRoleRequirement(jobRoleCode, requirement, this.getUsername());
         }
         return 0;
     }
 
-    public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException, SQLException {
+    public int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRoleBenefit(jobRoleCode, benefit, startDate, salaryBenefit, stringValue, doubleValue, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException, SQLException {
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobRoleBenefit(benefitRef, jobRoleCode, benefitCode, startDate, salaryBenefit, stringValue, doubleValue, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate) throws RemoteException, SQLException {
+    public int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate) throws RemoteException {
         if (server.isAlive()) {
             return server.endJobRoleBenefit(benefitRef, jobRoleCode, endDate, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws RemoteException, SQLException {
+    public int deleteJobRoleBenefit(String jobRoleCode, int benefit) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobRoleBenefit(jobRoleCode, benefit, this.getUsername());
         }
         return 0;
     }
 
-    public int createJobRequirement(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createJobRequirement(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRequirement(code, description, comment, this.getUsername());
         }
@@ -1206,14 +1206,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteJobRequirement(String requirement) throws RemoteException, SQLException {
+    public int deleteJobRequirement(String requirement) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobRequirement(requirement);
         }
         return 0;
     }
 
-    public int createJobBenefit(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createJobBenefit(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobBenefit(code, description, comment, this.getUsername());
         }
@@ -1227,14 +1227,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteJobBenefit(String benefit) throws RemoteException, SQLException {
+    public int deleteJobBenefit(String benefit) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteJobBenefit(benefit);
         }
         return 0;
     }
 
-    public int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode) throws RemoteException, SQLException {
+    public int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.createTenancy(startDate, length, pRef, aRef, tenTypeCode, officeCode, this.getUsername());
         }
@@ -1248,35 +1248,35 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteTenancy(int tRef) throws RemoteException, SQLException {
+    public int deleteTenancy(int tRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteTenancy(tRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createTenancyNote(tRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTenancyNote(tRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteTenancyNote(int tRef, int nRef) throws RemoteException, SQLException {
+    public int deleteTenancyNote(int tRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteTenancyNote(tRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createTenancyDocument(int tRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createTenancyDocument(int tRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1306,17 +1306,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteTenancyDocument(int tRef, int dRef) throws RemoteException, SQLException {
+    public int deleteTenancyDocument(int tRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteTenancyDocument(tRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadTenancyDocument(int tRef, int dRef) throws RemoteException, SQLException {
+    public int downloadTenancyDocument(int tRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadTenancyDocument(tRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadTenancyDocument(tRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1325,28 +1325,28 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createTenancyType(String code, String description, String comment) throws RemoteException, SQLException {
+    public int createTenancyType(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createTenancyType(code, description, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateTenancyType(String code, String description, boolean current, String comment) throws RemoteException, SQLException {
+    public int updateTenancyType(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTenancyType(code, description, current, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteTenancyType(String code) throws RemoteException, SQLException {
+    public int deleteTenancyType(String code) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteTenancyType(code);
         }
         return 0;
     }
 
-    public int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode) throws RemoteException, SQLException {
+    public int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.createLease(startDate, length, pRef, management, expenditure, officeCode, this.getUsername());
         }
@@ -1360,35 +1360,35 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteLease(int lRef) throws RemoteException, SQLException {
+    public int deleteLease(int lRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLease(lRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseNote(lRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLeaseNote(lRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLeaseNote(int lRef, int nRef) throws RemoteException, SQLException {
+    public int deleteLeaseNote(int lRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLeaseNote(lRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createLeaseDocument(int lRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createLeaseDocument(int lRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1418,17 +1418,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int deleteLeaseDocument(int lRef, int dRef) throws RemoteException, SQLException {
+    public int deleteLeaseDocument(int lRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLeaseDocument(lRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadLeaseDocument(int lRef, int dRef) throws RemoteException, SQLException {
+    public int downloadLeaseDocument(int lRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadLeaseDocument(lRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadLeaseDocument(lRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1444,14 +1444,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int endLeaseLandlord(int lRef, int landRef) throws RemoteException, SQLException {
+    public int endLeaseLandlord(int lRef, int landRef) throws RemoteException {
         if (server.isAlive()) {
             return server.endLeaseLandlord(lRef, landRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode) throws RemoteException, SQLException {
+    public int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.createContract(startDate, length, eRef, jobRoleCode, officeCode, this.getUsername());
         }
@@ -1465,35 +1465,35 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteContract(int cRef) throws RemoteException, SQLException {
+    public int deleteContract(int cRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteContract(cRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createContractNote(int cRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createContractNote(int cRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createContractNote(cRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateContractNote(cRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteContractNote(int cRef, int nRef) throws RemoteException, SQLException {
+    public int deleteContractNote(int cRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteContractNote(cRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createContractDocument(int cRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createContractDocument(int cRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1523,17 +1523,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteContractDocument(int cRef, int dRef) throws RemoteException, SQLException {
+    public int deleteContractDocument(int cRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteContractDocument(cRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadContractDocument(int cRef, int dRef) throws RemoteException, SQLException {
+    public int downloadContractDocument(int cRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadContractDocument(cRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadContractDocument(cRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1542,28 +1542,28 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createRentAccNote(int rAccRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createRentAccNote(int rAccRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createRentAccNote(rAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateRentAccNote(int rAccRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateRentAccNote(int rAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateRentAccNote(rAccRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteRentAccNote(int rAccRef, int nRef) throws RemoteException, SQLException {
+    public int deleteRentAccNote(int rAccRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteRentAccNote(rAccRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createRentAccDocument(int rAccRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createRentAccDocument(int rAccRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1593,17 +1593,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteRentAccDocument(int rAccRef, int dRef) throws RemoteException, SQLException {
+    public int deleteRentAccDocument(int rAccRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteRentAccDocument(rAccRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadRentAccDocument(int rAccRef, int dRef) throws RemoteException, SQLException {
+    public int downloadRentAccDocument(int rAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadRentAccDocument(rAccRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadRentAccDocument(rAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1612,28 +1612,28 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createLeaseAccNote(int lAccRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createLeaseAccNote(int lAccRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseAccNote(lAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLeaseAccNote(int lAccRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateLeaseAccNote(int lAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLeaseAccNote(lAccRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLeaseAccNote(int lAccRef, int nRef) throws RemoteException, SQLException {
+    public int deleteLeaseAccNote(int lAccRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLeaseAccNote(lAccRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createLeaseAccDocument(int lAccRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createLeaseAccDocument(int lAccRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1663,17 +1663,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteLeaseAccDocument(int lAccRef, int dRef) throws RemoteException, SQLException {
+    public int deleteLeaseAccDocument(int lAccRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLeaseAccDocument(lAccRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadLeaseAccDocument(int lAccRef, int dRef) throws RemoteException, SQLException {
+    public int downloadLeaseAccDocument(int lAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadLeaseAccDocument(lAccRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadLeaseAccDocument(lAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1682,28 +1682,28 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createEmployeeAccNote(int eAccRef, String comment, String createdBy) throws RemoteException, SQLException {
+    public int createEmployeeAccNote(int eAccRef, String comment, String createdBy) throws RemoteException {
         if (server.isAlive()) {
             return server.createEmployeeAccNote(eAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateEmployeeAccNote(int eAccRef, int nRef, String comment, String modifiedBy) throws RemoteException, SQLException {
+    public int updateEmployeeAccNote(int eAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEmployeeAccNote(eAccRef, nRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEmployeeAccNote(int eAccRef, int nRef) throws RemoteException, SQLException {
+    public int deleteEmployeeAccNote(int eAccRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEmployeeAccNote(eAccRef, nRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createEmployeeAccDocument(int eAccRef, String fileName, String comment) throws RemoteException, SQLException {
+    public int createEmployeeAccDocument(int eAccRef, String fileName, String comment) throws RemoteException {
         if (server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1733,17 +1733,17 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int deleteEmployeeAccDocument(int eAccRef, int dRef) throws RemoteException, SQLException {
+    public int deleteEmployeeAccDocument(int eAccRef, int dRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEmployeeAccDocument(eAccRef, dRef, this.getUsername());
         }
         return 0;
     }
 
-    public int downloadEmployeeAccDocument(int eAccRef, int dRef) throws RemoteException, SQLException {
+    public int downloadEmployeeAccDocument(int eAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                this.openDocument(server.downloadEmployeeAccDocument(eAccRef, dRef, this.getUsername()));
+                this.openDocument(server.downloadEmployeeAccDocument(eAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1752,42 +1752,42 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException, SQLException {
+    public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createRentAccTransaction(rAccRef, fromRef, toRef, amount, debit, transactionDate, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteRentAccTransaction(int tRef, int rAccRef) throws RemoteException, SQLException {
+    public int deleteRentAccTransaction(int tRef, int rAccRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteRentAccTransaction(tRef, rAccRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException, SQLException {
+    public int createLeaseAccTransaction(int lAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseAccTransaction(lAccRef, fromRef, toRef, amount, debit, transactionDate, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteLeaseAccTransaction(int tRef, int lAccRef) throws RemoteException, SQLException {
+    public int deleteLeaseAccTransaction(int tRef, int lAccRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteLeaseAccTransaction(tRef, lAccRef, this.getUsername());
         }
         return 0;
     }
 
-    public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException, SQLException {
+    public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createRentAccTransaction(eAccRef, fromRef, toRef, amount, debit, transactionDate, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws RemoteException, SQLException {
+    public int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteRentAccTransaction(tRef, eAccRef, this.getUsername());
         }

@@ -65,29 +65,49 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
     public int getDocumentRef() throws RemoteException {
         return documentRef;
     }
+    
+    @Override
+    public String getCurrentDocumentName() throws RemoteException {
+        return files.get(files.size() - 1).getName();
+    }
 
     /**
+     * @param version
      * @return the documentName
      * @throws java.rmi.RemoteException
      */
     @Override
-    public String getDocumentName() throws RemoteException {
-        return this.getDocument().getName();
+    public String getDocumentName(int version) throws RemoteException {
+        File file = this.getDocument(version);
+        if(file != null) {
+            return file.getName();
+        }
+        return null;
     }
     
     @Override
-    public String getDocumentPath() throws RemoteException {
-        return this.getDocument().getAbsolutePath();
+    public String getDocumentPath(int version) throws RemoteException {
+        File file = this.getDocument(version);
+        if(file != null) {
+            return file.getAbsolutePath();
+        }
+        return null;
     }
     
     @Override
-    public String getFilePath() throws RemoteException {
-        return this.getDocumentPath() + "\\" + this.getDocumentName();
+    public String getFilePath(int version) throws RemoteException {
+        if(this.hasVersion(version)) {
+            return this.getDocumentPath(version) + "\\" + this.getDocumentName(version);
+        }
+        return null;
     }
     
     @Override
-    public File getDocument() throws RemoteException {
-        return files.get(files.size() - 1);
+    public File getDocument(int version) throws RemoteException {
+        if(this.hasVersion(version)) {
+            return files.get(version -1);
+        }
+        return null;
     }
     
     
@@ -100,6 +120,11 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
             }
         }
         return pVersions;
+    }
+    
+    @Override
+    public boolean hasVersion(int version) throws RemoteException {
+        return (version > 0 && version <= files.size());
     }
     
     @Override

@@ -652,8 +652,8 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName() + ".pdf");   
-                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");   
+                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
@@ -681,8 +681,8 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName() + ".pdf");
-                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getLastModifiedBy());
@@ -728,8 +728,8 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setString(col++, code);
-                insertStat.setString(col++, document.getDocumentName());
-                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
@@ -757,8 +757,8 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setString(col++, code);
-                insertStat.setString(col++, document.getDocumentName() + ".pdf");
-                insertStat.setString(col++, document.getDocumentPath());
+                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getLastModifiedBy());
