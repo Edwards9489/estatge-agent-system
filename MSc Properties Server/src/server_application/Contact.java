@@ -11,6 +11,8 @@ import interfaces.Note;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -102,7 +104,6 @@ public class Contact extends UnicastRemoteObject implements ContactInterface {
     private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
-        this.modifiedBy(modifiedBy);
     }
     
     /**
@@ -114,11 +115,13 @@ public class Contact extends UnicastRemoteObject implements ContactInterface {
      * @throws java.rmi.RemoteException
      */
     public void updateContact(Element contactType, String contactValue, Date startDate, String comment, ModifiedByInterface modifiedBy) throws RemoteException {
-        this.setContactType(contactType);
-        this.setContactValue(contactValue);
-        this.setStartDate(startDate);
-        this.setComment(comment, modifiedBy);
-        this.modifiedBy(modifiedBy);
+        if (this.isCurrent()) {
+            this.setContactType(contactType);
+            this.setContactValue(contactValue);
+            this.setStartDate(startDate);
+            this.setComment(comment, modifiedBy);
+            this.modifiedBy(modifiedBy);
+        }
     }
     
     
@@ -189,7 +192,7 @@ public class Contact extends UnicastRemoteObject implements ContactInterface {
             return true;
         }
         else {
-            return endDate.before(new Date());
+            return endDate.after(new Date());
         }
     }
     

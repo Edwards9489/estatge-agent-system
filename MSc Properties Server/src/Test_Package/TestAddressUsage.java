@@ -54,7 +54,7 @@ public class TestAddressUsage {
             
             System.out.println("****** Updating Address Usage ******\n");
             
-            ModifiedByInterface modTest1 = new ModifiedBy("JBLOGGS", new Date(), "Updated Address Usage");
+            ModifiedByInterface modTest1 = new ModifiedBy("Updated Address Usage", "JBLOGGS", new Date());
             
             Date date1 = test1.getStartDate();
             date1.setDate(2);
@@ -66,7 +66,7 @@ public class TestAddressUsage {
             System.out.println(test1.getLastModifiedDate() + "\n");
             
             AddressInterface address1 = new Address(2, "", "", "", "", "5", "Brook Crescent", "Edmonton", "London", "England", "N9 0DJ", note3, "JBLOGGS", new Date());
-            ModifiedByInterface modTest2 = new ModifiedBy("DEDWARDS", new Date(), "Updated Address Usage");
+            ModifiedByInterface modTest2 = new ModifiedBy("Updated Address Usage", "DEDWARDS", new Date());
             
             test1.updateAddress(address1, test1.getStartDate(), "UPDATED AGAIN", modTest2);
             System.out.println(test1.getAddress());
@@ -76,7 +76,7 @@ public class TestAddressUsage {
             
             System.out.println("****** Ending Address Usage ******");
             
-            ModifiedByInterface modTest3 = new ModifiedBy("JBLOGGS", new Date(), "Ending Address Usage");
+            ModifiedByInterface modTest3 = new ModifiedBy("Ending Address Usage", "JBLOGGS", new Date());
             Date date2 = test1.getStartDate();
             date2.setDate(5);
             System.out.println(test1.isCurrent());
@@ -86,7 +86,7 @@ public class TestAddressUsage {
             System.out.println(test1.getLastModifiedBy());
             System.out.println(test1.getLastModifiedDate() + "\n");
             
-            ModifiedByInterface modTest4 = new ModifiedBy("JBLOGGS", new Date(), "Updated Address Usage");
+            ModifiedByInterface modTest4 = new ModifiedBy("Updated Address Usage", "JBLOGGS", new Date());
             Date date3 = test1.getStartDate();
             date3.setDate(3);
             test1.updateAddress(address, date3, "AND AGAIN",  modTest4);
@@ -94,7 +94,7 @@ public class TestAddressUsage {
             System.out.println(test1.getStartDate() + "\n");
             
             
-            ModifiedByInterface modTest5 = new ModifiedBy("DEDWARDS", new Date(), "Ending Address Usage");
+            ModifiedByInterface modTest5 = new ModifiedBy("Ending Address Usage", "DEDWARDS", new Date());
             Date date4 = test1.getEndDate();
             if(date4 != null) {
                 date4.setMonth(11);

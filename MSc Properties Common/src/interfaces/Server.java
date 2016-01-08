@@ -7,7 +7,6 @@ package interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -159,13 +158,13 @@ public interface Server extends Remote {
     int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate, String modifiedBy) throws RemoteException;
     int deleteJobRoleBenefit(String jobRoleCode, int benefit, String deletedBy) throws RemoteException;
     int createJobRequirement(String code, String description, String comment, String createdBy) throws RemoteException;
-    int updateJobRequirement(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException;
+    int updateJobRequirement(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException;
     int deleteJobRequirement(String requirement) throws RemoteException;
     int createJobBenefit(String code, String description, String comment, String createdBy) throws RemoteException;
-    int updateJobBenefit(String code, String description, boolean current, String comment, String modifiedBy) throws SQLException, RemoteException;
+    int updateJobBenefit(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException;
     int deleteJobBenefit(String benefit) throws RemoteException;
     int createTenancy(Date startDate, int length, int pRef, int aRef, String tenTypeCode, String officeCode, String createdBy) throws RemoteException;
-    int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws SQLException, RemoteException;
+    int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws RemoteException;
     int deleteTenancy(int tRef, String deletedBy) throws RemoteException;
     int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException;
     int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException;
@@ -179,7 +178,7 @@ public interface Server extends Remote {
     int deleteTenancyType(String code) throws RemoteException;
     int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, String officeCode, String createdBy) throws RemoteException;
     int createLease(Date startDate, int length, int pRef, boolean management, double expenditure, List<LandlordInterface> landlords, String officeCode, String createdBy) throws RemoteException;
-    int updateLease(int lRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException;
+    int updateLease(int lRef, String name, Date startDate, int length, String modifiedBy) throws RemoteException;
     int deleteLease(int lRef, String deletedBy) throws RemoteException;
     int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException;
     int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException;
@@ -188,10 +187,10 @@ public interface Server extends Remote {
     int updateLeaseDocument(int lRef, int dRef, byte[] buffer, String modifiedBy) throws RemoteException;
     int deleteLeaseDocument(int lRef, int dRef, String modifiedBy) throws RemoteException;
     byte[] downloadLeaseDocument(int tRef, int dRef, int version, String downloadedBy) throws RemoteException;
-    int createLeaseLandlord(int lRef, int landRef, String modifiedBy) throws SQLException, RemoteException;
+    int createLeaseLandlord(int lRef, int landRef, String modifiedBy) throws RemoteException;
     int endLeaseLandlord(int lRef, int landRef, String modifiedBy) throws RemoteException;
     int createContract(Date startDate, int length, int eRef, String jobRoleCode, String officeCode, String createdBy) throws RemoteException;
-    int updateContract(int cRef, String name, Date startDate, int length, String modifiedBy) throws SQLException, RemoteException;
+    int updateContract(int cRef, String name, Date startDate, int length, String modifiedBy) throws RemoteException;
     int deleteContract(int cRef, String deletedBy) throws RemoteException;
     int createContractNote(int cRef, String comment, String createdBy) throws RemoteException;
     int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException;

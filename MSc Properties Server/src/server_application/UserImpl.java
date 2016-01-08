@@ -74,6 +74,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      */
     public void setPassword(String password) {
         this.password = password;
+        this.setPasswordReset(false);
     }
     
     /**

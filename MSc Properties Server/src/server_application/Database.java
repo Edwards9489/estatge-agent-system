@@ -470,7 +470,7 @@ public class Database {
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
 
-                    ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
+                    ModifiedBy temp = new ModifiedBy(modifiedBy, description, modifiedDate);
 
                     modifiedByMap.put(modificationRef, temp);
                 }
@@ -522,7 +522,7 @@ public class Database {
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
 
-                    ModifiedBy temp = new ModifiedBy(modifiedBy, modifiedDate, description);
+                    ModifiedBy temp = new ModifiedBy(modifiedBy, description, modifiedDate);
                     modifiedByMap.put(modificationRef, temp);
                 }
             }

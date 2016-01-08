@@ -51,7 +51,7 @@ public class TestAgreement {
             System.out.println("\n\n ****** Testing Mutator Methods ******");
             System.out.println("\n****** Updating Agreement ******");
             
-            ModifiedByInterface modTest = new ModifiedBy("JBLOGGS", new Date(), "Updated Agreement");
+            ModifiedByInterface modTest = new ModifiedBy("Updated Agreement", "JBLOGGS", new Date());
             Date date1 = new Date();
             date1.setMonth(0);
             date1.setDate(2);
@@ -64,7 +64,7 @@ public class TestAgreement {
             System.out.println(test1.getLastModifiedBy());
             System.out.println(test1.getLastModifiedDate());
             
-            ModifiedByInterface modTest1 = new ModifiedBy("DEDWARDS", new Date(), "Updated Agreement");
+            ModifiedByInterface modTest1 = new ModifiedBy("Updated Agreement", "DEDWARDS", new Date());
             test1.updateAgreement(test1.getAgreementName(), test1.getStartDate(), -12, modTest1);
             
             System.out.println("\n" + test1.getAgreementName());
@@ -74,7 +74,7 @@ public class TestAgreement {
             System.out.println(test1.getLastModifiedBy());
             System.out.println(test1.getLastModifiedDate());
             
-            ModifiedByInterface modTest2 = new ModifiedBy("JBLOGGS", new Date(), "Updated Agreement");
+            ModifiedByInterface modTest2 = new ModifiedBy("Updated Agreement", "JBLOGGS", new Date());
             test1.updateAgreement(test1.getAgreementName(), test1.getStartDate(), 9, modTest2);
             
             System.out.println("\n" + test1.getAgreementName());
@@ -84,7 +84,7 @@ public class TestAgreement {
             System.out.println(test1.getLastModifiedBy());
             System.out.println(test1.getLastModifiedDate());
             
-            ModifiedByInterface modTest3 = new ModifiedBy("JBLOGGS", new Date(), "Updated Agreement");
+            ModifiedByInterface modTest3 = new ModifiedBy("Updated Agreement", "JBLOGGS", new Date());
             test1.updateAgreement("NEW NAME", test1.getStartDate(), test1.getLength(), modTest3);
             
             System.out.println("\n" + test1.getAgreementName());
@@ -97,7 +97,7 @@ public class TestAgreement {
             
             System.out.println("\n\n****** Ending Agreement ******");
             
-            ModifiedByInterface modTest4 = new ModifiedBy("DEDWARDS", new Date(), "Ended Agreement");
+            ModifiedByInterface modTest4 = new ModifiedBy("Ended Agreement", "DEDWARDS", new Date());
             Date date2 = new Date();
             date2.setMonth(0);
             date2.setDate(5);
@@ -107,7 +107,7 @@ public class TestAgreement {
             System.out.println(test1.getActualEndDate());
             System.out.println(test1.isCurrent());
             
-            ModifiedByInterface modTest5 = new ModifiedBy("JBLOGGS", new Date(), "Updated Agreement");
+            ModifiedByInterface modTest5 = new ModifiedBy("Updated Agreement", "JBLOGGS", new Date());
             test1.updateAgreement(test1.getAgreementName(), test1.getStartDate(), 12, modTest5);
             
             System.out.println("\n" + test1.getAgreementName());
@@ -117,7 +117,7 @@ public class TestAgreement {
             System.out.println(test1.getLastModifiedBy());
             System.out.println(test1.getLastModifiedDate());
             
-            ModifiedByInterface modTest6 = new ModifiedBy("DEDWARDS", new Date(), "Ended Agreement");
+            ModifiedByInterface modTest6 = new ModifiedBy("Ended Agreement", "DEDWARDS", new Date());
             Date date3 = new Date();
             date3.setMonth(11);
             date3.setDate(30);

@@ -155,7 +155,6 @@ public class Address extends UnicastRemoteObject implements AddressInterface {
     private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
-        this.modifiedBy(modifiedBy);
     }
     
     /**

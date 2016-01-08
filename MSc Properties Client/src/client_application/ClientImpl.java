@@ -1199,7 +1199,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateJobRequirement(String code, String description, boolean current, String comment) throws SQLException, RemoteException {
+    public int updateJobRequirement(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobRequirement(code, description, current, comment, this.getUsername());
         }
@@ -1220,7 +1220,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateJobBenefit(String code, String description, boolean current, String comment) throws SQLException, RemoteException {
+    public int updateJobBenefit(String code, String description, boolean current, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobBenefit(code, description, current, comment, this.getUsername());
         }
@@ -1241,7 +1241,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws SQLException, RemoteException {
+    public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTenancy(tRef, name, startDate, length, tenTypeCode, this.getUsername());
         }
@@ -1353,7 +1353,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateLease(int lRef, String name, Date startDate, int length) throws SQLException, RemoteException {
+    public int updateLease(int lRef, String name, Date startDate, int length) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLease(lRef, name, startDate, length, this.getUsername());
         }
@@ -1437,7 +1437,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createLeaseLandlord(int lRef, int landRef) throws SQLException, RemoteException {
+    public int createLeaseLandlord(int lRef, int landRef) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseLandlord(lRef, landRef, this.getUsername());
         }
@@ -1458,7 +1458,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateContract(int cRef, String name, Date startDate, int length) throws SQLException, RemoteException {
+    public int updateContract(int cRef, String name, Date startDate, int length) throws RemoteException {
         if (server.isAlive()) {
             return server.updateContract(cRef, name, startDate, length, this.getUsername());
         }

@@ -80,7 +80,6 @@ public class AddressUsage extends UnicastRemoteObject implements AddressUsageInt
     private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
-        this.modifiedBy(modifiedBy);
     }
     
     public void modifiedBy(ModifiedByInterface modifiedBy) {
@@ -99,6 +98,7 @@ public class AddressUsage extends UnicastRemoteObject implements AddressUsageInt
             this.modifiedBy(modifiedBy);
         }
     }
+    
     /**
      * @param address
      * @param startDate

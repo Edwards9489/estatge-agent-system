@@ -30,7 +30,7 @@ public class ModifiedBy extends UnicastRemoteObject implements ModifiedByInterfa
      * @param description 
      * @throws java.rmi.RemoteException 
      */
-    public ModifiedBy(String modifiedBy, Date modifedDate, String description) throws RemoteException {
+    public ModifiedBy(String description, String modifiedBy, Date modifedDate) throws RemoteException {
         this.modifiedBy = modifiedBy;
         this.modifiedDate = modifedDate;
         this.description = description;

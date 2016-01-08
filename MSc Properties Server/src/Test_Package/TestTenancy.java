@@ -59,7 +59,7 @@ public class TestTenancy {
             
             ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
             Property prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
-            ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", new Date(), "DEDWARDS");
+            ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", "DEDWARDS", new Date());
             prop.setLandlords(landlords, modTest);
             TenancyInterface test1 = new Tenancy(1, new Date(), 12, 12, prop, application, element, "NEWOFFICE", "DEDWARDS", new Date());
             

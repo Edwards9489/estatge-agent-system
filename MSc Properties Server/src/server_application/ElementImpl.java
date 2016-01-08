@@ -87,7 +87,6 @@ public class ElementImpl extends UnicastRemoteObject implements Element {
     private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
-        this.modifiedBy(modifiedBy);
     }
     
     /**
@@ -151,7 +150,10 @@ public class ElementImpl extends UnicastRemoteObject implements Element {
      */
     @Override
     public String getLastModifiedBy() throws RemoteException {
-        return this.getLastModification().getModifiedBy();
+        if(this.getLastModification() != null) {
+            return this.getLastModification().getModifiedBy();
+        }
+        return null;
     }
     
     /**
@@ -161,7 +163,10 @@ public class ElementImpl extends UnicastRemoteObject implements Element {
      */
     @Override
     public Date getLastModifiedDate() throws RemoteException {
-        return this.getLastModification().getModifiedDate();
+        if(this.getLastModification() != null) {
+            return this.getLastModification().getModifiedDate();
+        }
+        return null;
     }
     
     /**

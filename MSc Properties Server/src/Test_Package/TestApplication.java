@@ -136,14 +136,14 @@ public class TestApplication {
             
             System.out.println("****** Testing Mutator Methods ******");
             
-            ModifiedByInterface modTest = new ModifiedBy("Updated Application", new Date(), "DEDWARDS");
+            ModifiedByInterface modTest = new ModifiedBy("Updated Application", "DEDWARDS", new Date());
             test1.updateApplication("Mr Edwards & Ms Brindle", date, modTest);
             System.out.println(test1.getAppCorrName());
             
             test1.setAppStatusCode("CUR");
             System.out.println(test1.getAppStatusCode());
             
-            ModifiedByInterface modTest1 = new ModifiedBy("Added Involved Party", new Date(), "JBLOGGS");
+            ModifiedByInterface modTest1 = new ModifiedBy("Added Involved Party", "JBLOGGS", new Date());
             System.out.println(test1.getHousehold());
             test1.addInvolvedParty(invParty2, modTest1);
             System.out.println(test1.getHousehold());
@@ -158,7 +158,7 @@ public class TestApplication {
             
             
             
-            ModifiedByInterface modTest2 = new ModifiedBy("Set Tenancy", new Date(), "DEDWARDS");
+            ModifiedByInterface modTest2 = new ModifiedBy("Set Tenancy", "DEDWARDS", new Date());
             System.out.println(test1.getTenancyRef());
             test1.setTenancy(tenancy.getAgreementRef(), modTest2);
             System.out.println(test1.getTenancyRef());

@@ -96,7 +96,7 @@ public class TestDatabase {
         
         JobRole jobRole = new JobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, "DEDWARDS", new Date());
         
-        ModifiedBy modTest = new ModifiedBy("TEST", new Date(), "DEDWARDS");
+        ModifiedBy modTest = new ModifiedBy("TEST", "DEDWARDS", new Date());
         
         JobRoleBenefit benefit = new JobRoleBenefit(1, element, new Date(), true, null, 29.00, note2, "DEDWARDS", new Date());
         

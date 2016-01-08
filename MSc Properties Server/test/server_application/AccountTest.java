@@ -9,7 +9,9 @@ import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.TransactionInterface;
+import java.io.File;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -57,8 +59,12 @@ public class AccountTest {
             System.out.println("modifiedBy");
             Calendar date = Calendar.getInstance();
             date.set(2015, 1, 10);
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", new Date(), "DEDWARDS");
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = null;
             Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getModifiedBy().size());
+            instance.modifiedBy(modifiedBy2);
+            assertEquals(0, instance.getModifiedBy().size());
             instance.modifiedBy(modifiedBy);
             assertEquals(1, instance.getModifiedBy().size());
             assertEquals(modifiedBy, instance.getLastModification());
@@ -75,12 +81,13 @@ public class AccountTest {
         try {
             System.out.println("setEndDate");
             Calendar date = Calendar.getInstance();
-            date.set(2015, 5, 12);
+            date.set(2015, 1, 10);
             Calendar date2 = Calendar.getInstance();
-            date2.set(2015, 1, 10);
-            Date endDate = date.getTime();
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED2", new Date(), "DEDWARDS");
-            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date2.getTime(), "DEDWARDS", new Date());
+            date2.set(2015, 5, 12);
+            Date endDate = date2.getTime();
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getEndDate());
             instance.setEndDate(endDate, modifiedBy);
             assertEquals(endDate, instance.getEndDate());
             assertEquals(false, instance.isCurrent());
@@ -102,7 +109,7 @@ public class AccountTest {
             String accName = "NAMECHANGED";
             Calendar date2 = Calendar.getInstance();
             date2.set(2015, 1, 10);
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED3", new Date(), "DEDWARDS");
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date2.getTime(), "DEDWARDS", new Date());
             instance.updateAccount(startDate, accName, modifiedBy);
             assertEquals(startDate, instance.getStartDate());
@@ -126,16 +133,16 @@ public class AccountTest {
             date.set(2015, 1, 10);
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED3", new Date(), "DEDWARDS");
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
-            assertEquals(0.0 == instance.getBalance(), true);
+            assertEquals(true, 0.0 == instance.getBalance());
             instance.createTransaction(transaction, modifiedBy);
-            assertEquals(-500.00 == instance.getBalance(), true);
-            assertEquals(instance.isNegativeInd(), true);
+            assertEquals(true, -500.00 == instance.getBalance());
+            assertEquals(true, instance.isNegativeInd());
             assertEquals(1, instance.getModifiedBy().size());
             assertEquals(modifiedBy, instance.getLastModification());
             assertEquals(1, instance.getTransactions().size());
-            assertEquals(instance.hasTransaction(transaction.getTransactionRef()), true);
+            assertEquals(true, instance.hasTransaction(transaction.getTransactionRef()));
             assertEquals(transaction, instance.getTransaction(transaction.getTransactionRef()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -153,18 +160,18 @@ public class AccountTest {
             date.set(2015, 1, 10);
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED4", new Date(), "DEDWARDS");
-            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED5", new Date(), "DEDWARDS");
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
-            assertEquals(0.0 == instance.getBalance(), true);
+            assertEquals(true, 0.0 == instance.getBalance());
             instance.createTransaction(transaction, modifiedBy);
             instance.deleteTransaction(transaction.getTransactionRef(), modifiedBy2);
-            assertEquals(0.0 == instance.getBalance(), true);
-            assertEquals(instance.isNegativeInd(), false);
+            assertEquals(true, 0.0 == instance.getBalance());
+            assertEquals(false, instance.isNegativeInd());
             assertEquals(2, instance.getModifiedBy().size());
             assertEquals(modifiedBy2, instance.getLastModification());
             assertEquals(0, instance.getTransactions().size());
-            assertEquals(instance.hasTransaction(transaction.getTransactionRef()), false);
+            assertEquals(false, instance.hasTransaction(transaction.getTransactionRef()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -177,13 +184,17 @@ public class AccountTest {
     public void testCreateNote() {
         try {
             System.out.println("createNote");
-            Note note = null;
-            ModifiedByInterface modifiedBy = null;
-            Account instance = null;
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getNotes().size());
             instance.createNote(note, modifiedBy);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
-            
+            assertEquals(1, instance.getNotes().size());
+            assertEquals(1, instance.getModifiedBy().size());
+            assertEquals(modifiedBy, instance.getLastModification());
+            assertEquals(true, instance.hasNote(note.getReference()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -196,12 +207,23 @@ public class AccountTest {
     public void testDeleteNote() {
         try {
             System.out.println("deleteNote");
-            int ref = 0;
-            ModifiedByInterface modifiedBy = null;
-            Account instance = null;
-            instance.deleteNote(ref, modifiedBy);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getNotes().size());
+            instance.createNote(note, modifiedBy);
+            assertEquals(1, instance.getNotes().size());
+            instance.deleteNote(5, modifiedBy2);
+            assertEquals(1, instance.getNotes().size());
+            assertEquals(1, instance.getModifiedBy().size());
+            instance.deleteNote(note.getReference(), modifiedBy2);
+            assertEquals(2, instance.getModifiedBy().size());
+            assertEquals(modifiedBy2, instance.getLastModification());
+            assertEquals(0, instance.getNotes().size());
+            assertEquals(false, instance.hasTransaction(note.getReference()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -214,12 +236,19 @@ public class AccountTest {
     public void testCreateDocument() {
         try {
             System.out.println("createDocument");
-            Document document = null;
-            ModifiedByInterface modifiedBy = null;
-            Account instance = null;
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getDocuments().size());
             instance.createDocument(document, modifiedBy);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            assertEquals(1, instance.getDocuments().size());
+            assertEquals(1, instance.getModifiedBy().size());
+            assertEquals(modifiedBy, instance.getLastModification());
+            assertEquals(true, instance.hasDocument(document.getDocumentRef()));
+            assertEquals(true, instance.hasDocument("TEST.pdf"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -232,12 +261,26 @@ public class AccountTest {
     public void testDeleteDocument() {
         try {
             System.out.println("deleteDocument");
-            int ref = 0;
-            ModifiedByInterface modifiedBy = null;
-            Account instance = null;
-            instance.deleteDocument(ref, modifiedBy);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getDocuments().size());
+            instance.createDocument(document, modifiedBy);
+            assertEquals(1, instance.getDocuments().size());
+            assertEquals(1, instance.getModifiedBy().size());
+            instance.deleteDocument(7, modifiedBy2);
+            assertEquals(true, instance.hasDocument(document.getDocumentRef()));
+            assertEquals(true, instance.hasDocument("TEST.pdf"));
+            assertEquals(modifiedBy, instance.getLastModification());
+            instance.deleteDocument(document.getDocumentRef(), modifiedBy2);
+            assertEquals(2, instance.getModifiedBy().size());
+            assertEquals(modifiedBy2, instance.getLastModification());
+            assertEquals(false, instance.hasDocument(document.getDocumentRef()));
+            assertEquals(false, instance.hasDocument("TEST.pdf"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -250,12 +293,11 @@ public class AccountTest {
     public void testGetAccRef() {
         try {
             System.out.println("getAccRef");
-            Account instance = null;
-            int expResult = 0;
-            int result = instance.getAccRef();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(1, instance.getAccRef());
+            assertEquals(false, instance.getAccRef() == 2);
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -268,12 +310,11 @@ public class AccountTest {
     public void testGetAccName() {
         try {
             System.out.println("getAccName");
-            Account instance = null;
-            String expResult = "";
-            String result = instance.getAccName();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals("Mr Dwayne Leroy Edwards", instance.getAccName());
+            assertEquals(false, instance.getAccName().equals("WRONG"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -286,12 +327,11 @@ public class AccountTest {
     public void testGetStartDate() {
         try {
             System.out.println("getStartDate");
-            Account instance = null;
-            Date expResult = null;
-            Date result = instance.getStartDate();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(date.getTime(), instance.getStartDate());
+            assertEquals(false, instance.getStartDate().equals(new Date()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -304,12 +344,17 @@ public class AccountTest {
     public void testGetEndDate() {
         try {
             System.out.println("getEndDate");
-            Account instance = null;
-            Date expResult = null;
-            Date result = instance.getEndDate();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Calendar date2 = Calendar.getInstance();
+            date2.set(2015, 5, 12);
+            Date endDate = date2.getTime();
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getEndDate());
+            instance.setEndDate(endDate, modifiedBy);
+            assertEquals(endDate, instance.getEndDate());
+            assertEquals(false, instance.getEndDate().equals(new Date()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -322,12 +367,16 @@ public class AccountTest {
     public void testGetBalance() {
         try {
             System.out.println("getBalance");
-            Account instance = null;
-            double expResult = 0.0;
-            double result = instance.getBalance();
-            assertEquals(expResult, result, 0.0);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(true, 0.0 == instance.getBalance());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(true, -500.00 == instance.getBalance());
+            assertEquals(false, 500 == instance.getBalance());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -340,12 +389,11 @@ public class AccountTest {
     public void testGetOfficeCode() {
         try {
             System.out.println("getOfficeCode");
-            Account instance = null;
-            String expResult = "";
-            String result = instance.getOfficeCode();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(true, instance.getOfficeCode().equals("TEST"));
+            assertEquals(false, instance.getOfficeCode().equals("EDM"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -358,12 +406,19 @@ public class AccountTest {
     public void testIsNegativeInd() {
         try {
             System.out.println("isNegativeInd");
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.isNegativeInd();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction2 = new Transaction(2, 1, 3, 8, 700.00, false, new Date(), note2, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.isNegativeInd());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(true, instance.isNegativeInd());
+            instance.createTransaction(transaction2, modifiedBy);
+            assertEquals(false, instance.isNegativeInd());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -376,12 +431,16 @@ public class AccountTest {
     public void testIsCurrent() {
         try {
             System.out.println("isCurrent");
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.isCurrent();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Calendar date2 = Calendar.getInstance();
+            date2.set(2015, 5, 12);
+            Date endDate = date2.getTime();
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(true, instance.isCurrent());
+            instance.setEndDate(endDate, modifiedBy);
+            assertEquals(false, instance.isCurrent());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -394,12 +453,15 @@ public class AccountTest {
     public void testHasBeenModified() {
         try {
             System.out.println("hasBeenModified");
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.hasBeenModified();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.hasBeenModified());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(true, instance.hasBeenModified());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -412,13 +474,15 @@ public class AccountTest {
     public void testHasTransaction() {
         try {
             System.out.println("hasTransaction");
-            int ref = 0;
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.hasTransaction(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.hasTransaction(transaction.getTransactionRef()));
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(true, instance.hasTransaction(transaction.getTransactionRef()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -431,13 +495,14 @@ public class AccountTest {
     public void testHasNote() {
         try {
             System.out.println("hasNote");
-            int ref = 0;
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.hasNote(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.hasNote(note.getReference()));
+            instance.createNote(note, modifiedBy);
+            assertEquals(true, instance.hasNote(note.getReference()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -450,13 +515,15 @@ public class AccountTest {
     public void testGetNote() {
         try {
             System.out.println("getNote");
-            int ref = 0;
-            Account instance = null;
-            Note expResult = null;
-            Note result = instance.getNote(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, note.equals(instance.getNote(note.getReference())));
+            assertEquals(null, instance.getNote(note.getReference()));
+            instance.createNote(note, modifiedBy);
+            assertEquals(note, instance.getNote(note.getReference()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -469,12 +536,40 @@ public class AccountTest {
     public void testGetNotes() {
         try {
             System.out.println("getNotes");
-            Account instance = null;
-            List<Note> expResult = null;
-            List<Note> result = instance.getNotes();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST NOTE", "DEDWARDS", new Date());
+            Note note3 = new NoteImpl(3, "TEST NOTE", "DEDWARDS", new Date());
+            Note note4 = new NoteImpl(4, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getNotes().size());
+            List<Note> expResult = new ArrayList();
+            instance.createNote(note, modifiedBy);
+            expResult.add(note);
+            assertEquals(1, instance.getNotes().size());
+            assertEquals(expResult, instance.getNotes());
+            instance.createNote(note2, modifiedBy2);
+            expResult.add(note2);
+            assertEquals(2, instance.getNotes().size());
+            assertEquals(expResult, instance.getNotes());
+            instance.createNote(note3, modifiedBy3);
+            expResult.add(note3);
+            assertEquals(3, instance.getNotes().size());
+            assertEquals(expResult, instance.getNotes());
+            instance.createNote(note4, modifiedBy4);
+            expResult.add(note4);
+            assertEquals(4, instance.getNotes().size());
+            assertEquals(expResult, instance.getNotes());
+            instance.deleteNote(note.getReference(), modifiedBy5);
+            expResult.remove(note);
+            assertEquals(3, instance.getNotes().size());
+            assertEquals(expResult, instance.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -486,14 +581,17 @@ public class AccountTest {
     @Test
     public void testHasDocument_int() {
         try {
-            System.out.println("hasDocument");
-            int ref = 0;
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.hasDocument(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            System.out.println("hasDocument - int");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.hasDocument(document.getDocumentRef()));
+            instance.createDocument(document, modifiedBy);
+            assertEquals(true, instance.hasDocument(document.getDocumentRef()));
+            assertEquals(false, instance.hasDocument(7));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -505,14 +603,17 @@ public class AccountTest {
     @Test
     public void testHasDocument_String() {
         try {
-            System.out.println("hasDocument");
-            String fileName = "";
-            Account instance = null;
-            boolean expResult = false;
-            boolean result = instance.hasDocument(fileName);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            System.out.println("hasDocument - String");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.hasDocument("TEST.pdf"));
+            instance.createDocument(document, modifiedBy);
+            assertEquals(true, instance.hasDocument("TEST.pdf"));
+            assertEquals(false, instance.hasDocument("TEST"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -525,13 +626,16 @@ public class AccountTest {
     public void testGetDocument() {
         try {
             System.out.println("getDocument");
-            int ref = 0;
-            Account instance = null;
-            Document expResult = null;
-            Document result = instance.getDocument(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getDocument(document.getDocumentRef()));
+            instance.createDocument(document, modifiedBy);
+            assertEquals(document, instance.getDocument(document.getDocumentRef()));
+            assertEquals(null, instance.getDocument(9));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -544,12 +648,44 @@ public class AccountTest {
     public void testGetDocuments() {
         try {
             System.out.println("getDocuments");
-            Account instance = null;
-            List<Document> expResult = null;
-            List<Document> result = instance.getDocuments();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST NOTE", "DEDWARDS", new Date());
+            Note note3 = new NoteImpl(3, "TEST NOTE", "DEDWARDS", new Date());
+            Note note4 = new NoteImpl(4, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Document document = new DocumentImpl(1, new File("TEST.pdf"), note, "DEDWARDS", new Date());
+            Document document2 = new DocumentImpl(2, new File("TEST2.pdf"), note2, "DEDWARDS", new Date());
+            Document document3 = new DocumentImpl(3, new File("TEST3.pdf"), note3, "DEDWARDS", new Date());
+            Document document4 = new DocumentImpl(4, new File("TEST4.pdf"), note4, "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getDocuments().size());
+            List<Document> expResult = new ArrayList();
+            instance.createDocument(document, modifiedBy);
+            expResult.add(document);
+            assertEquals(1, instance.getDocuments().size());
+            assertEquals(expResult, instance.getDocuments());
+            instance.createDocument(document2, modifiedBy2);
+            expResult.add(document2);
+            assertEquals(2, instance.getDocuments().size());
+            assertEquals(expResult, instance.getDocuments());
+            instance.createDocument(document3, modifiedBy3);
+            expResult.add(document3);
+            assertEquals(3, instance.getDocuments().size());
+            assertEquals(expResult, instance.getDocuments());
+            instance.createDocument(document4, modifiedBy4);
+            expResult.add(document4);
+            assertEquals(4, instance.getDocuments().size());
+            assertEquals(expResult, instance.getDocuments());
+            instance.deleteDocument(document.getDocumentRef(), modifiedBy5);
+            expResult.remove(document);
+            assertEquals(3, instance.getDocuments().size());
+            assertEquals(expResult, instance.getDocuments());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -562,13 +698,16 @@ public class AccountTest {
     public void testGetTransaction() {
         try {
             System.out.println("getTransaction");
-            int ref = 0;
-            Account instance = null;
-            TransactionInterface expResult = null;
-            TransactionInterface result = instance.getTransaction(ref);
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getTransaction(transaction.getTransactionRef()));
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(transaction, instance.getTransaction(transaction.getTransactionRef()));
+            assertEquals(null, instance.getTransaction(12));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -581,12 +720,16 @@ public class AccountTest {
     public void testGetLastModifiedBy() {
         try {
             System.out.println("getLastModifiedBy");
-            Account instance = null;
-            String expResult = "";
-            String result = instance.getLastModifiedBy();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getLastModifiedBy());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(modifiedBy.getModifiedBy(), instance.getLastModifiedBy());
+            assertEquals(false, instance.getLastModifiedBy().equals("TEST"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -599,12 +742,16 @@ public class AccountTest {
     public void testGetLastModifiedDate() {
         try {
             System.out.println("getLastModifiedDate");
-            Account instance = null;
-            Date expResult = null;
-            Date result = instance.getLastModifiedDate();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getLastModifiedDate());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(modifiedBy.getModifiedDate(), instance.getLastModifiedDate());
+            assertEquals(false, instance.getLastModifiedDate().equals(date));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -617,12 +764,19 @@ public class AccountTest {
     public void testGetModifiedBy() {
         try {
             System.out.println("getModifiedBy");
-            Account instance = null;
-            List<ModifiedByInterface> expResult = null;
-            List<ModifiedByInterface> result = instance.getModifiedBy();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            List<ModifiedByInterface> modifiedByList = new ArrayList();
+            List<ModifiedByInterface> modifiedByList2 = new ArrayList();
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(modifiedByList, instance.getModifiedBy());
+            instance.createTransaction(transaction, modifiedBy);
+            modifiedByList.add(modifiedBy);
+            assertEquals(true, instance.getModifiedBy().equals(modifiedByList));
+            assertEquals(false, instance.getModifiedBy().equals(modifiedByList2));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -635,12 +789,21 @@ public class AccountTest {
     public void testGetLastModification() {
         try {
             System.out.println("getLastModification");
-            Account instance = null;
-            ModifiedByInterface expResult = null;
-            ModifiedByInterface result = instance.getLastModification();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST NOTE", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(null, instance.getLastModification());
+            instance.createTransaction(transaction, modifiedBy);
+            assertEquals(modifiedBy, instance.getLastModification());
+            assertEquals(false, instance.getLastModification().equals(modifiedBy2));
+            instance.createNote(note2, modifiedBy2);
+            assertEquals(modifiedBy2, instance.getLastModification());
+            assertEquals(false, instance.getLastModification().equals(modifiedBy));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -653,12 +816,12 @@ public class AccountTest {
     public void testGetCreatedBy() {
         try {
             System.out.println("getCreatedBy");
-            Account instance = null;
-            String expResult = "";
-            String result = instance.getCreatedBy();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(false, instance.getCreatedBy().equals(null));
+            assertEquals(true, instance.getCreatedBy().equals("DEDWARDS"));
+            assertEquals(false, instance.getCreatedBy().equals("JBLOOGS"));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -671,12 +834,14 @@ public class AccountTest {
     public void testGetCreatedDate() {
         try {
             System.out.println("getCreatedDate");
-            Account instance = null;
-            Date expResult = null;
-            Date result = instance.getCreatedDate();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Calendar date2 = Calendar.getInstance();
+            date2.set(2015, 1, 10);
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", date2.getTime());
+            assertEquals(false, instance.getCreatedDate().equals(null));
+            assertEquals(true, instance.getCreatedDate().equals(date2.getTime()));
+            assertEquals(false, instance.getCreatedDate().equals(new Date()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -689,29 +854,46 @@ public class AccountTest {
     public void testGetTransactions() {
         try {
             System.out.println("getTransactions");
-            Account instance = null;
-            List<TransactionInterface> expResult = null;
-            List<TransactionInterface> result = instance.getTransactions();
-            assertEquals(expResult, result);
-            // TODO review the generated test code and remove the default call to fail.
-            fail("The test case is a prototype.");
+            Calendar date = Calendar.getInstance();
+            date.set(2015, 1, 10);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
+            Note note2 = new NoteImpl(2, "TEST NOTE", "DEDWARDS", new Date());
+            Note note3 = new NoteImpl(3, "TEST NOTE", "DEDWARDS", new Date());
+            Note note4 = new NoteImpl(4, "TEST NOTE", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, false, new Date(), note, "DEDWARDS", new Date());
+            TransactionInterface transaction2 = new Transaction(2, 1, 3, 8, 700.00, true, new Date(), note, "DEDWARDS", new Date());
+            TransactionInterface transaction3 = new Transaction(3, 1, 3, 8, 200.00, false, new Date(), note, "DEDWARDS", new Date());
+            TransactionInterface transaction4 = new Transaction(4, 1, 3, 8, 1000.00, true, new Date(), note, "DEDWARDS", new Date());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            assertEquals(0, instance.getTransactions().size());
+            List<TransactionInterface> expResult = new ArrayList();
+            instance.createTransaction(transaction, modifiedBy);
+            expResult.add(transaction);
+            assertEquals(1, instance.getTransactions().size());
+            assertEquals(expResult, instance.getTransactions());
+            instance.createTransaction(transaction2, modifiedBy2);
+            expResult.add(transaction2);
+            assertEquals(2, instance.getTransactions().size());
+            assertEquals(expResult, instance.getTransactions());
+            instance.createTransaction(transaction3, modifiedBy3);
+            expResult.add(transaction3);
+            assertEquals(3, instance.getTransactions().size());
+            assertEquals(expResult, instance.getTransactions());
+            instance.createTransaction(transaction4, modifiedBy4);
+            expResult.add(transaction4);
+            assertEquals(4, instance.getTransactions().size());
+            assertEquals(expResult, instance.getTransactions());
+            instance.deleteTransaction(transaction.getTransactionRef(), modifiedBy5);
+            expResult.remove(transaction);
+            assertEquals(3, instance.getTransactions().size());
+            assertEquals(expResult, instance.getTransactions());
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    /**
-     * Test of toString method, of class Account.
-     */
-    @Test
-    public void testToString() {
-        System.out.println("toString");
-        Account instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-    
+    }    
 }

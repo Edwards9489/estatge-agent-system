@@ -156,7 +156,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     }
     
     public void createNote(Note note, ModifiedByInterface modifiedBy) throws RemoteException {
-        if(this.hasNote(note.getReference())) {
+        if(!this.hasNote(note.getReference())) {
             notes.add(note);
             this.modifiedBy(modifiedBy);
         }
@@ -165,7 +165,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public void deleteNote(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasNote(ref)) {
             Note note = this.getNote(ref);
-            if(note.hasBeenModified()) {
+            if(!note.hasBeenModified()) {
                 notes.remove(note);
                 this.modifiedBy(modifiedBy);
             }

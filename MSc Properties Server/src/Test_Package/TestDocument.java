@@ -50,7 +50,7 @@ public class TestDocument {
             System.out.println(Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getPreviousVersions().size() +1)));
             System.out.println("********************");
             System.out.println(test1.getPreviousVersions().size());
-            test1.createNewVersion(file2, new ModifiedBy("test", new Date(), "DEDWARDS"));
+            test1.createNewVersion(file2, new ModifiedBy("test", "DEDWARDS", new Date()));
             System.out.println(test1.getPreviousVersions().size());
             
             System.out.println(test1.getDocumentPath(test1.getPreviousVersions().size() +1) + "\\" + Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getPreviousVersions().size() +1)) + (test1.getPreviousVersions().size() + 2) + "." + Utils.getFileExtension(test1.getDocumentName(test1.getPreviousVersions().size() +1)));

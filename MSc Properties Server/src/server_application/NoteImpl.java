@@ -34,7 +34,9 @@ public class NoteImpl extends UnicastRemoteObject implements Note {
     }
     
     public void modifiedBy(ModifiedByInterface modified) {
-        this.modifiedBy.add(modified);
+        if(modified != null) {
+            this.modifiedBy.add(modified);
+        }
     }
 
     /**

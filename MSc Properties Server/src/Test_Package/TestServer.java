@@ -363,8 +363,6 @@ public class TestServer {
         } catch (RemoteException ex) {
             ex.printStackTrace();
             Logger.getLogger(TestServer.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(TestServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
