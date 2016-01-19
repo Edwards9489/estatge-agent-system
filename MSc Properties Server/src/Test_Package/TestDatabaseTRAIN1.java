@@ -564,8 +564,8 @@ public class TestDatabaseTRAIN1 {
 //            db.createEmployeeAccount(employeeAcc5);
             
             System.out.println("\nSystem Offices: " + db.getOffices().size());
-            System.out.println("\nEmployee Ref: " + employee.getEmployeeRef());
-            System.out.println("Modifications: " + employee.getModifiedBy().size());
+//            System.out.println("\nEmployee Ref: " + employee.getEmployeeRef());
+//            System.out.println("Modifications: " + employee.getModifiedBy().size());
             System.out.println("Employee Contracts: " + employee.getContracts().size() + "\n");
             System.out.println("System Contracts: " + db.countContracts() + "\n");
             System.out.println("System Employee Accounts: " + db.countEmployeeAccounts());
