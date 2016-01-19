@@ -43,6 +43,7 @@ public class HomeForm extends JFrame implements Observer {
         title.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 10));
         setLayout(new BorderLayout());
         buttonPanel = new ButtonPanel();
+        listsPanel = new ListPanel();
 
         buttonPanel.setButtonListener(new StringListener() {
             @Override
@@ -83,11 +84,11 @@ public class HomeForm extends JFrame implements Observer {
         
         
         
-        try {
-            this.updateAgreementsList(client.getUserAgreements());
-        } catch (RemoteException ex) {
-            Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            this.updateAgreementsList(client.getUserAgreements());
+//        } catch (RemoteException ex) {
+//            Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
         listsPanel.setTableListener(new TableListener() {
             @Override

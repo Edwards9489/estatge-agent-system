@@ -4522,6 +4522,8 @@ public class Database {
                     String updateSql = "update propertyInterest set cur=? where appRef=? and propRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     updateStat.setBoolean(col++, true);
+                    updateStat.setInt(col++, appRef);
+                    updateStat.setInt(col++, propRef);
                     updateStat.executeUpdate();
                     updateStat.close();
                 }
@@ -6674,6 +6676,8 @@ public class Database {
                     String updateSql = "update leaseLandlord set cur=? where landlordRef=? and leaseRef=?";
                     updateStat = con.prepareStatement(updateSql);
                     updateStat.setBoolean(col++, true);
+                    updateStat.setInt(col++, landlordRef);
+                    updateStat.setInt(col++, leaseRef);
                     updateStat.executeUpdate();
                     updateStat.close();
                 }
@@ -7396,7 +7400,6 @@ public class Database {
      * @throws RemoteException
      */
     private void loadLeaseAccounts() throws SQLException, RemoteException {
-        this.leaseAccounts.clear();
         String sql = "select leaseAccRef, name, startDate, endDate, balance, officeCode, "
                 + "expenditure, leaseRef, createdBy, createdDate from leaseAccounts order by leaseAccRef";
         try (Statement selectStat = con.createStatement()) {
@@ -7685,7 +7688,6 @@ public class Database {
      * @throws RemoteException
      */
     private void loadEmployeeAccounts() throws SQLException, RemoteException {
-        this.employeeAccounts.clear();
         String sql = "select employeeAccRef, name, startDate, endDate, balance, officeCode, "
                 + "salary, contractRef, createdBy, createdDate from employeeAccounts order by employeeAccRef";
         try (Statement selectStat = con.createStatement()) {
@@ -7898,7 +7900,7 @@ public class Database {
     private void createTransaction(String from, Transaction transaction) throws SQLException, RemoteException {
         if (!this.transactionExists(transaction.getTransactionRef())) {
             String insertSql = "insert into " + from + " (transactionRef, accountRef, fromRef, toRef, amount, "
-                    + "isDebit, transactionDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "isDebit, transactionDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, transaction.getTransactionRef());
@@ -7908,6 +7910,8 @@ public class Database {
                 insertStat.setDouble(col++, transaction.getAmount());
                 insertStat.setBoolean(col++, transaction.isDebit());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(transaction.getTransactionDate()));
+                insertStat.setInt(col++, transaction.getNote().getReference());
+                insertStat.setString(col++, transaction.getNote().getNote());
                 insertStat.setString(col++, transaction.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(transaction.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -7931,7 +7935,6 @@ public class Database {
     }
 
     private void loadTransactions(String from, Account account) throws SQLException, RemoteException {
-        this.transactions.clear();
         String sql = "select transactionRef, accountRef, fromRef, toRef, amount, isDebit, "
                 + "transactionDate, noteRef, comment, createdBy, createdDate from " + from + " where accountRef=? order by transactionRef";
         try (PreparedStatement selectStat = con.prepareStatement(sql)) {

@@ -87,11 +87,15 @@ public class LoginForm extends JFrame {
                 try {
                     ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{address, envir, user, new String(password)});
                     if (client!=null){
+                        System.out.println("Logged in: " + client.isUser(user, new String(password)));
                         if(client.isUser(user, new String(password))) {
+                            System.out.println("TEST1");
                             HomeForm home = new HomeForm();
                             home.setClient(client);
                             home.setVisible(true);
+                            setVisible(false);
                         } else {
+                            System.out.println("TEST2");
                             invUser = true;
                             layoutComponents();
                         }
@@ -104,8 +108,6 @@ public class LoginForm extends JFrame {
                 
                 // by wrapping Array of chars in a String it allows you to read the password
                 // usually when you do sys out on Array of chars it outputs reference to Array object
-
-                setVisible(false);
             }
         });
         

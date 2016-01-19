@@ -28,11 +28,11 @@ public class ListPanel extends JPanel {
     private JPopupMenu popup;
     private TableListener tableListener;
     
-    public ListPanel(String agreementType) {
+    public ListPanel() {
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem tenancyItem = new JMenuItem(agreementType + " Details");
+        JMenuItem tenancyItem = new JMenuItem("Agreements & Accounts");
         popup.add(tenancyItem);
         
         table.addMouseListener(new MouseAdapter() {

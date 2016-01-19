@@ -43,11 +43,11 @@ import server_application.Tenancy;
  *
  * @author Dwayne
  */
-public class TestDatabase {
+public class TestDatabaseTRAIN3 {
     public static void main(String[] args) throws RemoteException {
         System.out.println("Running database test\n");
         
-        Database db = new Database("TEST", "127.0.0.1", "root", "Toxic9489!999", 3306);
+        Database db = new Database("TRAIN", "127.0.0.1", "root", "Toxic9489!999", 3306);
         
         Note note = new NoteImpl(1, "TEST", "DEDWARDS", new Date());
         Note note2 = new NoteImpl(2, "TEST", "DEDWARDS", new Date());
@@ -239,16 +239,16 @@ public class TestDatabase {
             // Job Role Methods  -- Tested commented Job Role methods
 //            db.createJobRole(jobRole);
             jobRole = (JobRole) db.getJobRole(jobRole.getJobRoleCode());
-//            jobRole.updateJobRole(jobRole.getJobTitle(), jobRole.getJobDescription(), 30000.00, true, true, true, true, true, true, false, modTest);
-//            db.updateJobRole(jobRole.getJobRoleCode());
-//            jobRole.createJobRequirement(db.getJobRequirement(element.getCode()), modTest);
-//            db.updateJobRole(jobRole.getJobRoleCode());
-//            jobRole.createJobBenefit(benefit, modTest);
-//            db.updateJobRole(jobRole.getJobRoleCode());
-//            db.createJobRoleRequirement(jobRole.getJobRoleCode(), element.getCode());
-//            db.createJobRoleBenefit(jobRole.getJobRoleCode(), benefit);
-//            jobRole.createNote(note22, modTest);
-//            db.createJobRoleNote(jobRole.getJobRoleCode(), note22);
+            jobRole.updateJobRole(jobRole.getJobTitle(), jobRole.getJobDescription(), 30000.00, true, true, true, true, true, true, false, modTest);
+            db.updateJobRole(jobRole.getJobRoleCode());
+            jobRole.createJobRequirement(db.getJobRequirement(element.getCode()), modTest);
+            db.updateJobRole(jobRole.getJobRoleCode());
+            jobRole.createJobBenefit(benefit, modTest);
+            db.updateJobRole(jobRole.getJobRoleCode());
+            db.createJobRoleRequirement(jobRole.getJobRoleCode(), element.getCode());
+            db.createJobRoleBenefit(jobRole.getJobRoleCode(), benefit);
+            jobRole.createNote(note22, modTest);
+            db.createJobRoleNote(jobRole.getJobRoleCode(), note22);
             System.out.println("Job Role Code: " + jobRole.getJobRoleCode());
             System.out.println("Modifications: " + jobRole.getModifiedBy().size());
             System.out.println("Job Role Notes: " + jobRole.getNotes().size());
@@ -265,13 +265,14 @@ public class TestDatabase {
             address2 = (Address) db.getAddress(address2.getAddressRef());
 //            db.createAddress(address3);
             address3 = (Address) db.getAddress(address3.getAddressRef());
-//            address.updateAddress("", "", "", "", "5", "Brook Crescent", "Edmonton", "London", "England", "N9 0DJ", address.getNote().getNote(), modTest);
-//            db.updateAddress(address.getAddressRef());
+            address.updateAddress("", "", "", "", "5", "Brook Crescent", "Edmonton", "London", "England", "N9 0DJ", address.getNote().getNote(), modTest);
+            db.updateAddress(address.getAddressRef());
             System.out.println("Address Ref: " + address.getAddressRef());
             System.out.println("Address: " + address.printAddress());
             System.out.println("Modifications: " + address.getModifiedBy().size() + "\n");
             
             System.out.println("System Addresses: " + db.countAddresses() + "\n");
+            
             
             
             // Person methods -- Tested commented Person methods
@@ -284,17 +285,17 @@ public class TestDatabase {
 //            db.createPerson(person3);
 //            db.createPersonAddressUsage((AddressUsage) person3.getCurrentAddress(), person3.getPersonRef());
             person3 = (Person) db.getPerson(person3.getPersonRef());
-//            person.updatePerson(element, "DwayneUPDATED", "Leroy", "Edwards", new Date(), "UPDATED", element, element, element, element, element, element, element, modTest);
-//            db.updatePerson(person.getPersonRef());
-//            person.createContact(contact, modTest);
-//            db.createPersonContact(contact, person.getPersonRef());
-//            person.createNote(note23, modTest);
-//            db.createPersonNote(person.getPersonRef(), note23);
-//            person.createDocument(document, modTest);
-//            db.createPersonDoc(person.getPersonRef(), document);
-//            document = (DocumentImpl) person.getDocument(document.getDocumentRef());
-//            document.createNewVersion(file3, modTest);
-//            db.updatePersonDoc(person.getPersonRef(), document.getDocumentRef());
+            person.updatePerson(element, "DwayneUPDATED", "Leroy", "Edwards", new Date(), "UPDATED", element, element, element, element, element, element, element, modTest);
+            db.updatePerson(person.getPersonRef());
+            person.createContact(contact, modTest);
+            db.createPersonContact(contact, person.getPersonRef());
+            person.createNote(note23, modTest);
+            db.createPersonNote(person.getPersonRef(), note23);
+            person.createDocument(document, modTest);
+            db.createPersonDoc(person.getPersonRef(), document);
+            document = (DocumentImpl) person.getDocument(document.getDocumentRef());
+            document.createNewVersion(file3, modTest);
+            db.updatePersonDoc(person.getPersonRef(), document.getDocumentRef());
             
             System.out.println("Person Ref: " + person.getPersonRef());
             System.out.println("Modifications: " + person.getModifiedBy().size());
@@ -311,10 +312,10 @@ public class TestDatabase {
             //Office methods -- Tested commented Office methods
 //            db.createOffice(office);
             office = (Office) db.getOffice(office.getOfficeCode());
-//            office.setStartDate(date, modTest);
-//            db.updateOffice(office.getOfficeCode());
-//            office.createContact(contact2, modTest);
-//            db.createOfficeContact(contact2, office.getOfficeCode());
+            office.setStartDate(date, modTest);
+            db.updateOffice(office.getOfficeCode());
+            office.createContact(contact2, modTest);
+            db.createOfficeContact(contact2, office.getOfficeCode());
             System.out.println("Office Code: " + office.getOfficeCode());
             System.out.println("Modifications: " + office.getModifiedBy().size());
             System.out.println("Office Contacts: " + office.getContacts().size());
@@ -328,6 +329,7 @@ public class TestDatabase {
             landlord = (Landlord) db.getLandlord(landlord.getLandlordRef());
 //            db.createLandlord(landlord2);
             landlord2 = (Landlord) db.getLandlord(landlord2.getLandlordRef());
+            // NEED TO TEST ONCE CREATED A FEW LEASES - landlord.createLease(null, modTest);
             System.out.println("Landlord Ref: " + landlord.getLandlordRef());
             System.out.println("Modifications: " + landlord.getModifiedBy().size());
             System.out.println("Landlord Leases: " + landlord.getLeases().size() + "(no leases added yet)" + "\n");
@@ -343,8 +345,9 @@ public class TestDatabase {
 //            employee.updatePassword("UpdatedPassword", modTest);
 //            db.updateEmployee(employee.getEmployeeRef());
 //            db.updateUser(employee.getUser().getUsername());
+            // NEED TO TEST ONCE CREATED A FEW LEASES - landlord.createContract(null, modTest);
             System.out.println("Modifications: " + employee.getModifiedBy().size());
-            System.out.println("Employee Contracts: " + employee.getContracts().size() + "\n");
+            System.out.println("Employee Contracts: " + employee.getContracts().size() + "(no contracts added yet)" + "\n");
             
             System.out.println("System Employees: " + db.countEmployees() + "\n");
 
@@ -356,18 +359,18 @@ public class TestDatabase {
             property2 = (Property) db.getProperty(property2.getPropRef());
 //            db.createProperty(property3);
             property3 = (Property) db.getProperty(property3.getPropRef());
-//            property.updateProperty(address2, new Date(), element, element, modTest);
-//            db.updateProperty(property.getPropRef());
-//            property3.updateProperty(address3, new Date(), element2, element2, modTest);
-//            db.updateProperty(property3.getPropRef());
-//            property.createPropertyElement(propElement, modTest);
-//            db.updateProperty(property.getPropRef());
-//            property.createPropertyElement(propElement2, modTest);
-//            db.updateProperty(property.getPropRef());
-//            property.createPropertyElement(propElement3, modTest);
-//            db.updateProperty(property.getPropRef());
-//            property.createDocument(document2, modTest);
-//            db.createPropertyDoc(property.getPropRef(), document2);
+            property.updateProperty(address2, new Date(), element, element, modTest);
+            db.updateProperty(property.getPropRef());
+            property3.updateProperty(address3, new Date(), element2, element2, modTest);
+            db.updateProperty(property3.getPropRef());
+            property.createPropertyElement(propElement, modTest);
+            db.updateProperty(property.getPropRef());
+            property.createPropertyElement(propElement2, modTest);
+            db.updateProperty(property.getPropRef());
+            property.createPropertyElement(propElement3, modTest);
+            db.updateProperty(property.getPropRef());
+            property.createDocument(document2, modTest);
+            db.createPropertyDoc(property.getPropRef(), document2);
             System.out.println("Property Ref: " + property.getPropRef());
             System.out.println("Modifications: " + property.getModifiedBy().size());
             System.out.println("Property Rent: " + property.getRent());
@@ -381,15 +384,15 @@ public class TestDatabase {
             
             // PropertyElementValue methods -- Tested commented PropertyElementValue methods
             System.out.println("System Property Elements: " + db.getPropElements().size() + "\n");
-//            db.createPropertyElementValue(property.getPropRef(), propElement);
-//            db.createPropertyElementValue(property.getPropRef(), propElement2);
-//            db.createPropertyElementValue(property.getPropRef(), propElement3);
+            db.createPropertyElementValue(property.getPropRef(), propElement);
+            db.createPropertyElementValue(property.getPropRef(), propElement2);
+            db.createPropertyElementValue(property.getPropRef(), propElement3);
             propElement = (PropertyElement) db.getPropertyElementValue(propElement.getPropertyElementRef());
             propElement2 = (PropertyElement) db.getPropertyElementValue(propElement2.getPropertyElementRef());
             propElement3 = (PropertyElement) db.getPropertyElementValue(propElement3.getPropertyElementRef());
-//            propElement.updatePropertyElement(propElement.getStartDate(), "3 BED - AMENDED", null, false, propElement.getNote().getNote(), modTest);
-//            db.updatePropertyElementValue(property.getPropRef(), propElement.getPropertyElementRef());
-//            propElement2.updatePropertyElement(propElement2.getStartDate(), null, 99.99, true, propElement.getNote().getNote(), modTest);
+            propElement.updatePropertyElement(propElement.getStartDate(), "3 BED - AMENDED", null, false, propElement.getNote().getNote(), modTest);
+            db.updatePropertyElementValue(property.getPropRef(), propElement.getPropertyElementRef());
+            propElement2.updatePropertyElement(propElement2.getStartDate(), null, 99.99, true, propElement.getNote().getNote(), modTest);
             db.updatePropertyElementValue(property.getPropRef(), propElement2.getPropertyElementRef());
             System.out.println("Property Element 1: " + propElement);
             System.out.println("Property Element 2: " + propElement2 + "\n");
@@ -401,24 +404,24 @@ public class TestDatabase {
 //            db.createApplication(application);
             application = (Application) db.getApplication(application.getApplicationRef());
 //            db.createApplicationAddressUsage((AddressUsage) application.getCurrentApplicationAddress(), application.getApplicationRef());
-//            application.updateApplication("Corr Name - AMENDED", date, modTest);
-//            db.updateApplication(application.getApplicationRef());
-//            application.addInvolvedParty(invParty2, modTest);
-//            db.updateApplication(application.getApplicationRef());
-//            application.addInvolvedParty(invParty3, modTest);
-//            db.updateApplication(application.getApplicationRef());
-//            application.addInterestedProperty(property, modTest);
-//            db.createPropertyInterest(application.getApplicationRef(), property.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
-//            application.addInterestedProperty(property2, modTest);
-//            db.createPropertyInterest(application.getApplicationRef(), property2.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
-//            application.addInterestedProperty(property3, modTest);
-//            db.createPropertyInterest(application.getApplicationRef(), property3.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
-//            application.endInterestInProperty(property2, modTest);
-//            db.endPropertyInterest(application.getApplicationRef(), property2.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
+            application.updateApplication("Corr Name - AMENDED", date, modTest);
+            db.updateApplication(application.getApplicationRef());
+            application.addInvolvedParty(invParty2, modTest);
+            db.updateApplication(application.getApplicationRef());
+            application.addInvolvedParty(invParty3, modTest);
+            db.updateApplication(application.getApplicationRef());
+            application.addInterestedProperty(property, modTest);
+            db.updateApplication(application.getApplicationRef());
+            db.createPropertyInterest(application.getApplicationRef(), property.getPropRef());
+            application.addInterestedProperty(property2, modTest);
+            db.updateApplication(application.getApplicationRef());
+            db.createPropertyInterest(application.getApplicationRef(), property2.getPropRef());
+            application.addInterestedProperty(property3, modTest);
+            db.updateApplication(application.getApplicationRef());
+            db.createPropertyInterest(application.getApplicationRef(), property3.getPropRef());
+            application.endInterestInProperty(property2, modTest);
+            db.updateApplication(application.getApplicationRef());
+            db.endPropertyInterest(application.getApplicationRef(), property2.getPropRef());
             System.out.println("Application Ref: " + application.getApplicationRef());
             System.out.println("Application Correspondence Name: " + application.getAppCorrName());
             System.out.println("Modifications: " + application.getModifiedBy().size());
@@ -436,8 +439,8 @@ public class TestDatabase {
             invParty2 = (InvolvedParty) db.getInvolvedParty(invParty2.getInvolvedPartyRef());
 //            db.createInvolvedParty(invParty3);
             invParty3 = (InvolvedParty) db.getInvolvedParty(invParty3.getInvolvedPartyRef());
-//            invParty2.updateInvolvedParty(false, invParty2.getStartDate(), element, modTest);
-//            db.updateInvolvedParty(invParty2.getInvolvedPartyRef());
+            invParty2.updateInvolvedParty(false, invParty2.getStartDate(), element, modTest);
+            db.updateInvolvedParty(invParty2.getInvolvedPartyRef());
             System.out.println("Involved Party Ref: " + invParty2.getInvolvedPartyRef());
             System.out.println("Modifications: " + invParty2.getModifiedBy().size());
             System.out.println("Involved Party End Reason: " + invParty2.getEndReason() + "\n");
@@ -448,8 +451,8 @@ public class TestDatabase {
             // Tenancy methods - Tested commented Tenancy methods
 //            db.createTenancy(tenancy);
             tenancy = (Tenancy) db.getTenancy(tenancy.getAgreementRef());
-//            application.setTenancy(tenancy.getAgreementRef(), modTest);
-//            db.updateApplication(application.getApplicationRef());
+            application.setTenancy(tenancy.getAgreementRef(), modTest);
+            db.updateApplication(application.getApplicationRef());
             System.out.println("Tenancy Ref: " + tenancy.getAgreementRef());
             System.out.println("Modifications: " + tenancy.getModifiedBy().size());
             System.out.println("Tenancy App Ref: " + tenancy.getApplication().getApplicationRef());
@@ -474,13 +477,13 @@ public class TestDatabase {
             // Lease methods - Tested commented Tenancy methods
 //            db.createLease(lease);
             lease = (Lease) db.getLease(lease.getAgreementRef());
-//            lease.addLandlord(landlord2, modTest);
-//            db.updateLease(lease.getAgreementRef());
-//            db.createLeaseLandlord(landlord.getLandlordRef(), lease.getAccountRef());
-//            property.setLandlords(lease.getLandlords(), modTest);
-//            db.updateProperty(property.getPropRef());
-//            landlord.createLease(lease, modTest);
-//            db.updateLandlord(landlord.getLandlordRef());
+            lease.addLandlord(landlord2, modTest);
+            db.updateLease(lease.getAgreementRef());
+            db.createLeaseLandlord(landlord.getLandlordRef(), lease.getAccountRef());
+            property.setLandlords(lease.getLandlords(), modTest);
+            db.updateProperty(property.getPropRef());
+            landlord.createLease(lease, modTest);
+            db.updateLandlord(landlord.getLandlordRef());
             System.out.println("Lease Ref: " + lease.getAgreementRef());
             System.out.println("Modifications: " + lease.getModifiedBy().size());
             System.out.println("Lease Prop Ref: " + lease.getProperty().getPropRef());
@@ -503,8 +506,8 @@ public class TestDatabase {
             // Contract methods - Tested commented Tenancy methods
 //            db.createContract(contract);
             contract = (Contract) db.getContract(contract.getAgreementRef());
-//            employee.createContract(contract, modTest);
-//            db.updateEmployee(employee.getEmployeeRef());
+            employee.createContract(contract, modTest);
+            db.updateEmployee(employee.getEmployeeRef());
             System.out.println("Contract Ref: " + contract.getAgreementRef());
             System.out.println("Lease Employee Ref: " + contract.getEmployee().getEmployeeRef());
             System.out.println("Lease Job Role: " + contract.getJobRole().getJobRoleCode() + "\n");
@@ -519,7 +522,7 @@ public class TestDatabase {
             System.out.println("Employee Acc Salary: " + employeeAcc.getSalary());
             System.out.println("Contract Ref: " + employeeAcc.getContractRef() + "\n");
             
-            System.out.println("System Employee Accounts: " + db.countEmployeeAccounts());
+            System.out.println("System Employee Accounts: " + db.countRentAccounts());
             
             
             
@@ -570,7 +573,7 @@ public class TestDatabase {
             
         } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger(TestDatabase.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestDatabaseTRAIN3.class.getName()).log(Level.SEVERE, null, ex);
         }
         db.disconnect();
     }

@@ -549,7 +549,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updatePersonDocument(int pRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updatePersonDocument(int pRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -685,7 +685,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateOfficeDocument(String oCode, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateOfficeDocument(String oCode, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -806,9 +806,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int addInvolvedParty(int aRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException {
+    public int addInvolvedParty(int aRef, int pRef, boolean joint, Date start, String relationshipCode) throws RemoteException {
         if (server.isAlive()) {
-            return server.addInvolvedParty(aRef, pRef, joint, start, relationshipCode, createdBy);
+            return server.addInvolvedParty(aRef, pRef, joint, start, relationshipCode, this.getUsername());
         }
         return 0;
     }
@@ -877,7 +877,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateApplicationDocument(int aRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateApplicationDocument(int aRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -956,7 +956,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateEmployeeNote(int eRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEmployeeNote(eRef, nRef, comment, this.getUsername());
         }
@@ -991,7 +991,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateLandlordNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateLandlordNote(int lRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLandlordNote(lRef, nRef, comment, this.getUsername());
         }
@@ -1026,14 +1026,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createPropertyNote(int pRef, String comment, String createdBy) throws RemoteException {
+    public int createPropertyNote(int pRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createPropertyNote(pRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updatePropertyNote(int pRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updatePropertyNote(int pRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updatePropertyNote(pRef, nRef, comment, this.getUsername());
         }
@@ -1062,7 +1062,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updatePropertyDocument(int pRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updatePropertyDocument(int pRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1143,14 +1143,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createJobRoleNote(String officeCode, String comment, String createdBy) throws RemoteException {
+    public int createJobRoleNote(String officeCode, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createJobRoleNote(officeCode, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateJobRoleNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateJobRoleNote(String officeCode, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateJobRoleNote(officeCode, nRef, comment, this.getUsername());
         }
@@ -1255,7 +1255,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode, String modifiedBy) throws RemoteException {
+    public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTenancy(tRef, name, startDate, length, tenTypeCode, this.getUsername());
         }
@@ -1269,14 +1269,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createTenancyNote(int tRef, String comment, String createdBy) throws RemoteException {
+    public int createTenancyNote(int tRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createTenancyNote(tRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateTenancyNote(int tRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateTenancyNote(int tRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateTenancyNote(tRef, nRef, comment, this.getUsername());
         }
@@ -1305,7 +1305,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateTenancyDocument(int tRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateTenancyDocument(int tRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1384,14 +1384,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createLeaseNote(int lRef, String comment, String createdBy) throws RemoteException {
+    public int createLeaseNote(int lRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseNote(lRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLeaseNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateLeaseNote(int lRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLeaseNote(lRef, nRef, comment, this.getUsername());
         }
@@ -1420,7 +1420,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateLeaseDocument(int lRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateLeaseDocument(int lRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1492,14 +1492,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createContractNote(int cRef, String comment, String createdBy) throws RemoteException {
+    public int createContractNote(int cRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createContractNote(cRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateContractNote(int cRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateContractNote(int cRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateContractNote(cRef, nRef, comment, this.getUsername());
         }
@@ -1528,7 +1528,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateContractDocument(int cRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateContractDocument(int cRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1565,14 +1565,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createRentAccNote(int rAccRef, String comment, String createdBy) throws RemoteException {
+    public int createRentAccNote(int rAccRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createRentAccNote(rAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateRentAccNote(int rAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateRentAccNote(int rAccRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateRentAccNote(rAccRef, nRef, comment, this.getUsername());
         }
@@ -1601,7 +1601,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateRentAccDocument(int rAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateRentAccDocument(int rAccRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1638,14 +1638,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createLeaseAccNote(int lAccRef, String comment, String createdBy) throws RemoteException {
+    public int createLeaseAccNote(int lAccRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createLeaseAccNote(lAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateLeaseAccNote(int lAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateLeaseAccNote(int lAccRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateLeaseAccNote(lAccRef, nRef, comment, this.getUsername());
         }
@@ -1674,7 +1674,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateLeaseAccDocument(int lAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateLeaseAccDocument(int lAccRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {
@@ -1711,14 +1711,14 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createEmployeeAccNote(int eAccRef, String comment, String createdBy) throws RemoteException {
+    public int createEmployeeAccNote(int eAccRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createEmployeeAccNote(eAccRef, comment, this.getUsername());
         }
         return 0;
     }
 
-    public int updateEmployeeAccNote(int eAccRef, int nRef, String comment, String modifiedBy) throws RemoteException {
+    public int updateEmployeeAccNote(int eAccRef, int nRef, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.updateEmployeeAccNote(eAccRef, nRef, comment, this.getUsername());
         }
@@ -1747,7 +1747,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateEmployeeAccDocument(int eAccRef, int dRef, String fileName, String modifiedBy) throws RemoteException {
+    public int updateEmployeeAccDocument(int eAccRef, int dRef, String fileName) throws RemoteException {
         if(server.isAlive()) {
             byte[] documentData = null;
             try {

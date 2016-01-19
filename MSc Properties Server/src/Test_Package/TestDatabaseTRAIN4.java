@@ -43,11 +43,11 @@ import server_application.Tenancy;
  *
  * @author Dwayne
  */
-public class TestDatabase {
+public class TestDatabaseTRAIN4 {
     public static void main(String[] args) throws RemoteException {
         System.out.println("Running database test\n");
         
-        Database db = new Database("TEST", "127.0.0.1", "root", "Toxic9489!999", 3306);
+        Database db = new Database("TRAIN", "127.0.0.1", "root", "Toxic9489!999", 3306);
         
         Note note = new NoteImpl(1, "TEST", "DEDWARDS", new Date());
         Note note2 = new NoteImpl(2, "TEST", "DEDWARDS", new Date());
@@ -151,7 +151,7 @@ public class TestDatabase {
         Contact contact2 = new Contact(2, element, "test@test.com", new Date(), note17, "DEDWARDS", new Date());
         
         Office office = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
-        Office office2 = new Office("BHP", address3, new Date(), "DEDWARDS", new Date());
+        Office office2 = new Office("BHP", address, new Date(), "DEDWARDS", new Date());
         
         Landlord landlord = new Landlord(1, person, "DEDWARDS", new Date());
         Landlord landlord2 = new Landlord(2, person2, "DEDWARDS", new Date());
@@ -198,7 +198,7 @@ public class TestDatabase {
         cal.set(2016, 0, 3);
         Date date = cal.getTime();
         
-        try {
+//        try {
             // System Elements
 //            db.createContactType(element);
 //            db.createEndReason(element);
@@ -295,7 +295,7 @@ public class TestDatabase {
 //            document = (DocumentImpl) person.getDocument(document.getDocumentRef());
 //            document.createNewVersion(file3, modTest);
 //            db.updatePersonDoc(person.getPersonRef(), document.getDocumentRef());
-            
+//            
             System.out.println("Person Ref: " + person.getPersonRef());
             System.out.println("Modifications: " + person.getModifiedBy().size());
             System.out.println("Person Notes: " + person.getNotes().size());
@@ -305,7 +305,7 @@ public class TestDatabase {
             
             System.out.println("System People: " + db.countPeople() + "\n");
             
-            System.out.println("Document previous versions: " + document.getPreviousVersions().size());
+//            System.out.println("Document previous versions: " + document.getPreviousVersions().size());
             
             
             //Office methods -- Tested commented Office methods
@@ -328,6 +328,7 @@ public class TestDatabase {
             landlord = (Landlord) db.getLandlord(landlord.getLandlordRef());
 //            db.createLandlord(landlord2);
             landlord2 = (Landlord) db.getLandlord(landlord2.getLandlordRef());
+//            // NEED TO TEST ONCE CREATED A FEW LEASES - landlord.createLease(null, modTest);
             System.out.println("Landlord Ref: " + landlord.getLandlordRef());
             System.out.println("Modifications: " + landlord.getModifiedBy().size());
             System.out.println("Landlord Leases: " + landlord.getLeases().size() + "(no leases added yet)" + "\n");
@@ -339,12 +340,13 @@ public class TestDatabase {
 //            db.createEmployee(employee);
 //            db.createUser(employee.getUser());
             employee = (Employee) db.getEmployee(employee.getEmployeeRef());
-            User user = db.getUser(employee.getEmployeeRef());
+//            User user = db.getUser(employee.getEmployeeRef());
 //            employee.updatePassword("UpdatedPassword", modTest);
 //            db.updateEmployee(employee.getEmployeeRef());
 //            db.updateUser(employee.getUser().getUsername());
+//            // NEED TO TEST ONCE CREATED A FEW LEASES - landlord.createContract(null, modTest);
             System.out.println("Modifications: " + employee.getModifiedBy().size());
-            System.out.println("Employee Contracts: " + employee.getContracts().size() + "\n");
+            System.out.println("Employee Contracts: " + employee.getContracts().size() + "(no contracts added yet)" + "\n");
             
             System.out.println("System Employees: " + db.countEmployees() + "\n");
 
@@ -390,11 +392,11 @@ public class TestDatabase {
 //            propElement.updatePropertyElement(propElement.getStartDate(), "3 BED - AMENDED", null, false, propElement.getNote().getNote(), modTest);
 //            db.updatePropertyElementValue(property.getPropRef(), propElement.getPropertyElementRef());
 //            propElement2.updatePropertyElement(propElement2.getStartDate(), null, 99.99, true, propElement.getNote().getNote(), modTest);
-            db.updatePropertyElementValue(property.getPropRef(), propElement2.getPropertyElementRef());
+//            db.updatePropertyElementValue(property.getPropRef(), propElement2.getPropertyElementRef());
             System.out.println("Property Element 1: " + propElement);
             System.out.println("Property Element 2: " + propElement2 + "\n");
             
-            System.out.println("System Property Element Values: " + db.countPropElements() + "\n");
+            System.out.println("System Property Elements: " + db.countPropElements() + "\n");
             
             
             // Application methods -- Tested commented Application methods
@@ -408,17 +410,17 @@ public class TestDatabase {
 //            application.addInvolvedParty(invParty3, modTest);
 //            db.updateApplication(application.getApplicationRef());
 //            application.addInterestedProperty(property, modTest);
+//            db.updateApplication(application.getApplicationRef());
 //            db.createPropertyInterest(application.getApplicationRef(), property.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
 //            application.addInterestedProperty(property2, modTest);
+//            db.updateApplication(application.getApplicationRef());
 //            db.createPropertyInterest(application.getApplicationRef(), property2.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
 //            application.addInterestedProperty(property3, modTest);
+//            db.updateApplication(application.getApplicationRef());
 //            db.createPropertyInterest(application.getApplicationRef(), property3.getPropRef());
-//            db.updateApplication(application.getApplicationRef());
 //            application.endInterestInProperty(property2, modTest);
-//            db.endPropertyInterest(application.getApplicationRef(), property2.getPropRef());
 //            db.updateApplication(application.getApplicationRef());
+//            db.endPropertyInterest(application.getApplicationRef(), property2.getPropRef());
             System.out.println("Application Ref: " + application.getApplicationRef());
             System.out.println("Application Correspondence Name: " + application.getAppCorrName());
             System.out.println("Modifications: " + application.getModifiedBy().size());
@@ -450,8 +452,8 @@ public class TestDatabase {
             tenancy = (Tenancy) db.getTenancy(tenancy.getAgreementRef());
 //            application.setTenancy(tenancy.getAgreementRef(), modTest);
 //            db.updateApplication(application.getApplicationRef());
-            System.out.println("Tenancy Ref: " + tenancy.getAgreementRef());
-            System.out.println("Modifications: " + tenancy.getModifiedBy().size());
+//            System.out.println("Tenancy Ref: " + tenancy.getAgreementRef());
+//            System.out.println("Modifications: " + tenancy.getModifiedBy().size());
             System.out.println("Tenancy App Ref: " + tenancy.getApplication().getApplicationRef());
             System.out.println("Tenancy Charges: " + tenancy.getCharges());
             System.out.println("Tenancy Rent: " + tenancy.getRent());
@@ -519,7 +521,7 @@ public class TestDatabase {
             System.out.println("Employee Acc Salary: " + employeeAcc.getSalary());
             System.out.println("Contract Ref: " + employeeAcc.getContractRef() + "\n");
             
-            System.out.println("System Employee Accounts: " + db.countEmployeeAccounts());
+            System.out.println("System Employee Accounts: " + db.countRentAccounts());
             
             
             
@@ -568,10 +570,10 @@ public class TestDatabase {
             System.out.println("System Contracts: " + db.countContracts() + "\n");
             System.out.println("System Employee Accounts: " + db.countEmployeeAccounts());
             
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            Logger.getLogger(TestDatabase.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//            Logger.getLogger(TestDatabaseTRAIN4.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         db.disconnect();
     }
 }

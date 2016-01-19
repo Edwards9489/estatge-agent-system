@@ -23,11 +23,8 @@ public class TestClient3  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "ADMIN", "MScProperties"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "PBRINDLE", "Password"});
             client.addObserver(this);
-            
-            
-            client.downloadPersonDocument(1, 1, 1);
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient3.class.getName()).log(Level.SEVERE, null, ex);
         }

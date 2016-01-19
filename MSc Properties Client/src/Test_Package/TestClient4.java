@@ -19,20 +19,20 @@ import java.util.logging.Logger;
  *
  * @author Dwayne
  */
-public class TestClient2  implements Observer {
+public class TestClient4  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "UpdatedPassword"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "TEST", "test"});
             client.addObserver(this);
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
-            Logger.getLogger(TestClient2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TestClient4.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public static void main(String[] args) {
-        TestClient2 test = new TestClient2();
+        TestClient4 test = new TestClient4();
         test.run();
     }
     

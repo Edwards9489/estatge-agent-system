@@ -110,13 +110,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.leaseAccRef = this.database.countLeaseAccounts() + 1;
         this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
         this.addressRef = this.database.countAddresses() + 1;
-        this.transactionRef = this.database.countTransactions() + 1;
         this.addressUsageRef = this.database.countAddressUsages() + 1;
         this.contactRef = this.database.countContacts() + 1;
         this.noteRef = this.database.countNotes() + 1;
         this.documentRef = this.database.countDocuments() + 1;
         this.propertyElementRef = this.database.countPropElements() + 1;
         this.jobBenefitRef = this.database.countJobBenefits() + 1;
+        this.transactionRef = this.database.countTransactions() + 1;
         
         //Schedule to run every Day at midnight
         this.scheduler = new TaskGenerator(this, 1000 * 60);
@@ -1051,8 +1051,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public byte[] downloadPersonDocument(int pRef, int dRef, int version, String downloadedBy) throws RemoteException {
-        System.out.println(this.database.personExists(pRef));
-        System.out.println(this.database.getPerson(pRef).hasDocument(dRef));
         if (this.database.personExists(pRef) && this.database.getPerson(pRef).hasDocument(dRef)) {
             return this.downloadDocument(dRef, version);
         }
@@ -4855,7 +4853,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.officeExists(officeCode)) {
             List<AgreementInterface> agreements = this.getUserAgreements(officeCode);
             for (Client client : users.values()) {
-                if (client.isAlive() && client.getOfficeCode().equals(officeCode)) {
+                if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
                     client.updateUserAgreements(agreements);
                 } else if (!client.isAlive()) {
                     users.remove(client.getUsername());
@@ -4948,9 +4946,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.documentExists(dRef)) {
             try {
                 Document document = this.database.getDocument(dRef);
-                System.out.println(document.hasVersion(version));
                 if (document.hasVersion(version)) {
-                    System.out.println(document.getDocumentPath(version));
                     File file = new File(document.getDocumentPath(version));
                     byte buffer[] = new byte[(int) file.length()];
                     try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(document.getDocumentPath(version)))) {

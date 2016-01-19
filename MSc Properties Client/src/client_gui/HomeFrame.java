@@ -22,9 +22,9 @@ public class HomeFrame extends javax.swing.JFrame {
     public HomeFrame() {
         initComponents();
         buttonPanel = new ButtonPanel();
-        ListPanel tenPanel = new ListPanel("Tenancy");
-        ListPanel leasePanel = new ListPanel("Lease");
-        ListPanel contractPanel = new ListPanel("Contract");
+        ListPanel tenPanel = new ListPanel();
+        ListPanel leasePanel = new ListPanel();
+        ListPanel contractPanel = new ListPanel();
         tenanciesList.setLayout(new BorderLayout());
         leasesList.setLayout(new BorderLayout());
         contractsList.setLayout(new BorderLayout());
