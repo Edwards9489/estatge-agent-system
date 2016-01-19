@@ -52,7 +52,7 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="ContactType" package="" visibility="public" xPosition="187.0" yPosition="326.0">
+    <Class name="ContactType" package="" visibility="public" xPosition="22.0" yPosition="312.0">
       <Fields>
         <Field name="contactTypeCode" type="String" visibility="private"/>
         <Field name="contactTypeDescription" type="String" visibility="private"/>
@@ -61,25 +61,27 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Contract" package="" visibility="public" xPosition="481.0" yPosition="263.0">
+    <Class name="Contract" package="" visibility="public" xPosition="240.0" yPosition="37.0">
       <Fields>
         <Field name="contractRef" type="int" visibility="private"/>
         <Field name="jobRole" type="JobRole" visibility="private"/>
         <Field name="startDate" type="Date" visibility="private"/>
         <Field name="length" type="int" visibility="private"/>
+        <Field name="employee" type="Employee" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Employee" package="" visibility="public" xPosition="187.0" yPosition="490.0">
+    <Class name="Employee" package="" visibility="public" xPosition="263.0" yPosition="452.0">
       <Fields>
         <Field name="employeeRef" type="int" visibility="private"/>
         <Field name="contract" type="Contract" visibility="private"/>
+        <Field name="person" type="Person" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="InvolvedParty" package="" visibility="public" xPosition="481.0" yPosition="9.0">
+    <Class name="InvolvedParty" package="" visibility="public" xPosition="421.0" yPosition="28.0">
       <Fields>
         <Field name="involvedPartyRef" type="int" visibility="private"/>
         <Field name="person" type="Person" visibility="private"/>
@@ -106,18 +108,34 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Landlord" package="" visibility="public" xPosition="6.0" yPosition="528.0">
-      <Fields/>
+    <Class name="Landlord" package="" visibility="public" xPosition="240.0" yPosition="263.0">
+      <Fields>
+        <Field name="landlordRef" type="int" visibility="private"/>
+        <Field name="person" type="Person" visibility="private"/>
+        <Field name="lease" type="LeaseAccount" visibility="private"/>
+      </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Lease" package="" visibility="public" xPosition="421.0" yPosition="528.0">
-      <Fields/>
+    <Class name="LeaseAccount" package="" visibility="public" xPosition="473.0" yPosition="322.0">
+      <Fields>
+        <Field name="leaseAccRef" type="int" visibility="private"/>
+        <Field name="transaction" type="Transaction" visibility="private"/>
+      </Fields>
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="LeaseAccount" package="" visibility="public" xPosition="421.0" yPosition="432.0">
-      <Fields/>
+    <Class name="Lease" package="" visibility="public" xPosition="17.0" yPosition="28.0">
+      <Fields>
+        <Field name="landlord" type="Landlord" visibility="private"/>
+        <Field name="property" type="Property" visibility="private"/>
+        <Field name="fullManagement" type="boolean" visibility="private"/>
+        <Field name="Expenditure" type="double" visibility="private"/>
+        <Field name="untitledField" type="Object" visibility="private"/>
+        <Field name="leaseRef" type="int" visibility="private"/>
+        <Field name="startDate" type="Date" visibility="private"/>
+        <Field name="length" type="int" visibility="private"/>
+      </Fields>
       <Constructors/>
       <Methods/>
     </Class>
@@ -173,7 +191,7 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="RentAccount]" package="" visibility="public" xPosition="1115.0" yPosition="9.0">
+    <Class name="RentAccount" package="" visibility="public" xPosition="1115.0" yPosition="9.0">
       <Fields>
         <Field name="rentAccRef" type="int" visibility="private"/>
         <Field name="accountName" type="String" visibility="private"/>
@@ -200,7 +218,10 @@
       <Methods/>
     </Class>
     <Class name="EstateAgent" package="" visibility="public" xPosition="1115.0" yPosition="510.0">
-      <Fields/>
+      <Fields>
+        <Field name="agreements" type="Agreement" visibility="private"/>
+        <Field name="accounts" type="Account" visibility="private"/>
+      </Fields>
       <Constructors/>
       <Methods/>
     </Class>
