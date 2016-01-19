@@ -558,7 +558,7 @@ public class TestDatabaseTRAIN1 {
 //            db.createPersonAddressUsage((AddressUsage) person5.getCurrentAddress(), person5.getPersonRef());
 //            db.createEmployee(employee5);
 //            db.createUser(employee5.getUser());
-//            employee4.createContract(contract5, modTest);
+//            employee5.createContract(contract5, modTest);
 //            db.createContract(contract5);
 //            db.updateEmployee(employee5.getEmployeeRef());
 //            db.createEmployeeAccount(employeeAcc5);

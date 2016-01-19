@@ -192,7 +192,7 @@ public class TestDatabaseTRAIN2 {
         EmployeeAccount employeeAcc2 = new EmployeeAccount(2, contract2, "DEDWARDS", new Date());
         EmployeeAccount employeeAcc3 = new EmployeeAccount(3, contract3, "DEDWARDS", new Date());
         EmployeeAccount employeeAcc4 = new EmployeeAccount(4, contract4, "DEDWARDS", new Date());
-        EmployeeAccount employeeAcc5 = new EmployeeAccount(4, contract5, "DEDWARDS", new Date());
+        EmployeeAccount employeeAcc5 = new EmployeeAccount(5, contract5, "DEDWARDS", new Date());
         
         Calendar cal = Calendar.getInstance();
         cal.set(2016, 0, 3);
@@ -558,7 +558,7 @@ public class TestDatabaseTRAIN2 {
             db.createPersonAddressUsage((AddressUsage) person5.getCurrentAddress(), person5.getPersonRef());
             db.createEmployee(employee5);
             db.createUser(employee5.getUser());
-            employee4.createContract(contract5, modTest);
+            employee5.createContract(contract5, modTest);
             db.createContract(contract5);
             db.updateEmployee(employee5.getEmployeeRef());
             db.createEmployeeAccount(employeeAcc5);
