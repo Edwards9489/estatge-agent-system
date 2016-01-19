@@ -26,6 +26,8 @@ public class TestClient2  implements Observer {
             ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "UpdatedPassword"});
             client.addObserver(this);
             
+            System.out.println(client.updateEmployeePassword(1, "NewPAssword"));
+            
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient2.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -969,6 +969,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateEmployeePassword(int eRef, String password) throws RemoteException {
+        if (server.isAlive()) {
+            return server.updateEmployeePassword(eRef, password, this.getUsername());
+        }
+        return 0;
+    }
 
     public int createLandlord(int lRef) throws RemoteException {
         if (server.isAlive()) {
