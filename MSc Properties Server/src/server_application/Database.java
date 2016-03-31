@@ -2746,13 +2746,13 @@ public class Database {
      * @throws RemoteException
      */
     private void loadProperties() throws SQLException, RemoteException {
-        String sql = "select propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
-                + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propertyRef";
+        String sql = "select propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
+                + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
             while (results.next()) {
-                int propertyRef = results.getInt("propertyRef");
+                int propertyRef = results.getInt("propRef");
                 int addressRef = results.getInt("addressRef");
                 AddressInterface address;
                 if (this.addressExists(addressRef)) {
@@ -2944,7 +2944,7 @@ public class Database {
             this.deleteNote("propertyNotes", propRef, noteRef);
         }
     }
-
+    
     /**
      *
      * @param type
@@ -3855,7 +3855,6 @@ public class Database {
      * @throws RemoteException
      */
     private void loadInvolvedParties(int reference) throws SQLException, RemoteException {
-        this.involvedParties.clear();
         String sql = "select invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, endDate, endReasonCode, "
                 + "relationshipCode, createdBy, createdDate from involvedParties order by invPartyRef";
 
@@ -8333,7 +8332,7 @@ public class Database {
     }
 
     public int countProperties() {
-        String selectSql = "select max(propertyRef) as count from properties";
+        String selectSql = "select max(propRef) as count from properties";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
@@ -8648,7 +8647,7 @@ public class Database {
     public List<Element> getReligions() {
         return Collections.unmodifiableList(new ArrayList<>(religions.values()));
     }
-
+    
     public List<Element> getPropertyTypes() {
         return Collections.unmodifiableList(new ArrayList<>(propertyTypes.values()));
     }

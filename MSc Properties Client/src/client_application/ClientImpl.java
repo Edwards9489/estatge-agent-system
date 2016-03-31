@@ -102,6 +102,8 @@ public class ClientImpl extends Observable implements Client {
         Registry registry = LocateRegistry.getRegistry(host);
         //get the server stub from the registry
         server = (Server) registry.lookup(environment);
+        //register the chatter with the server
+        server.register(getStub());
         System.out.println("Server found!");
     }
     
@@ -110,8 +112,6 @@ public class ClientImpl extends Observable implements Client {
             if(server != null && server.isAlive()) {
                 if(server.isUser(username, passsword)) {
                     setUser(server.getUser(username));
-                    //register the chatter with the server
-                    server.register(getStub());
                 }
             }
         } catch (RemoteException ex) {
@@ -143,10 +143,7 @@ public class ClientImpl extends Observable implements Client {
     
     @Override
     public String getOfficeCode() throws RemoteException {
-        if(user != null) {
-            return user.getOfficeCode();
-        }
-        return null;
+        return user.getOfficeCode();
     }
     
     @Override
@@ -574,10 +571,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadPersonDocument(int pRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadPersonDocument(pRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadPersonDocument(pRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -710,10 +704,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadOfficeDocument(String officeCode, int version, int dRef) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadOfficeDocument(officeCode, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadOfficeDocument(officeCode, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -902,10 +893,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadApplicationDocument(int aRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadApplicationDocument(aRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadApplicationDocument(aRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -941,6 +929,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateEmployeePassword(String password) throws RemoteException {
+        if (server.isAlive()) {
+            return server.updateEmployeePassword(user.getEmployeeRef(), password, this.getUsername());
+        }
+        return 0;
+    }
 
     public int deleteEmployee(int eRef) throws RemoteException {
         if (server.isAlive()) {
@@ -966,13 +961,6 @@ public class ClientImpl extends Observable implements Client {
     public int deleteEmployeeNote(int eRef, int nRef) throws RemoteException {
         if (server.isAlive()) {
             return server.deleteEmployeeNote(eRef, nRef, this.getUsername());
-        }
-        return 0;
-    }
-    
-    public int updateEmployeePassword(int eRef, String password) throws RemoteException {
-        if (server.isAlive()) {
-            return server.updateEmployeePassword(eRef, password, this.getUsername());
         }
         return 0;
     }
@@ -1094,10 +1082,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadPropertyDocument(int pRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadPropertyDocument(pRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadPropertyDocument(pRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1337,10 +1322,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadTenancyDocument(int tRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadTenancyDocument(tRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadTenancyDocument(tRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1452,10 +1434,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadLeaseDocument(int lRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadLeaseDocument(lRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadLeaseDocument(lRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1560,10 +1539,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadContractDocument(int cRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadContractDocument(cRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadContractDocument(cRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1633,10 +1609,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadRentAccDocument(int rAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadRentAccDocument(rAccRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadRentAccDocument(rAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1706,10 +1679,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadLeaseAccDocument(int lAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadLeaseAccDocument(lAccRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadLeaseAccDocument(lAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1779,10 +1749,7 @@ public class ClientImpl extends Observable implements Client {
     public int downloadEmployeeAccDocument(int eAccRef, int dRef, int version) throws RemoteException {
         if (server.isAlive()) {
             try {
-                byte[] buffer = server.downloadEmployeeAccDocument(eAccRef, dRef, version, this.getUsername());
-                if(buffer != null) {
-                    this.openDocument(buffer);
-                }
+                this.openDocument(server.downloadEmployeeAccDocument(eAccRef, dRef, version, this.getUsername()));
                 return 1;
             } catch (IOException ex) {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);

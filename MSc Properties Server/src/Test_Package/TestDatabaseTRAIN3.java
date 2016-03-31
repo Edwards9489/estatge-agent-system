@@ -163,8 +163,8 @@ public class TestDatabaseTRAIN3 {
         Employee employee5 = new Employee(5, person5, "TESTED", "tested", "DEDWARDS", new Date());
         
         Property property = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
-        Property property2 = new Property(2, address, new Date(), element, element, "DEDWARDS", new Date());
-        Property property3 = new Property(3, address, new Date(), element, element, "DEDWARDS", new Date());
+        Property property2 = new Property(2, address, new Date(), element2, element2, "DEDWARDS", new Date());
+        Property property3 = new Property(3, address, new Date(), element3, element3, "DEDWARDS", new Date());
         
         InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
         InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
@@ -361,7 +361,7 @@ public class TestDatabaseTRAIN3 {
             property3 = (Property) db.getProperty(property3.getPropRef());
             property.updateProperty(address2, new Date(), element, element, modTest);
             db.updateProperty(property.getPropRef());
-            property3.updateProperty(address3, new Date(), element2, element2, modTest);
+            property3.updateProperty(address3, new Date(), element3, element3, modTest);
             db.updateProperty(property3.getPropRef());
             property.createPropertyElement(propElement, modTest);
             db.updateProperty(property.getPropRef());

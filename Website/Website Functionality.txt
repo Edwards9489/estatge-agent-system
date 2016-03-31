@@ -1,0 +1,24 @@
+Website Functionality
+
+Property Search Facility (Quick and Full Search)
+	- Retrieve the drop down items from database table values
+
+Featured Home (Max Property to Rent pm)
+	- Retrieve Featured Home Information from Database table
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+Common Functions:
+
+ - Run Select Statement
+ - Run Update / Insert / Delete Statement
+ - Database Connect
+ 

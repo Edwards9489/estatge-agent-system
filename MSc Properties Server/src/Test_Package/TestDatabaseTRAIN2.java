@@ -163,8 +163,8 @@ public class TestDatabaseTRAIN2 {
         Employee employee5 = new Employee(5, person5, "TESTED", "tested", "DEDWARDS", new Date());
         
         Property property = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
-        Property property2 = new Property(2, address, new Date(), element, element, "DEDWARDS", new Date());
-        Property property3 = new Property(3, address, new Date(), element, element, "DEDWARDS", new Date());
+        Property property2 = new Property(2, address, new Date(), element2, element2, "DEDWARDS", new Date());
+        Property property3 = new Property(3, address, new Date(), element3, element3, "DEDWARDS", new Date());
         
         InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
         InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
@@ -210,8 +210,6 @@ public class TestDatabaseTRAIN2 {
             db.createMaritalStatus(element);
             db.createNationality(element);
             db.createPropElement(element);
-            db.createPropertySubType(element);
-            db.createPropertyType(element);
             db.createRelationship(element);
             db.createReligion(element);
             db.createSexuality(element);
@@ -228,8 +226,6 @@ public class TestDatabaseTRAIN2 {
             db.createNationality(element2);
             db.createPropElement(element2);
             db.createPropElement(element3);
-            db.createPropertySubType(element2);
-            db.createPropertyType(element2);
             db.createRelationship(element2);
             db.createReligion(element2);
             db.createSexuality(element2);

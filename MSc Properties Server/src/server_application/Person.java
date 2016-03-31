@@ -426,13 +426,13 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
         if(this.title != null) {
             temp = this.title.getDescription();
         }
-        if(!this.forename.isEmpty()) {
+        if(!(this.forename == null || this.forename.isEmpty())) {
             temp = temp + " " + this.forename;
         }
-        if(!this.middleNames.isEmpty()) {
+        if(!(this.middleNames == null || this.middleNames.isEmpty())) {
             temp = temp + " " + this.middleNames;
         }
-        if(!this.surname.isEmpty()) {
+        if(!(this.surname == null || this.surname.isEmpty())) {
             temp = temp + " " + this.surname;
         }
         return temp;

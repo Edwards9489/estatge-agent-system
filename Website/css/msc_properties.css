@@ -1,0 +1,248 @@
+html {margin:0; padding:0;}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	color: white;
+	background-color: #FFFFFF;
+}
+
+p {
+	font-size: 16px;
+}
+
+p.topofdiv {
+	font-weight: bold;
+}
+
+
+input {
+	font-size: 16px;
+}
+
+select {
+	font-size: 16px;
+}
+
+textarea {
+	font-size: 16px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.textblack {
+	color: black;
+}
+
+.textdisabled {
+	background-color: lightgray;
+}
+
+.errormsg {
+	color: red;
+}
+
+#toolbar
+{
+	position: absolute;
+	top: 160px;
+	left: 10px;
+	width: 960px;
+	height: 20px;
+	padding: 10px;
+	background-color: #808080;
+	text-align:center
+}
+
+#quicksearch
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 210px;
+	height: 320px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#fullsearch
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 250px;
+	height: 520px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#featuredhome
+{
+	position: absolute;
+	top: 205px;
+	left: 250px;
+	width: 720px;
+	height: 320px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#whylet
+{
+	position: absolute;
+	top: 555px;
+	left: 10px;
+	width: 960px;
+	height: 200px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#locatestore
+{
+	position: absolute;
+	top: 785px;
+	left: 10px;
+	width: 450px;
+	height: 120px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#careers
+{
+	position: absolute;
+	top: 785px;
+	left: 490px;
+	width: 480px;
+	height: 120px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#lookingtorent
+{
+	position: absolute;
+	top: 205px;
+	left: 295px;
+	width: 375px;
+	height: 520px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#register
+{
+	position: absolute;
+	top: 205px;
+	left: 705;
+	width: 265;
+	height: 520px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#viewproperties
+{
+	position: absolute;
+	top: 205px;
+	left: 290px;
+	width: 680px;
+	height: 800px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#viewproperty
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 980px;
+	height: 800px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#careerstext
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 960px;
+	height: 200px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#vacancies
+{
+	position: absolute;
+	top: 435px;
+	left: 10px;
+	width: 960px;
+	height: 910px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+	
+#letting
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 665px;
+	height: 730px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#register2
+{
+	position: absolute;
+	top: 205px;
+	left: 705;
+	width: 265;
+	height: 730px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#aboutus
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 960px;
+	height: 250px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#locatestore2
+{
+	position: absolute;
+	top: 480px;
+	left: 10px;
+	width: 960px;
+	height: 120px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+
+#officedetails
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 960px;
+	height: 500px;
+	padding: 10px;
+	background-color: #0033FF;
+}
+	
+#endpage
+{
+	position: absolute;
+	left: 10px;
+	width: 980px;
+	background-color: #0033FF;
+}

@@ -1,0 +1,15 @@
+$sql_statement  = "SELECT town, area ";
+$sql_statement .= "FROM offices JOIN addresses ";"
+$sql_statement .= "USING(addressRef) ";
+$sql_statement .= "WHERE offices.endDate IS NULL OR offices.endDate > CURDATE() ";
+$sql_statement .= "ORDER BY town, area ";
+
+
+$sql_statement  = "SELECT area ";
+$sql_statement .= "FROM offices JOIN addresses ";
+$sql_statement .= "USING(addressRef) ";
+$sql_statement .= "WHERE offices.endDate IS NULL OR offices.endDate > CURDATE() ";
+$sql_statement .= "AND addresses.town = 
+$sql_statement .= "ORDER BY area";
+
+

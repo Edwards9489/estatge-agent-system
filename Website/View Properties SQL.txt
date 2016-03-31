@@ -1,0 +1,78 @@
+RETURN PROPERTY ADDRESSES
+
+SELECT propRef, addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode
+FROM properties JOIN addresses
+USING(addressRef)
+WHERE propStatus='VOID'
+
+
+SELECT 
+FROM
+
+
+SELECT buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode,
+FROM properties, addresses, propertyelementvalues rent, propertyelementvalues kitchen, propertyelementvalues beds, propertyelementvalues baths, propertyelementvalues driveway, propertyelementvalues garden, propertyelementvalues conservatory, propertyelementvalues receptions, propertyelementvalues age
+WHERE properties.addressRef = addresses.addressRef
+AND properties.propRef = rent.propRef(+)
+AND properties.propRef = kitchen.propRef(+)
+AND properties.propRef = beds.propRef(+)
+AND properties.propRef = baths.propRef(+)
+AND properties.propRef = driveway.propRef(+)
+AND properties.propRef = garden.propRef(+)
+AND properties.propRef = conservatory.propRef(+)
+AND properties.propRef = receptions.propRef(+)
+AND properties.propRef = age.propRef(+)
+AND properties.propStatus = 'VOID'
+AND rent.doubleValue = 
+AND kitchen.stringValue = 
+AND beds.doubleValue = 
+AND baths.doubleValue = 
+AND driveway.stringValue = 
+AND garden.stringValue = 
+AND conservatory.stringValue = 
+AND receptions.doubleValue = 
+AND age.stringValue = 
+ORDER BY propRef
+
+
+
+SELECT properties.propRef
+FROM addresses JOIN properties
+USING(addressRef) LEFT JOIN propertyelementvalues rent USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues rent
+USING(propRef) LEFT JOIN propertyelementvalues kitchen USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues kitchen
+USING(propRef) LEFT JOIN propertyelementvalues beds USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues beds
+USING(propRef)LEFT JOIN propertyelementvalues baths USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues baths
+USING(propRef) LEFT JOIN propertyelementvalues driveway USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues driveway
+USING(propRef) LEFT JOIN propertyelementvalues garden USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues garden
+USING(propRef)LEFT JOIN propertyelementvalues conservatory USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues conservatory
+USING(propRef) LEFT JOIN propertyelementvalues receptions USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues receptions
+USING(propRef) LEFT JOIN propertyelementvalues age USING(propRef)
+UNION
+SELECT properties.propRef FROM properties
+RIGHT JOIN propertyelementvalues age
+USING(propRef)
+WHERE properties.propStatus = 'VOID'

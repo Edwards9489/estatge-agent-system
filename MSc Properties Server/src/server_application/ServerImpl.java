@@ -25,6 +25,7 @@ import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
+import interfaces.LoginInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.OfficeInterface;
@@ -138,33 +139,39 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         ServerImpl server = (ServerImpl) createServer(new String[]{"LIVE", "127.0.0.1", "root", "Toxic9489!999", "3306"});
     }
 
-    public static Server createServer(String[] args) throws RemoteException, UnknownHostException, MalformedURLException {
-        RegistryLoader.Load();
-        String environment = "LIVE";
-        String addr = "127.0.0.1";
-        String username = null;
-        String password = null;
-        Integer port = null;
-        String myIP = java.net.InetAddress.getLocalHost().getHostAddress();
-        if (args.length == 5) {
-            environment = args[0];
-            addr = args[1];
-            username = args[2];
-            password = args[3];
-            port = Integer.parseInt(args[4]);
-        }
-        String myName = "Server" + environment;
-        String myURL = "rmi://" + myIP + "/" + myName;
+    public static Server createServer(String[] args) {
+        try {
+            RegistryLoader.Load();
+            String environment = "LIVE";
+            String addr = "127.0.0.1";
+            String username = null;
+            String password = null;
+            Integer port = null;
+            String myIP = java.net.InetAddress.getLocalHost().getHostAddress();
+            if (args.length == 5) {
+                environment = args[0];
+                addr = args[1];
+                username = args[2];
+                password = args[3];
+                port = Integer.parseInt(args[4]);
+            }
+            
+            String myName = "Server" + environment;
+            String myURL = "rmi://" + myIP + "/" + myName;
 
-        // register RMI object
-        ServerImpl serv = new ServerImpl(environment, addr, username, password, port);
-        Server serverStub = (Server) serv;
-        
-        //NB rebind will replace any stub with the given name 'Server'
-        System.out.println(myName);
-        Naming.rebind(myName, serverStub);
-        System.out.println("Server started");
-        return serverStub;
+            // register RMI object
+            Server serverStub = (Server) new ServerImpl(environment, addr, username, password, port);
+            
+            LoginInterface loginObject = new LoginImpl(serverStub);
+
+            //NB rebind will replace any stub with the given name 'Server'
+            System.out.println(myName);
+            Naming.rebind(myName, loginObject);
+            System.out.println((new Date()) + ": Server up and running");
+            return serverStub;
+        } catch (RemoteException | UnknownHostException | NumberFormatException | MalformedURLException e) {
+        }
+        return null;
     }
     
     private void createSuperUser() {

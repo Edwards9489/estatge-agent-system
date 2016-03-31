@@ -75,11 +75,7 @@ public class ServerForm2 extends JFrame {
                 char[] password = passwordField.getPassword();
                 Integer port = (Integer) portSpinner.getValue();
                 
-                try {
-                    ServerImpl server = (ServerImpl) ServerImpl.createServer(new String[] {environment, address, user, new String(password), port.toString()});
-                } catch (RemoteException | UnknownHostException | MalformedURLException ex) {
-                    Logger.getLogger(ServerForm2.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                ServerImpl server = (ServerImpl) ServerImpl.createServer(new String[] {environment, address, user, new String(password), port.toString()});
 
                 setVisible(false);
             }

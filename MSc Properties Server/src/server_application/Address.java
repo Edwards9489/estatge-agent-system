@@ -213,63 +213,63 @@ public class Address extends UnicastRemoteObject implements AddressInterface {
      * @return buildingNumber.isEmpty()
      */
     private boolean isBuildingNumberNull() {
-        return buildingNumber.isEmpty();
+        return buildingNumber == null;
     }
     
     /**
      * @return buildingName.isEmpty()
      */
     private boolean isBuildingNameNull() {
-        return buildingName.isEmpty();
+        return buildingName == null;
     }
     
     /**
      * @return subStreetNumber.isEmpty()
      */
     private boolean isSubStreetNumberNull() {
-        return subStreetNumber.isEmpty();
+        return subStreetNumber == null;
     }
     
     /**
      * @return subStreet.isEmpty()
      */
     private boolean isSubStreetNull() {
-        return subStreet.isEmpty();
+        return subStreet == null;
     }
     
     /**
      * @return streetNumber.isEmpty()
      */
     private boolean isStreetNumberNull() {
-        return streetNumber.isEmpty();
+        return streetNumber == null;
     }
 
     /**
      * @return street.isEmpty()
      */
     private boolean isStreetNull() {
-        return street.isEmpty();
+        return street == null;
     }
 
     /**
      * @return area.isEmpty()
      */
     private boolean isAreaNull() {
-        return area.isEmpty();
+        return area == null;
     }
 
     /**
      * @return town.isEmpty()
      */
     private boolean isTownNull() {
-        return town.isEmpty();
+        return town == null;
     }
 
     /**
      * @return country.isEmpty()
      */
     private boolean isCountryNull() {
-        return country.isEmpty();
+        return country == null;
     }
 
     /**

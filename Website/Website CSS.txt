@@ -1,0 +1,42 @@
+CSS File for Home Page
+
+toolbar div
+
+quick search div
+
+featured home div
+
+why let your property div
+
+locate store div
+
+careers div
+
+end page div
+
+
+
+CSS File for Let Properties
+
+toolbar div
+
+search div
+
+featured home div
+
+end page div
+
+
+
+CSS File for Properties Search
+
+toolbar div
+
+results div
+
+search div
+
+properties div
+
+end page div
+
