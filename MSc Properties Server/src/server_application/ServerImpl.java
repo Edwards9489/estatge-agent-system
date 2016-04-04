@@ -166,7 +166,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
             //NB rebind will replace any stub with the given name 'Server'
             System.out.println(myName);
-            Naming.rebind(myName, loginObject);
+            Naming.rebind(myName, serverStub);
             System.out.println((new Date()) + ": Server up and running");
             return serverStub;
         } catch (RemoteException | UnknownHostException | NumberFormatException | MalformedURLException e) {
@@ -4455,14 +4455,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<TenancyInterface> employeeTenancies = new ArrayList();
                 if (!tempTenancies.isEmpty()) {
                     for (TenancyInterface temp : tempTenancies) {
-                        if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                            tempTenancies.remove(temp);
+                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                            employeeTenancies.add(temp);
                         }
                     }
                 }
-                return tempTenancies;
+                return employeeTenancies;
             }
         }
         return null;
@@ -4472,15 +4473,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<TenancyInterface> getTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
             List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<TenancyInterface> officeTenancies = new ArrayList();
             if (!tempTenancies.isEmpty()) {
                 for (TenancyInterface temp : tempTenancies) {
-                    if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                        tempTenancies.remove(temp);
+                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        officeTenancies.add(temp);
                     }
                 }
-
             }
-            return tempTenancies;
+            return officeTenancies;
         }
         return null;
     }
@@ -4491,14 +4492,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<LeaseInterface> employeeLeases = new ArrayList();
                 if (!tempLeases.isEmpty()) {
                     for (LeaseInterface temp : tempLeases) {
-                        if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                            tempLeases.remove(temp);
+                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                            employeeLeases.add(temp);
                         }
                     }
                 }
-                return tempLeases;
+                return employeeLeases;
             }
         }
         return null;
@@ -4508,15 +4510,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<LeaseInterface> getLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
             List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<LeaseInterface> officeLeases = new ArrayList();
             if (!tempLeases.isEmpty()) {
                 for (LeaseInterface temp : tempLeases) {
-                    if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                        tempLeases.remove(temp);
+                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        officeLeases.add(temp);
                     }
                 }
 
             }
-            return tempLeases;
+            return officeLeases;
         }
         return null;
     }
@@ -4527,14 +4530,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<ContractInterface> employeeContracts = new ArrayList();
                 if (!tempContracts.isEmpty()) {
                     for (ContractInterface temp : tempContracts) {
-                        if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                            tempContracts.remove(temp);
+                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                            employeeContracts.add(temp);
                         }
                     }
                 }
-                return tempContracts;
+                return employeeContracts;
             }
         }
         return null;
@@ -4544,15 +4548,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
             List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<ContractInterface> officeContracts = new ArrayList();
             if (!tempContracts.isEmpty()) {
                 for (ContractInterface temp : tempContracts) {
-                    if (startDate.after(temp.getCreatedDate()) || endDate.before(temp.getCreatedDate())) {
-                        tempContracts.remove(temp);
+                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        officeContracts.add(temp);
                     }
                 }
 
             }
-            return tempContracts;
+            return officeContracts;
         }
         return null;
     }
@@ -4657,10 +4662,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     
     @Override
     public String generateEmployeeReport(Date startDate, Date endDate) throws RemoteException {
-        String report;
+        String report = "Employee Report\n\n";
         List<EmployeeInterface> employees = this.getEmployees();
         if(!employees.isEmpty()) {
-            report = "Employee Report\n\n";
             for(EmployeeInterface temp : employees) {
                 int tenancies = this.getTenanciesByEmployee(temp.getEmployeeRef(), startDate, endDate).size();
                 int leases = this.getLeasesByEmployee(temp.getEmployeeRef(), startDate, endDate).size();
@@ -4670,15 +4674,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                         tenancies + "\nLeases Created: " + leases + "\nContracts Created: " + contracts + "\n\n\n";
             }
         }
-        return null;
+        return report;
     }
     
     @Override
     public String generateOfficeReport(Date startDate, Date endDate) throws RemoteException {
-        String report;
+        String report = "Office Report\n\n";
         List<OfficeInterface> offices = this.getOffices();
         if(!offices.isEmpty()) {
-            report = "Office Report\n\n";
             for(OfficeInterface temp : offices) {
                 int tenancies = this.getTenanciesByOffice(temp.getOfficeCode(), startDate, endDate).size();
                 int leases = this.getLeasesByOffice(temp.getOfficeCode(), startDate, endDate).size();
@@ -4688,15 +4691,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                         tenancies + "\nLeases Created: " + leases + "\nContracts Created: " + contracts + "\n\n\n";
             }
         }
-        return null;
+        return report;
     }
     
     @Override
     public String generateOfficeFinanceReport(Date startDate, Date endDate) throws RemoteException {
-        String report;
+        String report = "Office Finance Report\n\n";
         List<OfficeInterface> offices = this.getOffices();
         if(!offices.isEmpty()) {
-            report = "Office Finance Report\n\n";
             for(OfficeInterface temp : offices) {
                 double expenditure = this.getExpenditureForOffice(temp.getOfficeCode(), startDate, endDate);
                 double revenue = this.getRevenueForOffice(temp.getOfficeCode(), startDate, endDate);
@@ -4706,7 +4708,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                         expenditure + "\nRevenue: £" + revenue + "\n\nProfit: £" + profit + "\n\n\n";
             }
         }
-        return null;
+        return report;
     }
     
     @Override

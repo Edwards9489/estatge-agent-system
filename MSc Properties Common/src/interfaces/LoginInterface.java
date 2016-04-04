@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package interfaces;
+import java.rmi.Remote;
 
 /**
  *
@@ -12,7 +13,7 @@ package interfaces;
 /**
  * Interface for client users to login.
  */
-public interface LoginInterface extends java.rmi.Remote {
+public interface LoginInterface extends Remote {
 
     /**
      * Method that allows clients to login, returning an interface to the
@@ -21,8 +22,8 @@ public interface LoginInterface extends java.rmi.Remote {
      * @param username The name of the user.
      * @param password The password of the user.
      * @return A reference to a proxy of the server object.
+     * @throws java.rmi.RemoteException
      * @throws SecurityException If the client is not allowed to login.
      */
-    public Server login(String username, String password)
-            throws java.rmi.RemoteException, SecurityException;
+    public Server login(String username, String password) throws java.rmi.RemoteException, SecurityException;
 }

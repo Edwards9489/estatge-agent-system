@@ -79,11 +79,10 @@ public class ClientImpl extends Observable implements Client {
         if (args.length == 4) {
             c.registerWithServer(args[0], args[1]);
             c.login(args[2], args[3]);
-        } else { //we are on the same machine as the server
+        } else {
             System.out.println("Login Details not supplied");
             System.out.println("Require Server IP address, Environment, Username and Password");
         }
-
         return c;
     }
 

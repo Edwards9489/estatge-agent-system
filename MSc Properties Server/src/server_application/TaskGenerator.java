@@ -38,16 +38,16 @@ public class TaskGenerator extends TimerTask {
         server.processRentTransactions(today.getTime());
         server.processLeaseTransactions(today.getTime());
         if (today.get(Calendar.DAY_OF_MONTH) == 1) {
-            try {
+            //try {
                 Calendar lastDay = Calendar.getInstance();
                 lastDay.set(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.getActualMaximum(Calendar.DAY_OF_MONTH));
                 
-                server.generateReport(today.getTime(), lastDay.getTime());
+                //server.generateReport(today.getTime(), lastDay.getTime());
                 server.processSalaryTransactions();
                 System.out.println("Monthly Tasks");
-            } catch (RemoteException ex) {
-                Logger.getLogger(TaskGenerator.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //} catch (RemoteException ex) {
+                //Logger.getLogger(TaskGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            //}
         }
     }
     

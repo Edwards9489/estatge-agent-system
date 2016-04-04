@@ -12,8 +12,7 @@ package server_application;
 /**
  * Exception that represents an user that was unable to authenticate.
  */
-public class InvalidUserException
-        extends SecurityException {
+public class InvalidUserException extends SecurityException {
 
     /**
      * The name of the user
@@ -32,7 +31,9 @@ public class InvalidUserException
 
     /**
      * Converts the exception to a string.
+     * @return exception
      */
+    @Override
     public String toString() {
         return "Could not authenticate user: " + username;
     }

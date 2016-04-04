@@ -32,7 +32,7 @@ public class TestServer {
         try {
             System.out.println("Running server test\n");
             
-            ServerImpl test = new ServerImpl("TEST", "127.0.0.1", "root", "Toxic9489!999", 3306);
+            ServerImpl test = new ServerImpl("LIVE", "127.0.0.1", "root", "", 3306);
             
             Calendar janBeg = Calendar.getInstance();
             janBeg.set(2015, 0, 1);
