@@ -49,34 +49,8 @@
 	<?php
 	
 	include 'MSc_Properties - Common_Functions.php';
-
-	$outputDisplay = '';
 	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print officeDropDown();
 	
 	?>
 	</select>
@@ -88,11 +62,11 @@
 	</form>
 	
 	</td>
-	<td style="padding-left: 80px">
+	<td style="padding-left: 40px">
 	<p><br>MSc Properties have a number of offices<br>
 	across most major cities in England, including<br>
 	London, Manchester, Liverpool and more.</p></td>
-	<td style="padding-left: 80px"><img src="../featured_house/bayview_2.jpg" height="100" width="200"/></td>
+	<td style="padding-left: 40px"><img src="../featured_house/bayview_2.jpg" height="100" width="200"/></td>
 	</tr>
 	</table>
 </div>

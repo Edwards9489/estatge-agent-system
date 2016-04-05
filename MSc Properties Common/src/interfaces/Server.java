@@ -120,7 +120,8 @@ public interface Server extends Remote {
     int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException;
     int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException;
     int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException;
-    int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException;
+    int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException;
+    int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException;
     int deleteEmployee(int eRef) throws RemoteException;
     int createEmployeeNote(int eRef, String comment, String createdBy) throws RemoteException;
     int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException;

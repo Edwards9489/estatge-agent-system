@@ -14,6 +14,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
@@ -43,6 +45,7 @@ public class LoginForm extends JFrame {
     private Boolean invPassword;
     private Boolean invUser;
     private JTextField envField;
+    private JLabel forgotPassword;
     
     public LoginForm() {
         this.layoutComponents();
@@ -68,6 +71,7 @@ public class LoginForm extends JFrame {
         invPassword = false;
         invUser = false;
         envField = new JTextField(10);
+        forgotPassword = new JLabel("Forgot your password?");
 
         okButton.addActionListener(new ActionListener() {
             @Override
@@ -86,7 +90,7 @@ public class LoginForm extends JFrame {
                 
                 try {
                     ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{address, envir, user, new String(password)});
-                    if (client!=null){
+                    if (client.isServerSet()){
                         System.out.println("Logged in: " + client.isUser(user, new String(password)));
                         if(client.isUser(user, new String(password))) {
                             System.out.println("TEST1");
@@ -103,7 +107,7 @@ public class LoginForm extends JFrame {
                 } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
                     Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
+                
                 System.out.println(user + " : " + new String(password));
                 
                 // by wrapping Array of chars in a String it allows you to read the password
@@ -117,8 +121,17 @@ public class LoginForm extends JFrame {
                 System.exit(0);
             }
         });
+        
+        forgotPassword.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+                forgotPasswordForm.setVisible(true);
+                setVisible(false);
+            }
+        });
 
-        setSize(300, 250);
+        setSize(300, 300);
         
         JPanel controlsPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();
@@ -145,7 +158,7 @@ public class LoginForm extends JFrame {
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(new JLabel("User: "), gc);
+        controlsPanel.add(new JLabel("Username: "), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -204,6 +217,22 @@ public class LoginForm extends JFrame {
             }
         }
         
+        ////////// NEXT ROW //////////
+        gc.gridx = 1;
+        gc.gridy++;
+
+        gc.weightx = 1;
+        gc.weighty = 1;
+        
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(forgotPassword, gc);
+
+//        gc.gridx++;
+//        gc.anchor = GridBagConstraints.WEST;
+//        gc.insets = new Insets(0, 0, 0, 5);
+//        controlsPanel.add(envField, gc);
 
         ////////// BUTTONS PANEL //////////
         

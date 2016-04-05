@@ -65,7 +65,7 @@
 	<td><input type="text" name="lastname" id="lastname" size="17"/></td></tr>
 	
 	<tr><td><strong>E:Mail: </strong></td>
-	<td><textarea name="email" id="email" cols="15" rows="2"></textarea>
+	<td><textarea name="email" cols="15" rows="2"></textarea>
 	</td></tr>
 	
 	<tr><td><strong>Phone: <strong></td>

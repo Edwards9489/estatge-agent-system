@@ -28,19 +28,43 @@
 <div id="officedetails">
 
 	<?php
-		
-		include "MSc_Properties - Common_Functions.php";
 
+		global $office;
+		
 		$office = $_POST['office'];
+		
+		print "<h2>MSc Properties - ".$office."<br>";
+		
+	?>
+	<br>
+	<table border='1'>
+	<tr><th>Address</th><th>Oppening Times</th><th>Location</th></tr>
+	<tr><td style="	padding: 20px 20px 20px 20px;" valign="top">
+	
+	<?php
+		include "MSc_Properties - Common_Functions.php";
+		
+		$town = '';
+		$area = '';
+		
+		if ($office !== '-')
+		{
+			
+			list($town, $area) = explode('-', $office);
+			$town = trim($town);
+			$area = trim($area);
+		}
 		
 		$address = '';
 		
-		
-		$sql_statement = "SELECT buildingNumber, buildingName, streetNumber, ";
-		$sql_statement .= "subStreetNumber, subStreet, street, area, ";
-		$sql_statement .= "town, country, postcode ";
+		$sql_statement = "SELECT officeCode, buildingNumber, buildingName, ";
+		$sql_statement .= "streetNumber, subStreetNumber, subStreet, ";
+		$sql_statement .= "street, area, town, country, postcode ";
 		$sql_statement .= "FROM  offices JOIN addresses ";
 		$sql_statement .= "USING(addressRef) ";
+		$sql_statement .= "WHERE town ='".$town."' ";
+		$sql_statement .= "AND area ='".$area."' ";
+		
 		
 		$sqlResults = selectResults($sql_statement);
 		
@@ -52,106 +76,32 @@
 		}
 		else
 		{
-			for ($ii = 1; $ii <= $error_or_rows; $ii++)
-			{
-				$buildingNumber  = $sqlResults [$ii] ['buildingNumber'];
-				$buildingName  = $sqlResults [$ii] ['buildingName'];
-				$subStreetNumber  = $sqlResults [$ii] ['subStreetNumber'];
-				$subStreet  = $sqlResults [$ii] ['subStreet'];
-				$streetNumber  = $sqlResults [$ii] ['streetNumber'];
-				$street  = $sqlResults [$ii] ['street'];
-				$area  = $sqlResults [$ii] ['area'];
-				$town  = $sqlResults [$ii] ['town'];
-				$country  = $sqlResults [$ii] ['country'];
-				$postcode  = $sqlResults [$ii] ['postcode'];
-				
-				if (isset($isBuildingNumber) && isset($buildingName))
-				{
-					$address .= $buildingNumber." ".$buildingName."<br>";
-				}
-				else if (isset($buildingName))
-				{
-					$address .= $buildingName."<br>";
-				}
-				
-				if (isset($subStreetNumber) && isset($subStreet))
-				{
-					$address .= $subStreetNumber." ".$subStreet."<br>";
-				}
-				else if (isset($subStreet))
-				{
-					$address .= $subStreet."<br>";
-				}
-				
-				if (isset($streetNumber) && isset($street))
-				{
-					$address .= $streetNumber." ".$street."<br>";
-				}
-				else if (isset($street))
-				{
-					$address .= $street."<br>";
-				}
-				
-				if (isset($area))
-				{
-					$address .= $area."<br>";
-				}
-				
-				if (isset($town))
-				{
-					$address .= $town."<br>";
-				}
-				
-				if (isset($country))
-				{
-					$address .= $country."<br>";
-				}
-				
-				if (isset($postcode))
-				{
-					$address .= $postcode."<br>";
-				}
-			}
+			$officeCode = $sqlResults [1] ['officeCode'];
+			$buildingNumber  = $sqlResults [1] ['buildingNumber'];
+			$buildingName  = $sqlResults [1] ['buildingName'];
+			$subStreetNumber  = $sqlResults [1] ['subStreetNumber'];
+			$subStreet  = $sqlResults [1] ['subStreet'];
+			$streetNumber  = $sqlResults [1] ['streetNumber'];
+			$street  = $sqlResults [1] ['street'];
+			$area  = $sqlResults [1] ['area'];
+			$town  = $sqlResults [1] ['town'];
+			$country  = $sqlResults [1] ['country'];
+			$postcode  = $sqlResults [1] ['postcode'];
+			
+			$address = printAddress($buildingNumber, $buildingName, $subStreetNumber, $subStreet, $streetNumber, $street, $area, $town, $country, $postcode);
 		}
 		
-		$telephone = '';
+		$telephone = getOfficeContact($officeCode, 'PHONE');
 		
-		$sql_statement1 = "SELECT contactValue ";
-		$sql_statement1 .= "FROM  officeContacts ";
-		$sql_statement1 .= "WHERE officeCode='".$office."' ";
+		$fax = getOfficeContact($officeCode, 'FAX');
 		
-		$sqlResults1 = selectResults($sql_statement1);
+		$email = getOfficeContact($officeCode, 'EMAIL');
 		
-		$error_or_rows1 = $sqlResults1[0];
-		
-		if (substr($error_or_rows1, 0 , 5) == 'ERROR')
-		{
-			print "<br />Error on DB<br><br>".$error_or_rows1."<br><br>".$sql_statement1;
-		}
-		else
-		{
-			for ($ii = 1; $ii <= $error_or_rows1; $ii++)
-			{
-				$telephone  = $sqlResults1 [$ii] ['contactValue'];
-			}
-		}
-		
-		
-		print $address;
-		print "<h2>MSc Properties - ".$office."<br>";
+		print $address."<br><br>\n";
+		print "Tel: ".$telephone."<br>\n";
+		print "Fax: ".$fax."<br><br>\n";
+		print "E-Mail: ".$email."<br>\n";
 	?>
-	<br>
-	<table border='1'>
-	<tr><th>Address</th><th>Oppening Times</th><th>Location</th></tr>
-	<tr><td style="	padding: 20px 20px 20px 20px;" valign="top">
-	
-	<p>5 Brook Crescent<br>
-	Edmonton<br>
-	London<br>
-	N9 0DJ</p>
-	<p>Tel: 020 8123 456</p>
-	<p>E-Mail: test@msc-properties.com</p>
-	
 	
 	</td>
 	

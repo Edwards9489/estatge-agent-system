@@ -25,7 +25,7 @@
 	
 </div>
 
-<div id="fullsearch">
+<div id="fullsearch" style="height: 1750px">
 	<h3><strong>Property Search </strong></h3>
 	
 <form method="post" action="MSc Properties - View_Properties.php">
@@ -34,38 +34,11 @@
 	<tr><td><strong>City: </strong></td>
 	<td><select name="town" id="town" size="1" >
 	<option value="-">Select City</option>
-	
 	<?php
 	
 	include "msc_properties - Common_Functions.php";
 
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print cityDropDown();
 	
 	?>
 	</td></tr></select>
@@ -75,33 +48,7 @@
 		<option value="-">Select Area</option>
 	<?php
 	
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print areaDropDown();
 	
 	?>
 	</select></td></tr>
@@ -111,7 +58,7 @@
 	<option value="-">Min Price</option>
 	<?php
 		for($i=2; $i<10; $i++) {
-			print '<option value="'.$i.'00">'.$i.'00 pcm</option>';
+			print '<option value="'.$i.'00">£'.$i.'00 pcm</option>';
 		}
 	?>
 	<option value="1000">£1000 pcm</option>
@@ -127,7 +74,7 @@
 	<option value="-">Max Price</option>
 	<?php
 		for($i=2; $i<10; $i++) {
-			print '<option value="'.$i.'00">'.$i.'00 pcm</option>';
+			print '<option value="'.$i.'00">£'.$i.'00 pcm</option>';
 		}
 	?>
 	<option value="1000">£1000 pcm</option>
@@ -145,23 +92,44 @@
 	<option value="M">Medium</option>
 	<option value="L">Large</option>
 	<option value="XL">Extra Large</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Type: </strong></td>
+	<td><select name="type" id="type" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print typeDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Sub Type: </strong></td>
+	<td><select name="sub_type" id="sub_type" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print subTypeDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Age: </strong></td>
+	<td><select name="age" id="age" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print ageDropDown();
+	
+	?>
+	</select></td></tr>
 	
 	<tr><td><strong>Bedrooms: </strong></td>
 	<td><select name="beds" id="beds" size="1" >
 	<option value="-">-</option>
 	<?php
 		for($i=1; $i<=10; $i++) {
-			print '<option value="'.$i.'">'.$i.' beds</option>';
-		}
-	?>
-	</select></td></tr>
-	
-	<tr><td><strong>Bathrooms: </strong></td>
-	<td><select name="baths" id="baths" size="1" >
-	<option value="-">-</option>
-	<?php
-		for($i=0; $i<=5; $i++) {
-			print '<option value="'.$i.'">'.$i.' beds</option>';
+			print '<option value="'.$i.'">'.$i.' bed</option>';
 		}
 	?>
 	</select></td></tr>
@@ -171,49 +139,41 @@
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
 	
 	<tr><td><strong>Garden: </strong></td>
 	<td><select name="garden" id="garden" size="1" >
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
 	
 	<tr><td><strong>Conservatory: </strong></td>
 	<td><select name="conservatory" id="conservatory" size="1" >
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Bathrooms: </strong></td>
+	<td><select name="baths" id="baths" size="1" >
+	<option value="-">-</option>
+	<?php
+		for($i=1; $i<=5; $i++) {
+			print '<option value="'.$i.'">'.$i.'</option>';
+		}
+	?>
+	</select></td></tr>
 	
 	<tr><td><strong>Receptions: </strong></td>
 	<td><select name="receptions" id="receptions" size="1" >
 	<option value="-">-</option>
 	<?php
 		for($i=0; $i<=5; $i++) {
-			print '<option value="'.$i.'">'.$i.' receptions</option>';
+			print '<option value="'.$i.'">'.$i.'</option>';
 		}
 	?>
 	</select></td></tr>
-	
-	<tr><td><strong>Type: </strong></td>
-	<td><select name="type" id="type" size="1" >
-	<option value="-">-</option>
-	<option value="house">House</option>
-	<option value="flat">Flat</option>
-	<option value="bungalow">Bungalow</option>
-	<option value="maisonette">Maisonette</option>
-	
-	<tr><td><strong>Sub Type: </strong></td>
-	<td><select name="sub_type" id="sub_type" size="1" >
-	<option value="-">-</option>
-	<option value="terrace">Terrace</option>
-	<option value="detached">Detached</option>
-	<option value="semi-detached">Semi-Detached</option>
-	
-	<tr><td><strong>Age: </strong></td>
-	<td><select name="age" id="age" size="1" >
-	<option value="-">-</option>
-	<option value="new">New Build</option>
-	<option value="victorian">Victorian</option>
 	
 	<tr><td><p>&nbsp;</p></td>
 	<td><input type="submit" value="Search" />
@@ -229,50 +189,34 @@
 </div>
 
 <div id="viewproperties">
-	
+<h2><strong>Property Search<strong></h2>
+
+<table border='1' cellpadding='10' >
+	<col width="320">
+	<col width="320"> 
+		
 	<?php
-	
-	$sql_statement  = "SELECT *";
-	$sql_statement .= "FROM city ";
-	
-	$where_clause = "";
 	
 	$town = $_POST['town'];
 	$area = $_POST['area'];
 	$beds = $_POST['beds'];
 	
-	if ($town !== '-')
-	{
-		$where_clause .= "WHERE name='".$town."' ";
-	}
-	if ($area !== '-')
-	{
-		if(empty($where_clause))
-		{
-			$where_clause .= "WHERE area='".$area."' ";
-		}
-		else
-		{
-			$where_clause .= "AND area='".$area."' ";
-		}
-	}
-	if ($beds !== '-')
-	{
-		if(empty($where_clause))
-		{
-			$where_clause .= "WHERE beds=".$beds." ";
-		}
-		else
-		{
-			$where_clause .= "AND beds=".$beds." ";
-		}
-	}
-	$sql_statement .= $where_clause;
-	$sql_statement .= "ORDER BY name ";
 	
-	$outputDisplay = '';
+	$min_price = '-';
+	$max_price = '-';
+	$kitchen = '-';
+	$baths = '-';
+	$driveway = '-';
+	$garden = '-';
+	$conservatory = '-';
+	$receptions = '-';
+	$type = '-';
+	$sub_type = '-';
+	$age = '-';
 	
-	
+	$sql_statement  = "SELECT propRef, propTypeCode, propSubTypeCode, addressRef ";
+	$sql_statement .= "FROM properties ";
+	$sql_statement .= "WHERE propStatus='VOID' ";
 	
 	$sqlResults = selectResults($sql_statement);
 	
@@ -280,28 +224,41 @@
 	
 	if (substr($error_or_rows, 0 , 5) == 'ERROR')
 	{
-		print "<br />Error on DB<br><br>".$error_or_rows."<br><br>".$sql_statement;
-	} else {
-		
+		print "<br />Error on DB<br><br />".$error_or_rows."<br /><br />".$sql_statement."<br /> ";
+	}
+	else
+	{
+		$returnedProps = 1;
 		for ($ii = 1; $ii <= $error_or_rows; $ii++)
 		{
-			// Function to extract property info into String (with HTML tags) to display each property
+			$outputDisplay = '';
+			$propRef  = $sqlResults [$ii] ['propRef'];
+			$propTypeCode  = $sqlResults [$ii] ['propTypeCode'];
+			$propSubTypeCode  = $sqlResults [$ii] ['propSubTypeCode'];
+			$propAddressRef  = $sqlResults [$ii] ['addressRef'];
 			
-			$name  = $sqlResults [$ii] ['name'];
+			$string = searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, $town, $area, $min_price, $max_price, $kitchen, $beds, $baths, $driveway, $garden, $conservatory, $receptions, $type, $sub_type, $age, $returnedProps);
 			
-			//print "<br>N: $name";
+			if(!empty($string))
+			{
+				list($outputDisplay, $returnedProps) = explode('|', $string);
+			}
 			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
+			print $outputDisplay;
+		}
+		if((($returnedProps-1)%2)!==0)
+		{
+			$outputDisplay .= "</tr>";
 		}
 	}
-	
-	print $outputDisplay;
 	?>
+	</table>
+	</font>
 </div>
 
 
 
-<div id="endpage" style="top: 915px;">
+<div id="endpage" style="top: 1980px;">
 	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
 	<br /><br /><br /><br />
 </div>

@@ -17,6 +17,7 @@ import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
 import interfaces.LeaseInterface;
+import interfaces.LoginInterface;
 import interfaces.OfficeInterface;
 import interfaces.PersonInterface;
 import interfaces.PropertyInterface;
@@ -53,6 +54,7 @@ import java.util.logging.Logger;
 public class ClientImpl extends Observable implements Client {
 
     Server server = null;
+    LoginInterface loginObject = null;
     User user = null;
 
     public ClientImpl() {
@@ -77,16 +79,29 @@ public class ClientImpl extends Observable implements Client {
         
         ClientImpl c = new ClientImpl();
         if (args.length == 4) {
-            c.registerWithServer(args[0], args[1]);
-            c.login(args[2], args[3]);
+            c.registerWithServer(args[0], args[1], args[2], args[3]);
         } else {
             System.out.println("Login Details not supplied");
             System.out.println("Require Server IP address, Environment, Username and Password");
         }
         return c;
     }
+    
+    public static boolean resetClient(String[] args) throws RemoteException, NotBoundException, UnknownHostException, MalformedURLException {
+        RMISecurityPolicyLoader.loadPolicy("RMISecurity.policy");
+        
+        ClientImpl c = new ClientImpl();
+        if (args.length == 6) {
+            System.out.println("TEST2 - Employee: " + args[4]);
+            return c.resetPassword(args[0], args[1], args[2], args[3], Integer.parseInt(args[4]), args[5]);
+        } else {
+            System.out.println("Reset Password Details not supplied");
+            System.out.println("Require Server IP address, Environment, Username, Email, Employee Ref and Memorable Location");
+            return false;
+        }
+    }
 
-    public void registerWithServer(String host, String environment) throws RemoteException, NotBoundException {
+    private void registerWithServer(String host, String environment, String username, String password) throws RemoteException, NotBoundException {
         if (host == null) {
             host = "127.0.0.1";
         }
@@ -97,28 +112,64 @@ public class ClientImpl extends Observable implements Client {
         }
         System.out.println("Environment : " + environment);
         System.out.println("Trying host : " + host);
+
         //get the registry
         Registry registry = LocateRegistry.getRegistry(host);
-        //get the server stub from the registry
-        server = (Server) registry.lookup(environment);
-        //register the chatter with the server
-        server.register(getStub());
-        System.out.println("Server found!");
-    }
-    
-    private void login(String username, String passsword) {
-        try {
-            if(server != null && server.isAlive()) {
-                if(server.isUser(username, passsword)) {
-                    setUser(server.getUser(username));
-                }
-            }
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
+
+        //lookup the server and get the login object
+        loginObject = (LoginInterface) registry.lookup(environment);
+        System.out.println("Server found! Trying to Login..." + host);
+        
+        //invoke login method on login object
+        //return server stub if login is successful
+        server = loginObject.login(username, password);
+        
+        //register the client with the server if server is not null
+        if(server != null) {
+            server.register(getStub());
+            setUser(server.getUser(username));
+            System.out.println("Registered with Server!");
+        }
+        else {
+            System.out.println("Registration with Server Failed!");
         }
     }
+    
+    private boolean resetPassword(String host, String environment, String username, String email, int empRef, String answer) throws RemoteException, NotBoundException {
+        if (host == null) {
+            host = "127.0.0.1";
+        }
+        if (environment == null) {
+            environment = "ServerLIVE";
+        } else {
+            environment = "Server" + environment;
+        }
+        System.out.println("Environment : " + environment);
+        System.out.println("Trying host : " + host);
 
-    //Like a singleton pattern, we want a unique stub for this chat
+        //get the registry
+        Registry registry = LocateRegistry.getRegistry(host);
+
+        //lookup the server and get the login object
+        loginObject = (LoginInterface) registry.lookup(environment);
+        System.out.println("Server found! Trying to Reset Password : " + username);
+        
+        //invoke reset password method on login object
+        //return true if password reset successful
+        System.out.println("TEST2 - Employee: " + empRef);
+        boolean result = loginObject.resetPassword(username, email, empRef, answer);
+        
+        //register the client with the server if server is not null
+        if(result) {
+            System.out.println("Password Reset!");
+        }
+        else {
+            System.out.println("Password Reset Failed!");
+        }
+        return result;
+    }
+
+    //Like a singleton pattern, we want a unique stub for this client
     Client stub = null;
 
     protected Client getStub() throws RemoteException {
@@ -132,6 +183,10 @@ public class ClientImpl extends Observable implements Client {
     @Override
     public boolean isAlive() throws RemoteException {
         return true;
+    }
+    
+    public boolean isServerSet() {
+        return server != null;
     }
 
     private void setUser(User usr) {
@@ -929,12 +984,12 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
     
-    public int updateEmployeePassword(String password) throws RemoteException {
-        if (server.isAlive()) {
-            return server.updateEmployeePassword(user.getEmployeeRef(), password, this.getUsername());
-        }
-        return 0;
-    }
+//    public int updateEmployeePassword(String password) throws RemoteException {
+//        if (server.isAlive()) {
+//            return server.updateEmployeePassword(user.getEmployeeRef(), password, this.getUsername());
+//        }
+//        return 0;
+//    }   
 
     public int deleteEmployee(int eRef) throws RemoteException {
         if (server.isAlive()) {

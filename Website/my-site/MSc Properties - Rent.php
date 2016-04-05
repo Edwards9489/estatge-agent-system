@@ -5,6 +5,81 @@
 	<title>MSc Properties</title>
 
 	<link rel="stylesheet" type="text/css" href="../css/msc_properties.css" />
+	
+	<script>
+
+		function validateForm()
+		{
+			var errmsg = '';
+
+			var firstname = document.getElementById('firstname').value;
+
+			if (firstname == null || firstname == "")
+			{
+			  errmsg += "<br />You must enter a Firstname";
+  			}
+			
+			var lastname = document.getElementById('lastname').value;
+
+			if (lastname == null || lastname == "")
+			{
+			  errmsg += "<br />You must enter a Lastname";
+  			}
+			
+			var phone = document.getElementById('phone').value;
+
+			if (phone == null || phone == "")
+			{
+			  errmsg += "<br />You must enter a Phone Number";
+  			}
+			
+			var beds = document.getElementById('beds').value;
+
+			if (beds == null || beds == "-")
+			{
+			  errmsg += "<br />You must select the number of Beds required";
+			  document.write('TEST 4');
+  			}
+			
+			var office = document.getElementById('office').value;
+
+			if (office == null || office == "-")
+			{
+			  errmsg += "<br />You must select the Office";
+			  document.write('TEST 5');
+  			}
+			
+			/* 
+
+			var age = document.getElementById('age').value;
+
+			if (age == null || age == "")
+			{
+			  errmsg += "<br />You must enter your Age";
+
+  			} else {
+
+  				if (isNaN(age))
+  				{
+					errmsg += "<br />Age must be a number";
+  				}
+
+  			} */
+
+			if (errmsg == '')
+			{
+				document.write('TRUE');
+				return true;
+				
+			} else {
+				var registerDiv = document.getElementById('register');
+				registerDiv.innerHTML .= "<br><br>".errmsg;
+				document.write('FALSE');
+				return false;
+			}
+		}
+
+	</script>
 
 </head>
 
@@ -25,7 +100,7 @@
 	
 </div>
 
-<div id="fullsearch">
+<div id="fullsearch" style="height: 520px">
 	<h3><strong>Property Search </strong></h3>
 	
 <form method="post" action="MSc Properties - View_Properties.php">
@@ -34,38 +109,11 @@
 	<tr><td><strong>City: </strong></td>
 	<td><select name="town" id="town" size="1" >
 	<option value="-">Select City</option>
-	
 	<?php
 	
 	include "msc_properties - Common_Functions.php";
 
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print cityDropDown();
 	
 	?>
 	</td></tr></select>
@@ -75,33 +123,7 @@
 		<option value="-">Select Area</option>
 	<?php
 	
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print areaDropDown();
 	
 	?>
 	</select></td></tr>
@@ -111,7 +133,7 @@
 	<option value="-">Min Price</option>
 	<?php
 		for($i=2; $i<10; $i++) {
-			print '<option value="'.$i.'00">'.$i.'00 pcm</option>';
+			print '<option value="'.$i.'00">£'.$i.'00 pcm</option>';
 		}
 	?>
 	<option value="1000">£1000 pcm</option>
@@ -127,7 +149,7 @@
 	<option value="-">Max Price</option>
 	<?php
 		for($i=2; $i<10; $i++) {
-			print '<option value="'.$i.'00">'.$i.'00 pcm</option>';
+			print '<option value="'.$i.'00">£'.$i.'00 pcm</option>';
 		}
 	?>
 	<option value="1000">£1000 pcm</option>
@@ -145,23 +167,44 @@
 	<option value="M">Medium</option>
 	<option value="L">Large</option>
 	<option value="XL">Extra Large</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Type: </strong></td>
+	<td><select name="type" id="type" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print typeDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Sub Type: </strong></td>
+	<td><select name="sub_type" id="sub_type" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print subTypeDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Age: </strong></td>
+	<td><select name="age" id="age" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print ageDropDown();
+	
+	?>
+	</select></td></tr>
 	
 	<tr><td><strong>Bedrooms: </strong></td>
 	<td><select name="beds" id="beds" size="1" >
 	<option value="-">-</option>
 	<?php
 		for($i=1; $i<=10; $i++) {
-			print '<option value="'.$i.'">'.$i.' beds</option>';
-		}
-	?>
-	</select></td></tr>
-	
-	<tr><td><strong>Bathrooms: </strong></td>
-	<td><select name="baths" id="baths" size="1" >
-	<option value="-">-</option>
-	<?php
-		for($i=0; $i<=5; $i++) {
-			print '<option value="'.$i.'">'.$i.' beds</option>';
+			print '<option value="'.$i.'">'.$i.' bed</option>';
 		}
 	?>
 	</select></td></tr>
@@ -171,60 +214,51 @@
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
 	
 	<tr><td><strong>Garden: </strong></td>
 	<td><select name="garden" id="garden" size="1" >
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
 	
 	<tr><td><strong>Conservatory: </strong></td>
 	<td><select name="conservatory" id="conservatory" size="1" >
 	<option value="-">-</option>
 	<option value="Y">Yes</option>
 	<option value="N">No</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Bathrooms: </strong></td>
+	<td><select name="baths" id="baths" size="1" >
+	<option value="-">-</option>
+	<?php
+		for($i=1; $i<=5; $i++) {
+			print '<option value="'.$i.'">'.$i.'</option>';
+		}
+	?>
+	</select></td></tr>
 	
 	<tr><td><strong>Receptions: </strong></td>
 	<td><select name="receptions" id="receptions" size="1" >
 	<option value="-">-</option>
 	<?php
 		for($i=0; $i<=5; $i++) {
-			print '<option value="'.$i.'">'.$i.' receptions</option>';
+			print '<option value="'.$i.'">'.$i.'</option>';
 		}
 	?>
 	</select></td></tr>
 	
-	<tr><td><strong>Type: </strong></td>
-	<td><select name="type" id="type" size="1" >
-	<option value="-">-</option>
-	<option value="house">House</option>
-	<option value="flat">Flat</option>
-	<option value="bungalow">Bungalow</option>
-	<option value="maisonette">Maisonette</option>
-	
-	<tr><td><strong>Sub Type: </strong></td>
-	<td><select name="sub_type" id="sub_type" size="1" >
-	<option value="-">-</option>
-	<option value="terrace">Terrace</option>
-	<option value="detached">Detached</option>
-	<option value="semi-detached">Semi-Detached</option>
-	
-	<tr><td><strong>Age: </strong></td>
-	<td><select name="age" id="age" size="1" >
-	<option value="-">-</option>
-	<option value="new">New Build</option>
-	<option value="victorian">Victorian</option>
-	
-	
+	<tr><td><p>&nbsp;</p></td>
+	<td><input type="submit" value="Search" />
+	</td></tr>
 	</table>
-	
-	<p>
-	<input type="submit" value="Search" />
-	</p>
 
 </form>
 
 </div>
+
 
 <div id="lookingtorent">
 	
@@ -244,7 +278,7 @@
 <div id="register">
 	<h2>To Rent a Property... Register with us now.</h2>
 	
-	<form method="post" action="MSc_Properties - Properties.php">
+	<form method="post" action="MSc Properties - Send E-Mail.php">
 	
 	<table border='0'>
 	
@@ -255,50 +289,14 @@
 	<td><input type="text" name="lastname" id="lastname" size="17"/></td></tr>
 	
 	<tr><td><strong>E:Mail: </strong></td>
-	<td><textarea name="email" id="email" cols="15" rows="2"></textarea>
+	<td><textarea name="email" cols="15" rows="2"></textarea>
 	</td></tr>
 	
 	<tr><td><strong>Phone: <strong></td>
 	<td><input type="text" name="phone" id="phone" size="17"/></td></tr>
 	
-	<tr><td><p><strong>Office: </strong></td>
-	<td><select name="office" id="office" size="1" >
-		<option value="-">Select Office</option>
-	<?php
-	
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
-	
-	?>
-	</select></td></tr>
-	
-	<tr><td><strong>Bathrooms: </strong></td>
-	<td><select name="baths" id="baths" size="1" >
+	<tr><td><strong>Bedrooms: </strong></td>
+	<td><select name="beds" id="beds" size="1" >
 	<option value="-">-</option>
 	<?php
 		for($i=0; $i<=5; $i++) {
@@ -307,23 +305,30 @@
 	?>
 	</select></td></tr>
 	
-	<tr><td><strong>Driveway: </strong></td>
-	<td><select name="driveway" id="driveway" size="1" >
-	<option value="-">-</option>
-	<option value="Y">Yes</option>
-	<option value="N">No</option>
-	
 	
 	</table>
 	
+	<br><strong>Office: </strong><br>
+	<select name="office" id="office" size="1" >
+	<option value="-">Select Office</option>
+	<?php
+	
+	print officeDropDown();
+	
+	?>
+	</select>
 	
 	<div align="right">
 		<p>
-		<input type="submit" value="Submit" />
+		<input type="submit" value="Submit" onclick="return validateForm();" />
+		<input type="reset" />
 		</p>
 	</div>
 
-</form>
+	</form>
+</div>
+
+<div style="color: red;" id="messagediv">
 </div>
 
 <div id="endpage" style="top: 755px;">

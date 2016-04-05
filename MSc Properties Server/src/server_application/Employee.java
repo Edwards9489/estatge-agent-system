@@ -35,6 +35,7 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
     private final String createdBy;
     private final Date createdDate;
     private final User user;
+    private String memorableLocation;
     
     ///   CONSTRUCTORS ///
     
@@ -70,6 +71,10 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         this.officeCode = officeCode;
         UserImpl temp = (UserImpl) this.user;
         temp.setOfficeCode(officeCode);
+    }
+    
+    public void setMemorableLocation(String answer) {
+        this.memorableLocation = answer;
     }
     
     /**
@@ -206,6 +211,10 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
     @Override
     public String getOfficeCode() throws RemoteException {
         return officeCode;
+    }
+    
+    public String getMemorableLocation() {
+        return memorableLocation;
     }
     
     /**

@@ -23,10 +23,12 @@ public class TestClient2  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "UpdatedPassword"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "afcohkcbuvkptv6j3nf6irsa18"});
             client.addObserver(this);
             
-            System.out.println(client.updateEmployeePassword("NewPassword"));
+            
+            // ADD METHODS
+            System.out.println(client.getTitles());
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient2.class.getName()).log(Level.SEVERE, null, ex);

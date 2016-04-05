@@ -11,6 +11,7 @@ package server_application;
  */
 import interfaces.LoginInterface;
 import interfaces.Server;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import javax.security.auth.*;
@@ -43,29 +44,58 @@ public class LoginImpl extends UnicastRemoteObject implements LoginInterface {
      */
     @Override
     public Server login(String username, String password) throws RemoteException, SecurityException {
-        // Creates a subject that represents the user
-        Subject user = new Subject();
-        user.getPrincipals().add(new RMILoginPrincipal(username));
-
-        // Check if this user can login. If not, an exception is thrown
-        // Checks if the user is known and the password matches
-        String realPassword = null;
-
-        try {
-            Properties passwords = new Properties();
-            passwords.load(new java.io.FileInputStream(Constants.PASS_FILENAME));
-
-            realPassword = passwords.getProperty(username);
-        } catch (java.io.IOException e) {
-            throw new InvalidUserException(username);
+//        // Creates a subject that represents the user
+//        Subject user = new Subject();
+//        user.getPrincipals().add(new RMILoginPrincipal(username));
+//
+//        // Check if this user can login. If not, an exception is thrown
+//        // Checks if the user is known and the password matches
+//        String realPassword = null;
+//
+//        try {
+//            Properties passwords = new Properties();
+//            passwords.load(new java.io.FileInputStream(Constants.PASS_FILENAME));
+//
+//            realPassword = passwords.getProperty(username);
+//        } catch (java.io.IOException e) {
+//            throw new InvalidUserException(username);
+//        }
+        
+        if (myServer != null && myServer.isAlive()) {
+            try {
+                if (myServer.isUser(username, password)) {
+                    return myServer;
+                }
+            } catch (IOException e) {
+                throw new InvalidUserException(username);
+            }
+        } else {
+            throw new RemoteException();
         }
-
-        if ((realPassword == null) || !realPassword.equals(password)) {
-            throw new InvalidUserException(username);
+        
+//        if (myServer != null && myServer.isAlive()) {
+//            if (!myServer.isUser(username, password)) {
+//                //throw new InvalidUserException(username);
+//            }
+//        } else {
+//            //throw new RemoteException();
+//        }
+        return null;
+    }
+    
+    @Override
+    public boolean resetPassword(String username, String email, int empRef, String answer) throws RemoteException {
+        if (myServer != null && myServer.isAlive()) {
+            try {
+                if (myServer.forgotPassword(email, empRef, username, answer) > 0) {
+                    return true;
+                }
+            } catch (IOException e) {
+                throw new InvalidUserException(username);
+            }
+        } else {
+            throw new RemoteException();
         }
-
-        // Return a reference to a proxy object that encapsulates the access
-        // to the server, for this client
-        return new ServerProxy(user, myServer);
+        return false;
     }
 }

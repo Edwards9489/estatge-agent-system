@@ -43,11 +43,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.Naming;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
@@ -91,6 +93,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private final TaskGenerator scheduler;
     
     private final String documentsLocation;
+    
+    private final SendEmail sendEmail;
+    
+    private SecureRandom random;
 
     ///   CONSTRUCTORS ///
     public ServerImpl(String environment, String addr, String username, String password, int port) throws RemoteException {
@@ -124,6 +130,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         
         //Location on Server where documents can be saved
         this.documentsLocation = "D:\\DOCUMENTS\\";
+        
+        this.sendEmail = new SendEmail("mscproperties.online@gmail.com", "Toxic9489", "smtp.gmail.com");
+        
+        this.random = new SecureRandom();
+
         
         this.createSuperUser();
     }
@@ -166,7 +177,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
             //NB rebind will replace any stub with the given name 'Server'
             System.out.println(myName);
-            Naming.rebind(myName, serverStub);
+            Naming.rebind(myName, loginObject);
             System.out.println((new Date()) + ": Server up and running");
             return serverStub;
         } catch (RemoteException | UnknownHostException | NumberFormatException | MalformedURLException e) {
@@ -1870,12 +1881,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
-
+    
     @Override
-    public int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException {
-        if (this.database.employeeExists(eRef)) {
+    public int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException {
+        if(this.database.employeeExists(eRef)) {
             Employee employee = (Employee) this.database.getEmployee(eRef);
-            employee.updatePassword(password, new ModifiedBy("Updated Password of Employee " + eRef, modifiedBy, new Date()));
+            employee.setMemorableLocation(documentsLocation);
             try {
                 this.database.updateEmployee(eRef);
             } catch (SQLException ex) {
@@ -1884,6 +1895,71 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             return 1;
         }
         return 0;
+    }
+    
+    @Override
+    public int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = (Employee) this.database.getEmployee(eRef);
+            User user = employee.getUser();
+            String empUsername = user.getUsername();
+            empUsername = empUsername.toUpperCase();
+            username = username.toUpperCase();
+            if(username.equals(empUsername)) {
+                String empAnswer = employee.getMemorableLocation();
+                empAnswer = empAnswer.toUpperCase();
+                answer = answer.toUpperCase();
+                if(answer.equals(empAnswer)) {
+                    String empEmail = this.getEmployeeEmail(eRef);
+                    empEmail = empEmail.toUpperCase();
+                    email = email.toUpperCase();
+                    if(email.equals(empEmail)) {
+                        String newPassword = new BigInteger(130, this.random).toString(32);
+                        if (this.updateEmployeePassword(user.getEmployeeRef(), newPassword, user.getUsername()) > 0) {
+                            String subject = "Password Reset - Employee Ref: " + user.getEmployeeRef();
+                            String message = "Your password has been reset to " + newPassword;
+                            this.sendEmail.sendEmail(empEmail, subject, message);
+                            return 1;
+                        }
+                    }
+                } else {
+                    throw new InvalidUserException(username);
+                }
+            } else {
+                throw new InvalidUserException(username);
+            }
+        }
+        return 0;
+    }
+
+    private int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = (Employee) this.database.getEmployee(eRef);
+            employee.updatePassword(password, new ModifiedBy("Updated Password of Employee " + eRef, modifiedBy, new Date()));
+            User user = employee.getUser();
+            try {
+                this.database.updateUser(user.getUsername());
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return 0;
+    }
+    
+    private String getEmployeeEmail(int eRef) throws RemoteException {
+        if (this.database.employeeExists(eRef)) {
+            EmployeeInterface employee = this.database.getEmployee(eRef);
+            PersonInterface person = employee.getPerson();
+            String email = "";
+            for (ContactInterface temp : person.getContacts()) {
+                if(temp.getContactType().getCode().equals("EMAIL") && temp.isCurrent()) {
+                    email = temp.getContactValue();
+                }
+            }
+            return email;
+        }
+        return null;
     }
 
     @Override

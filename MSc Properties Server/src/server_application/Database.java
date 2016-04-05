@@ -5774,10 +5774,11 @@ public class Database {
     public void updateEmployee(int employeeRef) throws SQLException, RemoteException {
         if (this.employeeExists(employeeRef)) {
             Employee employee = (Employee) this.getEmployee(employeeRef);
-            String updateSql = "update employees set officeCode=? where employeeRef=?";
+            String updateSql = "update employees set officeCode=?, memorableLocation=? where employeeRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, employee.getOfficeCode());
+                updateStat.setString(col++, employee.getMemorableLocation());
                 updateStat.setInt(col++, employee.getEmployeeRef());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -5830,7 +5831,7 @@ public class Database {
      */
     private void loadEmployees() throws SQLException, RemoteException {
         this.employees.clear();
-        String sql = "select employeeRef, personRef, officeCode, createdBy, createdDate from employees order by employeeRef";
+        String sql = "select employeeRef, personRef, officeCode, memorableLocation, createdBy, createdDate from employees order by employeeRef";
         String sql1 = "select count(employeeRef) as count from users where employeeRef=?";
         String sql2 = "select username, password from users where employeeRef=?";
         try (Statement selectStat = con.createStatement()) {
@@ -5842,6 +5843,7 @@ public class Database {
                 if (this.personExists(personRef)) {
                     PersonInterface person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
+                    String memorableLocation = results.getString("memorableLocation");
                     if ((officeCode == null || this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
@@ -5858,6 +5860,7 @@ public class Database {
                                     String username = results2.getString("username");
                                     String password = results2.getString("password");
                                     Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
+                                    temp.setMemorableLocation(memorableLocation);
                                     employees.put(temp.getEmployeeRef(), temp);
                                     users.put(temp.getUser().getUsername(), temp.getUser());
                                     this.loadEmployeeMods(temp.getEmployeeRef(), this.loadModMap("employeeModifications", temp.getEmployeeRef()));

@@ -576,11 +576,6 @@ public class ServerProxy
     }
 
     @Override
-    public int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public int deleteEmployee(int eRef) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -1737,6 +1732,16 @@ public class ServerProxy
 
     @Override
     public boolean propSubTypeExists(String code) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

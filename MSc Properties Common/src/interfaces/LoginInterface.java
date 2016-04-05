@@ -5,6 +5,7 @@
  */
 package interfaces;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  *
@@ -25,5 +26,6 @@ public interface LoginInterface extends Remote {
      * @throws java.rmi.RemoteException
      * @throws SecurityException If the client is not allowed to login.
      */
-    public Server login(String username, String password) throws java.rmi.RemoteException, SecurityException;
+    public Server login(String username, String password) throws RemoteException, SecurityException;
+    public boolean resetPassword(String username, String email, int empRef, String answer) throws RemoteException;
 }

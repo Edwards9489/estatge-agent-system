@@ -39,33 +39,7 @@
 	
 	include "msc_properties - Common_Functions.php";
 
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print cityDropDown();
 	
 	?>
 	</select>
@@ -76,33 +50,7 @@
 		<option value="-">-</option>
 	<?php
 	
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print areaDropDown();
 	
 	?>
 	</select>
@@ -137,7 +85,7 @@
 	
 	<table border='0'>
 	<tr><td><img src="../featured_house/bayview_2.jpg" /></td>
-	<td><p><strong>As Far as the Eye Can See!</strong></p>
+	<td style="padding-left: 20px"><p><strong>As Far as the Eye Can See!</strong></p>
 	<p>Spectacular Ocean and Canyon views!!<br />
 	This large estate has room to entertain with<br />
 	1200 sq. ft. "ballroom" that features modern<br />
@@ -165,39 +113,13 @@
 	<table border='0'>
 	<tr><td><h2>Locate an Office</h2>
 	<form method="post" action="MSc Properties - Office_Details.php">
-	<strong>Office: </strong>
+	<strong>Office: <br></strong>
 	<select name="office" id="office" size="1" >
 	<option value="-">-</option>
 	
 	<?php
-
-	$outputDisplay = '';
 	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print officeDropDown();
 	
 	?>
 	</select>
@@ -209,7 +131,7 @@
 
 	</form>
 	</td>
-	<td style="padding-left: 40px"><img src="../featured_house/bayview_2.jpg" height="80" width="180"/></td>
+	<td style="padding-left: 20px"><img src="../featured_house/bayview_2.jpg" height="120" width="180"/></td>
 	</tr>
 	</table>
 </div>
@@ -217,15 +139,15 @@
 <div id="careers">
 	<table border='0'>
 	<tr><td><h2>Careers/Vacancies</h2>
-	<p>Ever thought of a Career with<br>an Estate Agent?
-	<a href="MSc Properties - Careers.php" border="0"> Find out more here.</a> </p>
+	<p>Ever thought of a Career with<br>an Estate Agent?<br></p>
+	<p><a href="MSc Properties - Careers.php" border="0"> Find out more here.</a> </p>
 	</td>
-	<td style="padding-left: 20px"><br><img src="../featured_house/bayview_2.jpg" height="80" width="180"/></td>
+	<td style="padding-left: 20px"><br><img src="../featured_house/bayview_2.jpg" height="120" width="180"/></td>
 	</tr>
 	</table>
 </div>
 
-<div id="endpage" style="top: 935px;">
+<div id="endpage" style="top: 965px;">
 	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
 	<br /><br /><br /><br />
 </div>
