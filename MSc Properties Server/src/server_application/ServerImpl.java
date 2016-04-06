@@ -2675,7 +2675,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.updateUserAgreements(tenancy.getOfficeCode());
+            this.updateUserTenancies(tenancy.getOfficeCode());
             return 1;
         }
         return 0;
@@ -2777,7 +2777,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updateOffice(office.getOfficeCode());
                 
                 this.database.deleteTenancy(tenancy.getAgreementRef());
-                this.updateUserAgreements(tenancy.getOfficeCode());
+                this.updateUserTenancies(tenancy.getOfficeCode());
                 this.updateUserRentAccounts(tenancy.getOfficeCode());
                 return 1;
             } catch (SQLException ex) {
@@ -3010,7 +3010,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.updateLeaseAccount(lease.getAccountRef(), name, startDate, modifiedBy);
-            this.updateUserAgreements(lease.getOfficeCode());
+            this.updateUserLeases(lease.getOfficeCode());
             return 1;
         }
         return 0;
@@ -3069,7 +3069,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updateOffice(office.getOfficeCode());
                 
                 this.database.deleteLease(lease.getAgreementRef());
-                this.updateUserAgreements(lease.getOfficeCode());
+                this.updateUserLeases(lease.getOfficeCode());
                 return 1;
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -3284,7 +3284,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.updateEmployeeAccount(contract.getAccountRef(), name, startDate, modifiedBy);
-            this.updateUserAgreements(contract.getOfficeCode());
             return 1;
         }
         return 0;
@@ -3338,7 +3337,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updateOffice(office.getOfficeCode());
                 
                 this.database.deleteContract(contract.getAgreementRef());
-                this.updateUserAgreements(contract.getOfficeCode());
                 return 1;
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -4934,12 +4932,30 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @param officeCode
      * @throws RemoteException 
      */
-    private void updateUserAgreements(String officeCode) throws RemoteException {
+    private void updateUserTenancies(String officeCode) throws RemoteException {
         if (this.database.officeExists(officeCode)) {
-            List<AgreementInterface> agreements = this.getUserAgreements(officeCode);
+            List<AgreementInterface> tenancies =  this.getUserTenancies(officeCode);
             for (Client client : users.values()) {
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
-                    client.updateUserAgreements(agreements);
+                    client.updateUserTenancies(tenancies);
+                } else if (!client.isAlive()) {
+                    users.remove(client.getUsername());
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
+     * @param officeCode
+     * @throws RemoteException 
+     */
+    private void updateUserLeases(String officeCode) throws RemoteException {
+        if (this.database.officeExists(officeCode)) {
+            List<AgreementInterface> leases = this.getUserLeases(officeCode);
+            for (Client client : users.values()) {
+                if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    client.updateUserLeases(leases);
                 } else if (!client.isAlive()) {
                     users.remove(client.getUsername());
                 }
@@ -4954,23 +4970,83 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws RemoteException 
      */
     @Override
-    public List<AgreementInterface> getUserAgreements(String officeCode) throws RemoteException {
+    public List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException {
+        System.out.println("Office Code - Tenancies: " + officeCode);
         List<AgreementInterface> agreements = new ArrayList();
         List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
-        int i = 0;
+        System.out.println("Agreements (Server - Tenancies): " + tempAgreements);
+        System.out.println("Agreements for Office (Server - Tenancies): " + tempAgreements.size());
         AgreementInterface tempAgreement = null;
-        while (i < 15 && !tempAgreements.isEmpty()) {
+        int i = 0;
+        int tenCount = 0;
+        for(AgreementInterface temp : tempAgreements) {
+            if(temp instanceof TenancyInterface) {
+            tenCount++;
+            }
+        }
+        while (i < 5 && i <= tenCount) {
             for (AgreementInterface temp : tempAgreements) {
-                if (tempAgreement != null) {
+                if (tempAgreement != null && temp instanceof TenancyInterface) {
                     if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
                         tempAgreement = temp;
                     }
-                } else { // tempAgreement == null
+                } else if (temp instanceof TenancyInterface) { // tempAgreement == null
                     tempAgreement = temp;
                 }
             }
+            System.out.println("Tenancies: " + i + "\n" + tempAgreement + "\n");
             agreements.add(tempAgreement);
-            tempAgreements.remove(tempAgreement);
+            i++;
+        }
+        return agreements;
+    }
+    
+    /**
+     * 
+     * @param officeCode
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException {
+        System.out.println("Office Code - Leases: " + officeCode);
+        List<AgreementInterface> agreements = new ArrayList();
+        List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
+        System.out.println("Agreements (Server - Leases): " + tempAgreements);
+        System.out.println("Agreements for Office (Server - Leases): " + tempAgreements.size());
+        int i = 0;
+        AgreementInterface tempAgreement = null;
+//        Iterator myIt = tempAgreements.iterator();
+//        while (i < 15 && !tempAgreements.isEmpty() && myIt.hasNext()) {
+//            AgreementInterface temp = (AgreementInterface) myIt.next();
+//            if (tempAgreement != null && tempAgreement instanceof LeaseInterface) {
+//                if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
+//                    tempAgreement = temp;
+//                }
+//            } else if (tempAgreement instanceof LeaseInterface) { // tempAgreement == null
+//                tempAgreement = temp;
+//            }
+//            agreements.add(tempAgreement);
+//        }
+        int leaseCount = 0;
+        for(AgreementInterface temp : tempAgreements) {
+            if(temp instanceof LeaseInterface) {
+            leaseCount++;
+            }
+        }
+        while (i < 5 && i < leaseCount) {
+            for (AgreementInterface temp : tempAgreements) {
+                if (tempAgreement != null && temp instanceof LeaseInterface) {
+                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
+                        tempAgreement = temp;
+                    }
+                } else if (temp instanceof LeaseInterface) { // tempAgreement == null
+                    tempAgreement = temp;
+                }
+            }
+            System.out.println("Leases: " + i + "\n" + tempAgreement + "\n");
+            agreements.add(tempAgreement);
+            i++;
         }
         return agreements;
     }
@@ -4982,7 +5058,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      */
     private void updateUserRentAccounts(String officeCode) throws RemoteException {
         if (this.database.officeExists(officeCode)) {
-            List<RentAccountInterface> accounts = this.getUserRentAccounts(officeCode);
+            List<AccountInterface> accounts = this.getUserRentAccounts(officeCode);
             for (Client client : users.values()) {
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
                     client.updateUserRentAccounts(accounts);
@@ -5000,8 +5076,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws RemoteException 
      */
     @Override
-    public List<RentAccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
-        List<RentAccountInterface> accounts = new ArrayList();
+    public List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
+        List<AccountInterface> accounts = new ArrayList();
         List<AccountInterface> tempAccounts = this.getOffice(officeCode).getAccounts();
         int i = 0;
         AccountInterface tempAccount = null;
@@ -5016,7 +5092,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 }
             }
             accounts.add((RentAccountInterface) tempAccount);
-            tempAccounts.remove(tempAccount);
             i++;
         }
         return accounts;

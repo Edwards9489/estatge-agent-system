@@ -5,6 +5,7 @@
  */
 package client_application;
 
+import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
@@ -188,10 +189,20 @@ public class ClientImpl extends Observable implements Client {
     public boolean isServerSet() {
         return server != null;
     }
+    
+    public boolean isUserSet() {
+        return user != null;
+    }
 
     private void setUser(User usr) {
         if (user == null) {
             user = usr;
+        }
+    }
+    
+    public void logout() throws RemoteException {
+        if (server.isAlive() && this.isUserSet()) {
+            server.unregister(this);
         }
     }
     
@@ -207,23 +218,29 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
-
+    
     public boolean isUser(String username, String password) throws RemoteException {
         return server.isUser(username, password);
     }
     
     @Override
-    public void updateUserAgreements(List<AgreementInterface> agreements) throws RemoteException {
+    public void updateUserTenancies(List<AgreementInterface> agreements) throws RemoteException {
         this.setChanged();
         this.notifyObservers(agreements);
     }
     
     @Override
-    public void updateUserRentAccounts(List<RentAccountInterface> accounts) throws RemoteException {
+    public void updateUserLeases(List<AgreementInterface> agreements) throws RemoteException {
+        this.setChanged();
+        this.notifyObservers(agreements);
+    }
+    
+    @Override
+    public void updateUserRentAccounts(List<AccountInterface> accounts) throws RemoteException {
         this.setChanged();
         this.notifyObservers(accounts);
     }
-
+    
     public int createTitle(String code, String description, String comment) throws RemoteException {
         if (server.isAlive()) {
             return server.createTitle(code, description, comment, this.getUsername());
@@ -2886,23 +2903,26 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
+    public List<AgreementInterface> getUserTenancies() throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getUserTenancies(user.getOfficeCode());
+        }
+        return null;
+    }
     
-    public List<RentAccountInterface> getUserRentAccounts() throws RemoteException {
+    public List<AgreementInterface> getUserLeases() throws RemoteException {
+        if (server.isAlive()) {
+            return this.server.getUserLeases(user.getOfficeCode());
+        }
+        return null;
+    }
+    
+    public List<AccountInterface> getUserRentAccounts() throws RemoteException {
         if (server.isAlive()) {
             return this.server.getUserRentAccounts(user.getOfficeCode());
         }
         return null;
     }
-    
-    public List<AgreementInterface> getUserAgreements() throws RemoteException {
-        if (server.isAlive()) {
-            return this.server.getUserAgreements(user.getOfficeCode());
-        }
-        return null;
-    }
-    
-    
-    
 
     private byte[] uploadDocument(String fileName) throws IOException {
         File file = new File(fileName);

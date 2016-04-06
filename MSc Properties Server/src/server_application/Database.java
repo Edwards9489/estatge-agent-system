@@ -6108,6 +6108,8 @@ public class Database {
                                 if (actualEndDate != null) {
                                     temp.setActualEndDate(actualEndDate, null);
                                 }
+                                Office office = (Office) this.getOffice(officeCode);
+                                office.createAgreement(temp, null);
                                 this.loadTenancyMods(temp.getAgreementRef(), this.loadModMap("tenancyModifications", temp.getAgreementRef()));
                                 this.loadTenancyNotes(temp.getAgreementRef(), this.loadNoteMap("tenancyNotes", temp.getAgreementRef()));
                                 this.loadTenancyDocs(temp.getAgreementRef(), this.loadDocMap("tenancyDocuments", temp.getAgreementRef()));
@@ -6484,6 +6486,8 @@ public class Database {
                         if (actualEndDate != null) {
                             temp.setActualEndDate(actualEndDate, null);
                         }
+                        Office office = (Office) this.getOffice(officeCode);
+                        office.createAgreement(temp, null);
                         this.loadLeaseLandlords(temp.getAccountRef());
                         property.setLandlords(temp.getLandlords(), null);
                         this.loadLeaseMods(temp.getAgreementRef(), this.loadModMap("leaseModifications", temp.getAgreementRef()));
@@ -6874,6 +6878,8 @@ public class Database {
                             employee.createContract(temp, null);
                             UserImpl user = (UserImpl) employee.getUser();
                             user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate());
+                            Office office = (Office) this.getOffice(officeCode);
+                            office.createAgreement(temp, null);
                             this.loadContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
                             this.loadContractNotes(temp.getAgreementRef(), this.loadNoteMap("contractNotes", temp.getAgreementRef()));
                             this.loadContractDocs(temp.getAgreementRef(), this.loadDocMap("contractDocuments", temp.getAgreementRef()));
@@ -7137,6 +7143,8 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.rentAccounts.put(temp.getAccRef(), temp);
+                        Office office = (Office) this.getOffice(officeCode);
+                        office.createAccount(temp, null);
                         this.loadRentAccountMods(temp.getAccRef(), this.loadModMap("rentAccountModifications", temp.getAccRef()));
                         this.loadRentAccountNotes(temp.getAccRef(), this.loadNoteMap("rentAccountNotes", temp.getAccRef()));
                         this.loadRentAccountDocs(temp.getAccRef(), this.loadDocMap("rentAccountDocuments", temp.getAccRef()));
@@ -7424,6 +7432,8 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.leaseAccounts.put(temp.getAccRef(), temp);
+                        Office office = (Office) this.getOffice(officeCode);
+                        office.createAccount(temp, null);
                         this.loadLeaseAccountMods(temp.getAccRef(), this.loadModMap("leaseAccountModifications", temp.getAccRef()));
                         this.loadLeaseAccountNotes(temp.getAccRef(), this.loadNoteMap("leaseAccountNotes", temp.getAccRef()));
                         this.loadLeaseAccountDocs(temp.getAccRef(), this.loadDocMap("leaseAccountDocuments", temp.getAccRef()));
@@ -7712,6 +7722,8 @@ public class Database {
                             temp.setEndDate(endDate, null);
                         }
                         this.employeeAccounts.put(temp.getAccRef(), temp);
+                        Office office = (Office) this.getOffice(officeCode);
+                        office.createAccount(temp, null);
                         this.loadEmployeeAccountMods(temp.getAccRef(), this.loadModMap("employeeAccountModifications", temp.getAccRef()));
                         this.loadEmployeeAccountNotes(temp.getAccRef(), this.loadNoteMap("employeeAccountNotes", temp.getAccRef()));
                         this.loadEmployeeAccountDocs(temp.getAccRef(), this.loadDocMap("employeeAccountDocuments", temp.getAccRef()));

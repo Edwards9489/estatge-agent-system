@@ -22,17 +22,18 @@ import javax.swing.JTable;
  *
  * @author Dwayne
  */
-public class ListPanel extends JPanel {
+public class AgreementPanel extends JPanel {
     private JTable table;
     private AgreementTableModel tableModel;
     private JPopupMenu popup;
     private TableListener tableListener;
     
-    public ListPanel() {
+    public AgreementPanel() {
+        tableModel = new AgreementTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem tenancyItem = new JMenuItem("Agreements & Accounts");
+        JMenuItem tenancyItem = new JMenuItem("Agreements");
         popup.add(tenancyItem);
         
         table.addMouseListener(new MouseAdapter() {

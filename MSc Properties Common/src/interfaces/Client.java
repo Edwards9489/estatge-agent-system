@@ -16,6 +16,7 @@ public interface Client extends Remote {
     boolean isAlive() throws RemoteException;
     String getUsername() throws RemoteException;
     String getOfficeCode() throws RemoteException;
-    void updateUserAgreements(List<AgreementInterface> agreements) throws RemoteException;
-    void updateUserRentAccounts(List<RentAccountInterface> rentAccounts) throws RemoteException;
+    void updateUserTenancies(List<AgreementInterface> agreements) throws RemoteException;
+    void updateUserLeases(List<AgreementInterface> agreements) throws RemoteException;
+    void updateUserRentAccounts(List<AccountInterface> rentAccounts) throws RemoteException;
 }

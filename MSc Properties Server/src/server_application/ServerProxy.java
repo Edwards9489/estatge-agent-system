@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
@@ -1654,14 +1655,18 @@ public class ServerProxy
     public void generateReport(Date startDate, Date endDate) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public List<RentAccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
+    
+    public List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<AgreementInterface> getUserAgreements(String officeCode) throws RemoteException {
+    public List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

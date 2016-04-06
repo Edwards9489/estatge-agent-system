@@ -110,7 +110,6 @@ public class TestClient  implements Observer {
             System.out.println("\nNumber of Tenancies by Employee Ref 1: " + client.getNumberOfTenanciesByEmployee(1, date.getTime(), date2.getTime()));
             System.out.println("\nNumber of Contracts by Employee Ref 1: " + client.getNumberOfContractsByEmployee(1, date.getTime(), date2.getTime()));
             System.out.println("\nNumber of Leases by Employee Ref 1: " + client.getNumberOfLeasesByEmployee(1, date.getTime(), date2.getTime()));
-            
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient.class.getName()).log(Level.SEVERE, null, ex);
         }

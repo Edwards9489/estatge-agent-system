@@ -370,6 +370,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      */
     @Override
     public List<AgreementInterface> getAgreements() throws RemoteException {
+        System.out.println("Office Agreements: " + agreements.size());
         return Collections.unmodifiableList(new ArrayList(agreements));
     }
     

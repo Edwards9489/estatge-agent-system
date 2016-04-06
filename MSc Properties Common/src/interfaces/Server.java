@@ -373,8 +373,9 @@ public interface Server extends Remote {
     
     
     
-    public List<RentAccountInterface> getUserRentAccounts(String officeCode) throws RemoteException;
-    public List<AgreementInterface> getUserAgreements(String officeCode) throws RemoteException;
+    List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException;
+    List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException;
+    List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException;
     
     
     

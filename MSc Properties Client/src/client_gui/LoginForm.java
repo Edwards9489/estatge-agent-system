@@ -94,8 +94,7 @@ public class LoginForm extends JFrame {
                         System.out.println("Logged in: " + client.isUser(user, new String(password)));
                         if(client.isUser(user, new String(password))) {
                             System.out.println("TEST1");
-                            HomeForm home = new HomeForm();
-                            home.setClient(client);
+                            HomeForm home = new HomeForm(client);
                             home.setVisible(true);
                             setVisible(false);
                         } else {
