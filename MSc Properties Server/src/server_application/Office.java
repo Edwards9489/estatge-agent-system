@@ -142,6 +142,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      * @throws java.rmi.RemoteException 
      */
     public void createAgreement(AgreementInterface agreement, ModifiedByInterface modifiedBy) throws RemoteException {
+        System.out.println("Has Agreement? - Office - " + !this.hasAgreement(agreement.getAgreementRef()));
         if(!this.hasAgreement(agreement.getAgreementRef())) {
             this.agreements.add(agreement);
             this.modifiedBy(modifiedBy);
@@ -171,6 +172,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      * @throws java.rmi.RemoteException 
      */
     public void createAccount(AccountInterface account, ModifiedByInterface modifiedBy) throws RemoteException {
+        System.out.println("Has Account? - Office - " + !this.hasAccount(account.getAccRef()));
         if(!this.hasAccount(account.getAccRef())) {
             this.accounts.add(account);
             this.modifiedBy(modifiedBy);
@@ -370,7 +372,6 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      */
     @Override
     public List<AgreementInterface> getAgreements() throws RemoteException {
-        System.out.println("Office Agreements: " + agreements.size());
         return Collections.unmodifiableList(new ArrayList(agreements));
     }
     

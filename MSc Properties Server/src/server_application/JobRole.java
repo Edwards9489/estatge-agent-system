@@ -41,9 +41,11 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     private boolean read;
     private boolean write;
     private boolean update;
+    private boolean delete;
     private boolean employeeRead;
     private boolean employeeWrite;
     private boolean employeeUpdate;
+    private boolean employeeDelete;
     
     ///   CONSTRUCTORS ///
     
@@ -57,15 +59,17 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @param read
      * @param write
      * @param update
+     * @param delete
      * @param employeeRead
      * @param employeeWrite
      * @param employeeUpdate
+     * @param employeeDelete
      * @param createdBy
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
     public JobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy, Date createdDate) throws RemoteException {
+            boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String createdBy, Date createdDate) throws RemoteException {
         this.jobRoleCode = code;
         this.jobTitle = jobTitle;
         this.jobDescription = jobDescription;
@@ -79,9 +83,11 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
         this.read = read;
         this.write = write;
         this.update = update;
+        this.delete = delete;
         this.employeeRead = employeeRead;
         this.employeeWrite = employeeWrite;
         this.employeeUpdate = employeeUpdate;
+        this.employeeDelete = employeeDelete;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -133,6 +139,13 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     }
 
     /**
+     * @param update
+     */
+    private void setDelete(boolean delete) {
+        this.delete = delete;
+    }
+
+    /**
      * @param employeeRead
      */
     private void setEmployeeRead(boolean employeeRead) {
@@ -151,6 +164,13 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      */
     private void setEmployeeUpdate(boolean employeeUpdate) {
         this.employeeUpdate = employeeUpdate;
+    }
+
+    /**
+     * @param employeeUpdate
+     */
+    private void setEmployeeDelete(boolean employeeDelete) {
+        this.employeeDelete = employeeDelete;
     }
     
     /**
@@ -195,8 +215,8 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @param employeeUpdate
      * @param modifiedBy 
      */
-    public void updateJobRole(String title, String description, double salary, boolean current, boolean read, boolean write,
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, ModifiedByInterface modifiedBy) {
+    public void updateJobRole(String title, String description, double salary, boolean current, boolean read, boolean write, boolean update, 
+            boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, ModifiedByInterface modifiedBy) {
         this.setJobTitle(title);
         this.setJobDescription(description);
         this.setSalary(salary);
@@ -204,9 +224,11 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
         this.setRead(read);
         this.setWrite(write);
         this.setUpdate(update);
+        this.setDelete(delete);
         this.setEmployeeRead(employeeRead);
         this.setEmployeeWrite(employeeWrite);
         this.setEmployeeUpdate(employeeUpdate);
+        this.setEmployeeDelete(employeeDelete);
         this.modifiedBy(modifiedBy);
     }
     
@@ -479,6 +501,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return read
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getRead() throws RemoteException {
         return read;
     }
@@ -487,6 +510,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return write
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getWrite() throws RemoteException {
         return write;
     }
@@ -495,14 +519,25 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return update
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getUpdate() throws RemoteException {
         return update;
+    }
+
+    /**
+     * @return update
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public boolean getDelete() throws RemoteException {
+        return delete;
     }
 
     /**
      * @return employeeRead
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getEmployeeRead() throws RemoteException {
         return employeeRead;
     }
@@ -511,6 +546,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return employeeWrite
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getEmployeeWrite() throws RemoteException {
         return employeeWrite;
     }
@@ -519,7 +555,17 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return employeeUpdate
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean getEmployeeUpdate() throws RemoteException {
         return employeeUpdate;
+    }
+
+    /**
+     * @return employeeUpdate
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public boolean getEmployeeDelete() throws RemoteException {
+        return employeeDelete;
     }
 }

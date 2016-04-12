@@ -69,7 +69,7 @@ public class RentAccountTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("RENT", "RENT", note4, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "NEW", "DEDWARDS", new Date());
+            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
             PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
@@ -109,7 +109,7 @@ public class RentAccountTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("RENT", "RENT", note4, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "NEW", "DEDWARDS", new Date());
+            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
             PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
@@ -146,7 +146,7 @@ public class RentAccountTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("RENT", "RENT", note4, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "NEW", "DEDWARDS", new Date());
+            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
             PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
@@ -184,7 +184,7 @@ public class RentAccountTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("RENT", "RENT", note4, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "NEW", "DEDWARDS", new Date());
+            ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
             PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);

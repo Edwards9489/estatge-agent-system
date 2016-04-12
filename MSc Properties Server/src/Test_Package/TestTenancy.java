@@ -55,9 +55,12 @@ public class TestTenancy {
             ArrayList<LandlordInterface> landlords = new ArrayList();
             landlords.add(landlord);
             
-            AddressUsageInterface addressUsage = new AddressUsage(1, address, new Date(), note3, "DEDWARDS", new Date());
+            AddressUsage addressUsage = new AddressUsage(1, address, new Date(), note3, "DEDWARDS", new Date());
             
-            ApplicationInterface application = new Application(1, "Mr Dwayne Leroy Edwards", new Date(), invParty, (AddressUsage) addressUsage, "DEDWARDS", new Date());
+            Application application = new Application(1, "Dwayne Leroy Edwards", new Date(), addressUsage, "DEDWARDS", new Date());
+        
+            application.addInvolvedParty(invParty, null);
+            
             Property prop = new Property(1, address, new Date(), element, element, "DEDWARDS", new Date());
             ModifiedByInterface modTest = new ModifiedBy("Amended Landlord", "DEDWARDS", new Date());
             prop.setLandlords(landlords, modTest);

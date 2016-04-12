@@ -75,12 +75,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int employeeRef;
     private int appRef;
     private int propRef;
-    private int tenRef;
-    private int leaseRef;
-    private int contractRef;
-    private int rentAccRef;
-    private int leaseAccRef;
-    private int employeeAccRef;
+    private int agreementRef;
+    private int accountRef;
     private int addressRef;
     private int addressUsageRef;
     private int contactRef;
@@ -90,7 +86,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     private int noteRef;
     private int documentRef;
 
-    private final TaskGenerator scheduler;
+    //private final TaskGenerator scheduler;
     
     private final String documentsLocation;
     
@@ -105,28 +101,40 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.database = new Database(environment, addr, username, password, port);
 
         this.personRef = this.database.countPeople() + 1;
+        System.out.println("Person Ref: " + personRef);
         this.invPartyRef = this.database.countInvolvedParties() + 1;
+        System.out.println("Inv Party Ref: " + invPartyRef);
         this.landlordRef = this.database.countLandords() + 1;
+        System.out.println("Landlord Ref: " + landlordRef);
         this.employeeRef = this.database.countEmployees() + 1;
+        System.out.println("Employee Ref: " + employeeRef);
         this.appRef = this.database.countApplications() + 1;
+        System.out.println("App Ref: " + appRef);
         this.propRef = this.database.countProperties() + 1;
-        this.tenRef = this.database.countTenancies() + 1;
-        this.leaseRef = this.database.countLeases() + 1;
-        this.contractRef = this.database.countContracts() + 1;
-        this.rentAccRef = this.database.countRentAccounts() + 1;
-        this.leaseAccRef = this.database.countLeaseAccounts() + 1;
-        this.employeeAccRef = this.database.countEmployeeAccounts() + 1;
+        System.out.println("Prop Ref: " + propRef);
+        this.agreementRef = this.database.getAgreementRef() + 1;
+        System.out.println("Agreement Ref: " + agreementRef);
+        this.accountRef = this.database.getAccountRef() + 1;
+        System.out.println("Account Ref: " + accountRef);
         this.addressRef = this.database.countAddresses() + 1;
+        System.out.println("Address Ref: " + addressRef);
         this.addressUsageRef = this.database.countAddressUsages() + 1;
+        System.out.println("Address Usage Ref: " + addressUsageRef);
         this.contactRef = this.database.countContacts() + 1;
+        System.out.println("Contact Ref: " + contactRef);
         this.noteRef = this.database.countNotes() + 1;
+        System.out.println("Note Ref: " + noteRef);
         this.documentRef = this.database.countDocuments() + 1;
+        System.out.println("Document Ref: " + documentRef);
         this.propertyElementRef = this.database.countPropElements() + 1;
+        System.out.println("Property Element Ref: " + propertyElementRef);
         this.jobBenefitRef = this.database.countJobBenefits() + 1;
+        System.out.println("Job Benefit Ref: " + jobBenefitRef);
         this.transactionRef = this.database.countTransactions() + 1;
+        System.out.println("Transaction Ref: " + transactionRef);
         
         //Schedule to run every Day at midnight
-        this.scheduler = new TaskGenerator(this, 1000 * 60);
+        //this.scheduler = new TaskGenerator(this, 1000 * 60);
         
         //Location on Server where documents can be saved
         this.documentsLocation = "D:\\DOCUMENTS\\";
@@ -134,7 +142,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         this.sendEmail = new SendEmail("mscproperties.online@gmail.com", "Toxic9489", "smtp.gmail.com");
         
         this.random = new SecureRandom();
-
         
         this.createSuperUser();
     }
@@ -189,7 +196,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if(!this.database.userExists("ADMIN")) {
             try {
                 UserImpl user = new UserImpl(-1, -1, "ADMIN", "MScProperties", null);
-                user.setUserPermissions(true, true, true, true, true, true);
+                user.setUserPermissions(true, true, true, true, true, true, true, true);
                 this.database.createUser(user);
             } catch (RemoteException | SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -868,9 +875,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHOD TO CREATE ADDRESS USAGE     ////////
     private AddressUsage createAddressUsage(int addrRef, Date startDate, String createdBy) throws RemoteException {
+        System.out.println("Address exists? - Server createAddress: " + database.addressExists(addrRef));
         if (database.addressExists(addrRef)) {
             Note note = this.createNote(null, createdBy);
             AddressUsage addressUsage = new AddressUsage(this.addressUsageRef++, database.getAddress(addrRef), startDate, note, createdBy, new Date());
+            System.out.println("Address Usage - Server createAddress: " + addressUsage);
             return addressUsage;
         }
         return null;
@@ -890,12 +899,24 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public int createPerson(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
+        System.out.println();
+        System.out.println("Title exists? - createPersonServer - " + this.database.titleExists(titleCode));
+        System.out.println("Gender exists? - createPersonServer - " + this.database.genderExists(genderCode));
+        System.out.println("Marital exists? - createPersonServer - " + this.database.maritalStatusExists(maritalStatusCode));
+        System.out.println("Ethnic exists? - createPersonServer - " + this.database.ethnicOriginExists(ethnicOriginCode));
+        System.out.println("Language exists? - createPersonServer - " + this.database.languageExists(languageCode));
+        System.out.println("Nationality exists? - createPersonServer - " + this.database.nationalityExists(nationalityCode));
+        System.out.println("Sexuality exists? - createPersonServer - " + this.database.sexualityExists(sexualityCode));
+        System.out.println("Religion exists? - createPersonServer - " + this.database.religionExists(religionCode));
+        System.out.println("Address exists? - createPersonServer - " + this.database.addressExists(addrRef));
         if (this.database.titleExists(titleCode) && this.database.genderExists(genderCode) && this.database.maritalStatusExists(maritalStatusCode) && this.database.ethnicOriginExists(ethnicOriginCode) && this.database.languageExists(languageCode) && this.database.nationalityExists(nationalityCode) && this.database.sexualityExists(sexualityCode) && this.database.religionExists(religionCode) && this.database.addressExists(addrRef)) {
             if (this.database.getTitle(titleCode).isCurrent() && this.database.getGender(genderCode).isCurrent() && this.database.getMaritalStatus(maritalStatusCode).isCurrent() && this.database.getEthnicOrigin(ethnicOriginCode).isCurrent() && this.database.getLanguage(languageCode).isCurrent() && this.database.getNationality(nationalityCode).isCurrent() && this.database.getSexuality(sexualityCode).isCurrent() && this.database.getReligion(religionCode).isCurrent()) {
                 AddressUsage address = this.createAddressUsage(addrRef, addressStartDate, createdBy);
                 Person person = new Person(personRef++, this.database.getTitle(titleCode), forename, middleNames, surname, dateOfBirth, nationalInsurance, this.database.getGender(genderCode),
                         this.database.getMaritalStatus(maritalStatusCode), this.database.getEthnicOrigin(ethnicOriginCode), this.database.getLanguage(languageCode), this.database.getNationality(nationalityCode),
                         this.database.getSexuality(sexualityCode), this.database.getReligion(religionCode), address, createdBy, new Date());
+                
+                System.out.println("Person createPersonServer - " + person.getName());
                 try {
                     this.database.createPerson(person);
                     this.database.createPersonAddressUsage(address, person.getPersonRef());
@@ -1377,7 +1398,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //////     METHODS TO CREATE, UPDATE AND DELETE A INVOLVED PARTY     ////////
     @Override
     public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, int address, String createdBy) throws RemoteException {
-        if (this.database.applicationExists(aRef) && this.database.personExists(pRef) && this.database.relationshipExists(relationshipCode) && this.database.getRelationship(relationshipCode).isCurrent()) {
+        if (this.database.personExists(pRef) && this.database.relationshipExists(relationshipCode) && this.database.getRelationship(relationshipCode).isCurrent()) {
             InvolvedParty invParty = new InvolvedParty(invPartyRef++, aRef, this.database.getPerson(pRef), joint, main, start, this.database.getRelationship(relationshipCode), createdBy, new Date());
             Person person = (Person) invParty.getPerson();
             AddressUsage addressUsage = this.createAddressUsage(address, start, createdBy);
@@ -1483,18 +1504,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
         if (this.database.personExists(pRef) && this.database.addressExists(addrRef) && this.database.relationshipExists(relationshipCode)) {
-            int mainAppRef = this.createInvolvedParty(pRef, appRef, true, true, appStartDate, relationshipCode, addrRef, createdBy);
-            if (this.database.invPartyExists(mainAppRef)) {
-                InvolvedParty mainApp = (InvolvedParty) this.database.getInvolvedParty(mainAppRef);
-                Application application = new Application(this.appRef++, corrName, appStartDate, mainApp, this.createAddressUsage(addrRef, appStartDate, createdBy), createdBy, new Date());
-                try {
-                    this.database.createApplication(application);
-                    this.database.createApplicationAddressUsage((AddressUsage) application.getCurrentApplicationAddress(), application.getApplicationRef());
-                } catch (SQLException ex) {
-                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return application.getApplicationRef();
+            Application application = new Application(this.appRef++, corrName, appStartDate, this.createAddressUsage(addrRef, appStartDate, createdBy), createdBy, new Date());
+            int mainAppRef = this.createInvolvedParty(pRef, application.getApplicationRef(), true, true, appStartDate, relationshipCode, addrRef, createdBy);
+            application.addInvolvedParty(this.database.getInvolvedParty(mainAppRef), null);
+            try {
+                this.database.createApplication(application);
+                this.database.createApplicationAddressUsage((AddressUsage) application.getCurrentApplicationAddress(), application.getApplicationRef());
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return application.getApplicationRef();
         }
         return 0;
     }
@@ -1624,18 +1643,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (database.applicationExists(aRef) && database.tenancyExists(tRef) && this.database.addressExists(addrRef)) {
             Application application = (Application) database.getApplication(aRef);
             List<PropertyInterface> properties = application.setTenancy(tRef, new ModifiedBy("Assigned Application Tenancy " + tRef, createdBy, new Date()));
+            application.setAppStatusCode("HSED");
             for (PropertyInterface property : properties) {
                 try {
                     this.database.endPropertyInterest(aRef, property.getPropRef());
+                    this.database.updateApplication(aRef);
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            application.setAppStatusCode("HSED");
-            try {
-                this.database.updateApplication(application.getApplicationRef());
-            } catch (SQLException ex) {
-                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.createApplicationAddressUsage(aRef, addrRef, startDate, createdBy);
             return 1;
@@ -1796,8 +1811,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Application application = (Application) database.getApplication(applicationRef);
             application.setAppAddress((AddressUsage) addressUsage, new ModifiedBy("Created App Address " + addressUsage.getAddressUsageRef(), createdBy, new Date()));
             try {
-                this.database.updateApplication(applicationRef);
-                this.database.createApplicationAddressUsage(addressUsage, appRef);
+                this.database.createApplicationAddressUsage(addressUsage, applicationRef);
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1886,9 +1900,25 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException {
         if(this.database.employeeExists(eRef)) {
             Employee employee = (Employee) this.database.getEmployee(eRef);
-            employee.setMemorableLocation(documentsLocation);
+            employee.setMemorableLocation(memorableLocation);
             try {
                 this.database.updateEmployee(eRef);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException {
+        if (this.database.employeeExists(eRef)) {
+            Employee employee = (Employee) this.database.getEmployee(eRef);
+            employee.updatePassword(password, new ModifiedBy("Updated Password of Employee " + eRef, modifiedBy, new Date()));
+            User user = employee.getUser();
+            try {
+                this.database.updateUser(user.getUsername());
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1928,21 +1958,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } else {
                 throw new InvalidUserException(username);
             }
-        }
-        return 0;
-    }
-
-    private int updateEmployeePassword(int eRef, String password, String modifiedBy) throws RemoteException {
-        if (this.database.employeeExists(eRef)) {
-            Employee employee = (Employee) this.database.getEmployee(eRef);
-            employee.updatePassword(password, new ModifiedBy("Updated Password of Employee " + eRef, modifiedBy, new Date()));
-            User user = employee.getUser();
-            try {
-                this.database.updateUser(user.getUsername());
-            } catch (SQLException ex) {
-                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return 1;
         }
         return 0;
     }
@@ -2120,8 +2135,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //////     METHODS TO CREATE, UPDATE AND DELETE A PROPERTY     ////////
     @Override
     public int createProperty(int addrRef, Date startDate, String propTypeCode, String propSubTypeCode, String createdBy) throws RemoteException {
+        System.out.println("Address exists? - createPropertyServer - " + this.database.addressExists(addrRef));
+        System.out.println("Prop Type exists - createPropertyServer - " + this.database.propTypeExists(propTypeCode));
+        System.out.println("Prop Sub Type exists - createPropertyServer - " + this.database.propSubTypeExists(propSubTypeCode));
         if (this.database.addressExists(addrRef) && this.database.propTypeExists(propTypeCode) && this.database.propSubTypeExists(propSubTypeCode)) {
             Property property = new Property(propRef++, this.database.getAddress(addrRef), startDate, this.database.getPropertyType(propTypeCode), this.database.getPropertySubType(propSubTypeCode), createdBy, new Date());
+            System.out.println("Property created By - createPropertyServer - " + property.getCreatedBy());
             try {
                 this.database.createProperty(property);
             } catch (SQLException ex) {
@@ -2326,10 +2345,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLES     ////////
     @Override
-    public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write,
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy) throws RemoteException {
+    public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, boolean update,
+            boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String createdBy) throws RemoteException {
         if (!this.database.jobRoleExists(code)) {
-            JobRole jobRole = new JobRole(code, jobTitle, jobDescription, fullTime, salary, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, new Date());
+            JobRole jobRole = new JobRole(code, jobTitle, jobDescription, fullTime, salary, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, createdBy, new Date());
             try {
                 this.database.createJobRole(jobRole);
             } catch (SQLException ex) {
@@ -2341,11 +2360,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write,
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String modifiedBy) throws RemoteException {
+    public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write, boolean update,
+            boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String modifiedBy) throws RemoteException {
         if (this.database.jobRoleExists(code)) {
             JobRole jobRole = (JobRole) this.database.getJobRole(code);
-            jobRole.updateJobRole(jobTitle, jobDescription, salary, current, read, write, update, employeeRead, employeeWrite, employeeUpdate, new ModifiedBy("Updated Job Role " + code, modifiedBy, new Date()));
+            jobRole.updateJobRole(jobTitle, jobDescription, salary, current, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, new ModifiedBy("Updated Job Role " + code, modifiedBy, new Date()));
             List<ContractInterface> contracts = this.database.getContracts(null, null, null, null, null, null, null, code, null, null, null, null, null);
             for (ContractInterface contract : contracts) {
                 EmployeeAccount account = (EmployeeAccount) this.database.getEmployeeAccount(contract.getAccountRef());
@@ -2635,8 +2654,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             ApplicationInterface application = this.database.getApplication(aRef);
             Property property = (Property) this.database.getProperty(pRef);
             Office office = (Office) this.database.getOffice(officeCode);
-            Tenancy tenancy = new Tenancy(tenRef++, startDate, length, rentAccRef, property, application, this.database.getTenancyType(tenTypeCode), officeCode, createdBy, new Date());
-            RentAccount rentAcc = new RentAccount(rentAccRef++, tenancy, createdBy, new Date());
+            Tenancy tenancy = new Tenancy(agreementRef++, startDate, length, accountRef, property, application, this.database.getTenancyType(tenTypeCode), officeCode, createdBy, new Date());
+            RentAccount rentAcc = new RentAccount(accountRef++, tenancy, createdBy, new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("Created Tenancy " + tenancy.getAgreementRef(), createdBy, new Date());
             try {
                 this.database.createTenancy(tenancy);
@@ -2655,6 +2674,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 office.createAccount(rentAcc, new ModifiedBy("Created Rent Account " + rentAcc.getAccRef(), createdBy, new Date()));
                 this.database.updateOffice(office.getOfficeCode());
                 
+                this.updateUserTenancies(tenancy.getOfficeCode());
                 return tenancy.getAgreementRef();
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -2722,6 +2742,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 // End Rent Account
                 rentAcc.setEndDate(endDate, new ModifiedBy("Ended Rent Account " + rentAcc.getAccRef(), modifiedBy, new Date()));
                 this.database.updateRentAccount(rentAcc.getAccRef());
+                this.updateUserTenancies(tenancy.getOfficeCode());
                 return 1;
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -2777,7 +2798,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updateOffice(office.getOfficeCode());
                 
                 this.database.deleteTenancy(tenancy.getAgreementRef());
-                this.updateUserTenancies(tenancy.getOfficeCode());
                 this.updateUserRentAccounts(tenancy.getOfficeCode());
                 return 1;
             } catch (SQLException ex) {
@@ -2952,8 +2972,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.propertyExists(pRef) && this.database.officeExists(officeCode)) {
             Property property = (Property) this.database.getProperty(pRef);
             Office office = (Office) this.database.getOffice(officeCode);
-            Lease lease = (Lease) new Lease(leaseRef++, startDate, length, leaseAccRef, this.database.getProperty(pRef), management, expenditure, officeCode, createdBy, new Date());
-            LeaseAccount leaseAcc = new LeaseAccount(leaseAccRef++, lease, createdBy, new Date());
+            Lease lease = (Lease) new Lease(agreementRef++, startDate, length, accountRef, this.database.getProperty(pRef), management, expenditure, officeCode, createdBy, new Date());
+            LeaseAccount leaseAcc = new LeaseAccount(accountRef++, lease, createdBy, new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("Created Lease " + lease.getAgreementRef(), createdBy, new Date());
             try {
                 this.database.createLease(lease);
@@ -2969,6 +2989,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 office.createAccount(leaseAcc, new ModifiedBy("Created Lease Account " + leaseAcc.getAccRef(), createdBy, new Date()));
                 this.database.updateOffice(office.getOfficeCode());
                 
+                this.updateUserLeases(lease.getOfficeCode());
                 return lease.getAgreementRef();
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -2993,6 +3014,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                this.updateUserLeases(lease.getOfficeCode());
                 return lease.getAgreementRef();
             }
         }
@@ -3236,14 +3258,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Employee employee = (Employee) this.database.getEmployee(eRef);
             JobRoleInterface jobRole = this.database.getJobRole(jobRoleCode);
             Office office = (Office) this.database.getOffice(officeCode);
-            Contract contract = new Contract(contractRef++, employeeAccRef, startDate, length, employee, jobRole, officeCode, createdBy, new Date());
-            EmployeeAccount employeeAcc = new EmployeeAccount(employeeAccRef++, contract, createdBy, new Date());
+            Contract contract = new Contract(agreementRef++, accountRef, startDate, length, employee, jobRole, officeCode, createdBy, new Date());
+            EmployeeAccount employeeAcc = new EmployeeAccount(accountRef++, contract, createdBy, new Date());
             ModifiedByInterface modified = new ModifiedBy("Created Contract " + contract.getAgreementRef(), createdBy, new Date());
             try {
                 // UPDATE EMPLOYEE DETAILS
                 employee.createContract(contract, modified);
                 this.database.updateEmployee(employee.getEmployeeRef());
-                employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), null);
+                employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getDelete(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), jobRole.getEmployeeDelete(),null);
                 this.database.updateUser(employee.getUser().getUsername());
                 
                 // UPDATE OFFICE DETAILS
@@ -3326,7 +3348,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 if (!contracts.isEmpty()) {
                     ContractInterface oldContract = contracts.get(contracts.size() - 1);
                     JobRoleInterface jobRole = oldContract.getJobRole();
-                    employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), null);
+                    employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getDelete(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), jobRole.getEmployeeDelete(), null);
                     this.database.updateUser(employee.getUser().getUsername());
                 }
                 
@@ -3851,6 +3873,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     //////     METHODS TO CREATE ACCOUNT TRANSACTIONS     ////////    
     @Override
     public int createRentAccTransaction(int rAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment, String createdBy) throws RemoteException {
+        System.out.println("rentAcc exists? - Server createRentAccTran - " + this.database.rentAccountExists(rAccRef));
+        System.out.println("personFrom exists? - Server createRentAccTran - " + this.database.personExists(fromRef));
+        System.out.println("personTo exists? - Server createRentAccTran - " + this.database.personExists(toRef));
         if (this.database.rentAccountExists(rAccRef) && this.database.personExists(fromRef) && this.database.personExists(toRef)) {
             Note note = this.createNote(comment, createdBy);
             Transaction transaction = new Transaction(transactionRef++, rAccRef, fromRef, toRef, amount, debit, transactionDate, note, createdBy, new Date());
@@ -4335,9 +4360,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
-            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef,
+            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
     }
 
     @Override
@@ -4347,8 +4372,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<TenancyInterface> getApplicationTenancies(int appRef) throws RemoteException {
-        return this.database.getApplicationTenancies(appRef);
+    public List<TenancyInterface> getApplicationTenancies(int applicationRef) throws RemoteException {
+        return this.database.getApplicationTenancies(applicationRef);
     }
 
     @Override
@@ -4373,8 +4398,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getLeases(name, startDate, expectedEndDate, endDate, length, propRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
     }
 
     @Override
@@ -4384,8 +4409,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseInterface> getPropertyLeases(int propRef) throws RemoteException {
-        return this.database.getPropertyLeases(propRef);
+    public List<LeaseInterface> getPropertyLeases(int propertyRef) throws RemoteException {
+        return this.database.getPropertyLeases(propertyRef);
     }
 
     @Override
@@ -4399,8 +4424,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseInterface> getLandlordLeases(int landlordRef) throws RemoteException {
-        return this.database.getLandlordLeases(landlordRef);
+    public List<LeaseInterface> getLandlordLeases(int lRef) throws RemoteException {
+        return this.database.getLandlordLeases(lRef);
     }
 
     @Override
@@ -4412,9 +4437,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef,
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Integer empRef,
             String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getContracts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+        return this.database.getContracts(name, startDate, expectedEndDate, endDate, length, propertyRef, empRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
     }
 
     @Override
@@ -4453,9 +4478,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
-            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<TenancyInterface> tempTenancies = this.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+    public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef,
+            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<TenancyInterface> tempTenancies = this.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
         return this.database.getTenanciesRentAccounts(tempTenancies);
     }
 
@@ -4480,14 +4505,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<LeaseInterface> tempLeases = this.getLeases(name, startDate, createdDate, endDate, tenRef, propRef, current, expenditure, documentRef, officeCode, current, createdBy, createdDate);
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+        List<LeaseInterface> tempLeases = this.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
         return this.database.getLeasesLeaseAccounts(tempLeases);
     }
-
+    
     @Override
-    public LeaseAccountInterface getLeaseLeaseAcc(int leaseRef) throws RemoteException {
-        return this.database.getLeaseLeaseAcc(leaseRef);
+    public LeaseAccountInterface getLeaseLeaseAcc(int lRef) throws RemoteException {
+        return this.database.getLeaseLeaseAcc(lRef);
     }
 
     @Override
@@ -4506,15 +4531,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef,
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Integer empRef,
             String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<ContractInterface> tempContracts = this.getContracts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+        List<ContractInterface> tempContracts = this.getContracts(name, startDate, expectedEndDate, endDate, length, propertyRef, empRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
         return this.database.getContractsEmployeeAccounts(tempContracts);
     }
 
     @Override
-    public EmployeeAccountInterface getContractEmployeeAcc(int contractRef) throws RemoteException {
-        return this.database.getContractEmployeeAcc(contractRef);
+    public EmployeeAccountInterface getContractEmployeeAcc(int cRef) throws RemoteException {
+        return this.database.getContractEmployeeAcc(cRef);
     }
 
     @Override
@@ -4933,10 +4958,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws RemoteException 
      */
     private void updateUserTenancies(String officeCode) throws RemoteException {
+        System.out.println("Office exists? - Server updateUserTen - " + this.database.officeExists(officeCode));
         if (this.database.officeExists(officeCode)) {
             List<AgreementInterface> tenancies =  this.getUserTenancies(officeCode);
+            System.out.println("Office Tenancies size - Server updateUserTen - " + tenancies.size());
             for (Client client : users.values()) {
+                System.out.println("Logged on:  - Server updateUserTen - " + client.getUsername());
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    System.out.println("Alive:  - Server updateUserTen - " + client.getUsername());
                     client.updateUserTenancies(tenancies);
                 } else if (!client.isAlive()) {
                     users.remove(client.getUsername());
@@ -4951,10 +4980,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws RemoteException 
      */
     private void updateUserLeases(String officeCode) throws RemoteException {
+        System.out.println("Office exists? - Server updateUserLease - " + this.database.officeExists(officeCode));
         if (this.database.officeExists(officeCode)) {
             List<AgreementInterface> leases = this.getUserLeases(officeCode);
+            System.out.println("Office Leases size - Server updateUserLease - " + leases.size());
             for (Client client : users.values()) {
+                System.out.println("Logged on:  - Server updateUserLease - " + client.getUsername());
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    System.out.println("Alive:  - Server updateUserLease - " + client.getUsername());
                     client.updateUserLeases(leases);
                 } else if (!client.isAlive()) {
                     users.remove(client.getUsername());
@@ -4971,32 +5004,39 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      */
     @Override
     public List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException {
-        System.out.println("Office Code - Tenancies: " + officeCode);
+        List<AgreementInterface> tempAgreements = new ArrayList();
         List<AgreementInterface> agreements = new ArrayList();
-        List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
-        System.out.println("Agreements (Server - Tenancies): " + tempAgreements);
-        System.out.println("Agreements for Office (Server - Tenancies): " + tempAgreements.size());
+        List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
         AgreementInterface tempAgreement = null;
         int i = 0;
-        int tenCount = 0;
-        for(AgreementInterface temp : tempAgreements) {
+        int count = 0;
+        for(AgreementInterface temp : officeAgreements) {
             if(temp instanceof TenancyInterface) {
-            tenCount++;
+                count++;
             }
         }
-        while (i < 5 && i <= tenCount) {
-            for (AgreementInterface temp : tempAgreements) {
+        while (i < count) {
+            for (AgreementInterface temp : officeAgreements) {
                 if (tempAgreement != null && temp instanceof TenancyInterface) {
-                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
-                        tempAgreement = temp;
+                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) > 0) {
+                        if (!tempAgreements.contains(temp)) {
+                            tempAgreement = temp;
+                        }
                     }
-                } else if (temp instanceof TenancyInterface) { // tempAgreement == null
+                } else if (temp instanceof TenancyInterface && !tempAgreements.contains(temp)) { // tempAgreement == null
                     tempAgreement = temp;
                 }
             }
-            System.out.println("Tenancies: " + i + "\n" + tempAgreement + "\n");
-            agreements.add(tempAgreement);
+            tempAgreements.add(tempAgreement);
             i++;
+            tempAgreement = null;
+        }
+        int ii = 0;
+        for(AgreementInterface agreement : tempAgreements) {
+            if(ii < 9) {
+                agreements.add(agreement);
+                ii++;
+            }
         }
         return agreements;
     }
@@ -5009,44 +5049,39 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      */
     @Override
     public List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException {
-        System.out.println("Office Code - Leases: " + officeCode);
+        List<AgreementInterface> tempAgreements = new ArrayList();
         List<AgreementInterface> agreements = new ArrayList();
-        List<AgreementInterface> tempAgreements = this.getOffice(officeCode).getAgreements();
-        System.out.println("Agreements (Server - Leases): " + tempAgreements);
-        System.out.println("Agreements for Office (Server - Leases): " + tempAgreements.size());
-        int i = 0;
+        List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
         AgreementInterface tempAgreement = null;
-//        Iterator myIt = tempAgreements.iterator();
-//        while (i < 15 && !tempAgreements.isEmpty() && myIt.hasNext()) {
-//            AgreementInterface temp = (AgreementInterface) myIt.next();
-//            if (tempAgreement != null && tempAgreement instanceof LeaseInterface) {
-//                if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
-//                    tempAgreement = temp;
-//                }
-//            } else if (tempAgreement instanceof LeaseInterface) { // tempAgreement == null
-//                tempAgreement = temp;
-//            }
-//            agreements.add(tempAgreement);
-//        }
-        int leaseCount = 0;
-        for(AgreementInterface temp : tempAgreements) {
+        int i = 0;
+        int count = 0;
+        for(AgreementInterface temp : officeAgreements) {
             if(temp instanceof LeaseInterface) {
-            leaseCount++;
+                count++;
             }
         }
-        while (i < 5 && i < leaseCount) {
-            for (AgreementInterface temp : tempAgreements) {
+        while (i < count) {
+            for (AgreementInterface temp : officeAgreements) {
                 if (tempAgreement != null && temp instanceof LeaseInterface) {
-                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) < 0) {
-                        tempAgreement = temp;
+                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) > 0) {
+                        if (!tempAgreements.contains(temp)) {
+                            tempAgreement = temp;
+                        }
                     }
-                } else if (temp instanceof LeaseInterface) { // tempAgreement == null
+                } else if (temp instanceof LeaseInterface && !tempAgreements.contains(temp)) { // tempAgreement == null
                     tempAgreement = temp;
                 }
             }
-            System.out.println("Leases: " + i + "\n" + tempAgreement + "\n");
-            agreements.add(tempAgreement);
+            tempAgreements.add(tempAgreement);
             i++;
+            tempAgreement = null;
+        }
+        int ii = 0;
+        for(AgreementInterface agreement : tempAgreements) {
+            if(ii < 9) {
+                agreements.add(agreement);
+                ii++;
+            }
         }
         return agreements;
     }
@@ -5057,10 +5092,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @throws RemoteException 
      */
     private void updateUserRentAccounts(String officeCode) throws RemoteException {
+        System.out.println("Office exists? - Server updateUserRentAcc - " + this.database.officeExists(officeCode));
         if (this.database.officeExists(officeCode)) {
             List<AccountInterface> accounts = this.getUserRentAccounts(officeCode);
+            System.out.println("Office RentAccs size - Server updateUserRentAcc - " + accounts.size());
             for (Client client : users.values()) {
+                System.out.println("Logged on:  - Server updateUserRentAcc - " + client.getUsername());
                 if (client.isAlive() && officeCode.equals(client.getOfficeCode())) {
+                    System.out.println("Alive:  - Server updateUserRentAcc - " + client.getUsername());
                     client.updateUserRentAccounts(accounts);
                 } else if (!client.isAlive()) {
                     users.remove(client.getUsername());
@@ -5077,22 +5116,39 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      */
     @Override
     public List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
+        List<AccountInterface> tempAccounts = new ArrayList();
         List<AccountInterface> accounts = new ArrayList();
-        List<AccountInterface> tempAccounts = this.getOffice(officeCode).getAccounts();
-        int i = 0;
+        List<AccountInterface> officeAccounts = this.getOffice(officeCode).getAccounts();
         AccountInterface tempAccount = null;
-        while (i < 15 && !tempAccounts.isEmpty()) {
-            for (AccountInterface temp : tempAccounts) {
-                if (temp instanceof RentAccountInterface && tempAccount != null) {
-                    if (tempAccount.getBalance() > temp.getBalance()) {
-                        tempAccount = temp;
+        int i = 0;
+        int count = 0;
+        for(AccountInterface temp : officeAccounts) {
+            if(temp instanceof RentAccountInterface) {
+                count++;
+            }
+        }
+        while (i < count) {
+            for (AccountInterface temp : officeAccounts) {
+                if (tempAccount != null && temp instanceof RentAccountInterface) {
+                    if (temp.getBalance() > temp.getBalance()) {
+                        if (!tempAccounts.contains(temp)) {
+                            tempAccount = temp;
+                        }
                     }
-                } else if (temp instanceof RentAccountInterface && tempAccount == null) {
+                } else if (temp instanceof RentAccountInterface && !tempAccounts.contains(temp)) { // tempAgreement == null
                     tempAccount = temp;
                 }
             }
-            accounts.add((RentAccountInterface) tempAccount);
+            tempAccounts.add(tempAccount);
             i++;
+            tempAccount = null;
+        }
+        int ii = 0;
+        for(AccountInterface agreement : tempAccounts) {
+            if(ii < 9) {
+                accounts.add(agreement);
+                ii++;
+            }
         }
         return accounts;
     }

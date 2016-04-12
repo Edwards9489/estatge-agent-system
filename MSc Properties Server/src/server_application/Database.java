@@ -40,6 +40,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -316,7 +317,7 @@ public class Database {
     }
     
     private void loadSuperUser() throws RemoteException, SQLException {
-        String sql = "select username, employeeRef, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate from users where username='ADMIN'";
+        String sql = "select username, employeeRef, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete from users where username='ADMIN'";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
             
@@ -327,11 +328,13 @@ public class Database {
                 boolean read = results.getBoolean("otherRead");
                 boolean write = results.getBoolean("otherWrite");
                 boolean update = results.getBoolean("otherUpdate");
+                boolean delete = results.getBoolean("otherDelete");
                 boolean employeeRead = results.getBoolean("employeeRead");
                 boolean employeeWrite = results.getBoolean("employeeWrite");
                 boolean employeeUpdate = results.getBoolean("employeeUpdate");
+                boolean employeeDelete = results.getBoolean("employeeDelete");
                 UserImpl temp = new UserImpl(employeeRef, -1, username, password, null);
-                temp.setUserPermissions(read, write, update, employeeRead, employeeWrite, employeeUpdate);
+                temp.setUserPermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete);
                 
                 users.put(username, temp);
             }
@@ -1451,6 +1454,9 @@ public class Database {
      * @throws java.rmi.RemoteException
      */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException, RemoteException {
+        System.out.println("Is address not null? - Database createPersonAddr: " + address != null);
+        System.out.println("Does " + address.getAddressUsageRef() + " address usage not exist? - Database createPersonAddr: " + !this.addressUsageExists(address.getAddressUsageRef()));
+        System.out.println("Does person exist? - Database createPersonAddr: " + this.personExists(personRef));
         if (address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
             String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
@@ -1468,6 +1474,7 @@ public class Database {
                 addressUsages.put(address.getAddressUsageRef(), address);
                 notes.put(address.getNote().getReference(), address.getNote());
             }
+            this.updatePerson(personRef);
         }
     }
 
@@ -1608,6 +1615,7 @@ public class Database {
                 addressUsages.put(address.getAddressUsageRef(), address);
                 notes.put(address.getNote().getReference(), address.getNote());
             }
+            this.updateApplication(appRef);
         }
     }
 
@@ -2474,6 +2482,7 @@ public class Database {
      * @throws RemoteException
      */
     public void createAddress(Address address) throws SQLException, RemoteException {
+        System.out.println("Address does not exist? - createAddressDatabase - " + !this.addressExists(address.getAddressRef()));
         if (!this.addressExists(address.getAddressRef())) {
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
                     + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) "
@@ -2650,8 +2659,9 @@ public class Database {
      * @throws RemoteException
      */
     public void createProperty(Property property) throws SQLException, RemoteException {
+        System.out.println("Property does not exists? - Database" + !this.propertyExists(property.getPropRef()));
         if (!this.propertyExists(property.getPropRef())) {
-            String insertSql = "insert into properties (propertyRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
+            String insertSql = "insert into properties (propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
                     + "propSubTypeCode, propStatus, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
@@ -2682,7 +2692,7 @@ public class Database {
         if (this.propertyExists(propRef)) {
             PropertyInterface property = this.getProperty(propRef);
             String updateSql = "update properties set addressRef=?, acquiredDate=?, leaseEndDate=?, "
-                    + "propTypeCode=?, propSubTypeCode=?, propStatus=? where propertyRef=?";
+                    + "propTypeCode=?, propSubTypeCode=?, propStatus=? where propRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setInt(col++, property.getAddress().getAddressRef());
@@ -2707,7 +2717,7 @@ public class Database {
      */
     public void deleteProperty(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef) && this.canDeleteProperty(propRef)) {
-            String deleteSql = "delete from Properties where propRef=" + propRef;
+            String deleteSql = "delete from properties where propRef=" + propRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.properties.remove(propRef);
@@ -3422,6 +3432,7 @@ public class Database {
      * @throws RemoteException
      */
     public void createPerson(Person person) throws SQLException, RemoteException {
+        System.out.println("Person exists? - createPersonDatabase - " + !this.personExists(person.getPersonRef()));
         if (!this.personExists(person.getPersonRef())) {
             String insertSql = "insert into people (personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
                     + "nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, "
@@ -3482,6 +3493,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
+            System.out.println("Person Modification: " + person.getLastModification());
             this.createModifiedBy("personModifications", person.getLastModification(), person.getPersonRef());
         }
     }
@@ -3552,9 +3564,9 @@ public class Database {
 
                 Element maritalStatus;
                 if (this.maritalStatusExists(results.getString("maritalStatusCode"))) {
-                    maritalStatus = this.getTitle(results.getString("maritalStatusCode"));
+                    maritalStatus = this.getMaritalStatus(results.getString("maritalStatusCode"));
                 } else {
-                    maritalStatus = this.getTitle(results.getString("maritalStatusCode")); // Create ERROR Code
+                    maritalStatus = this.getMaritalStatus(results.getString("maritalStatusCode")); // Create ERROR Code
                 }
 
                 Element ethnicOrigin;
@@ -4241,6 +4253,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
+            System.out.println("Application Modification: " + application.getLastModification());
             this.createModifiedBy("applicationModifications", application.getLastModification(), application.getApplicationRef());
         }
     }
@@ -4315,7 +4328,8 @@ public class Database {
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
 
-                Application temp = new Application(appRef, appCorrName, appStartDate, appStatus, createdBy, createdDate);
+                Application temp = new Application(appRef, appCorrName, appStartDate, createdBy, createdDate);
+                temp.setAppStatusCode(appStatus);
 
                 if (appEndDate != null) {
                     temp.setEndDate(appEndDate, null);
@@ -4828,6 +4842,7 @@ public class Database {
      * @throws RemoteException
      */
     public void updateOffice(String officeCode) throws SQLException, RemoteException {
+        System.out.println("Office exists? - Database updateOffice - " + this.officeExists(officeCode));
         if (this.officeExists(officeCode)) {
             OfficeInterface office = this.getOffice(officeCode);
             String updateSql = "update Offices set addressRef=?, startDate=?, endDate=? where officeCode=?";
@@ -4840,6 +4855,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
+            System.out.println("Office Last Modification: " + office.getLastModification());
             this.createModifiedBy("officeModifications", office.getLastModification(), office.getOfficeCode());
         }
     }
@@ -5072,8 +5088,8 @@ public class Database {
     public void createJobRole(JobRole jobRole) throws SQLException, RemoteException {
         if (!this.jobRoleExists(jobRole.getJobRoleCode())) {
             String insertSql = "insert into jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, "
-                    + "cur, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate, "
-                    + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "cur, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, "
+                    + "createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, jobRole.getJobRoleCode());
@@ -5085,9 +5101,11 @@ public class Database {
                 insertStat.setBoolean(col++, jobRole.getRead());
                 insertStat.setBoolean(col++, jobRole.getWrite());
                 insertStat.setBoolean(col++, jobRole.getUpdate());
+                insertStat.setBoolean(col++, jobRole.getDelete());
                 insertStat.setBoolean(col++, jobRole.getEmployeeRead());
                 insertStat.setBoolean(col++, jobRole.getEmployeeWrite());
                 insertStat.setBoolean(col++, jobRole.getEmployeeUpdate());
+                insertStat.setBoolean(col++, jobRole.getEmployeeDelete());
                 insertStat.setString(col++, jobRole.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(jobRole.getCreatedDate()));
                 insertStat.executeUpdate();
@@ -5109,8 +5127,8 @@ public class Database {
         if (this.jobRoleExists(jobRoleCode)) {
             JobRoleInterface jobRole = this.getJobRole(jobRoleCode);
             String updateSql = "update jobRoles set jobTitle=?, jobDescription=?, salary=?, cur=?, "
-                    + "otherRead=?, otherWrite=?, otherUpdate=?, employeeRead=?, employeeWrite=?, "
-                    + "employeeUpdate=? where jobRoleCode=?";
+                    + "otherRead=?, otherWrite=?, otherUpdate=?, otherDelete=?, employeeRead=?, employeeWrite=?, "
+                    + "employeeUpdate=?, employeeDelete=? where jobRoleCode=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, jobRole.getJobTitle());
@@ -5120,9 +5138,11 @@ public class Database {
                 updateStat.setBoolean(col++, jobRole.getRead());
                 updateStat.setBoolean(col++, jobRole.getWrite());
                 updateStat.setBoolean(col++, jobRole.getUpdate());
+                updateStat.setBoolean(col++, jobRole.getDelete());
                 updateStat.setBoolean(col++, jobRole.getEmployeeRead());
                 updateStat.setBoolean(col++, jobRole.getEmployeeWrite());
                 updateStat.setBoolean(col++, jobRole.getEmployeeUpdate());
+                updateStat.setBoolean(col++, jobRole.getEmployeeDelete());
                 updateStat.setString(col++, jobRole.getJobRoleCode());
                 updateStat.executeUpdate();
                 updateStat.close();
@@ -5174,8 +5194,8 @@ public class Database {
     private void loadJobRoles() throws SQLException, RemoteException {
         this.jobRoles.clear();
         String sql = "select jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, "
-                + "otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, "
-                + "employeeUpdate, createdBy, createdDate from jobroles order by createdDate";
+                + "otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, "
+                + "employeeUpdate, employeeDelete, createdBy, createdDate from jobroles order by createdDate";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -5187,15 +5207,17 @@ public class Database {
                 boolean read = results.getBoolean("otherRead");
                 boolean write = results.getBoolean("otherWrite");
                 boolean update = results.getBoolean("otherUpdate");
+                boolean delete = results.getBoolean("otherDelete");
                 boolean employeeRead = results.getBoolean("employeeRead");
                 boolean employeeWrite = results.getBoolean("employeeWrite");
                 boolean employeeUpdate = results.getBoolean("employeeUpdate");
+                boolean employeeDelete = results.getBoolean("employeeDelete");
                 double salary = results.getDouble("salary");
                 boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
 
-                JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, read, write, update, employeeRead, employeeWrite, employeeUpdate, createdBy, createdDate);
+                JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, createdBy, createdDate);
                 temp.setCurrent(current);
 
                 this.jobRoles.put(temp.getJobRoleCode(), temp);
@@ -5986,6 +6008,7 @@ public class Database {
      * @throws RemoteException
      */
     public void createTenancy(Tenancy tenancy) throws SQLException, RemoteException {
+        System.out.println("Tenancy does not exist? - Database createTenancy - " + !this.tenancyExists(tenancy.getAgreementRef()));
         if (!this.tenancyExists(tenancy.getAgreementRef())) {
             String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
                     + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -6877,7 +6900,7 @@ public class Database {
                             this.contracts.put(temp.getAgreementRef(), temp);
                             employee.createContract(temp, null);
                             UserImpl user = (UserImpl) employee.getUser();
-                            user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate());
+                            user.setUserPermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getDelete(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), jobRole.getEmployeeDelete());
                             Office office = (Office) this.getOffice(officeCode);
                             office.createAgreement(temp, null);
                             this.loadContractMods(temp.getAgreementRef(), this.loadModMap("contractModifications", temp.getAgreementRef()));
@@ -7050,6 +7073,7 @@ public class Database {
      * @throws RemoteException
      */
     public void createRentAccount(RentAccount rentAcc) throws SQLException, RemoteException {
+        System.out.println("Rent Account does not exist? - Database createRentAcc - " + !this.rentAccountExists(rentAcc.getAccRef()));
         if (!this.rentAccountExists(rentAcc.getAccRef())) {
             String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, balance, "
                     + "officeCode, rent, tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -7095,6 +7119,7 @@ public class Database {
      * @throws RemoteException
      */
     public void updateRentAccount(int rentAccRef) throws SQLException, RemoteException {
+        System.out.println("RentAcc exists? - Database updateRentAcc - " + this.rentAccountExists(rentAccRef));
         if (this.rentAccountExists(rentAccRef)) {
             RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             String updateSql = "update rentAccounts set name=?, startDate=?, endDate=?, "
@@ -7110,6 +7135,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
+            System.out.println("RentAcc Modification - Database updateRentAcc - " + rentAcc.getLastModification());
             this.createModifiedBy("rentAccountModifications", rentAcc.getLastModification(), rentAcc.getAccRef());
         }
     }
@@ -7315,6 +7341,9 @@ public class Database {
      * @throws RemoteException
      */
     public void createRentAccountTransaction(int rentAccRef, Transaction transaction) throws SQLException, RemoteException {
+        System.out.println("transaction is not null? - Database createRentAccTran - " + transaction != null);
+        System.out.println("transaction does not exist? - Database createRentAccTran - " + !this.transactionExists(transaction.getTransactionRef()));
+        System.out.println("rentAcc exists? - Database createRentAccTran - " + this.rentAccountExists(rentAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.rentAccountExists(rentAccRef)) {
             this.createTransaction("rentTransactions", transaction);
         }
@@ -7990,7 +8019,7 @@ public class Database {
     public void createUser(User user) throws SQLException, RemoteException {
         if ((!this.userExists(user.getUsername())) && (this.employeeExists(user.getEmployeeRef()) || user.getUsername().equals("ADMIN"))) {
             String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
-                    + "otherUpdate, employeeRead, employeeWrite, employeeUpdate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, user.getEmployeeRef());
@@ -7999,9 +8028,11 @@ public class Database {
                 insertStat.setBoolean(col++, user.getRead());
                 insertStat.setBoolean(col++, user.getWrite());
                 insertStat.setBoolean(col++, user.getUpdate());
+                insertStat.setBoolean(col++, user.getDelete());
                 insertStat.setBoolean(col++, user.getEmployeeRead());
                 insertStat.setBoolean(col++, user.getEmployeeWrite());
                 insertStat.setBoolean(col++, user.getEmployeeUpdate());
+                insertStat.setBoolean(col++, user.getEmployeeDelete());
                 insertStat.executeUpdate();
                 insertStat.close();
             }
@@ -8012,17 +8043,19 @@ public class Database {
     public void updateUser(String username) throws SQLException, RemoteException {
         if (this.userExists(username)) {
             User user = this.getUser(username);
-            String updateSql = "update users set password=?, otherRead=?, otherWrite=?, otherUpdate=?, "
-                    + "employeeRead=?, employeeWrite=?, employeeUpdate=? where username=? and employeeRef=?";
+            String updateSql = "update users set password=?, otherRead=?, otherWrite=?, otherUpdate=?, otherDelete=?, "
+                    + "employeeRead=?, employeeWrite=?, employeeUpdate=?, employeeDelete=? where username=? and employeeRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, user.getPassword());
                 updateStat.setBoolean(col++, user.getRead());
                 updateStat.setBoolean(col++, user.getWrite());
                 updateStat.setBoolean(col++, user.getUpdate());
+                updateStat.setBoolean(col++, user.getDelete());
                 updateStat.setBoolean(col++, user.getEmployeeRead());
                 updateStat.setBoolean(col++, user.getEmployeeWrite());
                 updateStat.setBoolean(col++, user.getEmployeeUpdate());
+                updateStat.setBoolean(col++, user.getEmployeeDelete());
                 updateStat.setString(col++, user.getUsername());
                 updateStat.setInt(col++, user.getEmployeeRef());
                 updateStat.executeUpdate();
@@ -8359,9 +8392,23 @@ public class Database {
         }
         return 0;
     }
+    
+    public int getAgreementRef() {
+        int ten = countTenancies();
+        int lease = countLeases();
+        int contract = countContracts();
+        return Collections.max(Arrays.asList(ten, lease, contract));
+    }
+    
+    public int getAccountRef() {
+        int rentAcc = countRentAccounts();
+        int leaseAcc = countLeaseAccounts();
+        int empAcc = countEmployeeAccounts();
+        return Collections.max(Arrays.asList(rentAcc, leaseAcc, empAcc));
+    }
 
-    public int countTenancies() {
-        String selectSql = "select max(tenancyRef) as count from tenancies";
+    private int countTenancies() {
+        String selectSql = "select max(tenancyRef) as count from tenancies, leases, contracts";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
             results.next();
@@ -8374,7 +8421,7 @@ public class Database {
         return 0;
     }
 
-    public int countLeases() {
+    private int countLeases() {
         String selectSql = "select max(leaseRef) as count from leases";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
@@ -8388,7 +8435,7 @@ public class Database {
         return 0;
     }
 
-    public int countContracts() {
+    private int countContracts() {
         String selectSql = "select max(contractRef) as count from contracts";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
@@ -8402,7 +8449,7 @@ public class Database {
         return 0;
     }
 
-    public int countRentAccounts() {
+    private int countRentAccounts() {
         String selectSql = "select max(rentAccRef) as count from rentAccounts";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
@@ -8416,7 +8463,7 @@ public class Database {
         return 0;
     }
 
-    public int countLeaseAccounts() {
+    private int countLeaseAccounts() {
         String selectSql = "select max(leaseAccRef) as count from leaseAccounts";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
@@ -8430,7 +8477,7 @@ public class Database {
         return 0;
     }
 
-    public int countEmployeeAccounts() {
+    private int countEmployeeAccounts() {
         String selectSql = "select max(employeeAccRef) as count from employeeAccounts";
         try (Statement statement = con.createStatement()) {
             ResultSet results = statement.executeQuery(selectSql);
@@ -8461,7 +8508,7 @@ public class Database {
     public int countTransactions() throws RemoteException {
         int result = 0;
         List<TransactionInterface> transactionsList = this.getTransactions();
-        if (transactionsList.isEmpty()) {
+        if (!transactionsList.isEmpty()) {
             for (TransactionInterface temp : transactionsList) {
                 try {
                     if (temp.getTransactionRef() > result) {
@@ -8478,7 +8525,7 @@ public class Database {
     public int countAddressUsages() {
         int result = 0;
         List<AddressUsageInterface> addressUsagesList = this.getAddressUsages();
-        if (addressUsagesList.isEmpty()) {
+        if (!addressUsagesList.isEmpty()) {
             for (AddressUsageInterface temp : addressUsagesList) {
                 try {
                     if (temp.getAddressUsageRef() > result) {
@@ -8495,7 +8542,7 @@ public class Database {
     public int countContacts() {
         int result = 0;
         List<ContactInterface> contactList = this.getContacts();
-        if (contactList.isEmpty()) {
+        if (!contactList.isEmpty()) {
             for (ContactInterface temp : contactList) {
                 try {
                     if (temp.getContactRef() > result) {
@@ -8512,7 +8559,7 @@ public class Database {
     public int countNotes() {
         int result = 0;
         List<Note> notesList = this.getNotes();
-        if (notesList.isEmpty()) {
+        if (!notesList.isEmpty()) {
             for (Note temp : notesList) {
                 try {
                     if (temp.getReference() > result) {
@@ -8529,7 +8576,7 @@ public class Database {
     public int countDocuments() throws RemoteException {
         int result = 0;
         List<Document> documentsList = this.getDocuments();
-        if (documentsList.isEmpty()) {
+        if (!documentsList.isEmpty()) {
             for (Document temp : documentsList) {
                 try {
                     if (temp.getDocumentRef() > result) {

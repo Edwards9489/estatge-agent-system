@@ -91,14 +91,11 @@ public class LoginForm extends JFrame {
                 try {
                     ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{address, envir, user, new String(password)});
                     if (client.isServerSet()){
-                        System.out.println("Logged in: " + client.isUser(user, new String(password)));
                         if(client.isUser(user, new String(password))) {
-                            System.out.println("TEST1");
                             HomeForm home = new HomeForm(client);
                             home.setVisible(true);
                             setVisible(false);
                         } else {
-                            System.out.println("TEST2");
                             invUser = true;
                             layoutComponents();
                         }

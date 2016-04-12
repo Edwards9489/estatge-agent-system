@@ -11,12 +11,14 @@ import interfaces.AgreementInterface;
 import interfaces.ContractInterface;
 import interfaces.LeaseInterface;
 import interfaces.OfficeInterface;
+import interfaces.PersonInterface;
 import interfaces.RentAccountInterface;
 import interfaces.TenancyInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -31,7 +33,7 @@ public class TestClient2  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "DEDWARDSpassword"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "DEDWARDS", "DEDWARDS"});
             client.addObserver(this);
             
             
@@ -58,27 +60,28 @@ public class TestClient2  implements Observer {
 //                System.out.println("MNC Office Agreements: " + office.getAgreements().size());
 //            }
             
-            List<AgreementInterface> tenancies = client.getUserTenancies();
-            List<AgreementInterface> leases = client.getUserLeases();
-            List<AccountInterface> rentAccounts = client.getUserRentAccounts();
-            System.out.println("Tenancies - " + tenancies.size());
-            
-            for (AgreementInterface temp : tenancies) {
-                System.out.println(temp.getAgreementRef() + " : " + temp.getAgreementName());
-            }
-            
-            System.out.println("\n\nLeases - " + leases.size());
-            
-            for (AgreementInterface temp : leases) {
-                System.out.println(temp.getAgreementRef() + " : " + temp.getAgreementName());
-            }
-            
-            System.out.println("\n\nRent Accounts - " + rentAccounts.size());
-            
-            for (AccountInterface temp : rentAccounts) {
-                System.out.println(temp.getAccRef() + " : " + temp.getAccName());
-            }
-            
+//            List<AgreementInterface> tenancies = client.getUserTenancies();
+//            List<AgreementInterface> leases = client.getUserLeases();
+//            List<AccountInterface> rentAccounts = client.getUserRentAccounts();
+//            System.out.println("\n\nTenancies - " + tenancies.size());
+//            
+//            for (AgreementInterface temp : tenancies) {
+//                System.out.println("\n" + temp.getAgreementRef() + " : " + temp.getAgreementName());
+//            }
+//            
+//            System.out.println("\nLeases - " + leases.size());
+//            
+//            for (AgreementInterface temp : leases) {
+//                System.out.println("\n" + temp.getAgreementRef() + " : " + temp.getAgreementName());
+//            }
+//            
+//            System.out.println("\nRent Accounts - " + rentAccounts.size());
+//            
+//            for (AccountInterface temp : rentAccounts) {
+//                if(temp != null) {
+//                    System.out.println("\n" + temp.getAccRef() + " : " + temp.getAccName());
+//                }
+//            }
 //            OfficeInterface office = client.getOffice(client.getOfficeCode());
 //            List<AgreementInterface> agreements = office.getAgreements();
 //            System.out.println("Agreements - " + agreements);
@@ -88,7 +91,20 @@ public class TestClient2  implements Observer {
 //            System.out.println("Office Agreements - " + agreements.size());
 //            System.out.println("Office Tenancies: " + tenancies.size());
 //            System.out.println("Office Leases: " + leases.size());
-            //System.out.println("Office Rent Accounts: " + client.getUserRentAccounts().size());
+//            System.out.println("Office Rent Accounts: " + client.getUserRentAccounts().size());
+
+//            List<PersonInterface> people = client.getPeople(null, null, null, null, null, null, null, null, null, null, null, null, null, "ADMIN", null);
+//            System.out.println("\nSystem People - " + people.size());
+//            
+//            for (PersonInterface temp : people) {
+//                if(temp != null) {
+//                    System.out.println("\n" + temp.getPersonRef() + " : " + temp.getName() + " : Marital Status: " + temp.getMaritalStatus());
+//                }
+//            }
+            
+            
+            
+            System.out.println("Create Application: " + client.createApplication("TEST8", new Date(), 16, "APPL", 21, new Date()));
             
             client.logout();
             

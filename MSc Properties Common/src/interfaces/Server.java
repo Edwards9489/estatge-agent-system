@@ -122,11 +122,12 @@ public interface Server extends Remote {
     int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException;
     int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException;
     int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException;
+    int updateEmployeePassword(int employeeRef, String password, String modifiedBy) throws RemoteException;
     int deleteEmployee(int eRef) throws RemoteException;
     int createEmployeeNote(int eRef, String comment, String createdBy) throws RemoteException;
     int updateEmployeeNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException;
     int deleteEmployeeNote(int eRef, int nRef, String modifiedBy) throws RemoteException;
-    int createLandlord(int lRef, String createdBy) throws RemoteException;
+    int createLandlord(int pRef, String createdBy) throws RemoteException;
     int deleteLandlord(int lRef) throws RemoteException;
     int createLandlordNote(int lRef, String comment, String createdBy) throws RemoteException;
     int updateLandlordNote(int lRef, int nRef, String comment, String modifiedBy) throws RemoteException;
@@ -144,10 +145,10 @@ public interface Server extends Remote {
     int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment, String createdBy) throws RemoteException;
     int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, String modifiedBy) throws RemoteException;
     int deletePropertyElement(int eRef, int pRef) throws RemoteException;
-    int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, 
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy) throws RemoteException;
-    int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write, 
-            boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String modifiedBy) throws RemoteException;
+    int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, boolean update,
+            boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String createdBy) throws RemoteException;
+    int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write, boolean update,
+            boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String modifiedBy) throws RemoteException;
     int deleteJobRole(String officeCode) throws RemoteException;
     int createJobRoleNote(String officeCode, String comment, String createdBy) throws RemoteException;
     int updateJobRoleNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException;
@@ -339,7 +340,7 @@ public interface Server extends Remote {
     List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException;
     List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException;
-    List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
+    List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     LeaseAccountInterface getLeaseLeaseAcc(int leaseRef) throws RemoteException;
     List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException;
     List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException;

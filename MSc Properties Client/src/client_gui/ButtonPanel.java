@@ -5,7 +5,6 @@
  */
 package client_gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,9 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -37,149 +34,151 @@ public class ButtonPanel extends JPanel {
 	private JButton systemConfigButton;
 	private StringListener listener = null;
 	
-	public ButtonPanel() {
-		
-		appButton = new JButton("Applications");
-		propButton = new JButton("Properties");
-		tenButton = new JButton("Tenancies");
-		leaseButton = new JButton("Leases");
-		contractButton = new JButton("Contracts");
-		rentAccButton = new JButton("Rent Accounts");
-		leaseAccButton = new JButton("Lease Accounts");
-		employeeAccButton = new JButton("Employee Accounts");
-                reportingButton = new JButton("Reporting");
-		systemConfigButton = new JButton("System Config");
-                
-                Dimension buttonDim = employeeAccButton.getPreferredSize();
-                appButton.setPreferredSize(buttonDim);
-                propButton.setPreferredSize(buttonDim);
-                tenButton.setPreferredSize(buttonDim);
-                leaseButton.setPreferredSize(buttonDim);
-                contractButton.setPreferredSize(buttonDim);
-                rentAccButton.setPreferredSize(buttonDim);
-                leaseAccButton.setPreferredSize(buttonDim);
-                reportingButton.setPreferredSize(buttonDim);
-                systemConfigButton.setPreferredSize(buttonDim);
-                
-                
-		appButton.setMnemonic(KeyEvent.VK_A);
-		propButton.setMnemonic(KeyEvent.VK_P);
-		tenButton.setMnemonic(KeyEvent.VK_T);
-		leaseButton.setMnemonic(KeyEvent.VK_L);
-		contractButton.setMnemonic(KeyEvent.VK_C);
-		rentAccButton.setMnemonic(KeyEvent.VK_R);
-		leaseAccButton.setMnemonic(KeyEvent.VK_N);
-		employeeAccButton.setMnemonic(KeyEvent.VK_E);
-		reportingButton.setMnemonic(KeyEvent.VK_F);
-		systemConfigButton.setMnemonic(KeyEvent.VK_S);
-		
-		appButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		propButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		tenButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		leaseButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		contractButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		rentAccButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(appButton.getText());
-				}
-			}
-		});
-		
-		leaseAccButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(leaseAccButton.getText());
-				}
-			}
-		});
-		
-		employeeAccButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(employeeAccButton.getText());
-				}
-			}
-		});
-		
-		reportingButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(reportingButton.getText());
-				}
-			}
-		});
-		
-		systemConfigButton.addActionListener(new ActionListener() {
-                        @Override
-			public void actionPerformed(ActionEvent ev) {
-				if(listener != null) {
-					listener.textOmitted(systemConfigButton.getText());
-				}
-			}
-		});
-                
-                // Set up Border for ButtonPanel
-                Border innerBorder = BorderFactory.createEtchedBorder();
-                Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
-                setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
-                
-                setLayout(new GridBagLayout());
-                layoutComponents();
-                setVisible(true);
-	}
+    public ButtonPanel() {
+        layoutComponents();
+    }
+    
+    
+        
 	
-	public void setButtonListener(StringListener ev) {
-		listener = ev;
-	}
+    public void setButtonListener(StringListener ev) {
+        listener = ev;
+    }
 	
-	private void layoutComponents() {
-            GridBagConstraints gc = new GridBagConstraints();
+    private void layoutComponents() {
+        appButton = new JButton("Applications");
+        propButton = new JButton("Properties");
+        tenButton = new JButton("Tenancies");
+        leaseButton = new JButton("Leases");
+        contractButton = new JButton("Contracts");
+        rentAccButton = new JButton("Rent Accounts");
+        leaseAccButton = new JButton("Lease Accounts");
+        employeeAccButton = new JButton("Employee Accounts");
+        reportingButton = new JButton("Reporting");
+        systemConfigButton = new JButton("System Config");
 
+        Dimension buttonDim = employeeAccButton.getPreferredSize();
+        appButton.setPreferredSize(buttonDim);
+        propButton.setPreferredSize(buttonDim);
+        tenButton.setPreferredSize(buttonDim);
+        leaseButton.setPreferredSize(buttonDim);
+        contractButton.setPreferredSize(buttonDim);
+        rentAccButton.setPreferredSize(buttonDim);
+        leaseAccButton.setPreferredSize(buttonDim);
+        reportingButton.setPreferredSize(buttonDim);
+        systemConfigButton.setPreferredSize(buttonDim);
+
+
+        appButton.setMnemonic(KeyEvent.VK_A);
+        propButton.setMnemonic(KeyEvent.VK_P);
+        tenButton.setMnemonic(KeyEvent.VK_T);
+        leaseButton.setMnemonic(KeyEvent.VK_L);
+        contractButton.setMnemonic(KeyEvent.VK_C);
+        rentAccButton.setMnemonic(KeyEvent.VK_R);
+        leaseAccButton.setMnemonic(KeyEvent.VK_N);
+        employeeAccButton.setMnemonic(KeyEvent.VK_E);
+        reportingButton.setMnemonic(KeyEvent.VK_F);
+        systemConfigButton.setMnemonic(KeyEvent.VK_S);
+
+        appButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        propButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        tenButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        leaseButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        contractButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        rentAccButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(appButton.getText());
+                        }
+                }
+        });
+
+        leaseAccButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(leaseAccButton.getText());
+                        }
+                }
+        });
+
+        employeeAccButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(employeeAccButton.getText());
+                        }
+                }
+        });
+
+        reportingButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(reportingButton.getText());
+                        }
+                }
+        });
+
+        systemConfigButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(systemConfigButton.getText());
+                        }
+                }
+        });
+
+        // Set up Border for ButtonPanel
+        Border innerBorder = BorderFactory.createEtchedBorder();
+        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
+        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+
+        setLayout(new GridBagLayout());
+        
+        GridBagConstraints gc = new GridBagConstraints();
+        
         gc.gridx = 0; // zero x is at far left of screen
         gc.gridy = 0; // zero y is at top of screen
 

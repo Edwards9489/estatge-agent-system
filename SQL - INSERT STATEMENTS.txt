@@ -169,6 +169,8 @@ INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdB
 
 INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('TER', 'Terraced', 60, NULL, 1, 'ADMIN', '2016-01-01');
 
+INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('NA', 'Not Applicable', 319, NULL, 1, 'ADMIN', '2016-01-01');
+
 
 PropertyElements
 
@@ -265,6 +267,8 @@ INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (19, NULL, NULL, NULL, NULL, '58', 'Pretoria Road', 'Tottenham', 'London', 'England', 'N17 8EL', 88, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (20, NULL, NULL, NULL, NULL, '1', 'Matt Busby Way', 'Old Trafford', 'Manchester', 'England', 'M16 0RA', 89, NULL, 'ADMIN', '2016-01-01');
+
+INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (21, NULL, NULL, NULL, NULL, '12', 'Oxford Street', 'City of Manchester', 'Manchester', 'England', 'M1 5EJ', 318, NULL, 'DEDWARDS', '2016-01-01');
 
 
 People
@@ -530,7 +534,7 @@ INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, dou
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (20, 2, 'LVL', NULL, 'First Floor', '2014-09-20', 168, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (161, 2, 'CLN', 100.00, NULL, '2014-09-20', 314, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (161, 2, 'CLN', 100.00, NULL, '2014-09-20', 315, NULL, 'ADMIN', '2016-01-01');
 
 
 
@@ -677,7 +681,7 @@ INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, dou
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (80, 8, 'LVL', NULL, 'Ground Floor', '2015-12-20', 228, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (162, 8, 'CLN', 100.00, NULL, '2015-12-20', 315, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (162, 8, 'CLN', 100.00, NULL, '2015-12-20', 316, NULL, 'ADMIN', '2016-01-01');
 
 
 
@@ -870,7 +874,7 @@ INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, dou
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (160, 16, 'LVL', NULL, 'Ground Floor', '2015-12-03', 308, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (163, 16, 'CLN', 100.00, NULL, '2015-12-03', 316, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (163, 16, 'CLN', 100.00, NULL, '2015-12-03', 317, NULL, 'ADMIN', '2016-01-01');
 
 
 
@@ -951,25 +955,25 @@ Involved Party - Dwayne, TEST4 and TEST6 - prop 7 - address 11
 
 Tenancies
 
-INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (1, 'MISS P BRINDLE', '2012-04-29', '2016-04-28', 48, 1, 'EDM', 1, 1, 'SEC', 1500.00, 0.0, 'ADMIN', '2016-01-01');
+INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (4, 'MISS P BRINDLE', '2012-04-29', '2016-04-28', 48, 4, 'EDM', 1, 1, 'SEC', 1500.00, 0.0, 'ADMIN', '2016-01-01');
 
-INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (2, 'MISS D ADDAMS', '2015-06-01', '2016-05-31', 12, 2, 'MNC', 2, 3, 'PRO', 800.00, 0.0, 'ADMIN', '2016-01-01');
+INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (18, 'MISS D ADDAMS', '2015-06-01', '2016-05-31', 12, 18, 'MNC', 2, 3, 'PRO', 800.00, 0.0, 'ADMIN', '2016-01-01');
 
-INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (3, 'MR T JEROME, '2012-04-29', '2015-11-11', 24, 3, 'PON', 3, 2, 'SEC', 800.00, 100.0, 'ADMIN', '2016-01-01');
+INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (19, 'MR T JEROME, '2012-04-29', '2015-11-11', 24, 19, 'PON', 3, 2, 'SEC', 800.00, 100.0, 'ADMIN', '2016-01-01');
 
-INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (4, 'MR D EDWARDS', '2015-12-28', '2017-12-27', 24, 4, 'TOT', 4, 6, 'SEC', 1300.00, 0.0, 'ADMIN', '2016-01-01');
+INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (27, 'MR D EDWARDS', '2015-12-28', '2017-12-27', 24, 27, 'TOT', 4, 6, 'SEC', 1300.00, 0.0, 'ADMIN', '2016-01-01');
 
 
 
 RentAccounts
 
-INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (1, 'MISS P BRINDLE', '2012-04-29', 0.0, 'EDM', 1500.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (4, 'MISS P BRINDLE', '2012-04-29', 0.0, 'EDM', 1500.00, 4, 'ADMIN', '2016-01-01');
 
-INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (2, 'MISS D ADDAMS', '2015-06-01', 0.0, 'MNC', 800.00, 2, 'ADMIN', '2016-01-01');
+INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (18, 'MISS D ADDAMS', '2015-06-01', 0.0, 'MNC', 800.00, 18, 'ADMIN', '2016-01-01');
 
-INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (3, 'MR T JEROME', '2015-11-11', 0.0, 'PON', 900.00, 3, 'ADMIN', '2016-01-01');
+INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (19, 'MR T JEROME', '2015-11-11', 0.0, 'PON', 900.00, 19, 'ADMIN', '2016-01-01');
 
-INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (4, 'MR D EDWARDS', '2015-12-28', 0.0, 'TOT', 1300.00, 4, 'ADMIN', '2016-01-01');
+INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (27, 'MR D EDWARDS', '2015-12-28', 0.0, 'TOT', 1300.00, 27, 'ADMIN', '2016-01-01');
 
 
 
@@ -977,35 +981,35 @@ Leases
 
 INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (1, '5 Brook Crescent, Edmonton, London, N9 0DJ', '2012-04-09', '2017-04-08', 60, 1, 'EDM', 1, 450.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (2, '10 Kestrel House, 1 Exter Road, Enfield, London, EN2 3RH', '2014-09-20', '2017-09-19', 36, 2, 'PON', 2, 240.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (10, '10 Kestrel House, 1 Exter Road, Enfield, London, EN2 3RH', '2014-09-20', '2017-09-19', 36, 10, 'PON', 2, 240.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (3, '74 Bridge Street, Old Trafford, Manchester, England, M16 2RJ', '2015-05-12', '2016-05-11', 12, 3, 'MNC', 3, 480.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (17, '74 Bridge Street, Old Trafford, Manchester, England, M16 2RJ', '2015-05-12', '2016-05-11', 12, 17, 'MNC', 3, 480.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (4, '18 St Anns Square, City of Manchester, Manchester, M1 7HQ', '2015-12-03', '2017-12-02', 24, 4, 'MNC', 4, 240.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (23, '18 St Anns Square, City of Manchester, Manchester, M1 7HQ', '2015-12-03', '2017-12-02', 24, 23, 'MNC', 4, 240.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (5, '36 Oxford Street, City of Manchester, Manchester, M1 5EJ', '2014-09-16', '2018-09-15', 48, 5, 'MNC', 5, 105.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (9, '36 Oxford Street, City of Manchester, Manchester, M1 5EJ', '2014-09-16', '2018-09-15', 48, 9, 'MNC', 5, 105.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (6, '52 Fraser Road, Edmonton, London, N9 4ER', '2013-01-12', '2016-01-11', 36, 6, 'EDM', 6, 780.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (5, '52 Fraser Road, Edmonton, London, N9 4ER', '2013-01-12', '2016-01-11', 36, 5, 'EDM', 6, 780.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (7, '4 Highham Road, Tottenham, London, N7 6NF', '2015-12-12', '2018-12-11', 36, 7, 'TOT', 7, 390.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (25, '4 Highham Road, Tottenham, London, N7 6NF', '2015-12-12', '2018-12-11', 36, 25, 'TOT', 7, 390.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (8, '45 Shorpshire House, 10 Linley Road, Tottenham, London, N17 6RP', '2015-12-20', '2019-12-19', 48, 8, 'TOT', 8, 330.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (26, '45 Shorpshire House, 10 Linley Road, Tottenham, London, N17 6RP', '2015-12-20', '2019-12-19', 48, 26, 'TOT', 8, 330.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (9, '12 Church Street, Edmonton, London, N9 9PB', '2014-03-09', '2017-03-08', 36, 9, 'EDM', 9, 585.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (6, '12 Church Street, Edmonton, London, N9 9PB', '2014-03-09', '2017-03-08', 36, 6, 'EDM', 9, 585.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (10, '35 Lister Gardens, Edmonton, London, N18 4ER', '2015-02-12', '2016-02-11', 12, 10, 'EDM', 10, 600.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (13, '35 Lister Gardens, Edmonton, London, N18 4ER', '2015-02-12', '2016-02-11', 12, 13, 'EDM', 10, 600.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (11, '29 Durants Road, Ponders End, London, EN3 7DF', '2015-03-12', '2016-03-11', 12, 11, 'PON', 11, 1170.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (16, '29 Durants Road, Ponders End, London, EN3 7DF', '2015-03-12', '2016-03-11', 12, 16, 'PON', 11, 1170.00, 0, 'ADMIN', '2016-01-01');
 
 INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (12, '2 The Ride, Ponders End, London, EN3 7EE', '2014-10-10', '2017-10-09', 36, 12, 'PON', 12, 600.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (13, '43 Brookfield Road, Edmonton, London, N9 0DN', '2015-11-20', '2018-11-19', 36, 13, 'EDM', 13, 840.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (20, '43 Brookfield Road, Edmonton, London, N9 0DN', '2015-11-20', '2018-11-19', 36, 20, 'EDM', 13, 840.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (14, '13 Alma Road, Ponders End, London, EN3 4UL', '2014-09-20', '2017-09-19', 36, 14, 'PON', 14, 270.00, 1, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (11, '13 Alma Road, Ponders End, London, EN3 4UL', '2014-09-20', '2017-09-19', 36, 11, 'PON', 14, 270.00, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (15, '58 Pretoria Road, Tottenham, London, N17 8EL', '2015-12-29', '2017-12-28', 24, 15, 'TOT', 15, 810.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (28, '58 Pretoria Road, Tottenham, London, N17 8EL', '2015-12-29', '2017-12-28', 24, 28, 'TOT', 15, 810.00, 0, 'ADMIN', '2016-01-01');
 
-INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (16, '1 Matt Busby Way, Old Trafford, Manchester, M16 0RA', '2015-12-03', '2017-12-02', 24, 16, 'MNC', 16, 630.00, 0, 'ADMIN', '2016-01-01');
+INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (24, '1 Matt Busby Way, Old Trafford, Manchester, M16 0RA', '2015-12-03', '2017-12-02', 24, 24, 'MNC', 16, 630.00, 0, 'ADMIN', '2016-01-01');
 
 
 
@@ -1049,75 +1053,75 @@ LeaseAccounts
 
 INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (1, '5 Brook Crescent, Edmonton, London, N9 0DJ', '2012-04-09', 0.0, 'EDM', 1, 450.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (2, '10 Kestrel House, 1 Exter Road, Enfield, London, EN2 3RH', '2014-09-20', 0.0, 'PON', 2, 240.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (10, '10 Kestrel House, 1 Exter Road, Enfield, London, EN2 3RH', '2014-09-20', 0.0, 'PON', 10, 240.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (3, '74 Bridge Street, Old Trafford, Manchester, England, M16 2RJ', '2015-05-12', 0.0, 'MNC', 3, 480.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (17, '74 Bridge Street, Old Trafford, Manchester, England, M16 2RJ', '2015-05-12', 0.0, 'MNC', 17, 480.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (4, '18 St Anns Square, City of Manchester, Manchester, M1 7HQ', '2015-12-03', 0.0, 'MNC', 4, 240.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (23, '18 St Anns Square, City of Manchester, Manchester, M1 7HQ', '2015-12-03', 0.0, 'MNC', 23, 240.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (5, '36 Oxford Street, City of Manchester, Manchester, M1 5EJ', '2014-09-16', 0.0, 'MNC', 5, 105.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (9, '36 Oxford Street, City of Manchester, Manchester, M1 5EJ', '2014-09-16', 0.0, 'MNC', 9, 105.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (6, '52 Fraser Road, Edmonton, London, N9 4ER', '2013-01-12', 0.0, 'EDM', 6, 780.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (5, '52 Fraser Road, Edmonton, London, N9 4ER', '2013-01-12', 0.0, 'EDM', 5, 780.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (7, '4 Highham Road, Tottenham, London, N7 6NF', '2015-12-12', 0.0, 'TOT', 7, 390.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (25, '4 Highham Road, Tottenham, London, N7 6NF', '2015-12-12', 0.0, 'TOT', 25, 390.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (8, '45 Shorpshire House, 10 Linley Road, Tottenham, London, N17 6RP', '2015-12-20', 0.0, 'TOT', 8, 330.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (26, '45 Shorpshire House, 10 Linley Road, Tottenham, London, N17 6RP', '2015-12-20', 0.0, 'TOT', 26, 330.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (9, '12 Church Street, Edmonton, London, N9 9PB', '2014-03-09', 0.0, 'EDM', 9, 585.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (6, '12 Church Street, Edmonton, London, N9 9PB', '2014-03-09', 0.0, 'EDM', 6, 585.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (10, '35 Lister Gardens, Edmonton, London, N18 4ER', '2015-02-12', 0.0, 'EDM', 10, 600.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (13, '35 Lister Gardens, Edmonton, London, N18 4ER', '2015-02-12', 0.0, 'EDM', 13, 600.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (11, '29 Durants Road, Ponders End, London, EN3 7DF', '2015-03-12', 0.0, 'PON', 11, 1170.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (16, '29 Durants Road, Ponders End, London, EN3 7DF', '2015-03-12', 0.0, 'PON', 16, 1170.00, 'ADMIN', '2016-01-01');
 
 INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (12, '2 The Ride, Ponders End, London, EN3 7EE', '2014-10-10', 0.0, 'PON', 12, 600.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (13, '43 Brookfield Road, Edmonton, London, N9 0DN', '2015-11-20', 0.0, 'EDM', 13, 840.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (20, '43 Brookfield Road, Edmonton, London, N9 0DN', '2015-11-20', 0.0, 'EDM', 20, 840.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (14, '13 Alma Road, Ponders End, London, EN3 4UL', '2014-09-20', 0.0, 'PON', 14, 270.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (11, '13 Alma Road, Ponders End, London, EN3 4UL', '2014-09-20', 0.0, 'PON', 11, 270.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (15, '58 Pretoria Road, Tottenham, London, N17 8EL', '2015-12-29', 0.0, 'TOT', 15, 810.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (28, '58 Pretoria Road, Tottenham, London, N17 8EL', '2015-12-29', 0.0, 'TOT', 28, 810.00, 'ADMIN', '2016-01-01');
 
-INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (16, '1 Matt Busby Way, Old Trafford, Manchester, M16 0RA', '2015-12-03', 0.0, 'MNC', 16, 630.00, 'ADMIN', '2016-01-01');
+INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (24, '1 Matt Busby Way, Old Trafford, Manchester, M16 0RA', '2015-12-03', 0.0, 'MNC', 24, 630.00, 'ADMIN', '2016-01-01');
 
 
 
 Contracts
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (1, 'MR D L EDWARDS', '2015-03-10', '2020-03-09', 60, 1, 'MNC', 1, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (14, 'MR D L EDWARDS', '2015-03-10', '2020-03-09', 60, 14, 'MNC', 1, 'MNGR', 'ADMIN', '2016-01-01');
 
 INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (2, 'MR S DOLAN', '2012-04-09', '2017-04-08', 60, 2, 'EDM', 2, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (3, 'TEST1', '2014-09-01', '2019-08-31', 60, 3, 'PON', 3, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (7, 'TEST1', '2014-09-01', '2019-08-31', 60, 7, 'PON', 3, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (4, 'TEST2', '2015-12-01', '2019-11-30', 60, 4, 'TOT', 4, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (21, 'TEST2', '2015-12-01', '2019-11-30', 60, 21, 'TOT', 4, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (5, 'TEST3', '2015-03-10', '2020-03-09', 60, 5, 'MNC', 5, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (15, 'TEST3', '2015-03-10', '2020-03-09', 60, 15, 'MNC', 5, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (6, 'TEST4', '2012-04-09', '2017-04-08', 60, 6, 'EDM', 6, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (3, 'TEST4', '2012-04-09', '2017-04-08', 60, 3, 'EDM', 6, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (7, 'TEST5', '2014-09-01', '2019-08-31', 60, 7, 'PON', 7, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (8, 'TEST5', '2014-09-01', '2019-08-31', 60, 8, 'PON', 7, 'MNGR', 'ADMIN', '2016-01-01');
 
-INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (8, 'TEST6', '2015-12-01', '2019-11-30', 60, 8, 'TOT', 8, 'MNGR', 'ADMIN', '2016-01-01');
+INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (22, 'TEST6', '2015-12-01', '2019-11-30', 60, 22, 'TOT', 8, 'MNGR', 'ADMIN', '2016-01-01');
 
 
 
 EmploeeAccounts
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (1, 'MR D L EDWARDS', '2015-03-10', 0, 'MNC', 30000, 1, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (14, 'MR D L EDWARDS', '2015-03-10', 0, 'MNC', 30000, 14, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (2, 'MR S DOLAN', '2012-04-09', 0.0, 'EDM', 30000', 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (2, 'MR S DOLAN', '2012-04-09', 0.0, 'EDM', 30000', 2, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (3, 'TEST1', '2014-09-01', 0.0, 'PON', 30000, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (7, 'TEST1', '2014-09-01', 0.0, 'PON', 30000, 7 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (4, 'TEST2', '2015-12-01', 0.0, 'TOT', 30000, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (21, 'TEST2', '2015-12-01', 0.0, 'TOT', 30000, 21, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (5, 'TEST3', '2015-03-10', 0.0, 'MNC', 27000, 5, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (15, 'TEST3', '2015-03-10', 0.0, 'MNC', 27000, 15, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (6, 'TEST4', '2012-04-09', 0.0, 'EDM', 27000, 6, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (3, 'TEST3', '2012-04-09', 0.0, 'EDM', 27000, 3, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (7, 'TEST5', '2014-09-01', 0.0, 'PON', 27000, 7, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (8, 'TEST8', '2014-09-01', 0.0, 'PON', 27000, 8, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (8, 'TEST6', '2015-12-01', 0.0, 'TOT', 27000, 8, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (22, 'TEST8', '2015-12-01', 0.0, 'TOT', 27000, 22, 'ADMIN', '2016-01-01');
 
 
 

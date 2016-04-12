@@ -25,9 +25,11 @@ public class UserImpl extends UnicastRemoteObject implements User {
     private boolean read;
     private boolean write;
     private boolean update;
+    private boolean delete;
     private boolean employeeRead;
     private boolean employeeWrite;
     private boolean employeeUpdate;
+    private boolean employeeDelete;
     
     ///   CONSTRUCTORS ///
     
@@ -90,17 +92,21 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @param read
      * @param write
      * @param update
+     * @param delete
      * @param employeeRead
      * @param employeeWrite
      * @param employeeUpdate 
+     * @param employeeDelete 
      */
-    public void setUserPermissions(boolean read, boolean write, boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate) {
+    public void setUserPermissions(boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete) {
         this.read = read;
         this.write = write;
         this.update = update;
+        this.delete = delete;
         this.employeeRead = employeeRead;
         this.employeeWrite = employeeWrite;
         this.employeeUpdate = employeeUpdate;
+        this.employeeDelete = employeeDelete;
     }
     
     /**
@@ -195,6 +201,16 @@ public class UserImpl extends UnicastRemoteObject implements User {
     
     /**
      * 
+     * @return delete
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public boolean getDelete() throws RemoteException {
+        return this.delete;
+    }
+    
+    /**
+     * 
      * @return employeeRead
      * @throws java.rmi.RemoteException
      */
@@ -221,5 +237,15 @@ public class UserImpl extends UnicastRemoteObject implements User {
     @Override
     public boolean getEmployeeUpdate() throws RemoteException {
         return this.employeeUpdate;
+    }
+    
+    /**
+     * 
+     * @return employeeDelete
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public boolean getEmployeeDelete() throws RemoteException {
+        return this.employeeDelete;
     }
 }

@@ -134,7 +134,7 @@ public class UserImplTest {
             assertEquals(false, instance.getEmployeeWrite());
             assertEquals(false, instance.getEmployeeUpdate());
             
-            instance.setUserPermissions(true, true, true, true, false, false);
+            instance.setUserPermissions(true, true, true, false, true, false, false, false);
             
             assertEquals(true, instance.getRead());
             assertEquals(true, instance.getWrite());

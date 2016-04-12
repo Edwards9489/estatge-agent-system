@@ -75,7 +75,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.modifiedBy(modifiedBy2);
@@ -112,7 +113,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals("Dwayne Leroy Edwards", instance.getAppCorrName());
             assertEquals(date2.getTime(), instance.getAppStartDate());
@@ -155,7 +157,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getAppEndDate());
             assertEquals(true, instance.isCurrent());
@@ -192,7 +195,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals("NEW", instance.getAppStatusCode());
             instance.setAppStatusCode("VOID");
@@ -226,7 +230,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -271,7 +276,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -320,7 +326,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, date2.getTime(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, false, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -361,7 +368,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, date2.getTime(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, false, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -404,7 +412,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, date2.getTime(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, false, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -446,7 +455,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, date2.getTime(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, false, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -507,7 +517,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getTenancyRef());
             assertEquals(false, instance.hasTenancyRef());
@@ -542,7 +553,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getTenancyRef());
             instance.setTenancy(4, modifiedBy);
@@ -578,7 +590,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             PropertyInterface property = new Property(1, address, date2.getTime(), element, element, "DEDWARDS", new Date());
             
@@ -615,7 +628,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             PropertyInterface property = new Property(1, address, date2.getTime(), element, element, "DEDWARDS", new Date());
             
@@ -655,7 +669,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note5, modifiedBy);
@@ -692,7 +707,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note5, modifiedBy);
@@ -733,7 +749,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getDocuments().size());
             instance.createDocument(document, modifiedBy);
@@ -772,7 +789,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getDocuments().size());
             instance.createDocument(document, modifiedBy);
@@ -817,7 +835,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, true, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -859,7 +878,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, date2.getTime(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, true, false, date2.getTime(), element, "DEDWARDS", new Date());
@@ -898,7 +918,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
@@ -934,7 +955,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
@@ -967,7 +989,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(1, instance.getApplicationRef());
             assertEquals(false, instance.getApplicationRef() == 4);
@@ -997,7 +1020,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals("Dwayne Leroy Edwards", instance.getAppCorrName());
             assertEquals(false, instance.getAppCorrName().equals("TEST"));
@@ -1027,7 +1051,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals("NEW", instance.getAppStatusCode());
             instance.setAppStatusCode("HSED");
@@ -1059,7 +1084,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(date2.getTime(), instance.getAppStartDate());
             assertEquals(false, instance.getAppStartDate().equals(new Date()));
@@ -1092,7 +1118,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getAppEndDate());
             instance.setEndDate(date3.getTime(), modifiedBy);
@@ -1125,7 +1152,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -1161,7 +1189,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -1197,7 +1226,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -1235,7 +1265,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             AddressUsage addressUsage3 = new AddressUsage(3, address2, date2.getTime(), note3, "DEDWARDS", new Date());
@@ -1288,7 +1319,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             PropertyInterface property = new Property(1, address, date2.getTime(), element, element, "DEDWARDS", new Date());
             
@@ -1326,7 +1358,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             Person person2 = new Person(2, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedPartyInterface invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
@@ -1385,7 +1418,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             PropertyInterface property = new Property(1, address, date2.getTime(), element, element, "DEDWARDS", new Date());
             PropertyInterface property2 = new Property(2, address, date2.getTime(), element, element, "DEDWARDS", new Date());
@@ -1444,7 +1478,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getTenancyRef());
             instance.setTenancy(4, modifiedBy);
@@ -1478,7 +1513,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.hasTenancyRef());
             instance.setTenancy(4, modifiedBy);
@@ -1512,7 +1548,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getAppEndDate());
             assertEquals(true, instance.isCurrent());
@@ -1550,7 +1587,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.hasNote(note5.getReference()));
             instance.createNote(note5, modifiedBy);
@@ -1583,7 +1621,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, note5.equals(instance.getNote(note5.getReference())));
             assertEquals(null, instance.getNote(note5.getReference()));
@@ -1625,7 +1664,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getNotes().size());
             List<Note> expResult = new ArrayList();
@@ -1680,7 +1720,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.hasDocument(document.getDocumentRef()));
             instance.createDocument(document, modifiedBy);
@@ -1715,7 +1756,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.hasDocument("TEST.pdf"));
             instance.createDocument(document, modifiedBy);
@@ -1750,7 +1792,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getDocument(document.getDocumentRef()));
             instance.createDocument(document, modifiedBy);
@@ -1794,7 +1837,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(0, instance.getDocuments().size());
             List<Document> expResult = new ArrayList();
@@ -1846,7 +1890,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.hasBeenModified());
             instance.createNote(note5, modifiedBy);
@@ -1879,7 +1924,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getLastModifiedBy());
             instance.createNote(note5, modifiedBy);
@@ -1913,7 +1959,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getLastModifiedDate());
             instance.createNote(note5, modifiedBy);
@@ -1947,7 +1994,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             List<ModifiedByInterface> modifiedByList = new ArrayList();
             List<ModifiedByInterface> modifiedByList2 = new ArrayList();
@@ -1986,7 +2034,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(null, instance.getLastModification());
             instance.createNote(note5, modifiedBy);
@@ -2021,7 +2070,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", new Date());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", new Date());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.getCreatedBy().equals(null));
             assertEquals(true, instance.getCreatedBy().equals("DEDWARDS"));
@@ -2052,7 +2102,8 @@ public class ApplicationTest {
             AddressUsage addressUsage2 = new AddressUsage(2, address, date2.getTime(), note4, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             InvolvedParty invParty = new InvolvedParty(1, 1, person, true, true, new Date(), element, "DEDWARDS", new Date());
-            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), invParty, addressUsage2, "DEDWARDS", date2.getTime());
+            Application instance = new Application(1, "Dwayne Leroy Edwards", date2.getTime(), addressUsage2, "DEDWARDS", date2.getTime());
+            instance.addInvolvedParty(invParty, null);
             
             assertEquals(false, instance.getCreatedDate().equals(null));
             assertEquals(true, instance.getCreatedDate().equals(date2.getTime()));

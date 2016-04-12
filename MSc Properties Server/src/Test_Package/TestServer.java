@@ -225,8 +225,8 @@ public class TestServer {
 //            System.out.println(test.createTitle("TEST", "TEST", "COMMENT", "DEDWARDS"));
             
             // Job Role Methods  -- Tested commented Job Role methods
-            System.out.println(test.createJobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, "DEDWARDS"));
-//            System.out.println(test.updateJobRole("MNGR", "Manager", "Managerial Duties", true, 30000.00, true, true, true, true, true, true, false, "DEDWARDS"));
+            System.out.println(test.createJobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, true, true, "DEDWARDS"));
+//            System.out.println(test.updateJobRole("MNGR", "Manager", "Managerial Duties", true, 30000.00, true, true, true, true, true, true, true, true, false, "DEDWARDS"));
             System.out.println(test.createJobRoleRequirement("MNGR", "ERR", "DEDWARDS"));
             System.out.println(test.createJobRoleBenefit("MNGR", "ERR", janBeg.getTime(), true, null, 29.00, "TEST", "DEDWARDS"));
 //            System.out.println(test.createJobRoleNote("MNGR", "New Job Role for Managers", "DEDWARDS"));

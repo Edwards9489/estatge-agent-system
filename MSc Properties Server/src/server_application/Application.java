@@ -47,16 +47,15 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
      * @param appRef
      * @param corrName
      * @param appStartDate
-     * @param statusCode
      * @param createdBy
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
-    public Application(int appRef, String corrName, Date appStartDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
+    public Application(int appRef, String corrName, Date appStartDate, String createdBy, Date createdDate) throws RemoteException {
         this.appRef = appRef;
         this.appCorrName = corrName;
         this.appStartDate = appStartDate;
-        this.appStatusCode = statusCode;
+        this.appStatusCode = "NEW";
         this.household = new ArrayList();
         this.appAddresses = new ArrayList();
         this.tenancyRef = null;
@@ -73,15 +72,13 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
      * @param appRef
      * @param appStartDate
      * @param address
-     * @param mainApp
      * @param corrName
      * @param createdBy
      * @param createdDate
      * @throws java.rmi.RemoteException
      */
-    public Application(int appRef, String corrName, Date appStartDate, InvolvedParty mainApp, AddressUsage address, String createdBy, Date createdDate) throws RemoteException {
-        this(appRef, corrName, appStartDate, "NEW", createdBy, createdDate);
-        this.household.add(mainApp);
+    public Application(int appRef, String corrName, Date appStartDate, AddressUsage address, String createdBy, Date createdDate) throws RemoteException {
+        this(appRef, corrName, appStartDate, createdBy, createdDate);
         this.appAddresses.add(address);
     }
     

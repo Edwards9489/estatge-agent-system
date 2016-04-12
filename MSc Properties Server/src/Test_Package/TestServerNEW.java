@@ -48,16 +48,16 @@ public class TestServerNEW {
             //System.out.println(test.generateOfficeReport(startDate.getTime(), endDate.getTime()));
             //System.out.println(test.generateOfficeFinanceReport(startDate.getTime(), endDate.getTime()));
             //System.out.println(test.generateFinanceReport(startDate.getTime(), endDate.getTime()));
-            String email = "dwayne.edwards9489@outlook.com";
-            int eRef = 1;
-            String username = "DEDWARDS";
-            String answer = "TEST";
-            System.out.println(test.forgotPassword(email, eRef, username, answer));
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
+//            String email = "dwayne.edwards9489@outlook.com";
+//            int eRef = 1;
+//            String username = "DEDWARDS";
+//            String answer = "TEST";
+//            System.out.println(test.forgotPassword(email, eRef, username, answer));
+//            System.out.println();
+//            System.out.println();
+//            System.out.println();
+//            System.out.println();
+//            System.out.println();
             
             
             

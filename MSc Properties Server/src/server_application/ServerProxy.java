@@ -26,6 +26,7 @@ import interfaces.Server;
 import interfaces.TenancyInterface;
 import interfaces.User;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.List;
 import javax.security.auth.*;
@@ -38,9 +39,7 @@ import javax.security.auth.*;
  * Proxy that protects the server from direct calls by the clients. All calls go
  * through a security check.
  */
-public class ServerProxy
-        extends java.rmi.server.UnicastRemoteObject
-        implements Server {
+public class ServerProxy extends UnicastRemoteObject implements Server {
 
     /**
      * A reference to the real server object
@@ -50,7 +49,7 @@ public class ServerProxy
     /**
      * The user associated with this proxy
      */
-    private Subject user;
+    private User user;
 
   ////////////////////////
     /**
@@ -58,202 +57,407 @@ public class ServerProxy
      *
      * @param user A subject representing the user for this proxy.
      * @param theServer The real server object.
+     * @throws java.rmi.RemoteException
      */
-    public ServerProxy(Subject user, Server theServer)
-            throws java.rmi.RemoteException {
+    public ServerProxy(User user, Server theServer) throws RemoteException {
         this.theServer = theServer;
         this.user = user;
     }
 
-  ////////////////////////
-    /**
-     * The client calls this method. If he client has the appropriate
-     * permissions, the call goes through.
-     */
-    public void doOperationA()
-            throws java.rmi.RemoteException, SecurityException {
-        checkPermission("doOperationA");
-        //theServer.doOperationA();
-    }
-
-    /**
-     * The client calls this method. If he client has the appropriate
-     * permissions, the call goes through.
-     */
-    public void doOperationB()
-            throws java.rmi.RemoteException, SecurityException {
-        checkPermission("doOperationB");
-        //theServer.doOperationB();
-    }
-
-  ////////////////////////
-    /**
-     * Check if the current client can call a certain method. The check is made
-     * through JAAS and its policy file.
-     *
-     * @param methodName The method that will be called.
-     * @throws SecurityException If the client doesn't have the necessary
-     * permissions.
-     */
-    private void checkPermission(String methodName)
-            throws SecurityException {
-    // Assume the identity of the user, and validate if he can
-        // call this method
-        try {
-            Subject.doAs(user, new ValidateMethodCall(methodName));
-        } catch (java.security.PrivilegedActionException e) {
-            throw (SecurityException) e.getException();
-        }
-    }
-
     @Override
     public int createTitle(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createTitle(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateTitle(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateTitle(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteTitle(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteTitle(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createGender(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createGender(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateGender(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateGender(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteGender(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteGender(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createMaritalStatus(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createMaritalStatus(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateMaritalStatus(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateMaritalStatus(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteMaritalStatus(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteMaritalStatus(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createEthnicOrigin(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createEthnicOrigin(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateEthnicOrigin(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateEthnicOrigin(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteEthnicOrigin(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteEthnicOrigin(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createLanguage(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createLanguage(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateLanguage(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateLanguage(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteLanguage(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteLanguage(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createNationality(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createNationality(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateNationality(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateNationality(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteNationality(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteNationality(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createSexuality(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createSexuality(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateSexuality(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateSexuality(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteSexuality(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteSexuality(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createReligion(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createReligion(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateReligion(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateReligion(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteReligion(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteReligion(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int createPropertyType(String code, String description, String comment, String createdBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createPropertyType(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int updatePropertyType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updatePropertyType(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int deletePropertyType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deletePropertyType(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int createPropertySubType(String code, String description, String comment, String createdBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createPropertySubType(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int updatePropertySubType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updatePropertySubType(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int deletePropertySubType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deletePropertySubType(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createPropertyElement(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createPropertyElement(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updatePropertyElement(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updatePropertyElement(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deletePropertyElement(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deletePropertyElement(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int createContactType(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getWrite()) {
+                return theServer.createContactType(code, description, comment, createdBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int updateContactType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getUpdate()) {
+                return theServer.updateContactType(code, description, current, comment, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
     public int deleteContactType(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (theServer.isAlive()) {
+            if(user != null && user.getDelete()) {
+                return theServer.deleteContactType(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
     }
 
     @Override
@@ -577,6 +781,21 @@ public class ServerProxy
     }
 
     @Override
+    public int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int updateEmployeePassword(int employeeRef, String password, String modifiedBy) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public int deleteEmployee(int eRef) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -597,7 +816,7 @@ public class ServerProxy
     }
 
     @Override
-    public int createLandlord(int lRef, String createdBy) throws RemoteException {
+    public int createLandlord(int pRef, String createdBy) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -673,7 +892,15 @@ public class ServerProxy
 
     @Override
     public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (user != null && theServer.isAlive()) {
+            if(user.getWrite()) {
+                System.out.println("User is allowed to execute method");
+                return theServer.createPropertyElement(pRef, elementCode, startDate, charge, stringValue, doubleValue, comment, createdBy);
+            }
+            System.out.println("User is not allowed to execute method");
+            return 0;
+        }
+        return 0;
     }
 
     @Override
@@ -687,12 +914,12 @@ public class ServerProxy
     }
 
     @Override
-    public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String createdBy) throws RemoteException {
+    public int createJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String createdBy) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write, boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, String modifiedBy) throws RemoteException {
+    public int updateJobRole(String code, String jobTitle, String jobDescription, boolean fullTime, double salary, boolean current, boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String modifiedBy) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -1132,6 +1359,16 @@ public class ServerProxy
     }
 
     @Override
+    public List<Element> getPropertyTypes() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Element> getPropertySubTypes() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public List<Element> getPropElements() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -1242,6 +1479,16 @@ public class ServerProxy
     }
 
     @Override
+    public boolean propTypeExists(String code) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean propSubTypeExists(String code) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public boolean propElementExists(String code) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -1268,7 +1515,7 @@ public class ServerProxy
 
     @Override
     public boolean isUser(String username, String password) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return theServer.isUser(username, password);
     }
 
     @Override
@@ -1532,7 +1779,7 @@ public class ServerProxy
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -1655,98 +1902,96 @@ public class ServerProxy
     public void generateReport(Date startDate, Date endDate) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
     public List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (user != null && theServer.isAlive()) {
+            if(user.getRead()) {
+                return theServer.getUserRentAccounts(officeCode);
+            }
+            return null;
+        }
+        return null;
     }
 
     @Override
     public List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (user != null && theServer.isAlive()) {
+            if(user.getRead()) {
+                return theServer.getUserTenancies(officeCode);
+            }
+            return null;
+        }
+        return null;
     }
 
     @Override
     public List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (user != null && theServer.isAlive()) {
+            if(user.getRead()) {
+                return theServer.getUserLeases(officeCode);
+            }
+            return null;
+        }
+        return null;
     }
 
     @Override
     public void register(Client c) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        theServer.register(c);
     }
 
     @Override
     public void unregister(Client c) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        theServer.unregister(c);
     }
 
     @Override
     public boolean isAlive() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return theServer.isAlive();
     }
 
     @Override
     public User getUser(String username) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return theServer.getUser(username);
     }
 
-    @Override
-    public int createPropertyType(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+  ////////////////////////
+    /**
+     * The client calls this method. If he client has the appropriate
+     * permissions, the call goes through.
+     */
+//    public void doOperationA() throws RemoteException, SecurityException {
+//        checkPermission("doOperationA");
+//        //theServer.doOperationA();
+//    }
 
-    @Override
-    public int updatePropertyType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    /**
+     * The client calls this method. If he client has the appropriate
+     * permissions, the call goes through.
+     */
+//    public void doOperationB() throws RemoteException, SecurityException {
+//        checkPermission("doOperationB");
+//        //theServer.doOperationB();
+//    }
 
-    @Override
-    public int deletePropertyType(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int createPropertySubType(String code, String description, String comment, String createdBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int updatePropertySubType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int deletePropertySubType(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Element> getPropertyTypes() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Element> getPropertySubTypes() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean propTypeExists(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean propSubTypeExists(String code) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int forgotPassword(String email, int eRef, String username, String answer) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+  ////////////////////////
+    /**
+     * Check if the current client can call a certain method. The check is made
+     * through JAAS and its policy file.
+     *
+     * @param methodName The method that will be called.
+     * @throws SecurityException If the client doesn't have the necessary
+     * permissions.
+     */
+//    private void checkPermission(String methodName)
+//            throws SecurityException {
+//    // Assume the identity of the user, and validate if he can
+//        // call this method
+//        try {
+//            Subject.doAs(user, new ValidateMethodCall(methodName));
+//        } catch (java.security.PrivilegedActionException e) {
+//            throw (SecurityException) e.getException();
+//        }
+//    }
 }

@@ -94,7 +94,7 @@ public class TestDatabaseTRAIN1 {
         ElementImpl element2 = new ElementImpl("TEST", "Test", note20, "DEDWARDS", new Date());
         ElementImpl element3 = new ElementImpl("RENT", "Test", note20, "DEDWARDS", new Date());
         
-        JobRole jobRole = new JobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, "DEDWARDS", new Date());
+        JobRole jobRole = new JobRole("MNGR", "Manager", "Managerial Duties", true, 29000.00, true, true, true, true, true, true, true, true, "DEDWARDS", new Date());
         
         ModifiedBy modTest = new ModifiedBy("TEST", "DEDWARDS", new Date());
         
@@ -170,7 +170,9 @@ public class TestDatabaseTRAIN1 {
         InvolvedParty invParty2 = new InvolvedParty(2, 1, person2, true, false, new Date(), element, "DEDWARDS", new Date());
         InvolvedParty invParty3 = new InvolvedParty(3, 1, person3, false, false, new Date(), element2, "DEDWARDS", new Date());
         
-        Application application = new Application(1, "Dwayne Leroy Edwards", new Date(), invParty, addressUsage4, "DEDWARDS", new Date());
+        Application application = new Application(1, "Dwayne Leroy Edwards", new Date(), addressUsage4, "DEDWARDS", new Date());
+        
+        application.addInvolvedParty(invParty, null);
         
         PropertyElement propElement = new PropertyElement(1, element, new Date(), false, "2 BED", null, note18, "DEDWARDS", new Date());
         PropertyElement propElement2 = new PropertyElement(2, element2, new Date(), true, null, 36.00, note19, "DEDWARDS", new Date());
@@ -459,8 +461,6 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Tenancy Rent: " + tenancy.getRent());
 //            System.out.println("Tenancy Prop Ref: " + tenancy.getProperty().getPropRef() + "\n");
             
-            System.out.println("System Tenancies: " + db.countTenancies() + "\n");
-            
             
             // RentAccount methods - Tested commented RentAccount methods
 //            db.createRentAccount(rentAcc);
@@ -469,8 +469,6 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Modifications: " + rentAcc.getModifiedBy().size());
 //            System.out.println("Rent Acc Rent: " + rentAcc.getRent());
 //            System.out.println("Tenancy Ref: " + rentAcc.getTenancy().getAgreementRef() + "\n");
-            
-            System.out.println("System Rent Accounts: " + db.countRentAccounts() + "\n");
             
             
             // Lease methods - Tested commented Tenancy methods
@@ -489,8 +487,6 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Lease Expenditure: " + lease.getExpenditure());
 //            System.out.println("Lease Landlords: " + lease.getLandlords().size() +"\n");
             
-            System.out.println("System Leases: " + db.countLeases() + "\n");
-            
             
             // LeaseAccount methods - Tested commented RentAccount methods
 //            db.createLeaseAccount(leaseAcc);
@@ -499,8 +495,6 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Modifications: " + leaseAcc.getModifiedBy().size());
 //            System.out.println("Lease Acc Expenditure: " + leaseAcc.getExpenditure());
 //            System.out.println("Lease Ref: " + leaseAcc.getLease().getAgreementRef() + "\n");
-            
-            System.out.println("System Lease Accounts: " + db.countLeaseAccounts() + "\n");
             
             // Contract methods - Tested commented Tenancy methods
 //            db.createContract(contract);
@@ -511,8 +505,6 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Lease Employee Ref: " + contract.getEmployee().getEmployeeRef());
 //            System.out.println("Lease Job Role: " + contract.getJobRole().getJobRoleCode() + "\n");
             
-            System.out.println("System Contracts: " + db.countContracts() + "\n");
-            
             
             // EmployeeAccount methods - Tested commented RentAccount methods
 //            db.createEmployeeAccount(employeeAcc);
@@ -521,7 +513,8 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("Employee Acc Salary: " + employeeAcc.getSalary());
 //            System.out.println("Contract Ref: " + employeeAcc.getContractRef() + "\n");
             
-            System.out.println("System Employee Accounts: " + db.countRentAccounts());
+            System.out.println("System Agreements: " + db.getAgreementRef() + "\n");
+            System.out.println("System Accounts: " + db.getAccountRef());
             
             
             
@@ -567,8 +560,8 @@ public class TestDatabaseTRAIN1 {
 //            System.out.println("\nEmployee Ref: " + employee.getEmployeeRef());
 //            System.out.println("Modifications: " + employee.getModifiedBy().size());
             System.out.println("Employee Contracts: " + employee.getContracts().size() + "\n");
-            System.out.println("System Contracts: " + db.countContracts() + "\n");
-            System.out.println("System Employee Accounts: " + db.countEmployeeAccounts());
+            System.out.println("System Agreements: " + db.getAgreementRef() + "\n");
+            System.out.println("System Accounts: " + db.getAccountRef());
             
 //        } catch (SQLException ex) {
 //            ex.printStackTrace();

@@ -107,7 +107,9 @@ public class TestApplication {
             AddressInterface address1 = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note8, "DEDWARDS", new Date());
             AddressUsage addressUsage1 = new AddressUsage(2, address1, date, note9, "DEDWARDS", new Date());
             
-            Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, invParty1, addressUsage1, "DEDWARDS", new Date());
+            Application test1 = new Application(1, "Mr Dwayne Leroy Edwards", date, addressUsage1, "DEDWARDS", new Date());
+            
+            test1.addInvolvedParty(invParty1, null);
             
             PropertyInterface property = new Property(1, address1, new Date(), test, test, "DEDWARDS", new Date());
             TenancyInterface tenancy = new Tenancy(1, start, 12, 12, property, test1, test, "Mr Edwards & Ms Brindle", "DEDWARDS", new Date());

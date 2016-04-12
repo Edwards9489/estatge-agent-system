@@ -54,7 +54,7 @@ public class JobRoleTest {
     public void testSetCurrent() {
         try {
             System.out.println("setCurrent");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             assertEquals(true, instance.isCurrent());
             instance.setCurrent(true);
@@ -78,7 +78,7 @@ public class JobRoleTest {
             System.out.println("modifiedBy");
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = null;
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.modifiedBy(modifiedBy2);
@@ -100,7 +100,7 @@ public class JobRoleTest {
             System.out.println("createNote");
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note, modifiedBy);
@@ -123,7 +123,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note, modifiedBy);
@@ -148,7 +148,7 @@ public class JobRoleTest {
     public void testUpdateJobRole() {
         try {
             System.out.println("updateJobRole");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Boolean result = false;
@@ -165,7 +165,7 @@ public class JobRoleTest {
             assertEquals(true, instance.getEmployeeWrite());
             assertEquals(true, instance.getEmployeeUpdate());
             
-            instance.updateJobRole("Lead Manager", "UPDATED TEST", 30000.00, true, true, true, true, true, true, false, modifiedBy);
+            instance.updateJobRole("Lead Manager", "UPDATED TEST", 30000.00, true, true, true, true, true, true, true, true, false, modifiedBy);
             
             assertEquals("Lead Manager", instance.getJobTitle());
             assertEquals("UPDATED TEST", instance.getJobDescription());
@@ -189,7 +189,7 @@ public class JobRoleTest {
             assertEquals(false, result.equals(instance.getEmployeeWrite()));
             assertEquals(false, result2.equals(instance.getEmployeeUpdate()));
             
-            instance.updateJobRole("Lead Manager", "UPDATED TEST", 30000.00, false, true, true, true, true, true, false, modifiedBy2);
+            instance.updateJobRole("Lead Manager", "UPDATED TEST", 30000.00, false, true, true, true, true, true, true, true, true, modifiedBy2);
             
             assertEquals(false, instance.isCurrent());
         } catch (RemoteException ex) {
@@ -207,7 +207,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getJobRequirements().size());
             assertEquals(0, instance.getModifiedBy().size());
@@ -234,7 +234,7 @@ public class JobRoleTest {
             Element element2 = new ElementImpl("TEST2", "TEST2", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getJobRequirements().size());
             assertEquals(0, instance.getModifiedBy().size());
@@ -266,7 +266,7 @@ public class JobRoleTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getBenefits().size());
             assertEquals(0, instance.getModifiedBy().size());
@@ -298,7 +298,7 @@ public class JobRoleTest {
             JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.createJobBenefit(benefit, modifiedBy);
@@ -333,7 +333,7 @@ public class JobRoleTest {
             JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.createJobBenefit(benefit, modifiedBy);
@@ -355,7 +355,7 @@ public class JobRoleTest {
     public void testGetJobRoleCode() {
         try {
             System.out.println("getJobRoleCode");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals("MNGR", instance.getJobRoleCode());
             assertEquals(false, instance.getJobRoleCode().equals("TEST"));
@@ -371,7 +371,7 @@ public class JobRoleTest {
     public void testGetJobTitle() {
         try {
             System.out.println("getJobTitle");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals("Manager", instance.getJobTitle());
             assertEquals(false, instance.getJobTitle().equals("TEST"));
@@ -387,7 +387,7 @@ public class JobRoleTest {
     public void testGetJobDescription() {
         try {
             System.out.println("getJobDescription");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals("TEST", instance.getJobDescription());
             assertEquals(false, instance.getJobDescription().equals("NOT TEST"));
@@ -416,7 +416,7 @@ public class JobRoleTest {
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED3", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED4", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED5", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getJobRequirements().size());
             
@@ -471,7 +471,7 @@ public class JobRoleTest {
     public void testIsFullTime() {
         try {
             System.out.println("isFullTime");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.isFullTime());
@@ -488,7 +488,7 @@ public class JobRoleTest {
     public void testGetSalary() {
         try {
             System.out.println("getSalary");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(true, instance.getSalary() == 27000.00);
             assertEquals(false, instance.getSalary() == 30000.00);
@@ -504,7 +504,7 @@ public class JobRoleTest {
     public void testIsCurrent() {
         try {
             System.out.println("isCurrent");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.isCurrent());
@@ -524,7 +524,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.hasRequirement(element.getCode()));
             instance.createJobRequirement(element, modifiedBy);
@@ -548,7 +548,7 @@ public class JobRoleTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.hasBenefit(benefit.getBenefitRef()));
             instance.createJobBenefit(benefit, modifiedBy);
@@ -575,7 +575,7 @@ public class JobRoleTest {
             JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.hasCurrentBenefit(benefit.getBenefitCode()));
             instance.createJobBenefit(benefit, modifiedBy);
@@ -613,7 +613,7 @@ public class JobRoleTest {
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getBenefits().size());
             List<JobRoleBenefit> expResult = new ArrayList();
@@ -654,7 +654,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.hasBeenModified());
             instance.createJobRequirement(element, modifiedBy);
@@ -674,7 +674,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(null, instance.getLastModifiedBy());
             instance.createJobRequirement(element, modifiedBy);
@@ -697,7 +697,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", date.getTime());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(null, instance.getLastModifiedDate());
             instance.createJobRequirement(element, modifiedBy);
@@ -718,7 +718,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             List<ModifiedByInterface> modifiedByList = new ArrayList();
             List<ModifiedByInterface> modifiedByList2 = new ArrayList();
@@ -744,7 +744,7 @@ public class JobRoleTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(null, instance.getLastModification());
             instance.createJobRequirement(element, modifiedBy);
@@ -767,7 +767,7 @@ public class JobRoleTest {
             System.out.println("hasNote");
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.hasNote(note.getReference()));
             instance.createNote(note, modifiedBy);
@@ -786,7 +786,7 @@ public class JobRoleTest {
             System.out.println("getNote");
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, note.equals(instance.getNote(note.getReference())));
             assertEquals(null, instance.getNote(note.getReference()));
@@ -813,7 +813,7 @@ public class JobRoleTest {
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(0, instance.getNotes().size());
             List<Note> expResult = new ArrayList();
@@ -851,7 +851,7 @@ public class JobRoleTest {
     public void testGetCreatedBy() {
         try {
             System.out.println("getCreatedBy");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
             assertEquals(false, instance.getCreatedBy().equals(null));
             assertEquals(true, instance.getCreatedBy().equals("ADMIN"));
@@ -870,7 +870,7 @@ public class JobRoleTest {
             System.out.println("getCreatedDate");
             Calendar date = Calendar.getInstance();
             date.set(2015, 1, 10);
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", date.getTime());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", date.getTime());
             
             assertEquals(false, instance.getCreatedDate().equals(null));
             assertEquals(true, instance.getCreatedDate().equals(date.getTime()));
@@ -887,7 +887,7 @@ public class JobRoleTest {
     public void testGetRead() {
         try {
             System.out.println("getRead");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getRead());
@@ -904,7 +904,7 @@ public class JobRoleTest {
     public void testGetWrite() {
         try {
             System.out.println("getWrite");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getWrite());
@@ -921,7 +921,7 @@ public class JobRoleTest {
     public void testGetUpdate() {
         try {
             System.out.println("getUpdate");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getUpdate());
@@ -938,7 +938,7 @@ public class JobRoleTest {
     public void testGetEmployeeRead() {
         try {
             System.out.println("getEmployeeRead");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getEmployeeRead());
@@ -955,7 +955,7 @@ public class JobRoleTest {
     public void testGetEmployeeWrite() {
         try {
             System.out.println("getEmployeeWrite");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getEmployeeWrite());
@@ -972,7 +972,7 @@ public class JobRoleTest {
     public void testGetEmployeeUpdate() {
         try {
             System.out.println("getEmployeeUpdate");
-            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.getEmployeeUpdate());

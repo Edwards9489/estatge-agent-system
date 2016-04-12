@@ -14,9 +14,6 @@ import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,6 +23,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -58,17 +56,27 @@ public class HomeForm extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        System.out.println("UPDATE OCCURED");
         try {
+            System.out.println("arg is a list? - Home Form - " + (arg instanceof List<?>));
             if (arg instanceof List<?>) {
+                System.out.println("arg is empty? - Home Form - " + !((List<?>) arg).isEmpty());
+                System.out.println("arg element is a an agreement? - Home Form - " + (((List<?>) arg).get(0) instanceof AgreementInterface));
+                System.out.println("arg element is a a rent account? - Home Form - " + (((List<?>) arg).get(0) instanceof RentAccountInterface));
+                System.out.println("arg element is a a tenancy? - Home Form - " + (((List<?>) arg).get(0) instanceof TenancyInterface));
+                System.out.println("arg element is a a lease? - Home Form - " + (((List<?>) arg).get(0) instanceof LeaseInterface));
                 if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
                     List<AgreementInterface> agreements = (List<AgreementInterface>) arg;
-                    if (((List<?>) arg).get(0) instanceof TenancyInterface) {
+                    if (agreements.get(0) instanceof TenancyInterface) {
+                        System.out.println("UPDATE IS TENANCY UPDATE");
                         this.updateTenanciesList(agreements);
-                    } else if (((List<?>) arg).get(0) instanceof LeaseInterface) {
+                    } else if (agreements.get(0) instanceof LeaseInterface) {
+                        System.out.println("UPDATE IS LEASE UPDATE");
                         this.updateLeasesList(agreements);
                     }
                 } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof RentAccountInterface) {
                     List<AccountInterface> accounts = (List<AccountInterface>) arg;
+                    System.out.println("UPDATE IS RENT ACCOUNT UPDATE");
                     this.updateRentAccList(accounts);
                 }
             }
@@ -110,9 +118,10 @@ public class HomeForm extends JFrame implements Observer {
         setLayout(new BorderLayout());
         buttonPanel = new ButtonPanel();
         tablesPanel = new JPanel();
-        tenanciesPanel = new AgreementPanel();
-        leasesPanel = new AgreementPanel();
-        rentAccPanel = new AccountPanel();
+        
+        tenanciesPanel = new AgreementPanel("Tenancies");
+        leasesPanel = new AgreementPanel("Leases");
+        rentAccPanel = new AccountPanel("Rent Accounts");
 
         buttonPanel.setButtonListener(new StringListener() {
             @Override
@@ -183,40 +192,66 @@ public class HomeForm extends JFrame implements Observer {
 
         tenanciesPanel.setTableListener(new TableListener() {
             @Override
-            public void rowSelected(Object agreement) {
-                System.out.println(agreement instanceof TenancyInterface);
-                if (agreement instanceof TenancyInterface) {
-                    TenancyInterface tenancy = (TenancyInterface) agreement;
-                    System.out.println("TEST1-Tenancy");
-//                    TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                    tenancyForm.setClient(client);
-//                    tenancyForm.setTenancy(tenancy);
+            public void rowSelected(int tenancyRef) {
+                if(tenancyRef > 0) {
+                    try {
+                        TenancyInterface tenancy = client.getTenancy(tenancyRef);
+                        if(tenancy != null) {
+                            System.out.println(tenancy.getAgreementName());
+                        }
+                        System.out.println("TEST1-Tenancy");
+//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
+//                        tenancyForm.setClient(client);
+//                        tenancyForm.setTenancy(tenancy);
+//                        tenancyForm.setVisible(true);
+//                        setVisible(false);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
 
         leasesPanel.setTableListener(new TableListener() {
             @Override
-            public void rowSelected(Object agreement) {
-                if (agreement instanceof LeaseInterface) {
-                    LeaseInterface lease = (LeaseInterface) agreement;
-                    System.out.println("TEST1-Lease");
-//                    LeaseDetailsForm leaseForm = new LeaseDetailsForm();
-//                    leaseForm.setClient(client);
-//                    leaseForm.setLease(lease);
+            public void rowSelected(int leaseRef) {
+                if(leaseRef > 0) {
+                    try {
+                        LeaseInterface lease = client.getLease(leaseRef);
+                        if(lease != null) {
+                            System.out.println(lease.getAgreementName());
+                        }
+                        System.out.println("TEST1-Lease");
+//                        LeaseDetailsForm leaseForm = new LeaseDetailsForm();
+//                        leaseForm.setClient(client);
+//                        leaseForm.setLease(lease);
+//                        leaseForm.setVisible(true);
+//                        setVisible(false);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
 
         rentAccPanel.setTableListener(new TableListener() {
             @Override
-            public void rowSelected(Object account) {
-                if (account instanceof RentAccountInterface) {
-                    RentAccountInterface rentAcc = (RentAccountInterface) account;
-                    System.out.println("TEST1-RentAcc");
-//                    RentAccDetailsForm rentAccForm = new RentAccDetailsForm();
-//                    rentAccForm.setClient(client);
-//                    rentAccForm.setRentAcc(RentAcc);
+            public void rowSelected(int rentAccRef) {
+                if(rentAccRef > 0) {
+                    try {
+                        RentAccountInterface rentAcc = client.getRentAccount(rentAccRef);
+                        if(rentAcc != null) {
+                            System.out.println(rentAcc.getAccName());
+                        }
+                        System.out.println("TEST1-Rent Account");
+//                        RentAccountDetailsForm rentAccForm = new RentAccountDetailsForm();
+//                        rentAccForm.setClient(client);
+//                        rentAccForm.setLease(rentAcc);
+//                        rentAccForm.setVisible(true);
+//                        setVisible(false);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
@@ -224,62 +259,67 @@ public class HomeForm extends JFrame implements Observer {
         setJMenuBar(createMenuBar());
         
         tablesPanel.setSize(700, 500);
-
-        tablesPanel.setLayout(new GridBagLayout());
-
-        GridBagConstraints gc = new GridBagConstraints();
-
-        ////////// FIRST ROW //////////
-        gc.gridx = 0;
-        gc.gridy = 0;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
         
-        gc.ipady = 700;
-        gc.ipadx = 180;
+        tablesPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.PAGE_AXIS));
+        tablesPanel.add(tenanciesPanel);
+        tablesPanel.add(leasesPanel);
+        tablesPanel.add(rentAccPanel);
 
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        tablesPanel.add(tenanciesPanel, gc);
-
-        ////////// NEXT ROW //////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-
-        gc.ipady = 700;
-        gc.ipadx = 180;
-        
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        tablesPanel.add(leasesPanel, gc);
-
-        ////////// NEXT ROW //////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-
-        gc.ipady = 700;
-        gc.ipadx = 180;
-        
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        tablesPanel.add(rentAccPanel, gc);
+//        tablesPanel.setLayout(new GridBagLayout());
+//
+//        GridBagConstraints gc = new GridBagConstraints();
+//
+//        ////////// FIRST ROW //////////
+//        gc.gridx = 0;
+//        gc.gridy = 0;
+//
+//        gc.weightx = 1;
+//        gc.weighty = 1;
+//        
+//        gc.ipady = 700;
+//        gc.ipadx = 180;
+//
+//        gc.fill = GridBagConstraints.NONE;
+//        gc.anchor = GridBagConstraints.WEST;
+//        gc.insets = new Insets(0, 0, 0, 0);
+//        tablesPanel.add(tenanciesPanel, gc);
+//
+//        ////////// NEXT ROW //////////
+//        gc.gridx = 0;
+//        gc.gridy++;
+//
+//        gc.weightx = 1;
+//        gc.weighty = 1;
+//
+//        gc.ipady = 700;
+//        gc.ipadx = 180;
+//        
+//        gc.fill = GridBagConstraints.NONE;
+//        gc.anchor = GridBagConstraints.WEST;
+//        gc.insets = new Insets(0, 0, 0, 0);
+//        tablesPanel.add(leasesPanel, gc);
+//
+//        ////////// NEXT ROW //////////
+//        gc.gridx = 0;
+//        gc.gridy++;
+//
+//        gc.weightx = 1;
+//        gc.weighty = 1;
+//
+//        gc.ipady = 700;
+//        gc.ipadx = 180;
+//        
+//        gc.fill = GridBagConstraints.NONE;
+//        gc.anchor = GridBagConstraints.WEST;
+//        gc.insets = new Insets(0, 0, 0, 0);
+//        tablesPanel.add(rentAccPanel, gc);
 
         add(title, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.WEST);
         add(tablesPanel, BorderLayout.CENTER);
 
-        setMinimumSize(new Dimension(500, 700));
-        setSize(900, 700);
+        setMinimumSize(new Dimension(1200, 700));
+        setSize(1200, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
     }
@@ -321,18 +361,21 @@ public class HomeForm extends JFrame implements Observer {
 
         //Set up ActionListeners
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
             }
         });
 
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(HomeForm.this,
@@ -353,9 +396,4 @@ public class HomeForm extends JFrame implements Observer {
         });
         return menuBar;
     }
-
-//    public static void main(String[] args) {
-//        HomeForm test = new HomeForm();
-//        test.setVisible(true);
-//    }
 }

@@ -29,9 +29,11 @@ public interface JobRoleInterface extends Remote {
     boolean getRead() throws RemoteException;
     boolean getWrite() throws RemoteException;
     boolean getUpdate() throws RemoteException;
+    boolean getDelete() throws RemoteException;
     boolean getEmployeeRead() throws RemoteException;
     boolean getEmployeeWrite() throws RemoteException;
     boolean getEmployeeUpdate() throws RemoteException;
+    boolean getEmployeeDelete() throws RemoteException;
     String getLastModifiedBy() throws RemoteException;
     Date getLastModifiedDate() throws RemoteException;
     ModifiedByInterface getLastModification() throws RemoteException;

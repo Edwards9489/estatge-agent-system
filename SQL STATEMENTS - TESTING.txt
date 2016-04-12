@@ -1,0 +1,67 @@
+delete from addresses where addressRef=22;
+
+delete from propertyModifications where ref=4;
+
+delete from officeModifications where code='MNC';
+
+delete from personModifications where ref=16;
+
+delete from applicationModifications where ref=5;
+
+delete from rentAccountModifications where ref=18;
+
+
+
+delete from tenancies where tenancyRef > 28;
+
+delete from rentAccounts where rentAccRef > 28;
+
+
+
+delete from personAddresses where personRef=16;
+
+
+
+delete from applications where appRef=5;
+delete from applicationAddresses where appRef=5;
+delete from involvedParties where appRef=5;
+
+
+
+update applications set appStatus='NEW', tenancyRef=NULL where appRef=5;
+
+update properties set propStatus='VOID' where propRef=4;
+
+
+
+delete from rentTransactions where transactionRef>=1;
+
+
+
+
+
+
+
+
+
+
+
+select * from officeModifications;
+
+select * from propertyModifications;
+
+select * from tenancies where tenancyRef > 4;
+
+select * from rentAccounts where rentAccRef > 4;
+
+select * from personAddresses where personRef=16;
+
+select * from applicationAddresses where appRef=5;
+
+select * from applications where appRef=5;
+
+select * from involvedParties where appRef=5;
+
+select * from properties where addressRef=7;
+
+select * from addresses where addressRef=7;

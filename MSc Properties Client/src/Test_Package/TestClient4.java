@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -23,8 +24,12 @@ public class TestClient4  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "TEST", "test"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "TEST3", "TEST3password"});
             client.addObserver(this);
+            
+            System.out.println("User Write: " + client.getUser().getWrite());
+            
+            System.out.println("Create Age Property Element: " + client.createPropertyElement(17, "AGE", new Date(), false, "Victorian", null, ""));
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient4.class.getName()).log(Level.SEVERE, null, ex);

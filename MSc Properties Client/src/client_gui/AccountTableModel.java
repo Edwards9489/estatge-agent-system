@@ -7,6 +7,7 @@ package client_gui;
 
 import interfaces.AccountInterface;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ public class AccountTableModel extends AbstractTableModel {
     
     private List<AccountInterface> db;
     
-    private String[] colNames = {"Reference", "Agreement Name", "Start Date", "Balance", "Office Code"};
+    private String[] colNames = {"Ref", "Account Name", "Start Date", "Balance", "Office Code"};
     
     public AccountTableModel() {
     }
@@ -47,19 +48,19 @@ public class AccountTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
-            AccountInterface agreement = db.get(rowIndex);
+            AccountInterface account = db.get(rowIndex);
             
             switch(columnIndex) {
                 case 0:
-                    return agreement.getAccRef();
+                    return account.getAccRef();
                 case 1:
-                    return agreement.getAccName();
+                    return account.getAccName();
                 case 2:
-                    return agreement.getStartDate();
+                    return new SimpleDateFormat("dd-MM-YYYY").format(account.getStartDate());
                 case 3:
-                    return "£" + agreement.getBalance();
+                    return "£" + account.getBalance();
                 case 4:
-                    return agreement.getOfficeCode();
+                    return account.getOfficeCode();
             }
             return null;
         } catch (RemoteException ex) {

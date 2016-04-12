@@ -10,5 +10,5 @@ package client_gui;
  * @author Dwayne
  */
 public interface TableListener {
-    public void rowSelected(Object agreement);
+    public void rowSelected(int ref);
 }

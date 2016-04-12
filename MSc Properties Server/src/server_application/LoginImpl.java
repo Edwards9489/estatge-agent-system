@@ -64,7 +64,9 @@ public class LoginImpl extends UnicastRemoteObject implements LoginInterface {
         if (myServer != null && myServer.isAlive()) {
             try {
                 if (myServer.isUser(username, password)) {
-                    return myServer;
+                    
+                    Server proxyServer = new ServerProxy(myServer.getUser(username), myServer);
+                    return proxyServer;
                 }
             } catch (IOException e) {
                 throw new InvalidUserException(username);

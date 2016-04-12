@@ -69,7 +69,7 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
      * @param createdDate
      * @throws java.rmi.RemoteException
      */
-    public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender,Element maritalStatus, Element ethnicOrigin,
+    public Person(int personRef, Element title, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, Element gender, Element maritalStatus, Element ethnicOrigin,
             Element language, Element nationality, Element sexuality, Element religion, AddressUsageInterface address, String createdBy, Date createdDate) throws RemoteException {
         this.personRef = personRef;
         this.setTitle(title);
@@ -252,11 +252,11 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
                 if(addressUsage.isCurrent()) {
                     AddressUsage temp = (AddressUsage) addressUsage;
                     temp.setEndDate(address.getStartDate(), modifiedBy);
-                    this.modifiedBy(modifiedBy);
                 }
             }
         }
         this.addresses.add(address);
+        this.modifiedBy(modifiedBy);
     }
     
     /**

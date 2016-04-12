@@ -66,7 +66,7 @@ public class ContractTest {
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             Employee employee = new Employee(1, person, "DEDWARDS", "TestPassword", "ADMIN", new Date());
             Employee employee2 = new Employee(2, person, "DEDWARDS", "OtherPassword", "ADMIN", new Date());
-            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             ContractInterface instance = new Contract(1, 1, date2.getTime(), 12, employee, jobRole, "EDM", "DEDWARDS", new Date());
             
             assertEquals(employee, instance.getEmployee());
@@ -97,7 +97,7 @@ public class ContractTest {
             AddressUsage addressUsage = new AddressUsage(1, address, date2.getTime(), note3, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             Employee employee = new Employee(1, person, "DEDWARDS", "TestPassword", "ADMIN", new Date());
-            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             ContractInterface instance = new Contract(1, 1, date2.getTime(), 12, employee, jobRole, "EDM", "DEDWARDS", new Date());
             
             assertEquals(1, instance.getEmployeeRef());
@@ -126,8 +126,8 @@ public class ContractTest {
             AddressUsage addressUsage = new AddressUsage(1, address, date2.getTime(), note3, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             Employee employee = new Employee(1, person, "DEDWARDS", "TestPassword", "ADMIN", new Date());
-            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
-            JobRole jobRole2 = new JobRole("TEST", "Test", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole jobRole2 = new JobRole("TEST", "Test", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             ContractInterface instance = new Contract(1, 1, date2.getTime(), 12, employee, jobRole, "EDM", "DEDWARDS", new Date());
             
             assertEquals(jobRole, instance.getJobRole());
@@ -156,7 +156,7 @@ public class ContractTest {
             AddressUsage addressUsage = new AddressUsage(1, address, date2.getTime(), note3, "DEDWARDS", new Date());
             Person person = new Person(1, element, "Dwayne", "Leroy", "Edwards", date.getTime(), "JL 81 61 90 C", element, element, element, element, element, element, element, addressUsage, "DEDWARDS", new Date());
             Employee employee = new Employee(1, person, "DEDWARDS", "TestPassword", "ADMIN", new Date());
-            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, "ADMIN", new Date());
+            JobRole jobRole = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             ContractInterface instance = new Contract(1, 1, date2.getTime(), 12, employee, jobRole, "EDM", "DEDWARDS", new Date());
             
             assertEquals("MNGR", instance.getJobRoleCode());

@@ -85,9 +85,4 @@ public class Contract extends Agreement implements ContractInterface {
     public String getJobRoleCode() throws RemoteException {
         return getJobRole().getJobRoleCode();
     }
-    
-    @Override
-    public String toString() {
-        return "AMEND toString()";
-    }
 }

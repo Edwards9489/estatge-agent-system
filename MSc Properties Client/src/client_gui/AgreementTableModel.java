@@ -7,6 +7,7 @@ package client_gui;
 
 import interfaces.AgreementInterface;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ public class AgreementTableModel extends AbstractTableModel {
     
     private List<AgreementInterface> db;
     
-    private String[] colNames = {"Reference", "Agreement Name", "Start Date", "Expected End Date", "Office Code"};
+    private String[] colNames = {"Ref", "Agreement Name", "Start Date", "Expected End Date", "Office Code"};
     
     public AgreementTableModel() {
     }
@@ -55,9 +56,9 @@ public class AgreementTableModel extends AbstractTableModel {
                 case 1:
                     return agreement.getAgreementName();
                 case 2:
-                    return agreement.getStartDate();
+                    return new SimpleDateFormat("dd-MM-YYYY").format(agreement.getStartDate());
                 case 3:
-                    return agreement.getExpectedEndDate();
+                    return new SimpleDateFormat("dd-MM-YYYY").format(agreement.getExpectedEndDate());
                 case 4:
                     return agreement.getOfficeCode();
             }

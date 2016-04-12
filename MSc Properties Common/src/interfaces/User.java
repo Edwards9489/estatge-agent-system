@@ -23,7 +23,9 @@ public interface User extends Remote {
     boolean getRead() throws RemoteException;
     boolean getWrite() throws RemoteException;
     boolean getUpdate() throws RemoteException;
+    boolean getDelete() throws RemoteException;
     boolean getEmployeeRead() throws RemoteException;
     boolean getEmployeeWrite() throws RemoteException;
     boolean getEmployeeUpdate() throws RemoteException;
+    boolean getEmployeeDelete() throws RemoteException;
 }

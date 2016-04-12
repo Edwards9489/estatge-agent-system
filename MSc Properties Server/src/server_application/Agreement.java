@@ -422,8 +422,9 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
      */
     @Override
     public String toString() {
+        String temp = "";
         try {
-            String temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +
+            temp = "\n\nAgreement Ref: " + this.getAgreementRef() + "\nAgreement Name: " + this.getAgreementName() +
                     "\nOffice Code: " + this.getOfficeCode() + "\nAgreement Length: " + this.getLength() + "\nStart Date: " +
                     this.getStartDate() + "\nExpected End Date: " + this.getExpectedEndDate() + "\nActual End Date: " +
                     this.getActualEndDate() + "\nIs Current: " + this.isCurrent() + "\nCreated By: " + this.getCreatedBy() +
@@ -433,6 +434,6 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
         } catch (RemoteException ex) {
             Logger.getLogger(Agreement.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return temp;
     }
 }

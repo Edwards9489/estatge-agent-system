@@ -98,9 +98,9 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void updatePermissions(boolean read, boolean write, boolean update, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, ModifiedByInterface modifiedBy) {
+    public void updatePermissions(boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, ModifiedByInterface modifiedBy) {
         UserImpl temp = (UserImpl) this.user;
-        temp.setUserPermissions(read, write, update, employeeRead, employeeWrite, employeeUpdate);
+        temp.setUserPermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete);
         this.modifiedBy(modifiedBy);
     }
     
