@@ -2654,6 +2654,18 @@ public class Database {
 
     /**
      *
+     * @param addressRef
+     * @return
+     */
+    public AddressUsageInterface getAddressUsage(int addressRef) {
+        if (this.addressUsageExists(addressRef)) {
+            return this.addressUsages.get(addressRef);
+        }
+        return null;
+    }
+
+    /**
+     *
      * @param property
      * @throws SQLException
      * @throws RemoteException
@@ -8088,13 +8100,6 @@ public class Database {
     public ContactInterface getContact(int contactRef) {
         if (this.contactExists(contactRef)) {
             return contacts.get(contactRef);
-        }
-        return null;
-    }
-
-    public AddressUsageInterface getAddressUsage(int addressUsageRef) {
-        if (this.addressUsageExists(addressUsageRef)) {
-            return this.addressUsages.get(addressUsageRef);
         }
         return null;
     }

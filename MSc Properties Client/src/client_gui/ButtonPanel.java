@@ -22,16 +22,10 @@ import javax.swing.border.Border;
  * @author Dwayne
  */
 public class ButtonPanel extends JPanel {
-	private JButton appButton;
-	private JButton propButton;
-	private JButton tenButton;
-	private JButton leaseButton;
-	private JButton contractButton;
-	private JButton rentAccButton;
-	private JButton leaseAccButton;
-	private JButton employeeAccButton;
-	private JButton reportingButton;
-	private JButton systemConfigButton;
+	private JButton createBtn;
+	private JButton updateBtn;
+	private JButton deleteBtn;
+	private JButton viewDetailsBtn;
 	private StringListener listener = null;
 	
     public ButtonPanel() {
@@ -39,133 +33,61 @@ public class ButtonPanel extends JPanel {
     }
     
     
-        
-	
     public void setButtonListener(StringListener ev) {
         listener = ev;
     }
 	
     private void layoutComponents() {
-        appButton = new JButton("Applications");
-        propButton = new JButton("Properties");
-        tenButton = new JButton("Tenancies");
-        leaseButton = new JButton("Leases");
-        contractButton = new JButton("Contracts");
-        rentAccButton = new JButton("Rent Accounts");
-        leaseAccButton = new JButton("Lease Accounts");
-        employeeAccButton = new JButton("Employee Accounts");
-        reportingButton = new JButton("Reporting");
-        systemConfigButton = new JButton("System Config");
+        createBtn = new JButton("Create");
+        updateBtn = new JButton("Update");
+        deleteBtn = new JButton("Delete");
+        viewDetailsBtn = new JButton("View Details");
 
-        Dimension buttonDim = employeeAccButton.getPreferredSize();
-        appButton.setPreferredSize(buttonDim);
-        propButton.setPreferredSize(buttonDim);
-        tenButton.setPreferredSize(buttonDim);
-        leaseButton.setPreferredSize(buttonDim);
-        contractButton.setPreferredSize(buttonDim);
-        rentAccButton.setPreferredSize(buttonDim);
-        leaseAccButton.setPreferredSize(buttonDim);
-        reportingButton.setPreferredSize(buttonDim);
-        systemConfigButton.setPreferredSize(buttonDim);
+        Dimension buttonDim = viewDetailsBtn.getPreferredSize();
+        buttonDim.setSize(buttonDim.getWidth(), (buttonDim.getHeight() + 10));
+        createBtn.setPreferredSize(buttonDim);
+        updateBtn.setPreferredSize(buttonDim);
+        deleteBtn.setPreferredSize(buttonDim);
+        viewDetailsBtn.setPreferredSize(buttonDim);
+        
 
+        createBtn.setMnemonic(KeyEvent.VK_C);
+        updateBtn.setMnemonic(KeyEvent.VK_U);
+        deleteBtn.setMnemonic(KeyEvent.VK_D);
+        viewDetailsBtn.setMnemonic(KeyEvent.VK_V);
 
-        appButton.setMnemonic(KeyEvent.VK_A);
-        propButton.setMnemonic(KeyEvent.VK_P);
-        tenButton.setMnemonic(KeyEvent.VK_T);
-        leaseButton.setMnemonic(KeyEvent.VK_L);
-        contractButton.setMnemonic(KeyEvent.VK_C);
-        rentAccButton.setMnemonic(KeyEvent.VK_R);
-        leaseAccButton.setMnemonic(KeyEvent.VK_N);
-        employeeAccButton.setMnemonic(KeyEvent.VK_E);
-        reportingButton.setMnemonic(KeyEvent.VK_F);
-        systemConfigButton.setMnemonic(KeyEvent.VK_S);
-
-        appButton.addActionListener(new ActionListener() {
+        createBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(createBtn.getText());
                         }
                 }
         });
 
-        propButton.addActionListener(new ActionListener() {
+        updateBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(createBtn.getText());
                         }
                 }
         });
 
-        tenButton.addActionListener(new ActionListener() {
+        deleteBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(createBtn.getText());
                         }
                 }
         });
 
-        leaseButton.addActionListener(new ActionListener() {
+        viewDetailsBtn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
-                        }
-                }
-        });
-
-        contractButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(appButton.getText());
-                        }
-                }
-        });
-
-        rentAccButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(appButton.getText());
-                        }
-                }
-        });
-
-        leaseAccButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(leaseAccButton.getText());
-                        }
-                }
-        });
-
-        employeeAccButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(employeeAccButton.getText());
-                        }
-                }
-        });
-
-        reportingButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(reportingButton.getText());
-                        }
-                }
-        });
-
-        systemConfigButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                        if(listener != null) {
-                                listener.textOmitted(systemConfigButton.getText());
+                                listener.textOmitted(createBtn.getText());
                         }
                 }
         });
@@ -192,7 +114,7 @@ public class ButtonPanel extends JPanel {
         // have to set all of above for gt before you start
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
-        add(appButton, gc);
+        add(createBtn, gc);
 
         ////////// SECOND ROW ///////////
         gc.gridx = 0;
@@ -203,7 +125,7 @@ public class ButtonPanel extends JPanel {
 
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
-        add(propButton, gc);
+        add(updateBtn, gc);
 
         ////////// THIRD ROW ///////////
         gc.gridx = 0;
@@ -214,7 +136,7 @@ public class ButtonPanel extends JPanel {
 
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
-        add(tenButton, gc);
+        add(deleteBtn, gc);
 
         ////////// FOURTH ROW ///////////
         gc.gridx = 0;
@@ -225,73 +147,9 @@ public class ButtonPanel extends JPanel {
 
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
-        add(leaseButton, gc);
-
-        ////////// FIFTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(contractButton, gc);
-
-        ////////// SIXTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(rentAccButton, gc);
-
-        ////////// SEVENTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(leaseAccButton, gc);
-
-        ////////// EIGTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(employeeAccButton, gc);
-
-        ////////// NINTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(reportingButton, gc);
-
-        ////////// TENTH ROW ///////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 0.5;
-        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
-
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.insets = new Insets(0, 0, 0, 0);
-        add(systemConfigButton, gc);
+        add(viewDetailsBtn, gc);
+        
+        this.setSize(150, 200);
 
         this.setVisible(true);
     }

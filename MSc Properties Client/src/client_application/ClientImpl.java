@@ -7,6 +7,7 @@ package client_application;
 
 import interfaces.AccountInterface;
 import interfaces.AddressInterface;
+import interfaces.AddressUsageInterface;
 import interfaces.AgreementInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Client;
@@ -14,6 +15,7 @@ import interfaces.ContractInterface;
 import interfaces.Element;
 import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
+import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
@@ -2412,12 +2414,20 @@ public class ClientImpl extends Observable implements Client {
         return this.server.getAddress(aRef);
     }
     
+    public AddressUsageInterface getAddressUsage(int aRef) throws RemoteException {
+        return this.server.getAddressUsage(aRef);
+    }
+    
     public JobRoleInterface getJobRole(String jobRoleCode) throws RemoteException {
         return this.server.getJobRole(jobRoleCode);
     }
     
     public OfficeInterface getOffice(String officeCode) throws RemoteException {
         return this.server.getOffice(officeCode);
+    }
+    
+    public InvolvedPartyInterface getInvolvedParty(int iRef) throws RemoteException {
+        return this.server.getInvolvedParty(iRef);
     }
     
     public ApplicationInterface getApplication(int aRef) throws RemoteException {

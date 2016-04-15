@@ -536,6 +536,7 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
         return this.tenancyRef;
     }
     
+    @Override
     public boolean hasTenancyRef() throws RemoteException {
         return tenancyRef != null;
     }

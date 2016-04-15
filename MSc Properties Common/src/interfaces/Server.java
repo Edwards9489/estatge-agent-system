@@ -278,8 +278,10 @@ public interface Server extends Remote {
     
     
     AddressInterface getAddress(int aRef) throws RemoteException;
+    AddressUsageInterface getAddressUsage(int aRef) throws RemoteException;
     JobRoleInterface getJobRole(String jobRoleCode) throws RemoteException;
     OfficeInterface getOffice(String officeCode) throws RemoteException;
+    InvolvedPartyInterface getInvolvedParty(int iRef) throws RemoteException;
     ApplicationInterface getApplication(int aRef) throws RemoteException;
     PropertyInterface getProperty(int pRef) throws RemoteException;
     EmployeeInterface getEmployee(int eRef) throws RemoteException;
