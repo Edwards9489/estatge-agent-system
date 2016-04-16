@@ -20,6 +20,7 @@ public interface PropertyInterface extends Remote {
     List<LandlordInterface> getLandlords() throws RemoteException;
     Date getAcquiredDate() throws RemoteException;
     Date getLeaseEndDate() throws RemoteException;
+    Integer getLeaseRef() throws RemoteException;
     Element getPropType() throws RemoteException;
     Element getPropSubType() throws RemoteException;
     String getPropStatus() throws RemoteException;

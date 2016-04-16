@@ -35,6 +35,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
     private List<LandlordInterface> landlords;
     private Date acquiredDate;
     private Date leaseEndDate;
+    private Integer leaseRef;
     private Element propType;
     private Element propSubType;
     private String propStatus; // Occupied, Void, New, End etc
@@ -64,6 +65,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
         this.address = address;
         this.landlords = new ArrayList();
         this.acquiredDate = acquiredDate;
+        this.leaseRef = null;
         this.propType = propType;
         this.propSubType = propSubType;
         this.propStatus = "NEW";
@@ -132,6 +134,15 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
      */
     public void setLeaseEndDate(Date leaseEndDate, ModifiedByInterface modifiedBy) {
         this.leaseEndDate = leaseEndDate;
+        this.modifiedBy(modifiedBy);
+    }
+    
+    /**
+     * @param ref
+     * @param modifiedBy
+     */
+    public void setLeaseRef(Integer ref, ModifiedByInterface modifiedBy) {
+        this.leaseRef = ref;
         this.modifiedBy(modifiedBy);
     }
 
@@ -291,6 +302,15 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
     @Override
     public Date getLeaseEndDate() throws RemoteException {
         return leaseEndDate;
+    }
+    
+    /**
+     * @return leaseRef
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public Integer getLeaseRef() throws RemoteException {
+        return leaseRef;
     }
 
     /**

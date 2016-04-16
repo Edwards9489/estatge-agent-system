@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.property;
+package client_gui.person;
 
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.TableListener;
+import client_gui.application.AddressPanel;
 import client_gui.application.DocumentPanel;
 import client_gui.application.ModPanel;
-import client_gui.lease.LandlordPanel;
 import client_gui.lease.NotePanel;
 import interfaces.AddressUsageInterface;
-import interfaces.PropertyInterface;
+import interfaces.PersonInterface;
 import interfaces.Document;
+import interfaces.InvolvedPartyInterface;
 import interfaces.Note;
-import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,25 +50,27 @@ import javax.swing.border.Border;
  *
  * @author Dwayne
  */
-public class PropertyDetails extends JFrame {
+public class PersonDetails extends JFrame {
     
     private ClientImpl client = null;
-    private PropertyInterface property = null;
+    private PersonInterface person = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
     private JTabbedPane tabbedPane;
-    private ButtonPanel buttonPanel;    
-    private PropElementPanel propElementPanel;
+    private ButtonPanel buttonPanel;
+    private ContactPanel contactPanel;
+    private AddressPanel addressPanel;
     private NotePanel notePanel;
-    private LandlordPanel landlordPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-
-    public PropertyDetails(ClientImpl client, PropertyInterface app) {
+    
+    //     contacts - addresses - notes - documents - modifications
+    
+    public PersonDetails(ClientImpl client, PersonInterface app) {
         super("MSc Properties");
         setClient(client);
-        setApplication(app);
+        setPerson(app);
         layoutComponents();
     }
 
@@ -79,10 +81,10 @@ public class PropertyDetails extends JFrame {
         }
     }
 
-    // Use of singleton pattern to ensure only one Application is initiated
-    private void setApplication(PropertyInterface app) {
-        if (property == null) {
-            this.property = app;
+    // Use of singleton pattern to ensure only one Person is initiated
+    private void setPerson(PersonInterface app) {
+        if (person == null) {
+            this.person = app;
         }
     }
 
@@ -109,7 +111,7 @@ public class PropertyDetails extends JFrame {
             
             this.add(mainPanel, BorderLayout.CENTER);
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -120,7 +122,7 @@ public class PropertyDetails extends JFrame {
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("Property Details");
+        Border titleBorder = BorderFactory.createTitledBorder("Person Details");
 
         detailsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 
@@ -134,21 +136,21 @@ public class PropertyDetails extends JFrame {
 
         gc.weightx = 1;
         gc.weighty = 1;
-        gc.ipady = 20;
+        gc.ipady = 30;
 
-        JLabel leaseRef = new JLabel("Property Ref    ");
-        Font font = leaseRef.getFont();
+        JLabel appRef = new JLabel("Person Ref    ");
+        Font font = appRef.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 17);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 17);
 
-        leaseRef.setFont(plainFont);
+        appRef.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseRef, gc);
+        detailsPanel.add(appRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(property.getPropRef()));
+        JLabel ref = new JLabel(String.valueOf(person.getPersonRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -156,164 +158,195 @@ public class PropertyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(ref, gc);
 
-        JLabel leaseLength = new JLabel("Status    ");
-        leaseLength.setFont(plainFont);
+        JLabel corrName = new JLabel("National Insurance N.o    ");
+        corrName.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseLength, gc);
+        detailsPanel.add(corrName, gc);
 
-        JLabel length = new JLabel(property.getPropStatus());
-        length.setFont(boldFont);
+        JLabel name = new JLabel(person.getNI());
+        name.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(length, gc);
+        detailsPanel.add(name, gc);
 
-        JLabel lExpenditure = new JLabel("Type Code    ");
-        lExpenditure.setFont(plainFont);
+        JLabel pGender = new JLabel("Gender    ");
+        pGender.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(lExpenditure, gc);
+        detailsPanel.add(pGender, gc);
+
+        JLabel gender = new JLabel(person.getGender().getCode());
+        gender.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel expenditure = new JLabel(property.getPropType().getCode());
-        expenditure.setFont(boldFont);
-        detailsPanel.add(expenditure, gc);
-        
-        JLabel leasePropRef = new JLabel("Sub Type Code    ");
-        leasePropRef.setFont(plainFont);
+        detailsPanel.add(gender, gc);
+
+        JLabel appStatus = new JLabel("Ethnicity    ");
+        appStatus.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leasePropRef, gc);
+        detailsPanel.add(appStatus, gc);
+
+        JLabel status = new JLabel(person.getEthnicOrigin().getCode());
+        status.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel propRef = new JLabel(property.getPropSubType().getCode());
-        propRef.setFont(boldFont);
-        detailsPanel.add(propRef, gc);
-
-        JLabel lStartDate = new JLabel("Acquired Date    ");
-        lStartDate.setFont(plainFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(lStartDate, gc);
-
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(property.getAcquiredDate()));
-        startDate.setFont(boldFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(startDate, gc);
+        detailsPanel.add(status, gc);
 
             ////////// NEXT ROW //////////
         gc.gridx = 0;
         gc.gridy++;
 
-        JLabel leaseName = new JLabel("Address    ");
-        leaseName.setFont(plainFont);
-        
+        gc.weightx = 1;
+        gc.weighty = 1;
+
+        JLabel startDate = new JLabel("Name    ");
+        startDate.setFont(plainFont);
+
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseName, gc);
+        detailsPanel.add(startDate, gc);
 
-        JLabel start = new JLabel(property.getAddress().printAddress());
+        JLabel start = new JLabel(person.getName());
         start.setFont(boldFont);
 
         gc.gridx++;
-        gc.gridwidth = 5;
+        gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(start, gc);
 
         JLabel empty1 = new JLabel("");
         empty1.setFont(plainFont);
-
+        
         gc.gridx++;
         gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(empty1, gc);
 
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
         JLabel empty2 = new JLabel("");
         empty2.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(empty2, gc);
 
-        JLabel empty3 = new JLabel("");
-        empty3.setFont(plainFont);
+        JLabel tenancyRef = new JLabel("Language    ");
+        tenancyRef.setFont(plainFont);
 
         gc.gridx++;
-        gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty3, gc);
+        detailsPanel.add(tenancyRef, gc);
+        
+        JLabel tenRef = new JLabel(person.getLanguage().getCode());
+        tenRef.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty4 = new JLabel("");
-        empty4.setFont(boldFont);
-        detailsPanel.add(empty4, gc);
+        detailsPanel.add(tenRef, gc);
 
-        JLabel propLeaseRef = new JLabel("Lease Ref    ");
-        propLeaseRef.setFont(plainFont);
+        JLabel pNationality = new JLabel("Nationality    ");
+        pNationality.setFont(plainFont);
 
         gc.gridx++;
-        gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(propLeaseRef, gc);
+        detailsPanel.add(pNationality, gc);
         
-        JLabel propLRef;
-        if(property.getLeaseEndDate() != null) {
-            propLRef = new JLabel(String.valueOf(property.getLeaseRef()));
-        } else {
-            propLRef = new JLabel("");
-        }
-        propLRef.setFont(boldFont);
+        JLabel nationality = new JLabel(person.getNationality().getCode());
+        nationality.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        propLRef.setFont(boldFont);
-        detailsPanel.add(propLRef, gc);
-
-        JLabel leaseEndDate = new JLabel("Lease End Date    ");
-        leaseEndDate.setFont(plainFont);
+        detailsPanel.add(nationality, gc);
         
-        gc.gridx++;
+        
+        /////////// NEXT ROW
+        
+        gc.gridx = 0;
+        gc.gridy++;
+        JLabel pDOB = new JLabel("Date of Birth    ");
+        pDOB.setFont(plainFont);
+
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseEndDate, gc);
+        detailsPanel.add(pDOB, gc);
         
-        JLabel endDate;
-        if(property.getLeaseEndDate() != null) {
-            endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(property.getLeaseEndDate()));
-        } else {
-            endDate = new JLabel("");
-        }
-        endDate.setFont(boldFont);
-        
+        JLabel dob = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getDateOfBirth()));
+        dob.setFont(boldFont);
+
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(endDate, gc);
+        detailsPanel.add(dob, gc);
+
+        JLabel pMarStatus = new JLabel("Marital Status    ");
+        pMarStatus.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(pMarStatus, gc);
+
+        JLabel marStatus = new JLabel(person.getMaritalStatus().getCode());
+        marStatus.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(marStatus, gc);
+
+        JLabel pReligion = new JLabel("Religion    ");
+        pReligion.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(pReligion, gc);
+
+        JLabel religion = new JLabel(person.getReligion().getCode());
+        religion.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(religion, gc);
+
+        JLabel pSex = new JLabel("Sexuality    ");
+        pSex.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(pSex, gc);
+
+        JLabel sex = new JLabel(person.getSexuality().getCode());
+        sex.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(sex, gc);
     }
     
     private void setUpMainPanel() {
@@ -352,7 +385,7 @@ public class PropertyDetails extends JFrame {
 //                    setVisible(false);
 //                    tenSearch.setVisible(true);
                 } else if (text.equals("View Details")) {
-//                    PropertySearch leaseSearch = new PropertySearch();
+//                    LeaseSearch leaseSearch = new LeaseSearch();
 //                    leaseSearch.setClient(client);
 //                    setVisible(false);
 //                    leaseSearch.setVisible(true);
@@ -362,31 +395,61 @@ public class PropertyDetails extends JFrame {
         
         tabbedPane = new JTabbedPane();
         
-        propElementPanel = new PropElementPanel("Property Elements");
+        contactPanel = new ContactPanel("Contacts");
         
         try {
-            propElementPanel.setData(property.getPropertyElements());
+            contactPanel.setData(person.getContacts());
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        propElementPanel.setTableListener(new TableListener() {
+        contactPanel.setTableListener(new TableListener() {
             @Override
-            public void rowSelected(int propElementRef) {
-                if(propElementRef > 0) {
+            public void rowSelected(int invPartyRef) {
+                if(invPartyRef > 0) {
                     try {
-                        PropertyElementInterface propElement = property.getPropElement(propElementRef);
-                        if(propElement != null) {
-                            System.out.println(propElement.getPropertyElementRef());
+                        InvolvedPartyInterface invParty = client.getInvolvedParty(invPartyRef);
+                        if(invParty != null) {
+                            System.out.println(invParty.getPerson().getName());
                         }
-                        System.out.println("TEST1-Property Element");
+                        System.out.println("TEST1-Contacts");
 //                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
 //                        tenancyForm.setClient(client);
 //                        tenancyForm.setTenancy(tenancy);
 //                        tenancyForm.setVisible(true);
 //                        setVisible(false);
                     } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        
+        addressPanel = new AddressPanel("Addresses");
+        
+        try {
+            addressPanel.setData(person.getAddresses());
+        } catch (RemoteException ex) {
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        addressPanel.setTableListener(new TableListener() {
+            @Override
+            public void rowSelected(int addressRef) {
+                if(addressRef > 0) {
+                    try {
+                        AddressUsageInterface address = client.getAddressUsage(addressRef);
+                        if(address != null) {
+                            System.out.println(address.getAddress().printAddress());
+                        }
+                        System.out.println("TEST1-Address Usage");
+//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
+//                        tenancyForm.setClient(client);
+//                        tenancyForm.setTenancy(tenancy);
+//                        tenancyForm.setVisible(true);
+//                        setVisible(false);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -395,9 +458,9 @@ public class PropertyDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(property.getNotes());
+            notePanel.setData(person.getNotes());
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         notePanel.setTableListener(new TableListener() {
@@ -405,7 +468,7 @@ public class PropertyDetails extends JFrame {
             public void rowSelected(int noteRef) {
                 if(noteRef > 0) {
                     try {
-                        Note note = property.getNote(noteRef);
+                        Note note = person.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
                         }
@@ -416,37 +479,7 @@ public class PropertyDetails extends JFrame {
 //                        tenancyForm.setVisible(true);
 //                        setVisible(false);
                     } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
-        
-        landlordPanel = new LandlordPanel("Landlords");
-        
-        try {
-            landlordPanel.setData(property.getLandlords());
-        } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        landlordPanel.setTableListener(new TableListener() {
-            @Override
-            public void rowSelected(int addressRef) {
-                if(addressRef > 0) {
-                    try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
-                        }
-                        System.out.println("TEST1-Landlords");
-//                        PropertyDetailsForm tenancyForm = new PropertyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -455,9 +488,9 @@ public class PropertyDetails extends JFrame {
         documentPanel = new DocumentPanel("Documents");
         
         try {
-            documentPanel.setData(property.getDocuments());
+            documentPanel.setData(person.getDocuments());
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         documentPanel.setTableListener(new TableListener() {
@@ -465,18 +498,18 @@ public class PropertyDetails extends JFrame {
             public void rowSelected(int documentRef) {
                 if(documentRef > 0) {
                     try {
-                        Document document = property.getDocument(documentRef);
+                        Document document = person.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
                         }
                         System.out.println("TEST1-Document");
-//                        PropertyDetailsForm tenancyForm = new PropertyDetailsForm();
+//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
 //                        tenancyForm.setClient(client);
 //                        tenancyForm.setTenancy(tenancy);
 //                        tenancyForm.setVisible(true);
 //                        setVisible(false);
                     } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -485,24 +518,24 @@ public class PropertyDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(property.getModifiedBy());
+            modPanel.setData(person.getModifiedBy());
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         tabbedPane.setSize(800, 175);
         
-        tabbedPane.add(propElementPanel, "Property Elements");
+        tabbedPane.add(contactPanel, "Contacts");
+        tabbedPane.add(addressPanel, "Addresses");
         tabbedPane.add(notePanel, "Notes");
-        tabbedPane.add(landlordPanel, "Landlords");
         tabbedPane.add(documentPanel, "Documents");
         tabbedPane.add(modPanel, "Modifications");
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(property.getCreatedBy(), property.getCreatedDate(), property.getLastModifiedBy(), property.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(person.getCreatedBy(), person.getCreatedDate(), person.getLastModifiedBy(), person.getLastModifiedDate()));
         } catch (RemoteException ex) {
-            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
@@ -560,7 +593,7 @@ public class PropertyDetails extends JFrame {
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
 
-                int action = JOptionPane.showConfirmDialog(PropertyDetails.this,
+                int action = JOptionPane.showConfirmDialog(PersonDetails.this,
                         "Do you really want to exit the application?",
                         "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
 
@@ -569,7 +602,7 @@ public class PropertyDetails extends JFrame {
                         try {
                             client.logout();
                         } catch (RemoteException ex) {
-                            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                     System.exit(0);
@@ -583,7 +616,7 @@ public class PropertyDetails extends JFrame {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                new PropertyDetails().setVisible(true);
+//                new PersonDetails().setVisible(true);
 //            }
 //        });
 //    }

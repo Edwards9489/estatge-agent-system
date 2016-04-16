@@ -2673,14 +2673,15 @@ public class Database {
     public void createProperty(Property property) throws SQLException, RemoteException {
         System.out.println("Property does not exists? - Database" + !this.propertyExists(property.getPropRef()));
         if (!this.propertyExists(property.getPropRef())) {
-            String insertSql = "insert into properties (propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
-                    + "propSubTypeCode, propStatus, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into properties (propRef, addressRef, acquiredDate, leaseEndDate, leaseRef, "
+                    + "propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, property.getPropRef());
                 insertStat.setInt(col++, property.getAddress().getAddressRef());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getAcquiredDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getLeaseEndDate()));
+                insertStat.setInt(col++, property.getLeaseRef());
                 insertStat.setString(col++, property.getPropType().getCode());
                 insertStat.setString(col++, property.getPropSubType().getCode());
                 insertStat.setString(col++, property.getPropStatus());
@@ -2704,12 +2705,13 @@ public class Database {
         if (this.propertyExists(propRef)) {
             PropertyInterface property = this.getProperty(propRef);
             String updateSql = "update properties set addressRef=?, acquiredDate=?, leaseEndDate=?, "
-                    + "propTypeCode=?, propSubTypeCode=?, propStatus=? where propRef=?";
+                    + "leaseRef=?, propTypeCode=?, propSubTypeCode=?, propStatus=? where propRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setInt(col++, property.getAddress().getAddressRef());
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getAcquiredDate()));
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getLeaseEndDate()));
+                updateStat.setInt(col++, property.getLeaseRef());
                 updateStat.setString(col++, property.getPropType().getCode());
                 updateStat.setString(col++, property.getPropSubType().getCode());
                 updateStat.setString(col++, property.getPropStatus());
@@ -2768,7 +2770,7 @@ public class Database {
      * @throws RemoteException
      */
     private void loadProperties() throws SQLException, RemoteException {
-        String sql = "select propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, "
+        String sql = "select propRef, addressRef, acquiredDate, leaseEndDate, leaseRef, propTypeCode, "
                 + "propSubTypeCode, propStatus, createdBy, createdDate from properties order by propRef";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
@@ -2784,6 +2786,7 @@ public class Database {
                 }
                 Date acquiredDate = results.getDate("acquiredDate");
                 Date leaseEndDate = results.getDate("leaseEndDate");
+                Integer leaseRef = results.getInt("leaseRef");
                 String propTypeCode = results.getString("propTypeCode");
                 Element propType;
                 if (this.propTypeExists(propTypeCode)) {
@@ -2809,6 +2812,7 @@ public class Database {
                 this.loadPropertyNotes(temp.getPropRef(), this.loadNoteMap("propertyNotes", temp.getPropRef()));
                 this.loadPropertyDocs(temp.getPropRef(), this.loadDocMap("propertyDocuments", temp.getPropRef()));
                 temp.setLeaseEndDate(leaseEndDate, null);
+                temp.setLeaseRef(leaseRef, null);
                 temp.setPropStatus(propStatus, null);
             }
             selectStat.close();

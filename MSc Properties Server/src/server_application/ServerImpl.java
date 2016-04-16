@@ -2979,6 +2979,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
                 // UPDATE PROPERTY DETAILS
                 property.setPropStatus("VOID", modifiedBy);
+                property.setLeaseEndDate(lease.getExpectedEndDate(), null);
+                property.setLeaseRef(lease.getAgreementRef(), null);
                 this.database.updateProperty(property.getPropRef());
 
                 // UPDATE OFFICE DETAILS
@@ -3006,11 +3008,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 Lease lease = (Lease) this.database.getLease(lRef);
                 for (LandlordInterface temp : landlords) {
                     lease.addLandlord(temp, null);
-                }
-                try {
-                    this.database.updateProperty(pRef);
+                    Landlord temp2 = (Landlord) temp;
+                    temp2.createLease(lease, new ModifiedBy("Created Lease " + lease.getAgreementRef(), createdBy, new Date()));
+                    try {
+                    this.database.updateLandlord(temp.getLandlordRef());
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 }
                 this.updateUserLeases(lease.getOfficeCode());
                 return lease.getAgreementRef();
@@ -3023,9 +3027,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int updateLease(int lRef, String name, Date startDate, int length, String modifiedBy) throws RemoteException {
         if (this.database.leaseExists(lRef)) {
             Lease lease = (Lease) this.database.getLease(lRef);
-            lease.updateAgreement(name, startDate, length, new ModifiedBy("Updated Lease " + lRef, modifiedBy, new Date()));
+            ModifiedBy modified = new ModifiedBy("Updated Lease " + lRef, modifiedBy, new Date());
+            lease.updateAgreement(name, startDate, length, modified);
+            Property property = (Property) lease.getProperty();
+            property.setLeaseEndDate(lease.getExpectedEndDate(), modified);
             try {
                 this.database.updateLease(lease.getAgreementRef());
+                this.database.updateProperty(property.getPropRef());
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -3045,6 +3053,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             try {
                 // Close Property
                 property.setPropStatus("CLSD", modified);
+                property.setLeaseEndDate(endDate, null);
                 this.database.updateProperty(property.getPropRef());
 
                 // End Lease
@@ -3074,9 +3083,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             try {
                 /// ROOL BACK OF PROPERTY DETAILS
                 property.setPropStatus("CLSD", modified);
+                property.setLandlords(new ArrayList(), null);
+                property.setLeaseEndDate(null, null);
+                property.setLeaseRef(null, null);
                 this.database.updateProperty(property.getPropRef());
-                property.setLandlords(new ArrayList(), modified);
-
+                
+                
                 /// ROLL BACK OF LANDLORD DETAILS
                 for (LandlordInterface landlord : landlords) {
                     this.database.endLeaseLandlord(landlord.getLandlordRef(), lRef);
@@ -3218,10 +3230,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.leaseExists(lRef) && this.database.landlordExists(landRef)) {
             Lease lease = (Lease) this.database.getLease(lRef);
             if (!lease.isAlreadyLandlord(lRef)) {
-                LandlordInterface landlord = this.database.getLandlord(landRef);
-                lease.addLandlord(landlord, new ModifiedBy("Assigned Landlord " + landRef + " to Lease " + lRef, modifiedBy, new Date()));
+                Landlord landlord = (Landlord) this.database.getLandlord(landRef);
+                ModifiedBy modified = new ModifiedBy("Assigned Landlord " + landRef + " to Lease " + lRef, modifiedBy, new Date());
+                lease.addLandlord(landlord, modified);
+                landlord.createLease(lease, modified);
                 try {
                     this.database.createLeaseLandlord(landRef, lRef);
+                    this.database.updateLease(lRef);
+                    this.database.updateLandlord(landRef);
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -3236,9 +3252,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.leaseExists(lRef) && this.database.landlordExists(landRef)) {
             Lease lease = (Lease) this.database.getLease(lRef);
             if (lease.isAlreadyLandlord(lRef)) {
-                lease.endLandlord(lRef, new ModifiedBy("Ended Landlord " + landRef + " for Lease " + lRef, modifiedBy, new Date()));
+                Landlord landlord = (Landlord) lease.getLandlord(landRef);
+                ModifiedBy modified = new ModifiedBy("Ended Landlord " + landRef + " for Lease " + lRef, modifiedBy, new Date());
+                landlord.deleteLease(lRef, modified);
+                lease.endLandlord(lRef, modified);
                 try {
                     this.database.endLeaseLandlord(landRef, lRef);
+                    this.database.updateLandlord(landRef);
+                    this.database.updateLease(lRef);
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
