@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.InvalidSecurityPriviligies;
 import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;

@@ -160,7 +160,6 @@ public class InvolvedParty extends UnicastRemoteObject implements InvolvedPartyI
     public void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy) {
         System.out.println(end.after(this.startDate));
         if(end.after(this.startDate)) {
-            System.out.println("IN IF STATEMENT");
             this.setEndDate(end);
             this.setEndReason(endReason);
             this.modifiedBy(modifiedBy);
@@ -171,7 +170,7 @@ public class InvolvedParty extends UnicastRemoteObject implements InvolvedPartyI
      * 
      * @param joint
      * @param start
-     * @param relationhip
+     * @param relationship
      * @param modifiedBy 
      */
     public void updateInvolvedParty(boolean joint, Date start, Element relationship, ModifiedByInterface modifiedBy) {

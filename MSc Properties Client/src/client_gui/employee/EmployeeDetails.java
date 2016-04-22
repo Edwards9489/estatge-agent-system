@@ -9,17 +9,13 @@ import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
-import client_gui.TableListener;
-import client_gui.application.AddressPanel;
-import client_gui.application.DocumentPanel;
+import client_gui.IntegerListener;
+import client_gui.OKDialog;
 import client_gui.application.ModPanel;
+import client_gui.contract.ContractDetails;
 import client_gui.lease.NotePanel;
-import client_gui.person.ContactPanel;
-import interfaces.AddressUsageInterface;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
-import interfaces.Document;
-import interfaces.InvolvedPartyInterface;
 import interfaces.Note;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,6 +24,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -53,9 +50,9 @@ import javax.swing.border.Border;
  * @author Dwayne
  */
 public class EmployeeDetails extends JFrame {
-    
+
     private ClientImpl client = null;
-    private EmployeeInterface person = null;
+    private EmployeeInterface employee = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -64,7 +61,12 @@ public class EmployeeDetails extends JFrame {
     private ContractPanel contractPanel;
     private NotePanel notePanel;
     private ModPanel modPanel;
-    
+    private JLabel ref;
+    private JLabel dob;
+    private JLabel code;
+    private JLabel name;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
+
     public EmployeeDetails(ClientImpl client, EmployeeInterface app) {
         super("MSc Properties");
         setClient(client);
@@ -81,8 +83,8 @@ public class EmployeeDetails extends JFrame {
 
     // Use of singleton pattern to ensure only one Employee is initiated
     private void setEmployee(EmployeeInterface app) {
-        if (person == null) {
-            this.person = app;
+        if (employee == null) {
+            this.employee = app;
         }
     }
 
@@ -91,22 +93,24 @@ public class EmployeeDetails extends JFrame {
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
-            
+
             mainPanel = new JPanel();
-            
+
             centrePanel = new JPanel();
 
             setLayout(new BorderLayout());
 
-            setMinimumSize(new Dimension(1200, 700));
-            setSize(1200, 700);
+            this.setMinimumSize(new Dimension(1200, 700));
+            this.setSize(1200, 700);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
             setupDetails();
-            
+
             setUpMainPanel();
 
             this.add(detailsPanel, BorderLayout.NORTH);
-            
+
             this.add(mainPanel, BorderLayout.CENTER);
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,7 +118,7 @@ public class EmployeeDetails extends JFrame {
     }
 
     private void setupDetails() throws RemoteException {
-        /////// SET UP APPLICATION DETAILS PANEL
+        /////// SET UP EMPLOYEE DETAILS PANEL
 
         detailsPanel.setSize(1000, 250);
 
@@ -128,7 +132,7 @@ public class EmployeeDetails extends JFrame {
 
         GridBagConstraints gc = new GridBagConstraints();
 
-            ////////// FIRST ROW //////////
+        ////////// FIRST ROW //////////
         gc.gridx = 0;
         gc.gridy = 0;
 
@@ -136,19 +140,19 @@ public class EmployeeDetails extends JFrame {
         gc.weighty = 1;
         gc.ipady = 30;
 
-        JLabel appRef = new JLabel("Employee Ref    ");
-        Font font = appRef.getFont();
+        JLabel eRef = new JLabel("Ref    ");
+        Font font = eRef.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 17);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 17);
 
-        appRef.setFont(plainFont);
+        eRef.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(appRef, gc);
+        detailsPanel.add(eRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(person.getEmployeeRef()));
+        ref = new JLabel(String.valueOf(employee.getEmployeeRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -156,72 +160,88 @@ public class EmployeeDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(ref, gc);
 
-        JLabel corrName = new JLabel("Date of Birth    ");
-        corrName.setFont(plainFont);
+        JLabel eDOB = new JLabel("Date of Birth    ");
+        eDOB.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(corrName, gc);
+        detailsPanel.add(eDOB, gc);
 
-        JLabel name = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getPerson().getDateOfBirth()));
-        name.setFont(boldFont);
+        dob = new JLabel(formatter.format(employee.getPerson().getDateOfBirth()));
+        dob.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(name, gc);
+        detailsPanel.add(dob, gc);
 
-        JLabel pGender = new JLabel("Office Code    ");
-        pGender.setFont(plainFont);
+        JLabel officeCode = new JLabel("Office Code    ");
+        officeCode.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(pGender, gc);
-        
-        JLabel gender;
-        
-        if (person.getOfficeCode() != null) {
-            gender = new JLabel(person.getOfficeCode());
+        detailsPanel.add(officeCode, gc);
+
+        if (employee.getOfficeCode() != null) {
+            code = new JLabel(employee.getOfficeCode());
         } else {
-            gender = new JLabel("");
+            code = new JLabel("");
         }
-        gender.setFont(boldFont);
+        code.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(gender, gc);
+        detailsPanel.add(code, gc);
 
-            ////////// NEXT ROW //////////
+        ////////// NEXT ROW //////////
         gc.gridx = 0;
         gc.gridy++;
 
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel startDate = new JLabel("Name    ");
-        startDate.setFont(plainFont);
+        JLabel eName = new JLabel("Name    ");
+        eName.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(startDate, gc);
+        detailsPanel.add(eName, gc);
 
-        JLabel start = new JLabel(person.getPerson().getName());
-        start.setFont(boldFont);
+        name = new JLabel(employee.getPerson().getName());
+        name.setFont(boldFont);
 
         gc.gridx++;
         gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
+        detailsPanel.add(name, gc);
+
+        JLabel empty = new JLabel("");
+        empty.setFont(plainFont);
+
+        gc.gridx++;
+        gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(empty, gc);
+
+        JLabel empty2 = new JLabel("");
+        empty2.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(empty2, gc);
     }
-    
+
     private void setUpMainPanel() {
         /////// SET UP TABBED PANE
-        
+
         mainPanel.setSize(1000, 250);
 
         int space = 15;
@@ -231,55 +251,107 @@ public class EmployeeDetails extends JFrame {
         mainPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 
         mainPanel.setLayout(new BorderLayout());
-        
+
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.PAGE_AXIS));
-        
+
         buttonPanel = new ButtonPanel();
-        
+
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    LeaseSearch leaseSearch = new LeaseSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Contracts
+                            createContract();
+                        } else if (pane == 1) {
+                            //Notes
+                            createNote();
+
+                        }
+                        break;
+
+                    case "Update":
+                        System.out.println("TEST - Update");
+
+                        if (pane == 0) {
+                            //Contracts
+                            updateContract();
+                            System.out.println("TEST - Update Contract");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+
+                        }
+                        break;
+
+                    case "End":
+                        if (pane == 0) {
+                            //Contracts
+                            endContract();
+                            System.out.println("TEST - End Contract");
+
+                        }
+                        break;
+                    case "Delete":
+                        if (pane == 0) {
+                            //Contracts
+                            deleteContract();
+                            System.out.println("TEST - Delete Contract");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+
+                        }
+                        break;
+
+                    case "View Details":
+                        if (pane == 0) {
+                            //Contracts
+                            viewContract();
+                            System.out.println("TEST - View Contract");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
-        
+
         tabbedPane = new JTabbedPane();
-        
+
         contractPanel = new ContractPanel("Contacts");
-        
+
         try {
-            contractPanel.setData(person.getContracts());
+            contractPanel.setData(employee.getContracts());
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        contractPanel.setTableListener(new TableListener() {
+
+        contractPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int invPartyRef) {
-                if(invPartyRef > 0) {
+            public void intOmitted(int invPartyRef) {
+                if (invPartyRef > 0) {
                     try {
                         ContractInterface invParty = client.getContract(invPartyRef);
-                        if(invParty != null) {
+                        if (invParty != null) {
                             System.out.println(invParty.getAgreementName());
                         }
                         System.out.println("TEST1-Contracts");
@@ -294,22 +366,22 @@ public class EmployeeDetails extends JFrame {
                 }
             }
         });
-        
+
         notePanel = new NotePanel("Notes");
-        
+
         try {
-            notePanel.setData(person.getNotes());
+            notePanel.setData(employee.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        notePanel.setTableListener(new TableListener() {
+
+        notePanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int noteRef) {
-                if(noteRef > 0) {
+            public void intOmitted(int noteRef) {
+                if (noteRef > 0) {
                     try {
-                        Note note = person.getNote(noteRef);
-                        if(note != null) {
+                        Note note = employee.getNote(noteRef);
+                        if (note != null) {
                             System.out.println(note.getReference());
                         }
                         System.out.println("TEST1-Note");
@@ -324,28 +396,28 @@ public class EmployeeDetails extends JFrame {
                 }
             }
         });
-        
+
         modPanel = new ModPanel("Modifications");
-        
+
         try {
-            modPanel.setData(person.getModifiedBy());
+            modPanel.setData(employee.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         tabbedPane.setSize(800, 175);
-        
+
         tabbedPane.add(contractPanel, "Contracts");
         tabbedPane.add(notePanel, "Notes");
         tabbedPane.add(modPanel, "Modifications");
-        
+
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(person.getCreatedBy(), person.getCreatedDate(), person.getLastModifiedBy(), person.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(employee.getCreatedBy(), employee.getCreatedDate(), employee.getLastModifiedBy(), employee.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
     }
@@ -420,6 +492,153 @@ public class EmployeeDetails extends JFrame {
         return menuBar;
     }
 
+    private void createContract() {
+        CreateContract createContract = new CreateContract(client);
+        createContract.setVisible(true);
+        System.out.println("TEST - Create Contract");
+    }
+
+    private void updateContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Contract Ref: " + selection);
+                ContractInterface contract = client.getContract(selection);
+                if (contract != null) {
+                    System.out.println("Contract Name: " + contract.getAgreementName());
+                    UpdateContract contractDetails = new UpdateContract(client, contract);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void endContract() {
+        
+    }
+
+    private void deleteContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE contract " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Contract Delete - Yes button clicked");
+                    int result = client.deleteContract(selection);
+                    if (result > 0) {
+                        String message = "Contract " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmployeeDetails.this, message, title);
+                    } else {
+                        String message = "Contract " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmployeeDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                ContractInterface contract = client.getContract(selection);
+                if (contract != null) {
+                    ContractDetails contractDetails = new ContractDetails(client, contract);
+                    contractDetails.setVisible(true);
+                    setVisible(false);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Employee", employee.getEmployeeRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = employee.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Employee", employee.getEmployeeRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteEmployeeNote(employee.getEmployeeRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmployeeDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmployeeDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = employee.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            contractPanel.setData(employee.getContracts());
+            notePanel.setData(employee.getNotes());
+            modPanel.setData(employee.getModifiedBy());
+            contractPanel.refresh();
+            notePanel.refresh();
+            modPanel.refresh();
+            dob.setText(formatter.format(employee.getPerson().getDateOfBirth()));
+            code.setText(employee.getOfficeCode());
+            name.setText(employee.getPerson().getName());
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 //    public static void main(String[] args) {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
@@ -429,5 +648,3 @@ public class EmployeeDetails extends JFrame {
 //        });
 //    }
 }
-
-

@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.InvalidUserException;
 import classes.DateConversion;
 import classes.Utils;
 import interfaces.AccountInterface;
@@ -177,9 +178,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
             // register RMI object
             Server serverStub = (Server) new ServerImpl(environment, addr, username, password, port);
-
+            
             LoginInterface loginObject = new LoginImpl(serverStub);
-
+            
             //NB rebind will replace any stub with the given name 'Server'
             System.out.println(myName);
             Naming.rebind(myName, loginObject);
@@ -993,7 +994,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -1051,7 +1052,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -1153,7 +1154,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             AddressUsageInterface addressUsage = this.createAddressUsage(addrRef, startDate, createdBy);
             Person person = (Person) this.database.getPerson(pRef);
             person.createAddress(addressUsage, new ModifiedBy("Created Address " + addressUsage.getAddressUsageRef(), createdBy, new Date()));
-            return 1;
+            return addressUsage.getAddressUsageRef();
         }
         return 0;
     }
@@ -1243,7 +1244,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -1301,7 +1302,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -1349,8 +1350,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException {
         if (this.database.officeExists(oCode) && this.database.contactTypeExists(contactTypeCode)) {
             if (this.database.getContactType(contactTypeCode).isCurrent()) {
+                Office office = (Office) this.database.getOffice(oCode);
                 Contact contact = (Contact) this.createContact(contactTypeCode, value, date, createdBy);
+                office.createContact(contact, new ModifiedBy("Created Office Contact " + contact.getContactRef(), createdBy, new Date()));
                 try {
+                    this.database.updateOffice(oCode);
                     this.database.createOfficeContact(contact, oCode);
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -1454,7 +1458,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -1700,7 +1704,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -1758,7 +1762,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -1805,16 +1809,23 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException {
         if (this.database.applicationExists(applicationRef) && this.database.addressExists(addrRef)) {
-            AddressUsage addressUsage = (AddressUsage) this.createAddressUsage(addrRef, startDate, createdBy);
             Application application = (Application) database.getApplication(applicationRef);
-            application.setAppAddress((AddressUsage) addressUsage, new ModifiedBy("Created App Address " + addressUsage.getAddressUsageRef(), createdBy, new Date()));
+            AddressUsage addressUsage = (AddressUsage) this.createAddressUsage(addrRef, startDate, createdBy);
+            AddressUsage currentAddress = (AddressUsage) application.getCurrentApplicationAddress();
+            ModifiedBy modified = new ModifiedBy("Created App Address " + addressUsage.getAddressUsageRef(), createdBy, new Date());
+            application.setAppAddress((AddressUsage) addressUsage, modified);
             try {
+                if (currentAddress != null) {
+                    
+                    currentAddress.setEndDate(startDate, modified);
+                    this.database.updateApplicationAddressUsage(currentAddress.getAddressUsageRef(), application.getApplicationRef());
+                }
                 this.database.createApplicationAddressUsage(addressUsage, applicationRef);
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.createHouseholdAddressUsage(application, addrRef, startDate, createdBy);
-            return 1;
+            return addressUsage.getAddressUsageRef();
         }
         return 0;
     }
@@ -1917,6 +1928,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             User user = employee.getUser();
             try {
                 this.database.updateUser(user.getUsername());
+                this.database.updateEmployee(eRef);
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2001,7 +2013,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -2026,11 +2038,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public int deleteEmployeeNote(int eRef, int nRef, String modifiedBy) throws RemoteException {
+        System.out.println("Employee Exists? " + this.database.employeeExists(eRef));
         if (this.database.employeeExists(eRef)) {
             Employee employee = (Employee) this.database.getEmployee(eRef);
+            System.out.println("Employee has note? " + employee.hasNote(nRef));
             if (employee.hasNote(nRef)) {
                 NoteImpl note = (NoteImpl) employee.getNote(nRef);
+                System.out.println("Note has not been modified? " + !note.hasBeenModified());
                 if (!note.hasBeenModified()) {
+                    System.out.println("DELETED");
                     employee.deleteNote(nRef, new ModifiedBy("Deleted Employee Note " + nRef, modifiedBy, new Date()));
                     try {
                         this.database.updateEmployee(eRef);
@@ -2086,7 +2102,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -2190,7 +2206,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -2248,7 +2264,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -2305,7 +2321,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return propElement.getPropertyElementRef();
         }
         return 0;
     }
@@ -2362,15 +2378,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, String modifiedBy) throws RemoteException {
         if (this.database.jobRoleExists(code)) {
             JobRole jobRole = (JobRole) this.database.getJobRole(code);
-            jobRole.updateJobRole(jobTitle, jobDescription, salary, current, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, new ModifiedBy("Updated Job Role " + code, modifiedBy, new Date()));
+            ModifiedBy modified = new ModifiedBy("Updated Job Role " + code, modifiedBy, new Date());
+            jobRole.updateJobRole(jobTitle, jobDescription, salary, current, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, modified);
             List<ContractInterface> contracts = this.database.getContracts(null, null, null, null, null, null, null, code, null, null, null, null, null);
-            for (ContractInterface contract : contracts) {
-                EmployeeAccount account = (EmployeeAccount) this.database.getEmployeeAccount(contract.getAccountRef());
-                account.setSalary(salary);
-                try {
-                    this.database.updateEmployeeAccount(account.getAccRef());
-                } catch (SQLException ex) {
-                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            for (ContractInterface temp : contracts) {
+                if (temp.isCurrent()) {
+                    Employee employee = (Employee) temp.getEmployee();
+                    employee.updatePermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, modified);
+                    EmployeeAccount account = (EmployeeAccount) this.database.getEmployeeAccount(temp.getAccountRef());
+                    account.setSalary(salary);
+                    try {
+                        this.database.updateEmployee(employee.getEmployeeRef());
+                        this.database.updateEmployeeAccount(account.getAccRef());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
             try {
@@ -2409,7 +2431,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -2503,7 +2525,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                return 1;
+                return jobBenefit.getBenefitRef();
             }
         }
         return 0;
@@ -2765,22 +2787,31 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                     List<AddressUsageInterface> peopleAddresses = person.getAddresses();
                     if (!peopleAddresses.isEmpty()) {
                         if (peopleAddresses.size() > 1) {
+                            
+                                // ROLL BACK PERSON OLD ADDRESS
                             AddressUsage pOld = (AddressUsage) peopleAddresses.get(peopleAddresses.size() - 2);
                             pOld.setEndDate(null, new ModifiedBy("Reinstated Address Usage " + pOld.getAddressUsageRef(), deletedBy, new Date()));
                             this.database.updatePersonAddressUsage(person.getPersonRef(), pOld.getAddressUsageRef());
                         }
+                        // ROLL BACK PERSON TENANCY ADDRESS
                         AddressUsageInterface current = peopleAddresses.get(peopleAddresses.size() - 1);
                         person.deleteAddress(current, new ModifiedBy("Deleted Address Usage " + current.getAddressUsageRef(), deletedBy, new Date()));
                         this.database.deletePersonAddressUsage(person.getPersonRef(), current.getAddressUsageRef());
                     }
                 }
-                AddressUsageInterface appAddress = application.getCurrentApplicationAddress();
-                application.deleteAppAddress(appAddress.getAddressUsageRef(), new ModifiedBy("Deleted Address Usage " + appAddress.getAddressUsageRef(), deletedBy, new Date()));
+                
+                    // ROLL BACK TENANCY ADDRESS
+                AddressUsageInterface tenAddress = application.getCurrentApplicationAddress();
+                application.deleteAppAddress(tenAddress.getAddressUsageRef(), new ModifiedBy("Deleted Address Usage " + tenAddress.getAddressUsageRef(), deletedBy, new Date()));
                 this.database.updateApplication(application.getApplicationRef());
-                this.database.deleteApplicationAddressUsage(appAddress.getAddressUsageRef(), application.getApplicationRef());
-                AddressUsage curAppAddress = (AddressUsage) application.getCurrentApplicationAddress();
-                curAppAddress.setEndDate(null, new ModifiedBy("Reinstated Address Usage " + curAppAddress.getAddressUsageRef(), deletedBy, new Date()));
-                this.database.updateApplicationAddressUsage(curAppAddress.getAddressUsageRef(), application.getApplicationRef());
+                this.database.deleteApplicationAddressUsage(tenAddress.getAddressUsageRef(), application.getApplicationRef());
+                
+                
+                
+                    // ROLL BACK OLD ADDRESS
+                AddressUsage oldAddress = (AddressUsage) application.getCurrentApplicationAddress();
+                oldAddress.setEndDate(null, new ModifiedBy("Reinstated Address Usage " + oldAddress.getAddressUsageRef(), deletedBy, new Date()));
+                this.database.updateApplicationAddressUsage(oldAddress.getAddressUsageRef(), application.getApplicationRef());
                 application.clearTenancy(new ModifiedBy("Deleted Tenancy", deletedBy, new Date()));
                 this.database.updateApplication(application.getApplicationRef());
                 application.setAppStatusCode("OPEN");
@@ -2818,7 +2849,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -2876,7 +2907,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3123,7 +3154,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -3181,7 +3212,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3280,12 +3311,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Contract contract = new Contract(agreementRef++, accountRef, startDate, length, employee, jobRole, officeCode, createdBy, new Date());
             EmployeeAccount employeeAcc = new EmployeeAccount(accountRef++, contract, createdBy, new Date());
             ModifiedByInterface modified = new ModifiedBy("Created Contract " + contract.getAgreementRef(), createdBy, new Date());
+            Contract oldContract = (Contract) employee.getContract();
             try {
                 // UPDATE EMPLOYEE DETAILS
                 employee.createContract(contract, modified);
                 this.database.updateEmployee(employee.getEmployeeRef());
                 employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getDelete(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), jobRole.getEmployeeDelete(), null);
                 this.database.updateUser(employee.getUser().getUsername());
+                if (oldContract != null) {
+                    this.endContract(oldContract.getAccountRef(), startDate, createdBy);
+                }
 
                 // UPDATE OFFICE DETAILS
                 office.createAgreement(contract, modified);
@@ -3339,6 +3374,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 // End Contract
                 contract.setActualEndDate(endDate, modified);
                 this.database.updateContract(contract.getAgreementRef());
+                
+                // UPDATE EMPLOYEE
+                Employee employee = (Employee) this.database.getEmployee(contract.getEmployeeRef());
+                employee.updatePermissions(false, false, false, false, false, false, false, false, modified);
 
                 // End Employee Account
                 empAcc.setEndDate(endDate, modified);
@@ -3365,9 +3404,19 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 this.database.updateEmployee(employee.getEmployeeRef());
                 List<ContractInterface> contracts = employee.getContracts();
                 if (!contracts.isEmpty()) {
-                    ContractInterface oldContract = contracts.get(contracts.size() - 1);
+                    Contract oldContract = (Contract) contracts.get(contracts.size() - 1);
                     JobRoleInterface jobRole = oldContract.getJobRole();
+                    
+                        //ROLL BACK OLD CONTRACT
+                    oldContract.setActualEndDate(null, new ModifiedBy("Reinstated Contract " + oldContract.getAccountRef(), deletedBy, new Date()));
+                    this.database.updateContract(oldContract.getAgreementRef());
+                    
+                        //ROLL BACK USER PERMISSIONS
                     employee.updatePermissions(jobRole.getRead(), jobRole.getWrite(), jobRole.getUpdate(), jobRole.getDelete(), jobRole.getEmployeeRead(), jobRole.getEmployeeWrite(), jobRole.getEmployeeUpdate(), jobRole.getEmployeeDelete(), null);
+                    this.database.updateUser(employee.getUser().getUsername());
+                } else {
+                    //ROLL BACK USER PERMISSIONS
+                    employee.updatePermissions(false, false, false, false, false, false, false, false, null);
                     this.database.updateUser(employee.getUser().getUsername());
                 }
 
@@ -3399,7 +3448,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -3416,7 +3465,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                return 1;
+                return note.getReference();
             }
         }
         return 0;
@@ -3436,7 +3485,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                     } catch (SQLException ex) {
                         Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    return 1;
+                    return note.getReference();
                 }
             }
         }
@@ -3457,7 +3506,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3529,7 +3578,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -3587,7 +3636,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3659,7 +3708,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -3717,7 +3766,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3788,7 +3837,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return note.getReference();
         }
         return 0;
     }
@@ -3846,7 +3895,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return document.getDocumentRef();
         }
         return 0;
     }
@@ -3907,7 +3956,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.updateUserRentAccounts(rentAcc.getOfficeCode());
-            return 1;
+            return transaction.getTransactionRef();
         }
         return 0;
     }
@@ -3941,7 +3990,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return transaction.getTransactionRef();
         }
         return 0;
     }
@@ -3974,7 +4023,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return 1;
+            return transaction.getTransactionRef();
         }
         return 0;
     }

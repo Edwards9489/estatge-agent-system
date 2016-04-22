@@ -157,16 +157,10 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
      * @throws java.rmi.RemoteException
      */
     public void setAppAddress(AddressUsage address, ModifiedByInterface modifiedBy) throws RemoteException {
-        if(!this.appAddresses.isEmpty()) {
-            for(AddressUsageInterface addressUsage : this.appAddresses) {
-                if(addressUsage.isCurrent()) {
-                    AddressUsage temp = (AddressUsage) addressUsage;
-                    temp.setEndDate(address.getStartDate(), modifiedBy);
-                }
-            }
+        if(!appAddresses.contains(address)) {
+            this.appAddresses.add(address);
+            this.modifiedBy(modifiedBy);
         }
-        this.appAddresses.add(address);
-        this.modifiedBy(modifiedBy);
     }
     
     public void deleteAppAddress(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
@@ -174,10 +168,6 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
             AddressUsageInterface addr = this.getCurrentApplicationAddress();
             if(!addr.hasBeenModified()) {
                 appAddresses.remove(addr);
-                AddressUsage temp = (AddressUsage) this.getCurrentApplicationAddress();
-                if(temp != null) {
-                    temp.setEndDate(null, modifiedBy);
-                }
                 this.modifiedBy(modifiedBy);
             }
         }

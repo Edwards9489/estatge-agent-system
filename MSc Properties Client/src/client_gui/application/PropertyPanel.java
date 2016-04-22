@@ -5,8 +5,7 @@
  */
 package client_gui.application;
 
-import client_gui.TableListener;
-import interfaces.AddressUsageInterface;
+import client_gui.IntegerListener;
 import interfaces.PropertyInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -32,7 +31,7 @@ public class PropertyPanel extends JPanel {
     private JTable table;
     private PropertyTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public PropertyPanel(String text) {
         tableModel = new PropertyTableModel();
@@ -69,7 +68,7 @@ public class PropertyPanel extends JPanel {
                     int addressRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(addressRef);
-                    tableListener.rowSelected(addressRef);
+                    tableListener.intOmitted(addressRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -104,8 +103,17 @@ public class PropertyPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }
 

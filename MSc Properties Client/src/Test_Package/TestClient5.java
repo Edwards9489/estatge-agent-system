@@ -6,6 +6,8 @@
 package Test_Package;
 
 import client_application.ClientImpl;
+import client_gui.employee.EmployeeDetails;
+import interfaces.EmployeeInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
@@ -23,8 +25,18 @@ public class TestClient5  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "TESTING", "testing"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "TEST", "TEST7", "TEST7password"});
             client.addObserver(this);
+            
+            EmployeeInterface employee = client.getEmployee(7);
+            
+            EmployeeDetails empGUI = new EmployeeDetails(client, employee);
+            empGUI.setVisible(true);
+            
+            EmployeeInterface employee2 = client.getEmployee(8);
+            
+            EmployeeDetails empGUI2 = new EmployeeDetails(client, employee2);
+            empGUI2.setVisible(true);
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient5.class.getName()).log(Level.SEVERE, null, ex);

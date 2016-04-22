@@ -5,7 +5,7 @@
  */
 package client_gui.application;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.ModifiedByInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class ModPanel extends JPanel {
     private JTable table;
     private ModTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public ModPanel(String text) {
         tableModel = new ModTableModel();
@@ -68,7 +68,7 @@ public class ModPanel extends JPanel {
                     int addressRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(addressRef);
-                    tableListener.rowSelected(addressRef);
+                    tableListener.intOmitted(addressRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -100,8 +100,7 @@ public class ModPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
     }
 }
-

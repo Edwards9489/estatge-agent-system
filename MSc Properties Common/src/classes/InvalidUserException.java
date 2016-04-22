@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server_application;
+package classes;
 
 /**
  *
@@ -12,7 +12,7 @@ package server_application;
 /**
  * Exception that represents an user that was unable to authenticate.
  */
-public class InvalidSecurityPriviligies extends SecurityException {
+public class InvalidUserException extends SecurityException {
 
     /**
      * The name of the user
@@ -25,7 +25,7 @@ public class InvalidSecurityPriviligies extends SecurityException {
      *
      * @param username The name of the user.
      */
-    public InvalidSecurityPriviligies(String username) {
+    public InvalidUserException(String username) {
         this.username = username;
     }
 
@@ -35,6 +35,6 @@ public class InvalidSecurityPriviligies extends SecurityException {
      */
     @Override
     public String toString() {
-        return "User does not have privileges to invoke this method - user: " + username;
+        return "Could not authenticate user: " + username;
     }
 }

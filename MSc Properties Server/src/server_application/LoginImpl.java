@@ -9,6 +9,7 @@ package server_application;
  *
  * @author Dwayne
  */
+import classes.InvalidUserException;
 import interfaces.LoginInterface;
 import interfaces.Server;
 import java.io.IOException;

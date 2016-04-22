@@ -16,7 +16,7 @@ import client_gui.rentAcc.RentAccSearch;
 import client_gui.reporting.ReportingFrame;
 import client_gui.StringListener;
 import client_gui.systemConfig.SysConfigFrame;
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import client_gui.tenancy.TenSearch;
 import interfaces.AccountInterface;
 import interfaces.AgreementInterface;
@@ -26,6 +26,7 @@ import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -202,9 +203,9 @@ public class HomeForm extends JFrame implements Observer {
             Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        tenanciesPanel.setTableListener(new TableListener() {
+        tenanciesPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int tenancyRef) {
+            public void intOmitted(int tenancyRef) {
                 if(tenancyRef > 0) {
                     try {
                         TenancyInterface tenancy = client.getTenancy(tenancyRef);
@@ -224,9 +225,9 @@ public class HomeForm extends JFrame implements Observer {
             }
         });
 
-        leasesPanel.setTableListener(new TableListener() {
+        leasesPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int leaseRef) {
+            public void intOmitted(int leaseRef) {
                 if(leaseRef > 0) {
                     try {
                         LeaseInterface lease = client.getLease(leaseRef);
@@ -246,9 +247,9 @@ public class HomeForm extends JFrame implements Observer {
             }
         });
 
-        rentAccPanel.setTableListener(new TableListener() {
+        rentAccPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int rentAccRef) {
+            public void intOmitted(int rentAccRef) {
                 if(rentAccRef > 0) {
                     try {
                         RentAccountInterface rentAcc = client.getRentAccount(rentAccRef);
@@ -330,8 +331,10 @@ public class HomeForm extends JFrame implements Observer {
         add(buttonPanel, BorderLayout.WEST);
         add(tablesPanel, BorderLayout.CENTER);
 
-        setMinimumSize(new Dimension(1200, 700));
-        setSize(1200, 700);
+        this.setMinimumSize(new Dimension(1200, 700));
+        this.setSize(1200, 700);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
     }

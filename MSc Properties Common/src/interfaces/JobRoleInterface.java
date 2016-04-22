@@ -18,12 +18,14 @@ public interface JobRoleInterface extends Remote {
     String getJobRoleCode() throws RemoteException;
     String getJobTitle() throws RemoteException;
     String getJobDescription() throws RemoteException;
+    Element getJobRequirement(String requirementCode) throws RemoteException;
     List<Element> getJobRequirements() throws RemoteException;
     boolean isFullTime() throws RemoteException;
     double getSalary() throws RemoteException;
     boolean isCurrent() throws RemoteException;
     boolean hasBenefit(int benefitRef) throws RemoteException;
     boolean hasCurrentBenefit(String code) throws RemoteException;
+    JobRoleBenefitInterface getJobBenefit(int benefitRef) throws RemoteException;
     List<JobRoleBenefitInterface> getBenefits() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;
     boolean getRead() throws RemoteException;

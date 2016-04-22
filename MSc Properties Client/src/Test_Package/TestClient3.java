@@ -6,6 +6,8 @@
 package Test_Package;
 
 import client_application.ClientImpl;
+import client_gui.employee.EmployeeDetails;
+import interfaces.EmployeeInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
@@ -25,18 +27,18 @@ public class TestClient3  implements Observer {
     public void run()  {
         try {
             System.out.println("********************Running Client Test********************");
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "LIVE", "SDOLAN", "SDOLANpassword"});
+            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "TEST", "SDOLAN", "SDOLANpassword"});
             client.addObserver(this);   
             
             //System.out.println("Create Tenancy: " + client.createTenancy(new Date(), 12, 4, 5, "PRO", "MNC"));
             
             //System.out.println("Create Address: " + client.createAddress("", "", "", "", "170", "Parr Close", "Edmonton", "London", "England", "N18 2TX", ""));
             
-            Calendar date = Calendar.getInstance();
-            date.set(1990, 01, 01);
-            
-            Calendar date1 = Calendar.getInstance();
-            date1.set(2016, 02, 01);
+//            Calendar date = Calendar.getInstance();
+//            date.set(1990, 01, 01);
+//            
+//            Calendar date1 = Calendar.getInstance();
+//            date1.set(2016, 02, 01);
             
             //System.out.println("Create Person: " + client.createPerson("MR", "TEST9", "TEST9", "TEST9", date.getTime(), "TEST9", "M", "SNGL", "GBR", "ENGL", "ENGL", "STR", "PNTS", 22, date1.getTime()));
             
@@ -77,6 +79,11 @@ public class TestClient3  implements Observer {
             //System.out.println("Set Employee Answer: " + client.setEmployeeMemorableLocation("TEST"));
             
             //System.out.println("Create Contract: " + client.createContract(new Date(), 12, 9, "SALES", "EDM"));
+            
+            EmployeeInterface employee = client.getEmployee(1);
+            
+            EmployeeDetails empGUI = new EmployeeDetails(client, employee);
+            empGUI.setVisible(true);
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {
             Logger.getLogger(TestClient3.class.getName()).log(Level.SEVERE, null, ex);

@@ -21,15 +21,15 @@ public class UserImpl extends UnicastRemoteObject implements User {
     private final String username;
     private String password;
     private String officeCode;
-    private boolean forcePasswordReset;
-    private boolean read;
-    private boolean write;
-    private boolean update;
-    private boolean delete;
-    private boolean employeeRead;
-    private boolean employeeWrite;
-    private boolean employeeUpdate;
-    private boolean employeeDelete;
+    private Boolean forcePasswordReset;
+    private Boolean read = null;
+    private Boolean write = null;
+    private Boolean update = null;
+    private Boolean delete = null;
+    private Boolean employeeRead = null;
+    private Boolean employeeWrite = null;
+    private Boolean employeeUpdate = null;
+    private Boolean employeeDelete = null;
     
     ///   CONSTRUCTORS ///
     
@@ -51,16 +51,9 @@ public class UserImpl extends UnicastRemoteObject implements User {
         this.forcePasswordReset = true;
     }
     
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return 
-     */
-    @Override
-    public boolean isUser(String username, String password) {
-        return (this.username.equals(username) && this.password.equals(password));
-    }
+    
+    ///////// MUTATOR METHODS
+    
     
     /**
      * 
@@ -98,7 +91,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @param employeeUpdate 
      * @param employeeDelete 
      */
-    public void setUserPermissions(boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete) {
+    public void setUserPermissions(Boolean read, Boolean write, Boolean update, Boolean delete, Boolean employeeRead, Boolean employeeWrite, Boolean employeeUpdate, Boolean employeeDelete) {
         this.read = read;
         this.write = write;
         this.update = update;
@@ -108,6 +101,22 @@ public class UserImpl extends UnicastRemoteObject implements User {
         this.employeeUpdate = employeeUpdate;
         this.employeeDelete = employeeDelete;
     }
+    
+    
+    /////// ACCESSOR METHODS
+    
+    
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return 
+     */
+    @Override
+    public boolean isUser(String username, String password) {
+        return (this.username.equals(username) && this.password.equals(password));
+    }
+    
     
     /**
      * 

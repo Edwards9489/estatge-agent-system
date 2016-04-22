@@ -4299,7 +4299,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteApplication(int appRef) throws RemoteException {
-        if (this.applicationExists(appRef) && this.getApplication(appRef).hasBeenModified()) {
+        if (this.applicationExists(appRef) && !this.getApplication(appRef).hasBeenModified()) {
             for (InvolvedPartyInterface invParty : this.getApplication(appRef).getHousehold()) {
                 if (invParty.hasBeenModified()) {
                     return false;
@@ -4687,7 +4687,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteLandlord(int landlordRef) throws RemoteException {
-        if (this.landlordExists(landlordRef) && this.getLandlord(landlordRef).hasBeenModified()) {
+        if (this.landlordExists(landlordRef) && !this.getLandlord(landlordRef).hasBeenModified()) {
             for (LeaseInterface lease : this.getLeases()) {
                 if (lease.isAlreadyLandlord(landlordRef)) {
                     return false;
@@ -4901,7 +4901,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteOffice(String officeCode) throws RemoteException {
-        return this.officeExists(officeCode) && this.getOffice(officeCode).hasBeenModified() && !this.getOffice(officeCode).hasAgreements();
+        return this.officeExists(officeCode) && !this.getOffice(officeCode).hasBeenModified() && !this.getOffice(officeCode).hasAgreements();
     }
 
     /**
@@ -5192,7 +5192,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteJobRole(String jobRoleCode) throws RemoteException {
-        if (this.jobRoleExists(jobRoleCode) && this.getJobRole(jobRoleCode).hasBeenModified()) {
+        if (this.jobRoleExists(jobRoleCode) && !this.getJobRole(jobRoleCode).hasBeenModified()) {
             for (ContractInterface contract : this.getContracts()) {
                 if (jobRoleCode.equals(contract.getJobRoleCode())) {
                     return false;
@@ -5518,7 +5518,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteJobRoleBenefit(int benefitRef, String jobRoleCode) throws SQLException, RemoteException {
-        if (this.jobRoleExists(jobRoleCode) && this.jobRoleBenefitExists(benefitRef) && this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
+        if (this.jobRoleExists(jobRoleCode) && this.jobRoleBenefitExists(benefitRef) && !this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
             String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef + "and jobRoleCode='" + jobRoleCode + "'";
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
@@ -5878,10 +5878,12 @@ public class Database {
             while (results.next()) {
                 int employeeRef = results.getInt("employeeRef");
                 int personRef = results.getInt("personRef");
+                System.out.println("Person " + personRef + "exists? - " + this.personExists(personRef));
                 if (this.personExists(personRef)) {
                     PersonInterface person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
                     String memorableLocation = results.getString("memorableLocation");
+                    System.out.println("Office " + officeCode + "exists OR officeCode is NULL? - " + (officeCode == null || this.officeExists(officeCode)));
                     if ((officeCode == null || this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
@@ -5892,6 +5894,7 @@ public class Database {
                             int count = results1.getInt("count");
                             if (count == 1) {
                                 try (PreparedStatement selectStat2 = con.prepareStatement(sql2)) {
+                                    System.out.println("Employee should be added");
                                     selectStat2.setInt(1, employeeRef);
                                     ResultSet results2 = selectStat2.executeQuery();
                                     results2.next();
@@ -6106,7 +6109,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteTenancy(int tenancyRef) throws RemoteException {
-        return this.tenancyExists(tenancyRef) && this.getTenancy(tenancyRef).hasBeenModified() && this.getRentAccount(this.getTenancy(tenancyRef).getAccountRef()).hasBeenModified();
+        return this.tenancyExists(tenancyRef) && !this.getTenancy(tenancyRef).hasBeenModified() && !this.getRentAccount(this.getTenancy(tenancyRef).getAccountRef()).hasBeenModified();
     }
 
     /**
@@ -6488,7 +6491,7 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteLease(int leaseRef) throws RemoteException {
-        return this.leaseExists(leaseRef) && this.getLease(leaseRef).hasBeenModified() && this.getLeaseAccount(this.getLease(leaseRef).getAccountRef()).hasBeenModified();
+        return this.leaseExists(leaseRef) && !this.getLease(leaseRef).hasBeenModified() && !this.getLeaseAccount(this.getLease(leaseRef).getAccountRef()).hasBeenModified();
     }
 
     /**
@@ -6862,8 +6865,8 @@ public class Database {
             String deleteSql = "delete from contracts where contractRef=" + contractRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    contracts.remove(contractRef);
                     this.deleteEmployeeAccount(this.getContract(contractRef).getAccountRef());
+                    contracts.remove(contractRef);
                     deleteStat.close();
                 }
             }
@@ -6877,7 +6880,10 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteContract(int contractRef) throws RemoteException {
-        return this.contractExists(contractRef) && this.getContract(contractRef).hasBeenModified() && this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified();
+        System.out.println("Contract exists?: " + this.contractExists(contractRef));
+        System.out.println("Contract has been modified? " + !this.getContract(contractRef).hasBeenModified());
+        System.out.println("Employment Account has been modified?" + !this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified());
+        return this.contractExists(contractRef) && !this.getContract(contractRef).hasBeenModified() && !this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified();
     }
 
     /**
@@ -8077,8 +8083,6 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            EmployeeInterface employee = this.getEmployee(user.getEmployeeRef());
-            this.createModifiedBy("employeeModifications", employee.getLastModification(), employee.getEmployeeRef());
         }
     }
 
@@ -8788,6 +8792,10 @@ public class Database {
         List<PersonInterface> tempPeople = new ArrayList();
         for (PersonInterface temp : this.getPeople()) {
             boolean add = true;
+            System.out.println("Title Code not equal to NULL?" + titleCode != null);
+            System.out.println("Title Code is not empty?" + !titleCode.isEmpty());
+            System.out.println("Title Exists?" + this.titleExists(titleCode));
+            System.out.println("Title Code is not equal to person title?" + !titleCode.equals(temp.getTitle().getCode()));
             if (titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
                 add = false;
             }

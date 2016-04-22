@@ -9,7 +9,7 @@ import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import client_gui.application.DocumentPanel;
 import client_gui.application.ModPanel;
 import client_gui.lease.LandlordPanel;
@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -98,8 +99,10 @@ public class PropertyDetails extends JFrame {
 
             setLayout(new BorderLayout());
 
-            setMinimumSize(new Dimension(1200, 700));
-            setSize(1200, 700);
+            this.setMinimumSize(new Dimension(1200, 700));
+            this.setSize(1200, 700);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
             setupDetails();
             
@@ -370,9 +373,9 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        propElementPanel.setTableListener(new TableListener() {
+        propElementPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int propElementRef) {
+            public void intOmitted(int propElementRef) {
                 if(propElementRef > 0) {
                     try {
                         PropertyElementInterface propElement = property.getPropElement(propElementRef);
@@ -400,9 +403,9 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new TableListener() {
+        notePanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int noteRef) {
+            public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
                         Note note = property.getNote(noteRef);
@@ -430,9 +433,9 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        landlordPanel.setTableListener(new TableListener() {
+        landlordPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int addressRef) {
+            public void intOmitted(int addressRef) {
                 if(addressRef > 0) {
                     try {
                         AddressUsageInterface address = client.getAddressUsage(addressRef);
@@ -460,9 +463,9 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new TableListener() {
+        documentPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int documentRef) {
+            public void intOmitted(int documentRef) {
                 if(documentRef > 0) {
                     try {
                         Document document = property.getDocument(documentRef);

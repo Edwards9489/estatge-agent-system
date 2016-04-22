@@ -840,7 +840,7 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createInvovedPartyNote(int iRef, String comment) throws RemoteException {
+    public int createInvolvedPartyNote(int iRef, String comment) throws RemoteException {
         if (this.server.isAlive()) {
             return server.createInvolvedPartyNote(iRef, comment, this.getUsername());
         }

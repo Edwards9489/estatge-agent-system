@@ -10,5 +10,5 @@ package client_gui;
  * @author Dwayne
  */
 public interface IntegerListener {
-    public void intOmitted(int number);
+    public void intOmitted(int ref);
 }

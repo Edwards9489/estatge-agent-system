@@ -1,4 +1,4 @@
-Titles
+
 
 INSERT INTO titles (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('MR', 'Mr', 1, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -12,10 +12,7 @@ INSERT INTO titles (code, description, noteRef, comment, cur, createdBy, created
 
 INSERT INTO titles (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('OTHER', 'Other', 6, NULL, 1, 'ADMIN', '2016-01-01');
 
-select * from titles;
 
-
-Genders
 
 INSERT INTO genders (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('M', 'Male', 7, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -26,7 +23,6 @@ INSERT INTO genders (code, description, noteRef, comment, cur, createdBy, create
 INSERT INTO genders (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 10, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Marital Statuses
 
 INSERT INTO maritalstatuses (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('SNGL', 'Single', 11, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -37,7 +33,6 @@ INSERT INTO maritalstatuses (code, description, noteRef, comment, cur, createdBy
 INSERT INTO maritalstatuses (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 14, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Ethnic Origins
 
 INSERT INTO ethnicOrigins (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('GBR', 'British', 15, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -48,7 +43,6 @@ INSERT INTO ethnicOrigins (code, description, noteRef, comment, cur, createdBy, 
 INSERT INTO ethnicOrigins (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 18, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Languages
 
 INSERT INTO languages (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('ENGL', 'English', 19, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -59,7 +53,6 @@ INSERT INTO languages (code, description, noteRef, comment, cur, createdBy, crea
 INSERT INTO languages (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 22, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Nationalities
 
 INSERT INTO nationalities (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('ENGL', 'English', 23, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -70,7 +63,6 @@ INSERT INTO nationalities (code, description, noteRef, comment, cur, createdBy, 
 INSERT INTO nationalities (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 26, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Sexualities
 
 INSERT INTO sexualities (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('STR', 'Straight', 27, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -79,7 +71,6 @@ INSERT INTO sexualities (code, description, noteRef, comment, cur, createdBy, cr
 INSERT INTO sexualities (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 29, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Religions
 
 INSERT INTO religions (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('CHRI', 'Christian', 30, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -90,7 +81,6 @@ INSERT INTO religions (code, description, noteRef, comment, cur, createdBy, crea
 INSERT INTO religions (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PNTS', 'Prefer not to say', 33, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Contact Types
 
 INSERT INTO contacttypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('MOB', 'Mobile', 34, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -103,7 +93,6 @@ INSERT INTO contacttypes (code, description, noteRef, comment, cur, createdBy, c
 INSERT INTO contacttypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PHNE', 'Telephone', 136, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-End Reasons
 
 INSERT INTO endreasons (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('DEC', 'Deceased', 38, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -112,7 +101,6 @@ INSERT INTO endreasons (code, description, noteRef, comment, cur, createdBy, cre
 INSERT INTO endreasons (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('HBCK', 'Property Handback', 40, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Relationships
 
 INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('APPL', 'Applicant', 41, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -126,31 +114,27 @@ INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, 
 
 INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('SIS', 'Sister', 46, NULL, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('UNCL', 'Uncle', 47, NULL, 1, 'ADMIN', '2016-01-01');
+INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('SON', 'Son', 47, NULL, 1, 'ADMIN', '2016-01-01');
 
-INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('AUNT', 'Auntie', 48, NULL, 1, 'ADMIN', '2016-01-01');
+INSERT INTO relationships (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('DAU', 'Daughter', 48, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Tenancy Types
 
 INSERT INTO tenancytypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('SEC', 'Secure', 49, NULL, 1, 'ADMIN', '2016-01-01');
 
 INSERT INTO tenancytypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('PRO', 'Provisional', 50, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Job Requirements
 
 INSERT INTO jobrequirements (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('EXP', 'Experience', 51, NULL, 1, 'ADMIN', '2016-01-01');
 
 INSERT INTO jobrequirements (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('QUAL', 'Qualifications', 52, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Job Benefits
 
 INSERT INTO jobbenefits (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('BNUS', 'Bonuses', 53, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Property Types
 
 INSERT INTO propertytypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('HSE', 'House', 54, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -161,7 +145,6 @@ INSERT INTO propertytypes (code, description, noteRef, comment, cur, createdBy, 
 INSERT INTO propertytypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('BUN', 'Detached', 57, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Property Sub Types
 
 INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('DET', 'Detached', 58, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -172,7 +155,6 @@ INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdB
 INSERT INTO propertysubtypes (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('NA', 'Not Applicable', 319, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-PropertyElements
 
 INSERT INTO propertyelements (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('RENT', 'Rent', 61, NULL, 1, 'ADMIN', '2016-01-01');
 
@@ -197,9 +179,8 @@ INSERT INTO propertyelements (code, description, noteRef, comment, cur, createdB
 INSERT INTO propertyelements (code, description, noteRef, comment, cur, createdBy, createdDate) VALUES ('CLN', 'Cleaning Costs', 314, NULL, 1, 'ADMIN', '2016-01-01');
 
 
-Job Roles
 
-INSERT INTO jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate, createdBy, createdDate) values ('MNGR', 'Manager', 'Manager Description', 1, 30000, 1, 1, 1, 1, 1, 1, 1, 'ADMIN', '2016-01-01');
+INSERT INTO jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, createdBy, createdDate) values ('MNGR', 'Manager', 'Manager Description', 1, 30000, 1, 1, 1, 1, 1, 1, 1, 1, 1, 'ADMIN', '2016-01-01');
 
 INSERT INTO jobRoleRequirements (jobRoleCode, requirementCode) VALUES ('MNGR', 'EXP');
 
@@ -209,7 +190,7 @@ INSERT INTO jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, stringValu
 
 
 
-INSERT INTO jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate, createdBy, createdDate) values ('SALES', 'Sales Assistant', 'Sales Description', 1, 20000, 1, 1, 1, 1, 1, 1, 1, 'ADMIN', '2016-01-01');
+INSERT INTO jobRoles (jobRoleCode, jobTitle, jobDescription, fullTime, salary, cur, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, createdBy, createdDate) values ('SALES', 'Sales Assistant', 'Sales Description', 1, 20000, 1, 1, 1, 1, 0, 0, 0, 0, 0,  'ADMIN', '2016-01-01');
 
 INSERT INTO jobRoleRequirements (jobRoleCode, requirementCode) VALUES ('SALES', 'EXP');
 
@@ -218,25 +199,22 @@ INSERT INTO jobRoleRequirements (jobRoleCode, requirementCode) VALUES ('SALES', 
 INSERT INTO jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, stringValue, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate) VALUES (2, 'SALES', 'BNUS', NULL, 3000.00, '2012-04-09', NULL, 99, NULL,'ADMIN', '2016-01-01');
 
 
-Addressess
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (1, NULL, NULL, NULL, NULL, '5', 'Brook Crescent', 'Edmonton', 'London', 'England', 'N9 0DJ', 70, NULL, 'ADMIN', '2016-01-01');
 
-OFFICE
+
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (2, NULL, NULL, NULL, NULL, '250', 'Hertford Road', 'Edmonton', 'London', 'England', 'N9 5TP', 71, NULL, 'ADMIN', '2016-01-01');
 
-OFFICE
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (3, NULL, NULL, NULL, NULL, '79', 'High Street', 'Ponders End', 'London', 'England', 'EN3 4EN', 72, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (4, NULL, NULL, '10', 'Kestrel House', '1', 'Exter Road', 'Enfield', 'London', 'England', 'EN2 3RH', 73, NULL, 'ADMIN', '2016-01-01');
 
-OFFICE
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (5, NULL, NULL, 'Unit 4', 'Bridgewater Bank', '33', 'Whitworth Street West', 'Central Manchester', 'Manchester', 'England', 'M1 5ND', 74, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (6, NULL, NULL, NULL, NULL, '74', 'Bridge Street', NULL, 'Manchester', 'England', 'M3 2RJ', 75, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (6, NULL, NULL, NULL, NULL, '74', 'Bridge Street', 'Old Trafford', 'Manchester', 'England', 'M3 2RJ', 75, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (7, NULL, NULL, NULL, NULL, '18', 'St Anns Square', 'City of Manchester', 'Manchester', 'England', 'M1 7HQ', 76, NULL, 'ADMIN', '2016-01-01');
 
@@ -244,7 +222,6 @@ INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (9, NULL, NULL, NULL, NULL, '12', 'Fraser Road', 'Edmonton', 'London', 'England', 'N9 4ER', 78, NULL, 'ADMIN', '2016-01-01');
 
-OFFICE
 
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (10, NULL, NULL, NULL, NULL, '500/504', 'High Road', 'Tottenham', 'London', 'England', 'N17 9JF', 79, NULL, 'ADMIN', '2016-01-01');
 
@@ -271,15 +248,14 @@ INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber
 INSERT INTO addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) VALUES (21, NULL, NULL, NULL, NULL, '12', 'Oxford Street', 'City of Manchester', 'Manchester', 'England', 'M1 5EJ', 318, NULL, 'DEDWARDS', '2016-01-01');
 
 
-People
 
 INSERT INTO people (personRef, titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate) VALUES (1, 'MR', "Dwayne", "Leroy", "Edwards", '1989-09-04', 'JL 81 61 90 C', 'M', 'SNGL', 'GBR', 'ENGL', 'ENGL', 'STR', 'CHRI', 'ADMIN', '2016-01-01');
 
 INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (1, 1, 'EMAIL', 'TEST1@TEST.COM', '2015-03-10', 100, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (1, 1, 'MOB', '07123456789', '2015-03-10', 101, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (2, 1, 'MOB', '07123456789', '2015-03-10', 101, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (1, 1, 'WORK', '02081234567', '2015-03-10', 102, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (3, 1, 'WORK', '02081234567', '2015-03-10', 102, NULL, 'ADMIN', '2016-01-01');
 
 
 
@@ -401,13 +377,12 @@ INSERT INTO personContacts (contactRef, personRef, contactTypeCode, contactValue
 
 
 
-Offices
 
 INSERT INTO offices (officeCode, addressRef, startDate, createdBy, createdDate) VALUES ('EDM', 2, '2012-04-09', 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (34, 'EDM', 'EMAIL', 'EDM@TEST.COM', '2012-04-09', 137, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (35, 'EDM', 'PHONE', '02083451111', '2012-04-09', 138, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (35, 'EDM', 'PHNE', '02083451111', '2012-04-09', 138, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (36, 'EDM', 'FAX', '02083451112', '2012-04-09', 139, NULL, 'ADMIN', '2016-01-01');
 
@@ -417,7 +392,7 @@ INSERT INTO offices (officeCode, addressRef, startDate, createdBy, createdDate) 
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (37, 'PON', 'EMAIL', 'PON@TEST.COM', '2014-09-01', 140, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (38, 'PON', 'PHONE', '02082451111', '2014-09-01', 141, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (38, 'PON', 'PHNE', '02082451111', '2014-09-01', 141, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (39, 'PON', 'FAX', '02082451112', '2014-09-01', 142, NULL, 'ADMIN', '2016-01-01');
 
@@ -427,72 +402,69 @@ INSERT INTO offices (officeCode, addressRef, startDate, createdBy, createdDate) 
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (40, 'MNC', 'EMAIL', 'MNC@TEST.COM', '2015-03-10', 143, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (41, 'MNC', 'PHONE', '01618688000', '2015-03-10', 144, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (41, 'MNC', 'PHNE', '01618688000', '2015-03-10', 144, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (42, 'MNC', 'FAX', '01618688001', '2015-03-10', 145, NULL, 'ADMIN', '2016-01-01');
 
 
 
-INSERT INTO offices (officeCode, addressRef, startDate, createdBy, createdDate) VALUES ('TOT', 10, 'ADMIN', '2015-12-01', '2016-01-01');
+INSERT INTO offices (officeCode, addressRef, startDate, createdBy, createdDate) VALUES ('TOT', 10, '2015-12-01', 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (43, 'TOT', 'EMAIL', 'TOT@TEST.COM', '2015-12-01', 146, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (44, 'TOT', 'PHONE', '02073791111', '2015-12-01', 147, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (44, 'TOT', 'PHNE', '02073791111', '2015-12-01', 147, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO officeContacts (contactRef, officeCode, contactTypeCode, contactValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (45, 'TOT', 'FAX', '02073791112', '2015-12-01', 148, NULL, 'ADMIN', '2016-01-01');
 
 
 
-Landlords
 
 INSERT INTO landlords (landlordRef, personRef, createdBy, createdDate) VALUES (1, 1, 'ADMIN', '2016-01-01');
 
 INSERT INTO landlords (landlordRef, personRef, createdBy, createdDate) VALUES (2, 7, 'ADMIN', '2016-01-01');
 
-Employees
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (-1, 'ADMIN', 'ADMINpassword', 1, 1, 1, 1, 1, 1);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (-1, 'ADMIN', 'ADMINpassword', 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (1, 1, 'MNC', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (1, 'DEDWARDS', 'DEDWARDSpassword', 1, 1, 1, 1, 1, 1);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (1, 'DEDWARDS', 'DEDWARDSpassword', 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (2, 8, 'EDM', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (2, 'SDOLAN', 'SDOLANpassword', 1, 1, 1, 1, 1, 1);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (2, 'SDOLAN', 'SDOLANpassword', 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (3, 9, 'PON', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (3, 'TEST1', 'TEST1password', 1, 1, 1, 1, 1, 1);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (3, 'TEST1', 'TEST1password', 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (4, 10, 'TOT', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (4, 'TEST2', 'TEST2password', 1, 1, 1, 1, 1, 1);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (4, 'TEST2', 'TEST2password', 1, 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (5, 11, 'MNC', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (5, 'TEST3', 'TEST3password', 1, 1, 1, 0, 0, 0);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (5, 'TEST3', 'TEST3password', 1, 1, 1, 0, 0, 0, 0, 0);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (6, 13, 'EDM', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (6, 'TEST5', 'TEST5password', 1, 1, 1, 0, 0, 0);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (6, 'TEST5', 'TEST5password', 1, 1, 1, 0, 0, 0, 0, 0);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (7, 15, 'PON', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (7, 'TEST7', 'TEST7password', 1, 1, 1, 0, 0, 0);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (7, 'TEST7', 'TEST7password', 1, 1, 1, 0, 0, 0, 0, 0);
 
 INSERT INTO employees (employeeRef, personRef, officeCode, createdBy, createdDate) VALUES (8, 16, 'TOT', 'ADMIN', '2016-01-01');
 
-INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, employeeRead, employeeWrite, employeeUpdate) VALUES (1, 'TEST8', 'TEST8password', 1, 1, 1, 0, 0, 0);
+INSERT INTO users (employeeRef, username, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) VALUES (8, 'TEST8', 'TEST8password', 1, 1, 1, 0, 0, 0, 0, 0);
 
 
-Properties
 
 INSERT INTO properties (propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate) VALUES (1, 1, '2012-04-09', NULL, 'HSE', 'SDET', 'OCCP', 'ADMIN', '2016-01-01');
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (1, 1, 'AGE', NULL, 'Victorian', '2012-04-09', 149, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (2, 1, 'BATHS', NULL, '1' '2012-04-09', 150, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (2, 1, 'BATHS', NULL, '1',  '2012-04-09', 150, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (3, 1, 'BEDS', NULL, '3', '2012-04-09', 151, NULL, 'ADMIN', '2016-01-01');
 
@@ -759,9 +731,9 @@ INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, dou
 
 INSERT INTO properties (propRef, addressRef, acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate) VALUES (12, 16, '2014-10-10', NULL, 'HSE', 'TER', 'VOID', 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES 111, 12, 'AGE', NULL, 'New Build', '2014-10-10', 259, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (111, 12, 'AGE', NULL, 'New Build', '2014-10-10', 259, NULL, 'ADMIN', '2016-01-01');
 
-INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (112, 12, 'BATHS', 1, NULL, '2014-10-10, 260, NULL, 'ADMIN', '2016-01-01');
+INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (112, 12, 'BATHS', 1, NULL, '2014-10-10', 260, NULL, 'ADMIN', '2016-01-01');
 
 INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, doubleValue, stringValue, startDate, noteRef, comment, createdBy, createdDate) VALUES (113, 12, 'BEDS', 2, NULL, '2014-10-10', 261, NULL, 'ADMIN', '2016-01-01');
 
@@ -878,17 +850,7 @@ INSERT INTO propertyelementvalues (propertyElementRef, propRef, elementCode, dou
 
 
 
-1 - EDM, 4 - PON, 6 - MNC, 7 - MNC, 8 - MNC, 9 - EDM, 11 - TOT, 12 - TOT, 13 - EDM, 14 - EDM, 15 - PON, 16 - PON, 17 - EDM, 18 - PON, 19 - TOT, 20 - MNC
-
-EDM - 9-4-2012
-PON - 1-9-2014
-MNC - 10-3-2015
-TOT - 1-12-2015
-
-
-Applications
-
-INSERT INTO applications (appRef, appCorrName, appStartDate, appStatus, createdBy, createdDate) VALUES (1, 'MISS P BRINDLE, '2012-04-20', 'HSED', 'ADMIN', '2016-01-01');
+INSERT INTO applications (appRef, appCorrName, appStartDate, appStatus, createdBy, createdDate) VALUES (1, 'MISS P BRINDLE', '2012-04-20', 'HSED', 'ADMIN', '2016-01-01');
 
 INSERT INTO involvedParties (invPartyRef, appRef, personRef, jointApplicantInd, mainApplicantInd, startDate, relationshipCode, createdBy, createdDate) VALUES (1, 1, 2, 1, 1, '2012-04-20', 'APPL', 'ADMIN', '2016-01-01');
 
@@ -901,7 +863,6 @@ INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, 
 
 INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) VALUES (3, 1, 6, '2012-04-29', 92, NULL, 'ADMIN', '2016-01-01');
 
-Involved Party - Penny and Ricky - prop 1 - address 1
 
 
 
@@ -917,7 +878,7 @@ INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, 
 
 INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) VALUES (6, 6, 4, '2015-06-01', 95, NULL, 'ADMIN', '2016-01-01');
 
-Involved Party - Dennean and Tyrese - prop 3 - address 6
+
 
 
 
@@ -929,7 +890,7 @@ INSERT INTO applicationAddresses (addressUsageRef, addressRef, appRef, startDate
 
 INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) VALUES (8, 4, 3, '2015-11-11', 97, NULL, 'ADMIN', '2016-01-01');
 
-Involved Party - Tony - prop 2 - address 4
+
 
 
 
@@ -949,23 +910,21 @@ INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, 
 
 INSERT INTO personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) VALUES (12, 11, 14, '2015-12-28', 313, NULL, 'ADMIN', '2016-01-01');
 
-Involved Party - Dwayne, TEST4 and TEST6 - prop 7 - address 11
 
 
 
-Tenancies
+
 
 INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (4, 'MISS P BRINDLE', '2012-04-29', '2016-04-28', 48, 4, 'EDM', 1, 1, 'SEC', 1500.00, 0.0, 'ADMIN', '2016-01-01');
 
 INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (18, 'MISS D ADDAMS', '2015-06-01', '2016-05-31', 12, 18, 'MNC', 2, 3, 'PRO', 800.00, 0.0, 'ADMIN', '2016-01-01');
 
-INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (19, 'MR T JEROME, '2012-04-29', '2015-11-11', 24, 19, 'PON', 3, 2, 'SEC', 800.00, 100.0, 'ADMIN', '2016-01-01');
+INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (19, 'MR T JEROME', '2012-04-29', '2015-11-11', 24, 19, 'PON', 3, 2, 'SEC', 800.00, 100.0, 'ADMIN', '2016-01-01');
 
 INSERT INTO tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) VALUES (27, 'MR D EDWARDS', '2015-12-28', '2017-12-27', 24, 27, 'TOT', 4, 6, 'SEC', 1300.00, 0.0, 'ADMIN', '2016-01-01');
 
 
 
-RentAccounts
 
 INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent, tenancyRef, createdBy, createdDate) VALUES (4, 'MISS P BRINDLE', '2012-04-29', 0.0, 'EDM', 1500.00, 4, 'ADMIN', '2016-01-01');
 
@@ -977,7 +936,6 @@ INSERT INTO rentAccounts (rentAccRef, name, startDate, balance, officeCode, rent
 
 
 
-Leases
 
 INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountRef, officeCode, propRef, expenditure, fullManagement, createdBy, createdDate) VALUES (1, '5 Brook Crescent, Edmonton, London, N9 0DJ', '2012-04-09', '2017-04-08', 60, 1, 'EDM', 1, 450.00, 1, 'ADMIN', '2016-01-01');
 
@@ -1013,43 +971,41 @@ INSERT INTO leases (leaseRef, name, startDate, expectedEndDate, length, accountR
 
 
 
-Lease Landlords
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 1, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 1, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 2, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 5, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 3, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 6, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 4, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (1, 9, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 5, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 10, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (1, 6, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 11, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (1, 7, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 12, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (1, 8, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 13, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 9, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 16, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 10, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (1, 17, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 11, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 20, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 12, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (1, 23, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 13, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (1, 24, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 14, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 25, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (2, 15, 1);
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 26, 1);
 
-INSERT INTO (landlordRef, leaseRef, cur) VALUES (1, 16, 1);
-
+INSERT INTO leaselandlord (landlordRef, leaseRef, cur) VALUES (2, 28, 1);
 
 
-LeaseAccounts
+
 
 INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, leaseRef, expenditure, createdBy, createdDate) VALUES (1, '5 Brook Crescent, Edmonton, London, N9 0DJ', '2012-04-09', 0.0, 'EDM', 1, 450.00, 'ADMIN', '2016-01-01');
 
@@ -1085,7 +1041,6 @@ INSERT INTO leaseAccounts (leaseAccRef, name, startDate, balance, officeCode, le
 
 
 
-Contracts
 
 INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, accountRef, officeCode, employeeRef, jobRoleCode, createdBy, createdDate) VALUES (14, 'MR D L EDWARDS', '2015-03-10', '2020-03-09', 60, 14, 'MNC', 1, 'MNGR', 'ADMIN', '2016-01-01');
 
@@ -1105,13 +1060,12 @@ INSERT INTO contracts (contractRef, name, startDate, expectedEndDate, length, ac
 
 
 
-EmploeeAccounts
 
 INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (14, 'MR D L EDWARDS', '2015-03-10', 0, 'MNC', 30000, 14, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (2, 'MR S DOLAN', '2012-04-09', 0.0, 'EDM', 30000', 2, 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (2, 'MR S DOLAN', '2012-04-09', 0.0, 'EDM', 30000, 2, 'ADMIN', '2016-01-01');
 
-INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (7, 'TEST1', '2014-09-01', 0.0, 'PON', 30000, 7 'ADMIN', '2016-01-01');
+INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (7, 'TEST1', '2014-09-01', 0.0, 'PON', 30000, 7, 'ADMIN', '2016-01-01');
 
 INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (21, 'TEST2', '2015-12-01', 0.0, 'TOT', 30000, 21, 'ADMIN', '2016-01-01');
 
@@ -1123,6 +1077,3 @@ INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCo
 
 INSERT INTO employeeAccounts (employeeAccRef, name, startDate, balance, officeCode, salary, contractRef, createdBy, createdDate) VALUES (22, 'TEST8', '2015-12-01', 0.0, 'TOT', 27000, 22, 'ADMIN', '2016-01-01');
 
-
-
-EXECUTED ALL SQL STATEMENTS ABOVE

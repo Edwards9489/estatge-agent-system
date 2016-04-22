@@ -121,6 +121,11 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
     }
     
     @Override
+    public int getCurrentVersion() throws RemoteException {
+        return files.size();
+    }
+    
+    @Override
     public boolean hasVersion(int version) throws RemoteException {
         return (version > 0 && version <= files.size());
     }

@@ -24,8 +24,10 @@ import javax.swing.border.Border;
 public class ButtonPanel extends JPanel {
 	private JButton createBtn;
 	private JButton updateBtn;
+        private JButton endBtn;
 	private JButton deleteBtn;
 	private JButton viewDetailsBtn;
+        private JButton refresh;
 	private StringListener listener = null;
 	
     public ButtonPanel() {
@@ -40,21 +42,27 @@ public class ButtonPanel extends JPanel {
     private void layoutComponents() {
         createBtn = new JButton("Create");
         updateBtn = new JButton("Update");
+        endBtn = new JButton("End");
         deleteBtn = new JButton("Delete");
         viewDetailsBtn = new JButton("View Details");
+        refresh = new JButton("Refresh");
 
         Dimension buttonDim = viewDetailsBtn.getPreferredSize();
         buttonDim.setSize(buttonDim.getWidth(), (buttonDim.getHeight() + 10));
         createBtn.setPreferredSize(buttonDim);
         updateBtn.setPreferredSize(buttonDim);
+        endBtn.setPreferredSize(buttonDim);
         deleteBtn.setPreferredSize(buttonDim);
         viewDetailsBtn.setPreferredSize(buttonDim);
+        refresh.setPreferredSize(buttonDim);
         
 
         createBtn.setMnemonic(KeyEvent.VK_C);
         updateBtn.setMnemonic(KeyEvent.VK_U);
+        endBtn.setMnemonic(KeyEvent.VK_E);
         deleteBtn.setMnemonic(KeyEvent.VK_D);
         viewDetailsBtn.setMnemonic(KeyEvent.VK_V);
+        refresh.setMnemonic(KeyEvent.VK_R);
 
         createBtn.addActionListener(new ActionListener() {
                 @Override
@@ -69,7 +77,16 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(createBtn.getText());
+                                listener.textOmitted(updateBtn.getText());
+                        }
+                }
+        });
+
+        endBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(endBtn.getText());
                         }
                 }
         });
@@ -78,7 +95,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(createBtn.getText());
+                                listener.textOmitted(deleteBtn.getText());
                         }
                 }
         });
@@ -87,7 +104,16 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(createBtn.getText());
+                                listener.textOmitted(viewDetailsBtn.getText());
+                        }
+                }
+        });
+        
+        refresh.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                        if(listener != null) {
+                                listener.textOmitted(refresh.getText());
                         }
                 }
         });
@@ -100,6 +126,8 @@ public class ButtonPanel extends JPanel {
         setLayout(new GridBagLayout());
         
         GridBagConstraints gc = new GridBagConstraints();
+        
+        ////////// FIRST ROW ///////////
         
         gc.gridx = 0; // zero x is at far left of screen
         gc.gridy = 0; // zero y is at top of screen
@@ -116,7 +144,7 @@ public class ButtonPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         add(createBtn, gc);
 
-        ////////// SECOND ROW ///////////
+        ////////// NEXT ROW ///////////
         gc.gridx = 0;
         gc.gridy++; // by incrementing gridy by 1 each row it is moving the grid placement down a row by 1
 
@@ -126,8 +154,19 @@ public class ButtonPanel extends JPanel {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
         add(updateBtn, gc);
+        
+        ////////// NEXT ROW ///////////
+        gc.gridx = 0;
+        gc.gridy++; // by incrementing gridy by 1 each row it is moving the grid placement down a row by 1
 
-        ////////// THIRD ROW ///////////
+        gc.weightx = 0.5;
+        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
+
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.insets = new Insets(0, 0, 0, 0);
+        add(endBtn, gc);
+
+        ////////// NEXT ROW ///////////
         gc.gridx = 0;
         gc.gridy++;
 
@@ -138,7 +177,7 @@ public class ButtonPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         add(deleteBtn, gc);
 
-        ////////// FOURTH ROW ///////////
+        ////////// NEXT ROW ///////////
         gc.gridx = 0;
         gc.gridy++;
 
@@ -148,6 +187,17 @@ public class ButtonPanel extends JPanel {
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.insets = new Insets(0, 0, 0, 0);
         add(viewDetailsBtn, gc);
+        
+        ////////// NEXT ROW ///////////
+        gc.gridx = 0;
+        gc.gridy++;
+
+        gc.weightx = 0.5;
+        gc.weighty = 0.1; // weight controls for a given cell how much space to take up
+
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        gc.insets = new Insets(0, 0, 0, 0);
+        add(refresh, gc);
         
         this.setSize(150, 200);
 

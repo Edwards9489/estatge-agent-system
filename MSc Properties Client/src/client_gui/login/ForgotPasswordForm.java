@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -107,7 +108,10 @@ public class ForgotPasswordForm extends JFrame {
             }
         });
 
-        setSize(300, 350);
+        this.setSize(300, 350);
+        this.setSize(1200, 700);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         
         JPanel controlsPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();

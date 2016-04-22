@@ -210,9 +210,11 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @param read
      * @param write
      * @param update
+     * @param delete
      * @param employeeRead
      * @param employeeWrite
      * @param employeeUpdate
+     * @param employeeDelete
      * @param modifiedBy 
      */
     public void updateJobRole(String title, String description, double salary, boolean current, boolean read, boolean write, boolean update, 
@@ -325,6 +327,14 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     public String getJobDescription() throws RemoteException {
         return this.jobDescription;
     }
+    
+    @Override
+    public Element getJobRequirement(String requirementCode) throws RemoteException {
+        if (this.hasRequirement(requirementCode)) {
+            return requirements.get(requirementCode);
+        }
+        return null;
+    }
 
     /**
      * @return jobRequirements
@@ -385,6 +395,14 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
             }
         }
         return false;
+    }
+    
+    @Override
+    public JobRoleBenefitInterface getJobBenefit(int benefitRef) throws RemoteException {
+        if (this.hasBenefit(benefitRef)) {
+            return benefits.get(benefitRef);
+        }
+        return null;
     }
 
     /**

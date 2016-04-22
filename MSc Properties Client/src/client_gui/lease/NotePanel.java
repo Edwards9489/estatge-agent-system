@@ -5,7 +5,7 @@
  */
 package client_gui.lease;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.Note;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class NotePanel extends JPanel {
     private JTable table;
     private NoteTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public NotePanel(String text) {
         tableModel = new NoteTableModel();
@@ -68,7 +68,7 @@ public class NotePanel extends JPanel {
                     int accountRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(accountRef);
-                    tableListener.rowSelected(accountRef);
+                    tableListener.intOmitted(accountRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -103,7 +103,16 @@ public class NotePanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

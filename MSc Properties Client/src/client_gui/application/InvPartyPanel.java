@@ -5,7 +5,7 @@
  */
 package client_gui.application;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.InvolvedPartyInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,14 +31,14 @@ public class InvPartyPanel extends JPanel {
     private JTable table;
     private InvPartyTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public InvPartyPanel(String text) {
         tableModel = new InvPartyTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem accountItem = new JMenuItem("Accounts");
+        JMenuItem accountItem = new JMenuItem("Involved Party");
         popup.add(accountItem);
         
         // Set up Border for ButtonPanel
@@ -64,11 +64,11 @@ public class InvPartyPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
                 
-                if(tableListener != null) {
+                if(tableListener != null && row > -1) {
                     int accountRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(accountRef);
-                    tableListener.rowSelected(accountRef);
+                    tableListener.intOmitted(accountRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -105,7 +105,16 @@ public class InvPartyPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

@@ -9,10 +9,16 @@ import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
 import interfaces.ContactInterface;
+import interfaces.ContractInterface;
 import interfaces.Document;
+import interfaces.EmployeeAccountInterface;
+import interfaces.LeaseAccountInterface;
+import interfaces.LeaseInterface;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.OfficeInterface;
+import interfaces.RentAccountInterface;
+import interfaces.TenancyInterface;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -207,6 +213,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      * 
      * @param endDate
      * @param modifiedBy 
+     * @throws java.rmi.RemoteException 
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) throws RemoteException {
         if (endDate == null || this.canCloseOffice() && endDate.after(this.startDate)) {
@@ -219,6 +226,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      *
      * @param document
      * @param modifiedBy
+     * @throws java.rmi.RemoteException
      */
     public void createDocument(Document document, ModifiedByInterface modifiedBy) throws RemoteException {
         if(!this.hasDocument(document.getDocumentRef())) {
@@ -373,6 +381,54 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
         return Collections.unmodifiableList(new ArrayList(agreements));
     }
     
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<TenancyInterface> getTenancies() throws RemoteException {
+        List<TenancyInterface> tenancies = new ArrayList();
+        for (AgreementInterface temp : agreements) {
+            if (temp instanceof TenancyInterface) {
+                TenancyInterface tenancy = (TenancyInterface) temp;
+                tenancies.add(tenancy);
+            }
+        }
+        return tenancies;
+    }
+    
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<LeaseInterface> getLeases() throws RemoteException {
+        List<LeaseInterface> leases = new ArrayList();
+        for (AgreementInterface temp : agreements) {
+            if (temp instanceof LeaseInterface) {
+                LeaseInterface lease = (LeaseInterface) temp;
+                leases.add(lease);
+            }
+        }
+        return leases;
+    }
+    
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<ContractInterface> getContracts() throws RemoteException {
+        List<ContractInterface> contracts = new ArrayList();
+        for (AgreementInterface temp : agreements) {
+            if (temp instanceof ContractInterface) {
+                ContractInterface contract = (ContractInterface) temp;
+                contracts.add(contract);
+            }
+        }
+        return contracts;
+    }
+    
     @Override
     public boolean hasAccount(int ref) throws RemoteException {
         if(!accounts.isEmpty()) {
@@ -399,10 +455,59 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
 
     /**
      * @return contacts
+     * @throws java.rmi.RemoteException
      */
     @Override
     public List<AccountInterface> getAccounts() throws RemoteException {
         return Collections.unmodifiableList(new ArrayList(accounts));
+    }
+    
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<RentAccountInterface> getRentAccounts() throws RemoteException {
+        List<RentAccountInterface> rentAccs = new ArrayList();
+        for (AccountInterface temp : accounts) {
+            if (temp instanceof RentAccountInterface) {
+                RentAccountInterface rentAcc = (RentAccountInterface) temp;
+                rentAccs.add(rentAcc);
+            }
+        }
+        return rentAccs;
+    }
+    
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<LeaseAccountInterface> getLeaseAccounts() throws RemoteException {
+        List<LeaseAccountInterface> leaseAccs = new ArrayList();
+        for (AccountInterface temp : accounts) {
+            if (temp instanceof LeaseAccountInterface) {
+                LeaseAccountInterface leaseAcc = (LeaseAccountInterface) temp;
+                leaseAccs.add(leaseAcc);
+            }
+        }
+        return leaseAccs;
+    }
+    
+    /**
+     * @return contacts
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public List<EmployeeAccountInterface> getEmployeeAccounts() throws RemoteException {
+        List<EmployeeAccountInterface> empAccs = new ArrayList();
+        for (AccountInterface temp : accounts) {
+            if (temp instanceof EmployeeAccountInterface) {
+                EmployeeAccountInterface empAccount = (EmployeeAccountInterface) temp;
+                empAccs.add(empAccount);
+            }
+        }
+        return empAccs;
     }
     
     @Override
@@ -411,6 +516,17 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
             for(ContactInterface contact : contacts) {
                 if(contact.getContactRef() == ref) {
                     return contact;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public ContactInterface getCurrentContact(String contactTypeCode) throws RemoteException {
+        if(this.hasCurrentContact(contactTypeCode)) {
+            for (ContactInterface temp : contacts) {
+                if (temp.isCurrent() && contactTypeCode.equals(temp.getContactType().getCode())) {
+                    return temp;
                 }
             }
         }
@@ -437,6 +553,19 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
             }
         }
         return false;
+    }
+    
+    public boolean hasCurrentContact(String contactTypeCode) throws RemoteException {
+        if(contacts.isEmpty()) {
+            return false;
+        } else {
+            for (ContactInterface contact : contacts) {
+                if (contact.isCurrent() && contactTypeCode.equals(contact.getContactType().getCode())) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
     
     private boolean hasCurrentAgreement() throws RemoteException {

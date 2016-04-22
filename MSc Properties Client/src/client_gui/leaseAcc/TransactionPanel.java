@@ -5,7 +5,7 @@
  */
 package client_gui.leaseAcc;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.TransactionInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class TransactionPanel extends JPanel {
     private JTable table;
     private TransactionTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public TransactionPanel(String text) {
         tableModel = new TransactionTableModel();
@@ -68,7 +68,7 @@ public class TransactionPanel extends JPanel {
                     int accountRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(accountRef);
-                    tableListener.rowSelected(accountRef);
+                    tableListener.intOmitted(accountRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -103,7 +103,16 @@ public class TransactionPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

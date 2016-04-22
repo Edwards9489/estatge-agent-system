@@ -5,7 +5,7 @@
  */
 package client_gui.person;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.ContactInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class ContactPanel extends JPanel {
     private JTable table;
     private ContactTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public ContactPanel(String text) {
         tableModel = new ContactTableModel();
@@ -68,7 +68,7 @@ public class ContactPanel extends JPanel {
                     int addressRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(addressRef);
-                    tableListener.rowSelected(addressRef);
+                    tableListener.intOmitted(addressRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -102,7 +102,16 @@ public class ContactPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

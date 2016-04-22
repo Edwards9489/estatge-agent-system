@@ -46,7 +46,9 @@ public class NoteImpl extends UnicastRemoteObject implements Note {
     public void setNote(String note, ModifiedByInterface modified) {
         this.note = note;
         this.modifiedBy(modified);
-    } @Override
+    }
+    
+    @Override
     public boolean hasBeenModified() {
         return !this.modifiedBy.isEmpty();
     }

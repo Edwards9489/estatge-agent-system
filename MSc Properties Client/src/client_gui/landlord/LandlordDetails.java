@@ -9,16 +9,10 @@ import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
-import client_gui.TableListener;
-import client_gui.application.AddressPanel;
-import client_gui.application.DocumentPanel;
+import client_gui.IntegerListener;
 import client_gui.application.ModPanel;
 import client_gui.lease.NotePanel;
-import client_gui.person.ContactPanel;
-import interfaces.AddressUsageInterface;
 import interfaces.LandlordInterface;
-import interfaces.Document;
-import interfaces.InvolvedPartyInterface;
 import interfaces.LeaseInterface;
 import interfaces.Note;
 import java.awt.BorderLayout;
@@ -28,6 +22,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -98,8 +93,10 @@ public class LandlordDetails extends JFrame {
 
             setLayout(new BorderLayout());
 
-            setMinimumSize(new Dimension(1200, 700));
-            setSize(1200, 700);
+            this.setMinimumSize(new Dimension(1200, 700));
+            this.setSize(1200, 700);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
             setupDetails();
             
@@ -255,9 +252,9 @@ public class LandlordDetails extends JFrame {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        leasePanel.setTableListener(new TableListener() {
+        leasePanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int leaseRef) {
+            public void intOmitted(int leaseRef) {
                 if(leaseRef > 0) {
                     try {
                         LeaseInterface invParty = client.getLease(leaseRef);
@@ -285,9 +282,9 @@ public class LandlordDetails extends JFrame {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new TableListener() {
+        notePanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int noteRef) {
+            public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
                         Note note = person.getNote(noteRef);

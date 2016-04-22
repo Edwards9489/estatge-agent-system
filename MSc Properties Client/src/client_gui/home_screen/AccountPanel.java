@@ -5,7 +5,7 @@
  */
 package client_gui.home_screen;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.AccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class AccountPanel extends JPanel {
     private JTable table;
     private AccountTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public AccountPanel(String text) {
         tableModel = new AccountTableModel();
@@ -68,7 +68,7 @@ public class AccountPanel extends JPanel {
                     int accountRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(accountRef);
-                    tableListener.rowSelected(accountRef);
+                    tableListener.intOmitted(accountRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -102,7 +102,7 @@ public class AccountPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
     }
 }

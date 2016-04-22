@@ -98,7 +98,7 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         this.modifiedBy(modifiedBy);
     }
     
-    public void updatePermissions(boolean read, boolean write, boolean update, boolean delete, boolean employeeRead, boolean employeeWrite, boolean employeeUpdate, boolean employeeDelete, ModifiedByInterface modifiedBy) {
+    public void updatePermissions(Boolean read, Boolean write, Boolean update, Boolean delete, Boolean employeeRead, Boolean employeeWrite, Boolean employeeUpdate, Boolean employeeDelete, ModifiedByInterface modifiedBy) {
         UserImpl temp = (UserImpl) this.user;
         temp.setUserPermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete);
         this.modifiedBy(modifiedBy);
@@ -111,17 +111,19 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
      * @throws java.rmi.RemoteException 
      */
     public void createContract(ContractInterface contract, ModifiedByInterface modifiedBy) throws RemoteException {
-        if(!contracts.isEmpty()) {
-            Agreement temp = (Agreement) contracts.get(contracts.size()-1);
-            if(temp.isCurrent()) {
-                temp.setActualEndDate(contract.getStartDate(), modifiedBy);
-            }
+        if(!this.contracts.contains(contract)) {
+            contracts.add(contract);
+            this.modifiedBy(modifiedBy);
+            setOfficeCode(contract.getOfficeCode());
         }
-        contracts.add(contract);
-        this.modifiedBy(modifiedBy);
-        setOfficeCode(contract.getOfficeCode());
     }
     
+    /**
+     * 
+     * @param ref
+     * @param modifiedBy
+     * @throws java.rmi.RemoteException 
+     */
     public void deleteContract(int ref, ModifiedByInterface modifiedBy) throws RemoteException {
         if(this.hasContract(ref) && !(this.getContract(ref).hasBeenModified())) {
             contracts.remove(this.getContract(ref));

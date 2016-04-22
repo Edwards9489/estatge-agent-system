@@ -9,7 +9,7 @@ import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import client_gui.application.DocumentPanel;
 import client_gui.application.ModPanel;
 import client_gui.lease.NotePanel;
@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -94,9 +95,11 @@ public class ContractDetails extends JFrame {
 
             setLayout(new BorderLayout());
 
-            setMinimumSize(new Dimension(1200, 700));
-            setSize(1200, 700);
-
+            this.setMinimumSize(new Dimension(1200, 700));
+            this.setSize(1200, 700);
+            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+            this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+            
             setupDetails();
             
             setUpMainPanel();
@@ -371,9 +374,9 @@ public class ContractDetails extends JFrame {
             Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new TableListener() {
+        notePanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int noteRef) {
+            public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
                         Note note = contract.getNote(noteRef);
@@ -401,9 +404,9 @@ public class ContractDetails extends JFrame {
             Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new TableListener() {
+        documentPanel.setTableListener(new IntegerListener() {
             @Override
-            public void rowSelected(int documentRef) {
+            public void intOmitted(int documentRef) {
                 if(documentRef > 0) {
                     try {
                         Document document = contract.getDocument(documentRef);

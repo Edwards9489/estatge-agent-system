@@ -5,7 +5,7 @@
  */
 package client_gui.landlord;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.LeaseInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class LeasePanel extends JPanel {
     private JTable table;
     private LeaseTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public LeasePanel(String text) {
         tableModel = new LeaseTableModel();
@@ -68,7 +68,7 @@ public class LeasePanel extends JPanel {
                     int addressRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(addressRef);
-                    tableListener.rowSelected(addressRef);
+                    tableListener.intOmitted(addressRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -105,7 +105,16 @@ public class LeasePanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

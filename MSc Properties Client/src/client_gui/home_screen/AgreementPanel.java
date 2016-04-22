@@ -5,7 +5,7 @@
  */
 package client_gui.home_screen;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.AgreementInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class AgreementPanel extends JPanel {
     private JTable table;
     private AgreementTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public AgreementPanel(String text) {
         tableModel = new AgreementTableModel();
@@ -68,7 +68,7 @@ public class AgreementPanel extends JPanel {
                     int agreementRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(agreementRef);
-                    tableListener.rowSelected(agreementRef);
+                    tableListener.intOmitted(agreementRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -102,7 +102,7 @@ public class AgreementPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
     }
 }

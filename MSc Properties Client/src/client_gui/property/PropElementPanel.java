@@ -5,7 +5,7 @@
  */
 package client_gui.property;
 
-import client_gui.TableListener;
+import client_gui.IntegerListener;
 import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class PropElementPanel extends JPanel {
     private JTable table;
     private PropElementTableModel tableModel;
     private JPopupMenu popup;
-    private TableListener tableListener;
+    private IntegerListener tableListener;
     
     public PropElementPanel(String text) {
         tableModel = new PropElementTableModel();
@@ -68,7 +68,7 @@ public class PropElementPanel extends JPanel {
                     int accountRef = (Integer) table.getModel().getValueAt(row, 0);
                     
                     System.out.println(accountRef);
-                    tableListener.rowSelected(accountRef);
+                    tableListener.intOmitted(accountRef);
                     
 //                    tableModel.fireTableRowsDeleted(row, row);
 //                    System.out.println(row);
@@ -102,7 +102,16 @@ public class PropElementPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(TableListener tenListener) {
+    public void setTableListener(IntegerListener tenListener) {
         this.tableListener = tenListener;
+    }
+    
+    public Integer getSelectedObjectRef() {
+        int row = table.getSelectedRow();
+        if (row > -1) {
+            int ref = (Integer) table.getModel().getValueAt(row, 0);
+            return ref;
+        }
+        return null;
     }
 }

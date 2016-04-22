@@ -23,10 +23,16 @@ public interface OfficeInterface extends Remote {
     boolean hasAgreements() throws RemoteException;
     AgreementInterface getAgreement(int ref) throws RemoteException;
     List<AgreementInterface> getAgreements() throws RemoteException;
+    List<TenancyInterface> getTenancies() throws RemoteException;
+    List<LeaseInterface> getLeases() throws RemoteException;
+    List<ContractInterface> getContracts() throws RemoteException;
     boolean hasAccount(int ref) throws RemoteException;
     boolean hasAccounts() throws RemoteException;
     AccountInterface getAccount(int ref) throws RemoteException;
     List<AccountInterface> getAccounts() throws RemoteException;
+    List<RentAccountInterface> getRentAccounts() throws RemoteException;
+    List<LeaseAccountInterface> getLeaseAccounts() throws RemoteException;
+    List<EmployeeAccountInterface> getEmployeeAccounts() throws RemoteException;
     ContactInterface getContact(int ref) throws RemoteException;
     List<ContactInterface> getContacts() throws RemoteException;
     boolean hasContact(int ref) throws RemoteException;
