@@ -33,15 +33,15 @@ public class ReportingFrame extends JFrame {
     private JLabel title;
     private ClientImpl client = null;
     
-    public ReportingFrame() {
+    public ReportingFrame(ClientImpl client) {
         super("MSc Properties");
-        
+        setClient(client);
         layoutComponents();
         createMenuBar();
     }
     
     // Use of singleton pattern to ensure only one Client is initiated
-    public void setClient(ClientImpl model) {
+    private void setClient(ClientImpl model) {
         if (client == null) {
             this.client = model;
         }

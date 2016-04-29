@@ -5,6 +5,18 @@
  */
 package client_gui.application;
 
+import client_gui.document.CreateDocument;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.property.PropSearch;
+import client_gui.property.PropertyPanel;
+import client_gui.invParty.UpdateInvParty;
+import client_gui.invParty.InvPartyPanel;
+import client_gui.invParty.CreateInvParty;
+import client_gui.addressUsage.AddressUsageDetails;
+import client_gui.addressUsage.CreateAddressUsage;
+import client_gui.addressUsage.UpdateAddressUsage;
+import client_gui.addressUsage.AddressUsagePanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
@@ -12,11 +24,12 @@ import client_gui.StringListener;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
-import client_gui.employee.CreateNote;
-import client_gui.employee.NoteDetails;
-import client_gui.employee.UpdateNote;
+import client_gui.note.CreateNote;
+import client_gui.EndObject;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import client_gui.invParty.InvPartyDetails;
-import client_gui.lease.NotePanel;
+import client_gui.note.NotePanel;
 import client_gui.property.PropertyDetails;
 import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
@@ -36,7 +49,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
@@ -69,12 +81,19 @@ public class AppDetails extends JFrame {
     private JTabbedPane tabbedPane;
     private ButtonPanel buttonPanel;
     private InvPartyPanel invPartyPanel;
-    private AddressPanel addressPanel;
+    private AddressUsagePanel addressPanel;
     private NotePanel notePanel;
     private PropertyPanel propInterestPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
     private JFileChooser fileChooser;
+    private JLabel name;
+    private JLabel status;
+    private JLabel start;
+    private JLabel end;
+    private JLabel tenRef;
+    
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
     public AppDetails(ClientImpl client, ApplicationInterface app) {
         super("MSc Properties");
@@ -181,7 +200,7 @@ public class AppDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(corrName, gc);
 
-        JLabel name = new JLabel(application.getAppCorrName());
+        name = new JLabel(application.getAppCorrName());
         name.setFont(boldFont);
 
         gc.gridx++;
@@ -197,7 +216,7 @@ public class AppDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(appStatus, gc);
 
-        JLabel status = new JLabel(application.getAppStatusCode());
+        status = new JLabel(application.getAppStatusCode());
         status.setFont(boldFont);
 
         gc.gridx++;
@@ -220,7 +239,7 @@ public class AppDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(startDate, gc);
 
-        JLabel start = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(application.getAppStartDate()));
+        start = new JLabel(formatter.format(application.getAppStartDate()));
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -240,12 +259,12 @@ public class AppDetails extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         if (application.getAppEndDate() != null) {
-            JLabel end = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(application.getAppEndDate()));
-            end.setFont(boldFont);
-            detailsPanel.add(end, gc);
+            end = new JLabel(formatter.format(application.getAppEndDate()));
         } else {
-            detailsPanel.add(new JLabel(""), gc);
+            end = new JLabel("");
         }
+        end.setFont(boldFont);
+        detailsPanel.add(end, gc);
 
         JLabel tenancyRef = new JLabel("Tenancy Ref    ");
         tenancyRef.setFont(plainFont);
@@ -259,12 +278,12 @@ public class AppDetails extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         if (application.hasTenancyRef()) {
-            JLabel tenRef = new JLabel(String.valueOf(application.getTenancyRef()));
-            tenRef.setFont(boldFont);
-            detailsPanel.add(tenRef, gc);
+            tenRef = new JLabel(String.valueOf(application.getTenancyRef()));
         } else {
-            detailsPanel.add(new JLabel(""), gc);
+            tenRef = new JLabel("");
         }
+        tenRef.setFont(boldFont);
+            detailsPanel.add(tenRef, gc);
     }
     
     private void setUpMainPanel() {
@@ -344,6 +363,22 @@ public class AppDetails extends JFrame {
                             //Document
                             updateDocument();
                             System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+                        
+                     case "End":
+                        System.out.println("TEST - End Button");
+
+                        if (pane == 0) {
+                            //Involved Partys
+                            endInvolvedParty();
+                            System.out.println("TEST - End Involved Party");
+
+                        } else if (pane == 3) {
+                            //Addresses
+                            endProperty();
+                            System.out.println("TEST - End Property");
                             
                         }
                         break;
@@ -428,13 +463,10 @@ public class AppDetails extends JFrame {
                         InvolvedPartyInterface invParty = client.getInvolvedParty(invPartyRef);
                         if(invParty != null) {
                             System.out.println(invParty.getPerson().getName());
+                            System.out.println("TEST1-Involved Party");
+                            InvPartyDetails invPartyGUI = new InvPartyDetails(client, invParty);
+                            invPartyGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Involved Party");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -442,7 +474,7 @@ public class AppDetails extends JFrame {
             }
         });
         
-        addressPanel = new AddressPanel("Addresses");
+        addressPanel = new AddressUsagePanel("Addresses");
         
         try {
             addressPanel.setData(application.getApplicationAddressess());
@@ -458,13 +490,10 @@ public class AppDetails extends JFrame {
                         AddressUsageInterface address = client.getAddressUsage(addressRef);
                         if(address != null) {
                             System.out.println(address.getAddress().printAddress());
+                            System.out.println("TEST1-Address Usage");
+                            AddressUsageDetails addressGUI = new AddressUsageDetails(client, address);
+                            addressGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Address Usage");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -488,13 +517,10 @@ public class AppDetails extends JFrame {
                         Note note = application.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -518,13 +544,10 @@ public class AppDetails extends JFrame {
                         PropertyInterface property = client.getProperty(propRef);
                         if(property != null) {
                             System.out.println(property.getAddress().printAddress());
+                            System.out.println("TEST1-Prop Interests");
+                            PropertyDetails propertyGUI = new PropertyDetails(client, property);
+                            propertyGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Prop Interests");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -548,13 +571,9 @@ public class AppDetails extends JFrame {
                         Document document = application.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -661,9 +680,14 @@ public class AppDetails extends JFrame {
     }
 
     private void createInvolvedParty() {
-        CreateInvParty createInvParty = new CreateInvParty(client);
-        createInvParty.setVisible(true);
-        System.out.println("TEST - Create Involved Party");
+        try {
+            CreateInvParty createInvParty = new CreateInvParty(client);
+            createInvParty.setVisible(true);
+            createInvParty.setAppField(application.getApplicationRef());
+            System.out.println("TEST - Create Involved Party");
+        } catch (RemoteException ex) {
+            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void updateInvolvedParty() {
@@ -680,6 +704,15 @@ public class AppDetails extends JFrame {
             } catch (RemoteException ex) {
                 Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    
+    private void endInvolvedParty() {
+        Integer selection = invPartyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Involved Party Ref: " + selection);
+            EndObject endInvParty = new EndObject(client, "Involved Party", selection);
+            endInvParty.setVisible(true);
         }
     }
 
@@ -725,7 +758,7 @@ public class AppDetails extends JFrame {
 
     private void createAddress() {
         try {
-            CreateAddress createAddress = new CreateAddress(client, "Application", application.getApplicationRef());
+            CreateAddressUsage createAddress = new CreateAddressUsage(client, "Application", application.getApplicationRef());
             createAddress.setVisible(true);
             System.out.println("TEST - Create Address");
         } catch (RemoteException ex) {
@@ -852,9 +885,34 @@ public class AppDetails extends JFrame {
     }
 
     private void createProperty() {
-        PropertySearch createProperty = new PropertySearch(client);
+        PropSearch createProperty = new PropSearch(client);
         createProperty.setVisible(true);
         System.out.println("TEST - Create Property");
+    }
+    
+    private void endProperty() {
+        Integer selection = propInterestPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Property Ref: " + selection);
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to END interest in Property " + selection + "for Application " + application.getApplicationRef() + " ?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Property End - Yes button clicked");
+                    int result = client.endInterestInProperty(application.getApplicationRef(), selection);
+                    if (result > 0) {
+                        String message = "Interest in Property " + selection + " has been successfully ended for Application " + application.getApplicationRef();
+                        String title = "Information";
+                        OKDialog.okDialog(AppDetails.this, message, title);
+                    } else {
+                        String message = "Errors with ended Interest in Property " + selection + " and has not been ended";
+                        String title = "Error";
+                        OKDialog.okDialog(AppDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private void viewProperty() {
@@ -947,6 +1005,21 @@ public class AppDetails extends JFrame {
     
     private void refresh() {
         try {
+            if (application.getAppCorrName() != null) {
+                name.setText(application.getAppCorrName());
+            }
+            if (application.getAppStatusCode() != null) {
+                status.setText(application.getAppStatusCode());
+            }
+            if (application.getAppStartDate() != null) {
+                start.setText(formatter.format(application.getAppStartDate()));
+            }
+            if (application.getAppEndDate() != null) {
+                end.setText(formatter.format(application.getAppEndDate()));
+            }
+            if (application.hasTenancyRef()) {
+                tenRef = new JLabel(String.valueOf(application.getTenancyRef()));
+            }
             invPartyPanel.setData(application.getHousehold());
             addressPanel.setData(application.getApplicationAddressess());
             notePanel.setData(application.getNotes());
@@ -959,6 +1032,7 @@ public class AppDetails extends JFrame {
             propInterestPanel.refresh();
             documentPanel.refresh();
             modPanel.refresh();
+            repaint();
         } catch (RemoteException ex) {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -264,7 +264,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
@@ -295,7 +295,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
@@ -330,7 +330,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
@@ -546,7 +546,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
             
@@ -572,7 +572,7 @@ public class JobRoleTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             JobRole instance = new JobRole("MNGR", "Manager", "TEST", true, 27000.00, true, true, true, true, true, true, true, true, "ADMIN", new Date());
@@ -604,10 +604,10 @@ public class JobRoleTest {
             Element element2 = new ElementImpl("TEST2", "TEST", note2, "DEDWARDS", new Date());
             Element element3 = new ElementImpl("TEST3", "TEST", note3, "DEDWARDS", new Date());
             Element element4 = new ElementImpl("TEST4", "TEST", note4, "DEDWARDS", new Date());
-            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
-            JobRoleBenefit benefit2 = new JobRoleBenefit(2, element2, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
-            JobRoleBenefit benefit3 = new JobRoleBenefit(3, element3, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
-            JobRoleBenefit benefit4 = new JobRoleBenefit(4, element4, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit benefit = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
+            JobRoleBenefit benefit2 = new JobRoleBenefit(2, element2, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
+            JobRoleBenefit benefit3 = new JobRoleBenefit(3, element3, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
+            JobRoleBenefit benefit4 = new JobRoleBenefit(4, element4, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());

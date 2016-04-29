@@ -213,35 +213,35 @@ public class Address extends UnicastRemoteObject implements AddressInterface {
      * @return buildingNumber.isEmpty()
      */
     private boolean isBuildingNumberNull() {
-        return buildingNumber == null;
+        return (buildingNumber == null || buildingNumber.isEmpty());
     }
     
     /**
      * @return buildingName.isEmpty()
      */
     private boolean isBuildingNameNull() {
-        return buildingName == null;
+        return (buildingName == null || buildingName.isEmpty());
     }
     
     /**
      * @return subStreetNumber.isEmpty()
      */
     private boolean isSubStreetNumberNull() {
-        return subStreetNumber == null;
+        return (subStreetNumber == null || subStreetNumber.isEmpty());
     }
     
     /**
      * @return subStreet.isEmpty()
      */
     private boolean isSubStreetNull() {
-        return subStreet == null;
+        return (subStreet == null || subStreet.isEmpty());
     }
     
     /**
      * @return streetNumber.isEmpty()
      */
     private boolean isStreetNumberNull() {
-        return streetNumber == null;
+        return (streetNumber == null || streetNumber.isEmpty());
     }
 
     /**
@@ -255,22 +255,31 @@ public class Address extends UnicastRemoteObject implements AddressInterface {
      * @return area.isEmpty()
      */
     private boolean isAreaNull() {
-        return area == null;
+        return (area == null || area.isEmpty());
     }
 
     /**
      * @return town.isEmpty()
      */
     private boolean isTownNull() {
-        return town == null;
+        return (town == null || town.isEmpty());
     }
 
     /**
      * @return country.isEmpty()
      */
     private boolean isCountryNull() {
-        return country == null;
+        return (country == null || country.isEmpty());
     }
+
+    /**
+     * @return postcode.isEmpty()
+     */
+    private boolean isPostcodeNull() {
+        return (postcode == null || postcode.isEmpty());
+    }
+    
+    
 
     /**
      * @return addressRef
@@ -487,7 +496,9 @@ public class Address extends UnicastRemoteObject implements AddressInterface {
             temp = temp + getCountry() + ", ";
         }
         
-        temp = temp + getPostcode();
+        if (!isPostcodeNull()) {
+            temp = temp + getPostcode();
+        }
 
         return temp;
     }

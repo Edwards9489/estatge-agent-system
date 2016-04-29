@@ -27,12 +27,14 @@ public class DetailsPanel extends JPanel {
     private final Date createdDate;
     private final String modifiedBy;
     private final Date modifiedDate;
+    private final SimpleDateFormat formatter;
     
     public DetailsPanel(String createdBy, Date createdDate, String modifiedBy, Date modifiedDate) {
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.modifiedBy = modifiedBy;
         this.modifiedDate = modifiedDate;
+        formatter = new SimpleDateFormat("dd-MM-yyyy");
         layoutComponents();
     }
     
@@ -85,7 +87,7 @@ public class DetailsPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         add(cDate, gc);
 
-        JLabel cDate2 = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(createdDate));
+        JLabel cDate2 = new JLabel(formatter.format(createdDate));
         cDate2.setFont(boldFont);
 
         gc.gridx++;
@@ -101,7 +103,7 @@ public class DetailsPanel extends JPanel {
         
         if (modifiedBy != null) {
             mBy2 = new JLabel(modifiedBy);
-            mDate2 = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(modifiedDate));
+            mDate2 = new JLabel(formatter.format(modifiedDate));
         } else {
             mBy2 = new JLabel("");
             mDate2 = new JLabel("");

@@ -10,14 +10,22 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
-import client_gui.leaseAcc.TransactionPanel;
-import interfaces.AddressUsageInterface;
+import client_gui.OKDialog;
+import client_gui.PDFFileFilter;
+import client_gui.transaction.CreateTransaction;
+import client_gui.transaction.TransactionDetails;
+import client_gui.document.CreateDocument;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.transaction.TransactionPanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import interfaces.Document;
 import interfaces.EmployeeAccountInterface;
 import interfaces.Note;
+import interfaces.TransactionInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,12 +37,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -63,11 +73,18 @@ public class EmpAccDetails extends JFrame {
     private TransactionPanel transactionPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private JFileChooser fileChooser;
+    private JLabel length;
+    private JLabel start;
+    private JLabel startDate;
+    private JLabel endDate;
+    private JLabel propRef;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
-    public EmpAccDetails(ClientImpl client, EmployeeAccountInterface app) {
+    public EmpAccDetails(ClientImpl client, EmployeeAccountInterface emp) {
         super("MSc Properties");
         setClient(client);
-        setApplication(app);
+        setEmpAcc(emp);
         layoutComponents();
     }
 
@@ -78,15 +95,19 @@ public class EmpAccDetails extends JFrame {
         }
     }
 
-    // Use of singleton pattern to ensure only one Application is initiated
-    private void setApplication(EmployeeAccountInterface app) {
-        if (employeeAcc == null) {
-            this.employeeAcc = app;
+    // Use of singleton pattern to ensure only one Employee Account is initiated
+    private void setEmpAcc(EmployeeAccountInterface emp) {
+        if (this.employeeAcc == null) {
+            this.employeeAcc = emp;
         }
     }
 
     private void layoutComponents() {
         try {
+            fileChooser = new JFileChooser();
+            // If you need more choosbale files then add more choosable files
+            fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -165,7 +186,7 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseLength, gc);
 
-        JLabel length = new JLabel("£" + String.valueOf(employeeAcc.getSalary()));
+        length = new JLabel("£" + String.valueOf(employeeAcc.getSalary()));
         length.setFont(boldFont);
 
         gc.gridx++;
@@ -181,7 +202,7 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(employeeAcc.getStartDate()));
+        startDate = new JLabel(formatter.format(employeeAcc.getStartDate()));
         startDate.setFont(boldFont);
 
         gc.gridx++;
@@ -201,7 +222,7 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        JLabel start = new JLabel(employeeAcc.getAccName());
+        start = new JLabel(employeeAcc.getAccName());
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -217,7 +238,7 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leasePropRef, gc);
         
-        JLabel propRef = new JLabel("£" + String.valueOf(employeeAcc.getBalance()));
+        propRef = new JLabel("£" + String.valueOf(employeeAcc.getBalance()));
         propRef.setFont(boldFont);
         
         gc.gridx++;
@@ -233,9 +254,8 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseEndDate, gc);
         
-        JLabel endDate;
         if(employeeAcc.getEndDate() != null) {
-             endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(employeeAcc.getEndDate()));
+             endDate = new JLabel(formatter.format(employeeAcc.getEndDate()));
         } else {
             endDate  = new JLabel("");
         }
@@ -252,7 +272,7 @@ public class EmpAccDetails extends JFrame {
         gc.gridx = 0;
         gc.gridy++;
 
-        JLabel lAccRef = new JLabel("Contract Ref    ");
+        JLabel lAccRef = new JLabel("Employee Account Ref    ");
         lAccRef.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
@@ -260,7 +280,7 @@ public class EmpAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAccRef, gc);
 
-        JLabel accRef = new JLabel(String.valueOf(employeeAcc.getContractRef()));
+        JLabel accRef = new JLabel(String.valueOf(employeeAcc.getAccRef()));
         accRef.setFont(boldFont);
 
         gc.gridx++;
@@ -305,26 +325,90 @@ public class EmpAccDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    LeaseSearch leaseSearch = new LeaseSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        } else if (pane == 1) {
+                            //Transactions
+                            createTransaction();
+                            System.out.println("TEST - Create Transaction");
+                            
+                        } else if (pane == 2) {
+                            //Documents
+                            createDocument();
+                            System.out.println("TEST - Create Document");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        } else if (pane == 2) {
+                            //Document
+                            updateDocument();
+                            System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            deleteTransaction();
+                            System.out.println("TEST - Delete Transaction");
+                            
+                        } else if (pane == 2) {
+                            //Document
+                            deleteDocument();
+                            System.out.println("TEST - Delete Document");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        } else if (pane == 1) {
+                            //Document
+                            viewTransaction();
+                            System.out.println("TEST - View Transaction");
+
+                        } else if (pane == 2) {
+                            //Document
+                            viewDocument();
+                            System.out.println("TEST - View Document");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -347,13 +431,10 @@ public class EmpAccDetails extends JFrame {
                         Note note = employeeAcc.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -371,19 +452,16 @@ public class EmpAccDetails extends JFrame {
         
         transactionPanel.setTableListener(new IntegerListener() {
             @Override
-            public void intOmitted(int addressRef) {
-                if(addressRef > 0) {
+            public void intOmitted(int tranRef) {
+                if(tranRef > 0) {
                     try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
+                        TransactionInterface transaction = employeeAcc.getTransaction(tranRef);
+                        if(transaction != null) {
+                            System.out.println(transaction.getTransactionRef());
+                            System.out.println("TEST1-Transaction");
+                            TransactionDetails transactionGUI=  new TransactionDetails(client, transaction, "Employee Account");
+                            transactionGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Landlords");
-//                        LeaseDetailsForm tenancyForm = new LeaseDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -407,13 +485,9 @@ public class EmpAccDetails extends JFrame {
                         Document document = employeeAcc.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadEmployeeAccDocument(employeeAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        LeaseDetailsForm tenancyForm = new LeaseDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -445,6 +519,220 @@ public class EmpAccDetails extends JFrame {
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+    
+    private void createTransaction() {
+        try {
+            CreateTransaction createTransaction = new CreateTransaction(client, "Employee Account", employeeAcc.getAccRef());
+            createTransaction.setVisible(true);
+            System.out.println("TEST - Create Transaction");
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void deleteTransaction() {
+        Integer selection = transactionPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE transaction " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Transaction - Yes button clicked");
+                    int result = client.deleteEmployeeAccTransaction(employeeAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Transaction " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    } else {
+                        String message = "Transaction " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewTransaction() {
+        if (transactionPanel.getSelectedObjectRef() != null) {
+            TransactionInterface transaction;
+            try {
+                transaction = employeeAcc.getTransaction(transactionPanel.getSelectedObjectRef());
+                if (transaction != null) {
+                    TransactionDetails employeeAccTransaction = new TransactionDetails(client, transaction, "Employee Account");
+                    employeeAccTransaction.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Employee Account", employeeAcc.getAccRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = employeeAcc.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Employee Account", employeeAcc.getAccRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteEmployeeAccNote(employeeAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = employeeAcc.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails employeeAccDetails = new NoteDetails(client, note);
+                    employeeAccDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void createDocument() {
+        try {
+            CreateDocument createDoc = new CreateDocument(client, "Employee Account", employeeAcc.getAccRef());
+            createDoc.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Document document = employeeAcc.getDocument(selection);
+                if (document != null) {
+                    if(fileChooser.showOpenDialog(EmpAccDetails.this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        int result = client.updateEmployeeAccDocument(employeeAcc.getAccRef(), document.getDocumentRef(), file.getPath());
+                        if (result > 0) {
+                            String message = "Document " + selection + " has been successfully updated";
+                            String title = "Information";
+                            OKDialog.okDialog(EmpAccDetails.this, message, title);
+                        } else {
+                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
+                            String title = "Error";
+                            OKDialog.okDialog(EmpAccDetails.this, message, title);
+                        }
+                        System.out.println(fileChooser.getSelectedFile());
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE document " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Document Delete - Yes button clicked");
+                    int result = client.deleteEmployeeAccDocument(employeeAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Document " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    } else {
+                        String message = "Document " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmpAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            Document document;
+            try {
+                document = employeeAcc.getDocument(documentPanel.getSelectedObjectRef());
+                client.downloadEmployeeAccDocument(employeeAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            length.setText("£" + String.valueOf(employeeAcc.getSalary()));
+            if (employeeAcc.getStartDate() != null) {
+                startDate.setText(formatter.format(employeeAcc.getStartDate()));
+            }
+            if (employeeAcc.getAccName() != null) {
+                start.setText(employeeAcc.getAccName());
+            }
+            if (employeeAcc.getEndDate() != null) {
+                endDate.setText(formatter.format(employeeAcc.getEndDate()));
+            }
+            
+            propRef.setText("£" + String.valueOf(employeeAcc.getBalance()));
+            
+            notePanel.setData(employeeAcc.getNotes());
+            transactionPanel.setData(employeeAcc.getTransactions());
+            documentPanel.setData(employeeAcc.getDocuments());
+            modPanel.setData(employeeAcc.getModifiedBy());
+            notePanel.refresh();
+            transactionPanel.refresh();
+            documentPanel.refresh();
+            modPanel.refresh();
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmpAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

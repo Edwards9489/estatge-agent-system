@@ -16,6 +16,7 @@ import interfaces.Element;
 import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
 import interfaces.InvolvedPartyInterface;
+import interfaces.JobRoleBenefitInterface;
 import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
@@ -665,9 +666,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date) throws RemoteException {
+    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createPersonContact(pRef, contactTypeCode, value, date, this.getUsername());
+            return server.createPersonContact(pRef, contactTypeCode, value, date, comment, this.getUsername());
         }
         return 0;
     }
@@ -686,9 +687,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate) throws RemoteException {
+    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createPersonAddressUsage(pRef, addrRef, startDate, this.getUsername());
+            return server.createPersonAddressUsage(pRef, addrRef, startDate, comment, this.getUsername());
         }
         return 0;
     }
@@ -798,9 +799,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date) throws RemoteException {
+    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createOfficeContact(oCode, contactTypeCode, value, date, this.getUsername());
+            return server.createOfficeContact(oCode, contactTypeCode, value, date, comment, this.getUsername());
         }
         return 0;
     }
@@ -819,16 +820,16 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, int address) throws RemoteException {
+    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createInvolvedParty(pRef, aRef, joint, main, start, relationshipCode, address, this.getUsername());
+            return server.createInvolvedParty(pRef, aRef, joint, main, start, relationshipCode, this.getUsername());
         }
         return 0;
     }
 
-    public int updateInvolvedParty(int iRef, boolean joint, boolean main, Date start, String relationshipCode) throws RemoteException {
+    public int updateInvolvedParty(int iRef, boolean joint, Date start, String relationshipCode) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.updateInvolvedParty(iRef, joint, main, start, relationshipCode, this.getUsername());
+            return server.updateInvolvedParty(iRef, joint, start, relationshipCode, this.getUsername());
         }
         return 0;
     }
@@ -1001,9 +1002,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate) throws RemoteException {
+    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createApplicationAddressUsage(applicationRef, addrRef, startDate, this.getUsername());
+            return server.createApplicationAddressUsage(applicationRef, addrRef, startDate, comment, this.getUsername());
         }
         return 0;
     }
@@ -1289,6 +1290,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public JobRoleBenefitInterface getJobRoleBenefit(int jobRoleBenefitRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getJobRoleBenefit(jobRoleBenefitRef);
+        }
+        return null;
+    }
 
     public int createJobRequirement(String code, String description, String comment) throws RemoteException {
         if (this.server.isAlive()) {
@@ -1342,6 +1350,13 @@ public class ClientImpl extends Observable implements Client {
     public int updateTenancy(int tRef, String name, Date startDate, int length, String tenTypeCode) throws RemoteException {
         if (this.server.isAlive()) {
             return server.updateTenancy(tRef, name, startDate, length, tenTypeCode, this.getUsername());
+        }
+        return 0;
+    }
+    
+    public int endTenancy(int tRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endTenancy(tRef, endDate, this.getUsername());
         }
         return 0;
     }
@@ -1457,6 +1472,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int endLease(int lRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endLease(lRef, endDate, this.getUsername());
+        }
+        return 0;
+    }
 
     public int deleteLease(int lRef) throws RemoteException {
         if (this.server.isAlive()) {
@@ -1559,6 +1581,13 @@ public class ClientImpl extends Observable implements Client {
     public int updateContract(int cRef, String name, Date startDate, int length) throws RemoteException {
         if (this.server.isAlive()) {
             return server.updateContract(cRef, name, startDate, length, this.getUsername());
+        }
+        return 0;
+    }
+    
+    public int endContract(int cRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endContract(cRef, endDate, this.getUsername());
         }
         return 0;
     }
@@ -1880,16 +1909,23 @@ public class ClientImpl extends Observable implements Client {
 
     public int createEmployeeAccTransaction(int eAccRef, int fromRef, int toRef, double amount, boolean debit, Date transactionDate, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createRentAccTransaction(eAccRef, fromRef, toRef, amount, debit, transactionDate, comment, this.getUsername());
+            return server.createEmployeeAccTransaction(eAccRef, fromRef, toRef, amount, debit, transactionDate, comment, this.getUsername());
         }
         return 0;
     }
 
     public int deleteEmployeeAccTransaction(int tRef, int eAccRef) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.deleteRentAccTransaction(tRef, eAccRef, this.getUsername());
+            return server.deleteEmployeeAccTransaction(tRef, eAccRef, this.getUsername());
         }
         return 0;
+    }
+    
+    public Element getTitle(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getTitle(code);
+        }
+        return null;
     }
 
     public List<Element> getTitles() throws RemoteException {
@@ -1908,6 +1944,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempTitles;
+        }
+        return null;
+    }
+    
+    public Element getGender(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getGender(code);
         }
         return null;
     }
@@ -1931,6 +1974,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getMaritalStatus(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getMaritalStatus(code);
+        }
+        return null;
+    }
 
     public List<Element> getMaritalStatuses() throws RemoteException {
         if (this.server.isAlive()) {
@@ -1948,6 +1998,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempStatuses;
+        }
+        return null;
+    }
+    
+    public Element getEthnicOrigin(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getEthnicOrigin(code);
         }
         return null;
     }
@@ -1971,6 +2028,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getLanguage(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getLanguage(code);
+        }
+        return null;
+    }
 
     public List<Element> getLanguages() throws RemoteException {
         if (this.server.isAlive()) {
@@ -1988,6 +2052,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempLanguages;
+        }
+        return null;
+    }
+    
+    public Element getNationality(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getNationality(code);
         }
         return null;
     }
@@ -2011,6 +2082,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getSexuality(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getSexuality(code);
+        }
+        return null;
+    }
 
     public List<Element> getSexualities() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2028,6 +2106,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempSexualities;
+        }
+        return null;
+    }
+    
+    public Element getReligion(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getReligion(code);
         }
         return null;
     }
@@ -2051,6 +2136,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getPropertyType(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getPropertyType(code);
+        }
+        return null;
+    }
 
     public List<Element> getPropertyTypes() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2068,6 +2160,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempTypes;
+        }
+        return null;
+    }
+    
+    public Element getPropertySubType(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getPropertySubType(code);
         }
         return null;
     }
@@ -2091,6 +2190,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getPropElement(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getPropElement(code);
+        }
+        return null;
+    }
 
     public List<Element> getPropElements() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2108,6 +2214,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempElements;
+        }
+        return null;
+    }
+    
+    public Element getContactType(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getContactType(code);
         }
         return null;
     }
@@ -2131,6 +2244,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getEndReason(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getEndReason(code);
+        }
+        return null;
+    }
 
     public List<Element> getEndReasons() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2148,6 +2268,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempReasons;
+        }
+        return null;
+    }
+    
+    public Element getRelationship(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getRelationship(code);
         }
         return null;
     }
@@ -2171,6 +2298,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getJobBenefit(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getJobBenefit(code);
+        }
+        return null;
+    }
 
     public List<Element> getJobBenefits() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2191,6 +2325,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return null;
     }
+    
+    public Element getJobRequirement(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getJobRequirement(code);
+        }
+        return null;
+    }
 
     public List<Element> getJobRequirements() throws RemoteException {
         if (this.server.isAlive()) {
@@ -2208,6 +2349,13 @@ public class ClientImpl extends Observable implements Client {
                 }
             }
             return tempRequirements;
+        }
+        return null;
+    }
+    
+    public Element getTenancyType(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getTenancyType(code);
         }
         return null;
     }
@@ -2398,13 +2546,33 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
+    public boolean personExists(int pRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.personExists(pRef);
+        }
+        return false;
+    }
+    
     public boolean personEmployeeExists(int pRef) throws RemoteException {
-        return this.server.personEmployeeExists(pRef);
+        if (this.server.isAlive()) {
+            return server.personEmployeeExists(pRef);
+        }
+        return false;
     }
 
     
     public boolean personLandlordExists(int pRef) throws RemoteException {
-        return this.server.personLandlordExists(pRef);
+        if (this.server.isAlive()) {
+            return server.personLandlordExists(pRef);
+        }
+        return false;
+    }
+    
+    public boolean addressExists(int pRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.addressExists(pRef);
+        }
+        return false;
     }
     
     
@@ -2436,6 +2604,10 @@ public class ClientImpl extends Observable implements Client {
     
     public PropertyInterface getProperty(int pRef) throws RemoteException {
         return this.server.getProperty(pRef);
+    }
+    
+    public PersonInterface getPerson(int pRef) throws RemoteException {
+        return this.server.getPerson(pRef);
     }
     
     public EmployeeInterface getEmployee(int eRef) throws RemoteException {

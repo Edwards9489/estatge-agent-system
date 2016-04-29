@@ -5,15 +5,16 @@
  */
 package client_gui.person;
 
+import client_gui.contact.ContactPanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.AddressPanel;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.addressUsage.AddressUsagePanel;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
 import interfaces.AddressUsageInterface;
 import interfaces.PersonInterface;
 import interfaces.Document;
@@ -61,12 +62,12 @@ public class PersonDetails extends JFrame {
     private JTabbedPane tabbedPane;
     private ButtonPanel buttonPanel;
     private ContactPanel contactPanel;
-    private AddressPanel addressPanel;
+    private AddressUsagePanel addressPanel;
     private NotePanel notePanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
     
-    //     contacts - addresses - notes - documents - modifications
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
     public PersonDetails(ClientImpl client, PersonInterface app) {
         super("MSc Properties");
@@ -295,7 +296,7 @@ public class PersonDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(pDOB, gc);
         
-        JLabel dob = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getDateOfBirth()));
+        JLabel dob = new JLabel(formatter.format(person.getDateOfBirth()));
         dob.setFont(boldFont);
 
         gc.gridx++;
@@ -428,7 +429,7 @@ public class PersonDetails extends JFrame {
             }
         });
         
-        addressPanel = new AddressPanel("Addresses");
+        addressPanel = new AddressUsagePanel("Addresses");
         
         try {
             addressPanel.setData(person.getAddresses());

@@ -5,15 +5,22 @@
  */
 package client_gui.employee;
 
+import client_gui.EndObject;
+import client_gui.note.UpdateNote;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.contract.UpdateContract;
+import client_gui.contract.ContractPanel;
+import client_gui.contract.CreateContract;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.application.ModPanel;
+import client_gui.modifications.ModPanel;
 import client_gui.contract.ContractDetails;
-import client_gui.lease.NotePanel;
+import client_gui.note.NotePanel;
 import interfaces.ContractInterface;
 import interfaces.EmployeeInterface;
 import interfaces.Note;
@@ -65,12 +72,12 @@ public class EmployeeDetails extends JFrame {
     private JLabel dob;
     private JLabel code;
     private JLabel name;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
-    public EmployeeDetails(ClientImpl client, EmployeeInterface app) {
+    public EmployeeDetails(ClientImpl client, EmployeeInterface emp) {
         super("MSc Properties");
         setClient(client);
-        setEmployee(app);
+        setEmployee(emp);
         layoutComponents();
     }
 
@@ -82,9 +89,9 @@ public class EmployeeDetails extends JFrame {
     }
 
     // Use of singleton pattern to ensure only one Employee is initiated
-    private void setEmployee(EmployeeInterface app) {
-        if (employee == null) {
-            this.employee = app;
+    private void setEmployee(EmployeeInterface emp) {
+        if (this.employee == null) {
+            this.employee = emp;
         }
     }
 
@@ -350,16 +357,13 @@ public class EmployeeDetails extends JFrame {
             public void intOmitted(int invPartyRef) {
                 if (invPartyRef > 0) {
                     try {
-                        ContractInterface invParty = client.getContract(invPartyRef);
-                        if (invParty != null) {
-                            System.out.println(invParty.getAgreementName());
+                        ContractInterface contract = client.getContract(invPartyRef);
+                        if(contract != null) {
+                            System.out.println(contract.getAgreementRef());
+                            System.out.println("TEST1-Contract");
+                            ContractDetails contractGUI=  new ContractDetails(client, contract);
+                            contractGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Contracts");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -381,15 +385,12 @@ public class EmployeeDetails extends JFrame {
                 if (noteRef > 0) {
                     try {
                         Note note = employee.getNote(noteRef);
-                        if (note != null) {
+                        if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -516,7 +517,12 @@ public class EmployeeDetails extends JFrame {
     }
     
     private void endContract() {
-        
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Contract Ref: " + selection);
+            EndObject endContract = new EndObject(client, "Contract", selection);
+            endContract.setVisible(true);
+        }
     }
 
     private void deleteContract() {
@@ -625,6 +631,15 @@ public class EmployeeDetails extends JFrame {
     
     private void refresh() {
         try {
+            if (employee.getPerson().getDateOfBirth() != null) {
+                dob.setText(formatter.format(employee.getPerson().getDateOfBirth()));
+            }
+            if (employee.getOfficeCode() != null) {
+                code.setText(employee.getOfficeCode());
+            }
+            if (employee.getPerson().getName() != null) {
+                name.setText(employee.getPerson().getName());
+            }
             contractPanel.setData(employee.getContracts());
             notePanel.setData(employee.getNotes());
             modPanel.setData(employee.getModifiedBy());

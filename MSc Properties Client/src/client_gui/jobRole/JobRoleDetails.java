@@ -5,13 +5,24 @@
  */
 package client_gui.jobRole;
 
+import client_gui.jobRequirement.CreateJobRequirement;
+import client_gui.jobBenefit.JobRoleBenefitDetails;
+import client_gui.jobBenefit.CreateJobBenefit;
+import client_gui.jobBenefit.UpdateJobRoleBenefit;
+import client_gui.jobBenefit.BenefitPanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.OKDialog;
+import client_gui.element.ElementDetails;
+import client_gui.element.ElementPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import interfaces.JobRoleInterface;
 import interfaces.Element;
 import interfaces.JobRoleBenefitInterface;
@@ -51,7 +62,7 @@ import javax.swing.border.Border;
 public class JobRoleDetails extends JFrame {
     
     private ClientImpl client = null;
-    private JobRoleInterface lease = null;
+    private JobRoleInterface jobRole = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -61,11 +72,22 @@ public class JobRoleDetails extends JFrame {
     private BenefitPanel benefitPanel;
     private NotePanel notePanel;
     private ModPanel modPanel;
+    private JLabel title;
+    private JLabel salary;
+    private JCheckBox full;
+    private JCheckBox read;
+    private JCheckBox write;
+    private JCheckBox update;
+    private JCheckBox delete;
+    private JCheckBox eRead;
+    private JCheckBox eWrite;
+    private JCheckBox eUpdate;
+    private JCheckBox eDelete;
 
-    public JobRoleDetails(ClientImpl client, JobRoleInterface app) {
+    public JobRoleDetails(ClientImpl client, JobRoleInterface jobRole) {
         super("MSc Properties");
         setClient(client);
-        setApplication(app);
+        setApplication(jobRole);
         layoutComponents();
     }
 
@@ -77,9 +99,9 @@ public class JobRoleDetails extends JFrame {
     }
 
     // Use of singleton pattern to ensure only one Application is initiated
-    private void setApplication(JobRoleInterface app) {
-        if (lease == null) {
-            this.lease = app;
+    private void setApplication(JobRoleInterface jobRole) {
+        if (this.jobRole == null) {
+            this.jobRole = jobRole;
         }
     }
 
@@ -147,7 +169,7 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseRef, gc);
 
-        JLabel ref = new JLabel(lease.getJobRoleCode());
+        JLabel ref = new JLabel(jobRole.getJobRoleCode());
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -163,13 +185,13 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseLength, gc);
 
-        JLabel length = new JLabel(lease.getJobTitle());
-        length.setFont(boldFont);
+        title = new JLabel(jobRole.getJobTitle());
+        title.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(length, gc);
+        detailsPanel.add(title, gc);
 
         JLabel lExpenditure = new JLabel("Salary    ");
         lExpenditure.setFont(plainFont);
@@ -182,9 +204,9 @@ public class JobRoleDetails extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel expenditure = new JLabel("£" + String.valueOf(lease.getSalary()));
-        expenditure.setFont(boldFont);
-        detailsPanel.add(expenditure, gc);
+        salary = new JLabel("£" + String.valueOf(jobRole.getSalary()));
+        salary.setFont(boldFont);
+        detailsPanel.add(salary, gc);
 
         JLabel lStartDate = new JLabel("Full Time    ");
         lStartDate.setFont(plainFont);
@@ -194,13 +216,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JCheckBox startDate = new JCheckBox("", lease.isFullTime());
-        startDate.setEnabled(false);
+        full = new JCheckBox();
+        full.setSelected(jobRole.isFullTime());
+        full.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(startDate, gc);
+        detailsPanel.add(full, gc);
 
             ////////// NEXT ROW //////////
         gc.gridx = 0;
@@ -214,13 +237,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        JCheckBox start = new JCheckBox("", lease.getUpdate());
-        start.setEnabled(false);
+        read = new JCheckBox();
+        read.setSelected(jobRole.getRead());
+        read.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
+        detailsPanel.add(read, gc);
 
         JLabel empty1 = new JLabel("Write    ");
         empty1.setFont(plainFont);
@@ -230,13 +254,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(empty1, gc);
         
-        JCheckBox empty2 = new JCheckBox("", lease.getWrite());
-        empty2.setEnabled(false);
+        write = new JCheckBox();
+        write.setSelected(jobRole.getWrite());
+        write.setEnabled(false);
         
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(empty2, gc);
+        detailsPanel.add(write, gc);
 
         JLabel leasePropRef = new JLabel("Update    ");
         leasePropRef.setFont(plainFont);
@@ -246,13 +271,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leasePropRef, gc);
         
-        JCheckBox propRef = new JCheckBox("", lease.getUpdate());
-        propRef.setEnabled(false);
+        update = new JCheckBox();
+        update.setSelected(jobRole.getUpdate());
+        update.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(propRef, gc);
+        detailsPanel.add(update, gc);
 
         JLabel leaseEndDate = new JLabel("Delete    ");
         leaseEndDate.setFont(plainFont);
@@ -262,7 +288,8 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseEndDate, gc);
         
-        JCheckBox endDate = new JCheckBox("", lease.getDelete());
+        JCheckBox endDate = new JCheckBox();
+        endDate.setSelected(jobRole.getDelete());
         endDate.setEnabled(false);
         
         gc.gridx++;
@@ -283,14 +310,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAccRef, gc);
         
-        System.out.println(lease.getEmployeeRead());
-        JCheckBox accRef = new JCheckBox("", lease.getEmployeeRead());
-        accRef.setEnabled(false);
+        eRead = new JCheckBox();
+        eRead.setSelected(jobRole.getEmployeeRead());
+        eRead.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(accRef, gc);
+        detailsPanel.add(eRead, gc);
 
         JLabel lofficeCode = new JLabel("eWrite    ");
         lofficeCode.setFont(plainFont);
@@ -301,13 +328,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lofficeCode, gc);
 
-        JCheckBox officeCode = new JCheckBox("", lease.getEmployeeWrite());
-        officeCode.setEnabled(false);
+        eWrite = new JCheckBox();
+        eWrite.setSelected(jobRole.getEmployeeWrite());
+        eWrite.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(officeCode, gc);
+        detailsPanel.add(eWrite, gc);
 
         JLabel lfull = new JLabel("eUpdate    ");
         lfull.setFont(plainFont);
@@ -317,13 +345,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lfull, gc);
 
-        JCheckBox full = new JCheckBox("", lease.getEmployeeUpdate());
-        full.setEnabled(false);
+        eUpdate = new JCheckBox();
+        eUpdate.setSelected(jobRole.getEmployeeUpdate());
+        eUpdate.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(full, gc);
+        detailsPanel.add(eUpdate, gc);
 
         JLabel lAcEndDate = new JLabel("eDelete    ");
         lAcEndDate.setFont(plainFont);
@@ -333,13 +362,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAcEndDate, gc);
 
-        JCheckBox acEndDate = new JCheckBox("", lease.getEmployeeDelete());
-        acEndDate.setEnabled(false);
+        eDelete = new JCheckBox();
+        eDelete.setSelected(jobRole.getEmployeeDelete());
+        eDelete.setEnabled(false);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(acEndDate, gc);
+        detailsPanel.add(eDelete, gc);
         
         ////////// NEXT ROW //////////
         gc.gridx = 0;
@@ -353,7 +383,7 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAccDescrip, gc);
 
-        JLabel descrip = new JLabel(lease.getJobDescription());
+        JLabel descrip = new JLabel(jobRole.getJobDescription());
         descrip.setFont(boldFont);
 
         gc.gridx++;
@@ -383,26 +413,90 @@ public class JobRoleDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    JobRoleSearch leaseSearch = new JobRoleSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Requirements
+                            createJobRoleRequirement();
+                            System.out.println("Create Job Requirement");
+                            
+                        } else if (pane == 1) {
+                            //Benefits
+                            createJobRoleBenefit();
+                            System.out.println("Create Job Benefit");
+                            
+                        } else if (pane == 2) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 1) {
+                            //Benefits
+                            updateJobRoleBenefit();
+                            System.out.println("TEST - Update Job Benefit");
+                            
+                        } else if (pane == 2) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Requirements
+                            deleteJobRoleRequirement();
+                            System.out.println("TEST - Delete Job Requirement");
+                            
+                        } else if (pane == 1) {
+                            //Benefits
+                            deleteJobRoleBenefit();
+                            System.out.println("TEST - Delete Job Benefit");
+                            
+                        } else if (pane == 2) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Requirements
+                            viewJobRoleRequirement();
+                            System.out.println("TEST - View Job Requirement");
+
+                        } else if (pane == 1) {
+                            //Benefits
+                            viewJobRoleBenefit();
+                            System.out.println("TEST - View Job Benefit");
+
+                        } else if (pane == 2) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -412,7 +506,7 @@ public class JobRoleDetails extends JFrame {
         requirementPanel = new ElementPanel("Requirements");
         
         try {
-            requirementPanel.setData(lease.getJobRequirements());
+            requirementPanel.setData(jobRole.getJobRequirements());
         } catch (RemoteException ex) {
             Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -422,16 +516,13 @@ public class JobRoleDetails extends JFrame {
             public void textOmitted(String requirementCode) {
                 if (requirementCode != null) {
                     try {
-                        Element element = lease.getJobRequirement(requirementCode);
+                        Element element = jobRole.getJobRequirement(requirementCode);
                         if (element != null) {
                             System.out.println(element.getCode() + " : " + element.getDescription());
+                            System.out.println("TEST1-Job Role Requirement");
+                            ElementDetails requirementGUI = new ElementDetails(client, element, "Job Requirement");
+                            requirementGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Job Requirement");
-//                        JobRoleDetailsForm tenancyForm = new JobRoleDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -442,7 +533,7 @@ public class JobRoleDetails extends JFrame {
         benefitPanel = new BenefitPanel("Benefits");
         
         try {
-            benefitPanel.setData(lease.getBenefits());
+            benefitPanel.setData(jobRole.getBenefits());
         } catch (RemoteException ex) {
             Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -452,16 +543,13 @@ public class JobRoleDetails extends JFrame {
             public void intOmitted(int documentRef) {
                 if(documentRef > 0) {
                     try {
-                        JobRoleBenefitInterface document = lease.getJobBenefit(documentRef);
-                        if(document != null) {
-                            System.out.println(document.getBenefitRef() + " : " + document.getBenefitCode());
+                        JobRoleBenefitInterface jobRoleBenefit = jobRole.getJobBenefit(documentRef);
+                        if(jobRoleBenefit != null) {
+                            System.out.println(jobRoleBenefit.getBenefitRef() + " : " + jobRoleBenefit.getBenefitCode());
+                            System.out.println("TEST1-Job Role Benefit");
+                            JobRoleBenefitDetails addressGUI = new JobRoleBenefitDetails(client, jobRoleBenefit);
+                            addressGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Job Benefit");
-//                        JobRoleDetailsForm tenancyForm = new JobRoleDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -472,7 +560,7 @@ public class JobRoleDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(lease.getNotes());
+            notePanel.setData(jobRole.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -482,16 +570,13 @@ public class JobRoleDetails extends JFrame {
             public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
-                        Note note = lease.getNote(noteRef);
+                        Note note = jobRole.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI = new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -502,7 +587,7 @@ public class JobRoleDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(lease.getModifiedBy());
+            modPanel.setData(jobRole.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -516,13 +601,204 @@ public class JobRoleDetails extends JFrame {
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(lease.getCreatedBy(), lease.getCreatedDate(), lease.getLastModifiedBy(), lease.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(jobRole.getCreatedBy(), jobRole.getCreatedDate(), jobRole.getLastModifiedBy(), jobRole.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+    
+    private void createJobRoleRequirement() {
+        CreateJobRequirement createJobRequirement = new CreateJobRequirement(client, jobRole);
+        createJobRequirement.setVisible(true);
+        System.out.println("TEST - Create Note");
+    }
+
+    private void deleteJobRoleRequirement() {
+        String selection = requirementPanel.getSelectedObjectCode();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE requirement " + selection + " for Job Role " + jobRole.getJobRoleCode() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Requirement Delete - Yes button clicked");
+                    int result = client.deleteJobRoleRequirement(jobRole.getJobRoleCode(), selection);
+                    if (result > 0) {
+                        String message = "Requirement " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    } else {
+                        String message = "Requirement " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewJobRoleRequirement() {
+        if (requirementPanel.getSelectedObjectCode() != null) {
+            Element element;
+            try {
+                element = client.getJobRequirement(requirementPanel.getSelectedObjectCode());
+                if (element != null) {
+                    ElementDetails requirementDetails = new ElementDetails(client, element, "Job Requirement");
+                    requirementDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void createJobRoleBenefit() {
+        CreateJobBenefit createJobBenefit = new CreateJobBenefit(client, jobRole);
+        createJobBenefit.setVisible(true);
+        System.out.println("TEST - Create Job Benefit");
+    }
+
+    private void updateJobRoleBenefit() {
+        Integer selection = benefitPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                JobRoleBenefitInterface jobRoleBenefit = client.getJobRoleBenefit(selection);
+                if (jobRoleBenefit != null) {
+                    UpdateJobRoleBenefit jobRoleBenefitDetails = new UpdateJobRoleBenefit(client, jobRoleBenefit, jobRole.getJobRoleCode());
+                    jobRoleBenefitDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteJobRoleBenefit() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE benefit " + selection + " for Job Role " + jobRole.getJobRoleCode() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Benefit Delete - Yes button clicked");
+                    int result = client.deleteJobRoleNote(jobRole.getJobRoleCode(), selection);
+                    if (result > 0) {
+                        String message = "Benefit " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    } else {
+                        String message = "Benefit " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewJobRoleBenefit() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            JobRoleBenefitInterface jobRoleBenefit;
+            try {
+                jobRoleBenefit = client.getJobRoleBenefit(notePanel.getSelectedObjectRef());
+                if (jobRoleBenefit != null) {
+                    JobRoleBenefitDetails contractDetails = new JobRoleBenefitDetails(client, jobRoleBenefit);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Job Role", jobRole.getJobRoleCode());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = jobRole.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Job Role", jobRole.getJobRoleCode());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteJobRoleNote(jobRole.getJobRoleCode(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(JobRoleDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = jobRole.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            title = new JLabel(jobRole.getJobTitle());
+            salary = new JLabel("£" + String.valueOf(jobRole.getSalary()));
+            full.setSelected(jobRole.isFullTime());
+            read.setSelected(jobRole.getRead());
+            write.setSelected(jobRole.getWrite());
+            update.setSelected(jobRole.getUpdate());
+            delete.setSelected(jobRole.getDelete());
+            eRead.setSelected(jobRole.getEmployeeRead());
+            eWrite.setSelected(jobRole.getEmployeeWrite());
+            eUpdate.setSelected(jobRole.getEmployeeUpdate());
+            eDelete.setSelected(jobRole.getEmployeeDelete());
+            notePanel.setData(jobRole.getNotes());
+            modPanel.setData(jobRole.getModifiedBy());
+            notePanel.refresh();
+            modPanel.refresh();
+        } catch (RemoteException ex) {
+            Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {
@@ -562,18 +838,21 @@ public class JobRoleDetails extends JFrame {
 
         //Set up ActionListeners
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
             }
         });
 
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(JobRoleDetails.this,

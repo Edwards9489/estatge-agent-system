@@ -5,13 +5,22 @@
  */
 package client_gui.landlord;
 
+import client_gui.lease.LeasePanel;
+import client_gui.lease.UpdateLease;
+import client_gui.lease.CreateLease;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
+import client_gui.EndObject;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.OKDialog;
+import client_gui.lease.LeaseDetails;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
 import interfaces.Note;
@@ -50,7 +59,7 @@ import javax.swing.border.Border;
 public class LandlordDetails extends JFrame {
     
     private ClientImpl client = null;
-    private LandlordInterface person = null;
+    private LandlordInterface landlord = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -59,11 +68,14 @@ public class LandlordDetails extends JFrame {
     private LeasePanel leasePanel;
     private NotePanel notePanel;
     private ModPanel modPanel;
+    private JLabel name;
+    private JLabel dob;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
-    public LandlordDetails(ClientImpl client, LandlordInterface app) {
+    public LandlordDetails(ClientImpl client, LandlordInterface landlord) {
         super("MSc Properties");
         setClient(client);
-        setLandlord(app);
+        setLandlord(landlord);
         layoutComponents();
     }
 
@@ -75,9 +87,9 @@ public class LandlordDetails extends JFrame {
     }
 
     // Use of singleton pattern to ensure only one Landlord is initiated
-    private void setLandlord(LandlordInterface app) {
-        if (person == null) {
-            this.person = app;
+    private void setLandlord(LandlordInterface landlord) {
+        if (this.landlord == null) {
+            this.landlord = landlord;
         }
     }
 
@@ -145,7 +157,7 @@ public class LandlordDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(appRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(person.getLandlordRef()));
+        JLabel ref = new JLabel(String.valueOf(landlord.getLandlordRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -161,7 +173,7 @@ public class LandlordDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(corrName, gc);
 
-        JLabel name = new JLabel(person.getPerson().getName());
+        name = new JLabel(landlord.getPerson().getName());
         name.setFont(boldFont);
 
         gc.gridx++;
@@ -189,7 +201,7 @@ public class LandlordDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(pDOB, gc);
 
-        JLabel dob = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getPerson().getDateOfBirth()));
+        dob = new JLabel(formatter.format(landlord.getPerson().getDateOfBirth()));
         dob.setFont(boldFont);
 
         gc.gridx++;
@@ -218,26 +230,78 @@ public class LandlordDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    LeaseSearch leaseSearch = new LeaseSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Leases
+                            createLease();
+                        } else if (pane == 1) {
+                            //Notes
+                            createNote();
+
+                        }
+                        break;
+
+                    case "Update":
+                        System.out.println("TEST - Update");
+
+                        if (pane == 0) {
+                            //Leases
+                            updateLease();
+                            System.out.println("TEST - Update Lease");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+
+                        }
+                        break;
+
+                    case "End":
+                        if (pane == 0) {
+                            //Leases
+                            endLease();
+                            System.out.println("TEST - End Lease");
+
+                        }
+                        break;
+                    case "Delete":
+                        if (pane == 0) {
+                            //Leases
+                            deleteLease();
+                            System.out.println("TEST - Delete Lease");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+
+                        }
+                        break;
+
+                    case "View Details":
+                        if (pane == 0) {
+                            //Leases
+                            viewLease();
+                            System.out.println("TEST - View Lease");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -247,7 +311,7 @@ public class LandlordDetails extends JFrame {
         leasePanel = new LeasePanel("Leases");
         
         try {
-            leasePanel.setData(person.getLeases());
+            leasePanel.setData(landlord.getLeases());
         } catch (RemoteException ex) {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -255,18 +319,15 @@ public class LandlordDetails extends JFrame {
         leasePanel.setTableListener(new IntegerListener() {
             @Override
             public void intOmitted(int leaseRef) {
-                if(leaseRef > 0) {
+                if (leaseRef > 0) {
                     try {
-                        LeaseInterface invParty = client.getLease(leaseRef);
-                        if(invParty != null) {
-                            System.out.println(invParty.getAgreementName());
+                        LeaseInterface lease = client.getLease(leaseRef);
+                        if(lease != null) {
+                            System.out.println(lease.getAgreementRef());
+                            System.out.println("TEST1-Lease");
+                            LeaseDetails leaseGUI=  new LeaseDetails(client, lease);
+                            leaseGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Lease");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -277,7 +338,7 @@ public class LandlordDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(person.getNotes());
+            notePanel.setData(landlord.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -285,18 +346,15 @@ public class LandlordDetails extends JFrame {
         notePanel.setTableListener(new IntegerListener() {
             @Override
             public void intOmitted(int noteRef) {
-                if(noteRef > 0) {
+                if (noteRef > 0) {
                     try {
-                        Note note = person.getNote(noteRef);
+                        Note note = landlord.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -307,7 +365,7 @@ public class LandlordDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(person.getModifiedBy());
+            modPanel.setData(landlord.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -320,13 +378,170 @@ public class LandlordDetails extends JFrame {
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(person.getCreatedBy(), person.getCreatedDate(), person.getLastModifiedBy(), person.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(landlord.getCreatedBy(), landlord.getCreatedDate(), landlord.getLastModifiedBy(), landlord.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+
+    private void createLease() {
+        CreateLease createLease = new CreateLease(client);
+        createLease.setVisible(true);
+        System.out.println("TEST - Create Lease");
+    }
+
+    private void updateLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Lease Ref: " + selection);
+                LeaseInterface lease = client.getLease(selection);
+                if (lease != null) {
+                    System.out.println("Lease Name: " + lease.getAgreementName());
+                    UpdateLease leaseDetails = new UpdateLease(client, lease);
+                    leaseDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void endLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Lease Ref: " + selection);
+            EndObject endLease = new EndObject(client, "Lease", selection);
+            endLease.setVisible(true);
+        }
+    }
+
+    private void deleteLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE lease " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Lease Delete - Yes button clicked");
+                    int result = client.deleteLease(selection);
+                    if (result > 0) {
+                        String message = "Lease " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(LandlordDetails.this, message, title);
+                    } else {
+                        String message = "Lease " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(LandlordDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                LeaseInterface lease = client.getLease(selection);
+                if (lease != null) {
+                    LeaseDetails leaseDetails = new LeaseDetails(client, lease);
+                    leaseDetails.setVisible(true);
+                    setVisible(false);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Landlord", landlord.getLandlordRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = landlord.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Landlord", landlord.getLandlordRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteLandlordNote(landlord.getLandlordRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(LandlordDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(LandlordDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = landlord.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails leaseDetails = new NoteDetails(client, note);
+                    leaseDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            if (landlord.getPerson().getDateOfBirth() != null) {
+                dob.setText(formatter.format(landlord.getPerson().getDateOfBirth()));
+            }
+            if (landlord.getPerson().getName() != null) {
+                name.setText(landlord.getPerson().getName());
+            }
+            leasePanel.setData(landlord.getLeases());
+            notePanel.setData(landlord.getNotes());
+            modPanel.setData(landlord.getModifiedBy());
+            leasePanel.refresh();
+            notePanel.refresh();
+            modPanel.refresh();
+            dob.setText(formatter.format(landlord.getPerson().getDateOfBirth()));
+            name.setText(landlord.getPerson().getName());
+        } catch (RemoteException ex) {
+            Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

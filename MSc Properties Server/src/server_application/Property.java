@@ -355,10 +355,11 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
      * @return true if propertyElements contains PropertyElement with code == code
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean hasPropElement(String code) throws RemoteException {
         if(!propertyElements.isEmpty()) {
             for(PropertyElementInterface element : propertyElements.values()) {
-                if(code.equals(element.getElementCode())) {
+                if(element.isCurrent() && code.equals(element.getElementCode())) {
                     return true;
                 }
             }

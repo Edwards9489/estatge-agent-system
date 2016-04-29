@@ -17,7 +17,10 @@ import client_gui.reporting.ReportingFrame;
 import client_gui.StringListener;
 import client_gui.systemConfig.SysConfigFrame;
 import client_gui.IntegerListener;
+import client_gui.lease.LeaseDetails;
+import client_gui.rentAcc.RentAccDetails;
 import client_gui.tenancy.TenSearch;
+import client_gui.tenancy.TenancyDetails;
 import interfaces.AccountInterface;
 import interfaces.AgreementInterface;
 import interfaces.LeaseInterface;
@@ -63,33 +66,22 @@ public class HomeForm extends JFrame implements Observer {
     public HomeForm(ClientImpl c) {
         super("MSc Properties");
         setClient(c);
-
         layoutComponents();
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("UPDATE OCCURED");
         try {
-            System.out.println("arg is a list? - Home Form - " + (arg instanceof List<?>));
             if (arg instanceof List<?>) {
-                System.out.println("arg is empty? - Home Form - " + !((List<?>) arg).isEmpty());
-                System.out.println("arg element is a an agreement? - Home Form - " + (((List<?>) arg).get(0) instanceof AgreementInterface));
-                System.out.println("arg element is a a rent account? - Home Form - " + (((List<?>) arg).get(0) instanceof RentAccountInterface));
-                System.out.println("arg element is a a tenancy? - Home Form - " + (((List<?>) arg).get(0) instanceof TenancyInterface));
-                System.out.println("arg element is a a lease? - Home Form - " + (((List<?>) arg).get(0) instanceof LeaseInterface));
                 if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
                     List<AgreementInterface> agreements = (List<AgreementInterface>) arg;
                     if (agreements.get(0) instanceof TenancyInterface) {
-                        System.out.println("UPDATE IS TENANCY UPDATE");
                         this.updateTenanciesList(agreements);
                     } else if (agreements.get(0) instanceof LeaseInterface) {
-                        System.out.println("UPDATE IS LEASE UPDATE");
                         this.updateLeasesList(agreements);
                     }
                 } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof RentAccountInterface) {
                     List<AccountInterface> accounts = (List<AccountInterface>) arg;
-                    System.out.println("UPDATE IS RENT ACCOUNT UPDATE");
                     this.updateRentAccList(accounts);
                 }
             }
@@ -99,19 +91,16 @@ public class HomeForm extends JFrame implements Observer {
     }
 
     private void updateTenanciesList(List<AgreementInterface> agreements) {
-        System.out.println("Tenancies Updated");
         tenanciesPanel.setData(agreements);
         tenanciesPanel.refresh();
     }
 
     private void updateLeasesList(List<AgreementInterface> agreements) {
-        System.out.println("Leases Updated");
         leasesPanel.setData(agreements);
         leasesPanel.refresh();
     }
 
     private void updateRentAccList(List<AccountInterface> accounts) {
-        System.out.println("Rent Accounts Updated");
         rentAccPanel.setData(accounts);
         rentAccPanel.refresh();
     }
@@ -125,6 +114,7 @@ public class HomeForm extends JFrame implements Observer {
     }
 
     private void layoutComponents() {
+        setJMenuBar(createMenuBar());
         title = new JLabel("MSc Properties");
         Font font = title.getFont();
         title.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 10));
@@ -139,58 +129,59 @@ public class HomeForm extends JFrame implements Observer {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                System.out.println(text);
-                System.out.println(text.equals("Applications"));
-                if (text.equals("Applications")) {
-                    AppSearch appSearch = new AppSearch();
-                    appSearch.setClient(client);
-                    setVisible(false);
-                    appSearch.setVisible(true);
-                } else if (text.equals("Properties")) {
-                    PropSearch propSearch = new PropSearch();
-                    propSearch.setClient(client);
-                    setVisible(false);
-                    propSearch.setVisible(true);
-                } else if (text.equals("Tenancies")) {
-                    TenSearch tenSearch = new TenSearch();
-                    tenSearch.setClient(client);
-                    setVisible(false);
-                    tenSearch.setVisible(true);
-                } else if (text.equals("Leases")) {
-                    LeaseSearch leaseSearch = new LeaseSearch();
-                    leaseSearch.setClient(client);
-                    setVisible(false);
-                    leaseSearch.setVisible(true);
-                } else if (text.equals("Contracts") && client != null) {// && client.viewEmp()) {
-                    ContractSearch contractSearch = new ContractSearch();
-                    contractSearch.setClient(client);
-                    setVisible(false);
-                    contractSearch.setVisible(true);
-                } else if (text.equals("Rent Accounts")) {
-                    RentAccSearch rentAccSearch = new RentAccSearch();
-                    rentAccSearch.setClient(client);
-                    setVisible(false);
-                    rentAccSearch.setVisible(true);
-                } else if (text.equals("Lease Accounts")) {
-                    LeaseAccSearch leaseAccSearch = new LeaseAccSearch();
-                    leaseAccSearch.setClient(client);
-                    setVisible(false);
-                    leaseAccSearch.setVisible(true);
-                } else if (text.equals("Employee Accounts") && client != null) {// && client.viewEmp()) {
-                    EmpAccSearch empAccSearch = new EmpAccSearch();
-                    empAccSearch.setClient(client);
-                    setVisible(false);
-                    empAccSearch.setVisible(true);
-                } else if (text.equals("Reporting") && client != null) {// && client.canReport()) { // add another boolean field to User to determine if user can report
-                    ReportingFrame reporting = new ReportingFrame();
-                    reporting.setClient(client);
-                    setVisible(false);
-                    reporting.setVisible(true);
-                } else if (text.equals("System Configuration")) {
-                    SysConfigFrame config = new SysConfigFrame();
-                    config.setClient(client);
-                    setVisible(false);
-                    config.setVisible(true);
+                System.out.println("Button Text: " + text);
+                switch (text) {
+                    case "Applications" :
+                        AppSearch appSearch = new AppSearch(client);
+                        appSearch.setVisible(true);
+                        break;
+                        
+                    case "Properties" :
+                        PropSearch propSearch = new PropSearch(client);
+                        propSearch.setVisible(true);
+                        break;
+                        
+                    case "Tenancies" :
+                        TenSearch tenSearch = new TenSearch(client);
+                        tenSearch.setVisible(true);
+                        break;
+                        
+                    case "Leases" :
+                        LeaseSearch leaseSearch = new LeaseSearch(client);
+                        leaseSearch.setVisible(true);
+                        break;
+                        
+                    case "Contracts" :
+                        ContractSearch contractSearch = new ContractSearch(client);
+                        contractSearch.setVisible(true);
+                        break;
+                        
+                    case "Rent Accounts" :
+                        RentAccSearch rentAccSearch = new RentAccSearch(client);
+                        rentAccSearch.setVisible(true);
+                        break;
+                        
+                    case "Lease Accounts" :
+                        LeaseAccSearch leaseAccSearch = new LeaseAccSearch(client);
+                        leaseAccSearch.setVisible(true);
+                        break;
+                        
+                    case "Employee Accounts" :
+                        EmpAccSearch empAccSearch = new EmpAccSearch(client);
+                        empAccSearch.setVisible(true);
+                        break;
+                        
+                    case "Reporting" :
+                        ReportingFrame reporting = new ReportingFrame(client);
+                        reporting.setVisible(true);
+                        break;
+                        
+                    case "System Config" :
+                        SysConfigFrame config = new SysConfigFrame(client);
+                        config.setVisible(true);
+                        System.out.println("Sys Config Parameter: " + text);
+                        break;
+                        
                 }
             }
         });
@@ -210,14 +201,10 @@ public class HomeForm extends JFrame implements Observer {
                     try {
                         TenancyInterface tenancy = client.getTenancy(tenancyRef);
                         if(tenancy != null) {
+                            TenancyDetails tenancyGUI = new TenancyDetails(client, tenancy);
+                            tenancyGUI.setVisible(true);
                             System.out.println(tenancy.getAgreementName());
                         }
-                        System.out.println("TEST1-Tenancy");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -232,14 +219,10 @@ public class HomeForm extends JFrame implements Observer {
                     try {
                         LeaseInterface lease = client.getLease(leaseRef);
                         if(lease != null) {
+                            LeaseDetails leaseGUI = new LeaseDetails(client, lease);
+                            leaseGUI.setVisible(true);
                             System.out.println(lease.getAgreementName());
                         }
-                        System.out.println("TEST1-Lease");
-//                        LeaseDetailsForm leaseForm = new LeaseDetailsForm();
-//                        leaseForm.setClient(client);
-//                        leaseForm.setLease(lease);
-//                        leaseForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -254,22 +237,17 @@ public class HomeForm extends JFrame implements Observer {
                     try {
                         RentAccountInterface rentAcc = client.getRentAccount(rentAccRef);
                         if(rentAcc != null) {
+                            RentAccDetails rentAccGUI = new RentAccDetails(client, rentAcc);
+                            rentAccGUI.setVisible(true);
                             System.out.println(rentAcc.getAccName());
                         }
-                        System.out.println("TEST1-Rent Account");
-//                        RentAccountDetailsForm rentAccForm = new RentAccountDetailsForm();
-//                        rentAccForm.setClient(client);
-//                        rentAccForm.setLease(rentAcc);
-//                        rentAccForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(HomeForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
         });
-
-        setJMenuBar(createMenuBar());
+        
         
         tablesPanel.setSize(700, 500);
         
@@ -277,55 +255,6 @@ public class HomeForm extends JFrame implements Observer {
         tablesPanel.add(tenanciesPanel);
         tablesPanel.add(leasesPanel);
         tablesPanel.add(rentAccPanel);
-
-//        tablesPanel.setLayout(new GridBagLayout());
-//
-//        GridBagConstraints gc = new GridBagConstraints();
-//
-//        ////////// FIRST ROW //////////
-//        gc.gridx = 0;
-//        gc.gridy = 0;
-//
-//        gc.weightx = 1;
-//        gc.weighty = 1;
-//        
-//        gc.ipady = 700;
-//        gc.ipadx = 180;
-//
-//        gc.fill = GridBagConstraints.NONE;
-//        gc.anchor = GridBagConstraints.WEST;
-//        gc.insets = new Insets(0, 0, 0, 0);
-//        tablesPanel.add(tenanciesPanel, gc);
-//
-//        ////////// NEXT ROW //////////
-//        gc.gridx = 0;
-//        gc.gridy++;
-//
-//        gc.weightx = 1;
-//        gc.weighty = 1;
-//
-//        gc.ipady = 700;
-//        gc.ipadx = 180;
-//        
-//        gc.fill = GridBagConstraints.NONE;
-//        gc.anchor = GridBagConstraints.WEST;
-//        gc.insets = new Insets(0, 0, 0, 0);
-//        tablesPanel.add(leasesPanel, gc);
-//
-//        ////////// NEXT ROW //////////
-//        gc.gridx = 0;
-//        gc.gridy++;
-//
-//        gc.weightx = 1;
-//        gc.weighty = 1;
-//
-//        gc.ipady = 700;
-//        gc.ipadx = 180;
-//        
-//        gc.fill = GridBagConstraints.NONE;
-//        gc.anchor = GridBagConstraints.WEST;
-//        gc.insets = new Insets(0, 0, 0, 0);
-//        tablesPanel.add(rentAccPanel, gc);
 
         add(title, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.WEST);

@@ -12,9 +12,14 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.OKDialog;
+import client_gui.document.CreateDocument;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.NotePanel;
+import client_gui.note.UpdateNote;
 import interfaces.TenancyInterface;
 import interfaces.Document;
 import interfaces.Note;
@@ -29,12 +34,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -53,7 +60,7 @@ import javax.swing.border.Border;
 public class TenancyDetails extends JFrame {
     
     private ClientImpl client = null;
-    private TenancyInterface lease = null;
+    private TenancyInterface tenancy = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -62,6 +69,16 @@ public class TenancyDetails extends JFrame {
     private NotePanel notePanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private JFileChooser fileChooser;
+    private JLabel length;
+    private JLabel expenditure;
+    private JLabel charges;
+    private JLabel startDate;
+    private JLabel name;
+    private JLabel acEndDate;
+    private JLabel endDate;
+    private JLabel type;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public TenancyDetails(ClientImpl client, TenancyInterface app) {
         super("MSc Properties");
@@ -79,8 +96,8 @@ public class TenancyDetails extends JFrame {
 
     // Use of singleton pattern to ensure only one Application is initiated
     private void setApplication(TenancyInterface app) {
-        if (lease == null) {
-            this.lease = app;
+        if (tenancy == null) {
+            this.tenancy = app;
         }
     }
 
@@ -148,7 +165,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(lease.getAgreementRef()));
+        JLabel ref = new JLabel(String.valueOf(tenancy.getAgreementRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -164,7 +181,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseLength, gc);
 
-        JLabel length = new JLabel(String.valueOf(lease.getLength()));
+        length = new JLabel(String.valueOf(tenancy.getLength()));
         length.setFont(boldFont);
 
         gc.gridx++;
@@ -180,7 +197,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(lease.getStartDate()));
+        startDate = new JLabel(formatter.format(tenancy.getStartDate()));
         startDate.setFont(boldFont);
 
         gc.gridx++;
@@ -200,7 +217,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        JLabel start = new JLabel(lease.getAgreementName());
+        JLabel start = new JLabel(tenancy.getAgreementName());
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -219,7 +236,7 @@ public class TenancyDetails extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel propRef = new JLabel(String.valueOf(lease.getPropertyRef()));
+        JLabel propRef = new JLabel(String.valueOf(tenancy.getPropertyRef()));
         propRef.setFont(boldFont);
         detailsPanel.add(propRef, gc);
 
@@ -230,12 +247,13 @@ public class TenancyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseEndDate, gc);
-
+        
+        endDate = new JLabel(formatter.format(tenancy.getExpectedEndDate()));
+        endDate.setFont(boldFont);
+        
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(lease.getExpectedEndDate()));
-        endDate.setFont(boldFont);
         detailsPanel.add(endDate, gc);
         
         
@@ -252,7 +270,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAccRef, gc);
 
-        JLabel accRef = new JLabel(String.valueOf(lease.getAccountRef()));
+        JLabel accRef = new JLabel(String.valueOf(tenancy.getAccountRef()));
         accRef.setFont(boldFont);
 
         gc.gridx++;
@@ -268,7 +286,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lfull, gc);
 
-        JLabel full = new JLabel(String.valueOf(lease.getApplication().getApplicationRef()));
+        JLabel full = new JLabel(String.valueOf(tenancy.getApplication().getApplicationRef()));
         full.setFont(boldFont);
 
         gc.gridx++;
@@ -284,9 +302,8 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAcEndDate, gc);
 
-        JLabel acEndDate;
-        if(lease.getActualEndDate() != null) {
-            acEndDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(lease.getActualEndDate()));
+        if(tenancy.getActualEndDate() != null) {
+            acEndDate = new JLabel(formatter.format(tenancy.getActualEndDate()));
         } else {
             acEndDate = new JLabel("");
         }
@@ -312,7 +329,7 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lofficeCode, gc);
 
-        JLabel officeCode = new JLabel(lease.getOfficeCode());
+        JLabel officeCode = new JLabel(tenancy.getOfficeCode());
         officeCode.setFont(boldFont);
 
         gc.gridx++;
@@ -327,12 +344,13 @@ public class TenancyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lExpenditure, gc);
-
+        
+        expenditure = new JLabel("£" + String.valueOf(tenancy.getRent()));
+        expenditure.setFont(boldFont);
+        
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel expenditure = new JLabel("£" + String.valueOf(lease.getRent()));
-        expenditure.setFont(boldFont);
         detailsPanel.add(expenditure, gc);
         
         JLabel tcharges = new JLabel("Charges    ");
@@ -342,12 +360,13 @@ public class TenancyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(tcharges, gc);
+        
+        charges = new JLabel("£" + String.valueOf(tenancy.getCharges()));
+        charges.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel charges = new JLabel("£" + String.valueOf(lease.getCharges()));
-        charges.setFont(boldFont);
         detailsPanel.add(charges, gc);
 
             ////////// NEXT ROW //////////
@@ -357,15 +376,15 @@ public class TenancyDetails extends JFrame {
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel tenTypoe = new JLabel("Type Code    ");
-        tenTypoe.setFont(plainFont);
+        JLabel tenType = new JLabel("Type Code    ");
+        tenType.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(tenTypoe, gc);
+        detailsPanel.add(tenType, gc);
 
-        JLabel type = new JLabel(lease.getTenType().getCode());
+        type = new JLabel(tenancy.getTenType().getCode());
         type.setFont(boldFont);
 
         gc.gridx++;
@@ -394,26 +413,75 @@ public class TenancyDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    TenancySearch leaseSearch = new TenancySearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        } else if (pane == 1) {
+                            //Documents
+                            createDocument();
+                            System.out.println("TEST - Create Document");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            updateDocument();
+                            System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            deleteDocument();
+                            System.out.println("TEST - Delete Document");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        } else if (pane == 1) {
+                            //Document
+                            viewDocument();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -423,7 +491,7 @@ public class TenancyDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(lease.getNotes());
+            notePanel.setData(tenancy.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -433,16 +501,13 @@ public class TenancyDetails extends JFrame {
             public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
-                        Note note = lease.getNote(noteRef);
+                        Note note = tenancy.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -453,7 +518,7 @@ public class TenancyDetails extends JFrame {
         documentPanel = new DocumentPanel("Documents");
         
         try {
-            documentPanel.setData(lease.getDocuments());
+            documentPanel.setData(tenancy.getDocuments());
         } catch (RemoteException ex) {
             Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -463,16 +528,12 @@ public class TenancyDetails extends JFrame {
             public void intOmitted(int documentRef) {
                 if(documentRef > 0) {
                     try {
-                        Document document = lease.getDocument(documentRef);
+                        Document document = tenancy.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadTenancyDocument(tenancy.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -483,7 +544,7 @@ public class TenancyDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(lease.getModifiedBy());
+            modPanel.setData(tenancy.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -496,13 +557,186 @@ public class TenancyDetails extends JFrame {
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(lease.getCreatedBy(), lease.getCreatedDate(), lease.getLastModifiedBy(), lease.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(tenancy.getCreatedBy(), tenancy.getCreatedDate(), tenancy.getLastModifiedBy(), tenancy.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Tenancy", tenancy.getAgreementRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = tenancy.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Tenancy", tenancy.getAgreementRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteTenancyNote(tenancy.getAgreementRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(TenancyDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(TenancyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = tenancy.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails landlordDetails = new NoteDetails(client, note);
+                    landlordDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createDocument() {
+        try {
+            CreateDocument createDoc = new CreateDocument(client, "Tenancy", tenancy.getAgreementRef());
+            createDoc.setVisible(true);
+            System.out.println("TEST - Create Document");
+        } catch (RemoteException ex) {
+            Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Document document = tenancy.getDocument(selection);
+                if (document != null) {
+                    if(fileChooser.showOpenDialog(TenancyDetails.this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        int result = client.updateTenancyDocument(tenancy.getAgreementRef(), document.getDocumentRef(), file.getPath());
+                        if (result > 0) {
+                            String message = "Document " + selection + " has been successfully updated";
+                            String title = "Information";
+                            OKDialog.okDialog(TenancyDetails.this, message, title);
+                        } else {
+                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
+                            String title = "Error";
+                            OKDialog.okDialog(TenancyDetails.this, message, title);
+                        }
+                        System.out.println(fileChooser.getSelectedFile());
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE document " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Document Delete - Yes button clicked");
+                    int result = client.deleteTenancyDocument(tenancy.getAgreementRef(), selection);
+                    if (result > 0) {
+                        String message = "Document " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(TenancyDetails.this, message, title);
+                    } else {
+                        String message = "Document " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(TenancyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            Document document;
+            try {
+                document = tenancy.getDocument(documentPanel.getSelectedObjectRef());
+                client.downloadTenancyDocument(tenancy.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            length.setText(String.valueOf(tenancy.getLength()));
+            
+            expenditure.setText("£" + String.valueOf(tenancy.getRent()));
+            
+            charges.setText("£" + String.valueOf(tenancy.getCharges()));
+            
+            if (tenancy.getStartDate() != null) {
+                startDate.setText(formatter.format(tenancy.getStartDate()));
+            }
+            if (tenancy.getAgreementName() != null) {
+                name.setText(tenancy.getAgreementName());
+            }
+            if (tenancy.getExpectedEndDate() != null) {
+                endDate.setText(formatter.format(tenancy.getExpectedEndDate()));
+            }
+            if (tenancy.getActualEndDate() != null) {
+                acEndDate.setText(formatter.format(tenancy.getActualEndDate()));
+            }
+            if (tenancy.getTenType().getCode() != null) {
+                type.setText(tenancy.getTenType().getCode());
+            }
+            
+            notePanel.setData(tenancy.getNotes());
+            documentPanel.setData(tenancy.getDocuments());
+            modPanel.setData(tenancy.getModifiedBy());
+            notePanel.refresh();
+            documentPanel.refresh();
+            modPanel.refresh();
+            repaint();
+        } catch (RemoteException ex) {
+            Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

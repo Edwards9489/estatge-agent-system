@@ -23,6 +23,7 @@ public interface JobRoleInterface extends Remote {
     boolean isFullTime() throws RemoteException;
     double getSalary() throws RemoteException;
     boolean isCurrent() throws RemoteException;
+    boolean hasRequirement(String code) throws RemoteException;
     boolean hasBenefit(int benefitRef) throws RemoteException;
     boolean hasCurrentBenefit(String code) throws RemoteException;
     JobRoleBenefitInterface getJobBenefit(int benefitRef) throws RemoteException;

@@ -94,7 +94,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(propButton.getText());
                         }
                 }
         });
@@ -103,7 +103,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(tenButton.getText());
                         }
                 }
         });
@@ -112,7 +112,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(leaseButton.getText());
                         }
                 }
         });
@@ -121,7 +121,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(contractButton.getText());
                         }
                 }
         });
@@ -130,7 +130,7 @@ public class ButtonPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
                         if(listener != null) {
-                                listener.textOmitted(appButton.getText());
+                                listener.textOmitted(rentAccButton.getText());
                         }
                 }
         });

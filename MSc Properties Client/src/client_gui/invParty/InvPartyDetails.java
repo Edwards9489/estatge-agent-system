@@ -10,8 +10,12 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.OKDialog;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import interfaces.InvolvedPartyInterface;
 import interfaces.Note;
 import java.awt.BorderLayout;
@@ -50,7 +54,7 @@ import javax.swing.border.Border;
 public class InvPartyDetails extends JFrame {
     
     private ClientImpl client = null;
-    private InvolvedPartyInterface person = null;
+    private InvolvedPartyInterface invParty = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -58,11 +62,12 @@ public class InvPartyDetails extends JFrame {
     private ButtonPanel buttonPanel;
     private NotePanel notePanel;
     private ModPanel modPanel;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
-    public InvPartyDetails(ClientImpl client, InvolvedPartyInterface app) {
+    public InvPartyDetails(ClientImpl client, InvolvedPartyInterface invParty) {
         super("MSc Properties");
         setClient(client);
-        setInvolvedParty(app);
+        setInvolvedParty(invParty);
         layoutComponents();
     }
 
@@ -74,9 +79,9 @@ public class InvPartyDetails extends JFrame {
     }
 
     // Use of singleton pattern to ensure only one InvolvedParty is initiated
-    private void setInvolvedParty(InvolvedPartyInterface app) {
-        if (person == null) {
-            this.person = app;
+    private void setInvolvedParty(InvolvedPartyInterface invParty) {
+        if (this.invParty == null) {
+            this.invParty = invParty;
         }
     }
 
@@ -144,7 +149,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(appRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(person.getInvolvedPartyRef()));
+        JLabel ref = new JLabel(String.valueOf(invParty.getInvolvedPartyRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -160,7 +165,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(pGender, gc);
         
-        JLabel gender = new JLabel(String.valueOf(person.getApplicationRef()));
+        JLabel gender = new JLabel(String.valueOf(invParty.getApplicationRef()));
         gender.setFont(boldFont);
 
         gc.gridx++;
@@ -176,7 +181,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(relationship, gc);
         
-        JLabel relation = new JLabel(person.getRelationship().getCode());
+        JLabel relation = new JLabel(invParty.getRelationship().getCode());
         relation.setFont(boldFont);
 
         gc.gridx++;
@@ -192,7 +197,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(main, gc);
         
-        JCheckBox main2 = new JCheckBox("", person.isMainInd());
+        JCheckBox main2 = new JCheckBox("", invParty.isMainInd());
         main2.setEnabled(false);
         
         gc.gridx++;
@@ -208,7 +213,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(joint, gc);
         
-        JCheckBox jnt = new JCheckBox("", person.isJointInd());
+        JCheckBox jnt = new JCheckBox("", invParty.isJointInd());
         jnt.setEnabled(false);
 
         gc.gridx++;
@@ -231,7 +236,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(startDate, gc);
 
-        JLabel start = new JLabel(person.getPerson().getName());
+        JLabel start = new JLabel(invParty.getPerson().getName());
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -267,7 +272,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(stDate, gc);
         
-        JLabel sDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getStartDate()));
+        JLabel sDate = new JLabel(formatter.format(invParty.getStartDate()));
         sDate.setFont(boldFont);
 
         gc.gridx++;
@@ -286,8 +291,8 @@ public class InvPartyDetails extends JFrame {
         
         JLabel endDate;
                 
-        if (person.getEndDate() != null) {
-            endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(person.getEndDate()));
+        if (invParty.getEndDate() != null) {
+            endDate = new JLabel(formatter.format(invParty.getEndDate()));
         } else {
             endDate = new JLabel("");
         }
@@ -310,8 +315,8 @@ public class InvPartyDetails extends JFrame {
         
         JLabel eReason;
                 
-        if (person.getEndReason() != null) {
-            eReason = new JLabel(person.getEndReason().getCode());
+        if (invParty.getEndReason() != null) {
+            eReason = new JLabel(invParty.getEndReason().getCode());
         } else {
             eReason = new JLabel("");
         }
@@ -344,26 +349,55 @@ public class InvPartyDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    LeaseSearch leaseSearch = new LeaseSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -373,7 +407,7 @@ public class InvPartyDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(person.getNotes());
+            notePanel.setData(invParty.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -383,16 +417,13 @@ public class InvPartyDetails extends JFrame {
             public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
-                        Note note = person.getNote(noteRef);
+                        Note note = invParty.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -403,7 +434,7 @@ public class InvPartyDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(person.getModifiedBy());
+            modPanel.setData(invParty.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -415,13 +446,88 @@ public class InvPartyDetails extends JFrame {
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(person.getCreatedBy(), person.getCreatedDate(), person.getLastModifiedBy(), person.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(invParty.getCreatedBy(), invParty.getCreatedDate(), invParty.getLastModifiedBy(), invParty.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Involved Party", invParty.getInvolvedPartyRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = invParty.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Involved Party", invParty.getInvolvedPartyRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteInvolvedPartyNote(invParty.getInvolvedPartyRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(InvPartyDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(InvPartyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = invParty.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            notePanel.setData(invParty.getNotes());
+            modPanel.setData(invParty.getModifiedBy());
+            notePanel.refresh();
+            modPanel.refresh();
+        } catch (RemoteException ex) {
+            Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

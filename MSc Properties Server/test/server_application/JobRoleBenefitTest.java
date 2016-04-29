@@ -59,7 +59,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = null;
             
@@ -88,7 +88,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             
@@ -144,7 +144,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
@@ -170,7 +170,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(1, instance.getBenefitRef());
             assertEquals(false, instance.getBenefitRef() == 7);
@@ -193,7 +193,7 @@ public class JobRoleBenefitTest {
             Note note3 = new NoteImpl(3, "TEST NOTE3", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("TEST2", "TEST2", note3, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(element, instance.getBenefit());
             assertEquals(false, instance.getBenefit().equals(element2));
@@ -214,7 +214,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals("TEST", instance.getBenefitCode());
             assertEquals(false, instance.getBenefitCode().equals("EDM"));
@@ -235,7 +235,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), false, "Testing String Value", null, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), false, "Testing String Value", null, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals("Testing String Value", instance.getStringValue());
             assertEquals(false, instance.getStringValue().equals("TEST"));
@@ -256,7 +256,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(true, instance.getDoubleValue() == 300.00);
             assertEquals(false, instance.getDoubleValue() == 500.00);
@@ -277,7 +277,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(true, instance.getStartDate().equals(date.getTime()));
             assertEquals(false, instance.getStartDate().equals(new Date()));
@@ -301,7 +301,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
@@ -329,7 +329,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             assertEquals(true, instance.isCurrent());
@@ -356,7 +356,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasBeenModified());
@@ -381,7 +381,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModifiedBy());
@@ -409,7 +409,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", modDate.getTime());
             
             assertEquals(null, instance.getLastModifiedDate());
@@ -435,7 +435,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             
             List<ModifiedByInterface> modifiedByList = new ArrayList();
@@ -464,7 +464,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             
@@ -492,7 +492,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(note2, instance.getNote());
             assertEquals(false, instance.getNote().equals(note));
@@ -513,7 +513,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals("TEST NOTE2", instance.getComment());
             assertEquals(false, instance.getComment().equals("TEST"));
@@ -534,7 +534,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             
             assertEquals(false, instance.getCreatedBy().equals(null));
             assertEquals(true, instance.getCreatedBy().equals("DEDWARDS"));
@@ -558,7 +558,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", createdDate.getTime());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", createdDate.getTime());
             
             assertEquals(false, instance.getCreatedDate().equals(null));
             assertEquals(true, instance.getCreatedDate().equals(createdDate.getTime()));
@@ -582,7 +582,7 @@ public class JobRoleBenefitTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "DEDWARDS", new Date());
+            JobRoleBenefit instance = new JobRoleBenefit(1, element, date.getTime(), true, "", 300.00, note2, "EDM", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Boolean result = false;
             

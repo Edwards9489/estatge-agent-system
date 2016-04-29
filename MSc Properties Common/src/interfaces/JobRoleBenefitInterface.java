@@ -24,6 +24,7 @@ public interface JobRoleBenefitInterface extends Remote {
     Date getEndDate() throws RemoteException;
     boolean isCurrent() throws RemoteException;
     boolean hasBeenModified() throws RemoteException;
+    String getJobRoleCode() throws RemoteException;
     String getLastModifiedBy() throws RemoteException;
     Date getLastModifiedDate() throws RemoteException;
     ModifiedByInterface getLastModification() throws RemoteException;

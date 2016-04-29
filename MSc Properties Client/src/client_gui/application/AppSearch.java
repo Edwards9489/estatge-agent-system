@@ -6,135 +6,151 @@
 package client_gui.application;
 
 import client_application.ClientImpl;
+import client_gui.IntegerListener;
+import client_gui.person.PeopleSearchPanel;
+import client_gui.StringArrayListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Dwayne
  */
 public class AppSearch extends JFrame {
-    
-    private JLabel title;
+
     private ClientImpl client = null;
-    
-    public AppSearch() {
+    private IntegerListener listener = null;
+
+    private JButton okButton;
+    private JButton cancelButton;
+
+    private ApplicationPanel applicationPanel;
+    private JPanel searchResultsPanel;
+
+    private SimpleDateFormat dateFormatter;
+
+    public AppSearch(ClientImpl client) {
         super("MSc Properties");
-        
-        title = new JLabel("MSc Properties");
-        Font font = title.getFont();
-        title.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 10));
-        setLayout(new BorderLayout());
-        
-        createMenuBar();
-        
-        layoutComponents();
+        setClient(client);
+        this.layoutComponents();
     }
-    
+
     // Use of singleton pattern to ensure only one Client is initiated
-    public void setClient(ClientImpl model) {
+    private void setClient(ClientImpl model) {
         if (client == null) {
             this.client = model;
         }
     }
-    
-    private void layoutComponents() {
-        
-        setSize(1200, 700);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+
+    // Use of singleton pattern to ensure only one listener is initiated
+    public void setListener(IntegerListener listener) {
+        if (this.listener == null) {
+            this.listener = listener;
+        }
     }
 
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        
-        // File Menu
-        JMenu fileMenu = new JMenu("File");
-        
-        JMenuItem userAccount = new JMenuItem("User Account");
-        JMenuItem changeUser = new JMenuItem("Change User");
-        JMenuItem exitItem = new JMenuItem("Exit");
-        
-        fileMenu.add(userAccount);
-        fileMenu.add(changeUser);
-        fileMenu.addSeparator(); // Is the faint lines between grouped menu items
-        fileMenu.add(exitItem);
-        
-        
-        // Help Menu
-        JMenu helpMenu = new JMenu("Help");
-        
-        JMenuItem manualItem = new JMenuItem("User Manual");
-        JMenuItem aboutItem = new JMenuItem("About");
-        
-        
-        // Add Menubar items
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-        
-        
-        // Set up Mnemonics for Menus
-        
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        exitItem.setMnemonic(KeyEvent.VK_X);
-        
-        
-        // Set up Accelerators
-        
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
-        changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-        userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-        manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
-        
-        
-        //Set up ActionListeners
-        
-        changeUser.addActionListener(new ActionListener() {
+    private void layoutComponents() {
+
+        dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+
+        okButton = new JButton("OK");
+        cancelButton = new JButton("Cancel");
+
+        okButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-                
-            }
-        });
-        
-        userAccount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                
-            }
-        });
-        
-        exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                
-                int action = JOptionPane.showConfirmDialog(AppSearch.this,
-                        "Do you really want to exit the application?",
-                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
-                
-                if (action == JOptionPane.OK_OPTION) {
-                    if (client != null) {
-                        try {
-                            client.logout();
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(AppSearch.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    System.exit(0);
+                if (applicationPanel.getSelectedObjectRef() != null) {
+                    listener.intOmitted(applicationPanel.getSelectedObjectRef());
+                    setVisible(false);
+                    dispose();
                 }
             }
         });
-        return menuBar;
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                setVisible(false);
+                dispose();
+            }
+        });
+
+        applicationPanel = new ApplicationPanel("Applications");
+
+        this.setSize(1200, 800);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+
+        PeopleSearchPanel detailsPanel = new PeopleSearchPanel(client);
+
+        detailsPanel.setListener(new StringArrayListener() {
+            @Override
+            public void arrayOmitted(List<String> array) {
+                if (array.size() == 15) {
+                    try {
+                        Date dob = null;
+                        Date createdDate = null;
+                        
+                        if (array.get(4) != null) {
+                            dob = dateFormatter.parse(array.get(4));
+                        }
+                        if (array.get(14) != null) {
+                            createdDate = dateFormatter.parse(array.get(14));
+                        }
+                        applicationPanel.setData(client.getApplications(null, null, null, null, null, null, createdDate));
+                        applicationPanel.refresh();
+                    } catch (RemoteException | ParseException ex) {
+                        Logger.getLogger(AppSearch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
+
+        searchResultsPanel = new JPanel();
+        searchResultsPanel.setLayout(new BorderLayout());
+
+        ////////// BUTTONS PANEL //////////
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonsPanel.add(okButton);
+        buttonsPanel.add(cancelButton);
+
+        Dimension btnSize = cancelButton.getPreferredSize();
+        okButton.setPreferredSize(btnSize);
+
+        //Add components to searchResultsPanel
+        searchResultsPanel.add(applicationPanel, BorderLayout.CENTER);
+        searchResultsPanel.add(buttonsPanel, BorderLayout.SOUTH);
+
+        // Add sub panels to dialog
+        setLayout(new BorderLayout());
+        add(detailsPanel, BorderLayout.CENTER);
+        add(searchResultsPanel, BorderLayout.SOUTH);
     }
+
+//    public static void main(String[] args) {
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new AppSearch().setVisible(true);
+//            }
+//        });
+//    }
 }

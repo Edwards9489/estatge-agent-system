@@ -5,17 +5,21 @@
  */
 package client_gui.office;
 
+import client_gui.tenancy.TenancyPanel;
+import client_gui.rentAcc.RentAccPanel;
+import client_gui.leaseAcc.LeaseAccPanel;
+import client_gui.empAccount.EmpAccPanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.employee.ContractPanel;
-import client_gui.landlord.LeasePanel;
-import client_gui.lease.NotePanel;
-import client_gui.person.ContactPanel;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.contract.ContractPanel;
+import client_gui.lease.LeasePanel;
+import client_gui.note.NotePanel;
+import client_gui.contact.ContactPanel;
 import interfaces.ContactInterface;
 import interfaces.OfficeInterface;
 import interfaces.Document;
@@ -76,6 +80,7 @@ public class OfficeDetails extends JFrame {
     private ContactPanel contactPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public OfficeDetails(ClientImpl client, OfficeInterface app) {
         super("MSc Properties");
@@ -178,7 +183,7 @@ public class OfficeDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseLength, gc);
 
-        JLabel length = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(office.getStartDate()));
+        JLabel length = new JLabel(formatter.format(office.getStartDate()));
         length.setFont(boldFont);
 
         gc.gridx++;
@@ -196,7 +201,7 @@ public class OfficeDetails extends JFrame {
         
         JLabel expenditure;
         if (office.getEndDate() != null) {
-            expenditure = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(office.getEndDate()));
+            expenditure = new JLabel(formatter.format(office.getEndDate()));
         } else {
             expenditure = new JLabel("");
         }

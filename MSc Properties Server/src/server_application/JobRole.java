@@ -378,6 +378,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      * @return true if requirements contains Element with code == code
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean hasRequirement(String code) throws RemoteException {
         return this.requirements.containsKey(code);
     }

@@ -10,14 +10,22 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
-import client_gui.leaseAcc.TransactionPanel;
-import interfaces.AddressUsageInterface;
+import client_gui.OKDialog;
+import client_gui.PDFFileFilter;
+import client_gui.document.CreateDocument;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.transaction.TransactionPanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
+import client_gui.transaction.CreateTransaction;
+import client_gui.transaction.TransactionDetails;
 import interfaces.Document;
 import interfaces.RentAccountInterface;
 import interfaces.Note;
+import interfaces.TransactionInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,12 +37,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -53,7 +63,7 @@ import javax.swing.border.Border;
 public class RentAccDetails extends JFrame {
     
     private ClientImpl client = null;
-    private RentAccountInterface leaseAcc = null;
+    private RentAccountInterface rentAcc = null;
     private JPanel detailsPanel;
     private JPanel mainPanel;
     private JPanel centrePanel;
@@ -63,6 +73,13 @@ public class RentAccDetails extends JFrame {
     private TransactionPanel transactionPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private JFileChooser fileChooser;
+    private JLabel length;
+    private JLabel start;
+    private JLabel startDate;
+    private JLabel propRef;
+    private JLabel endDate;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public RentAccDetails(ClientImpl client, RentAccountInterface app) {
         super("MSc Properties");
@@ -80,13 +97,17 @@ public class RentAccDetails extends JFrame {
 
     // Use of singleton pattern to ensure only one Application is initiated
     private void setApplication(RentAccountInterface app) {
-        if (leaseAcc == null) {
-            this.leaseAcc = app;
+        if (rentAcc == null) {
+            this.rentAcc = app;
         }
     }
 
     private void layoutComponents() {
         try {
+            fileChooser = new JFileChooser();
+            // If you need more choosbale files then add more choosable files
+            fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -149,7 +170,7 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseRef, gc);
 
-        JLabel ref = new JLabel(String.valueOf(leaseAcc.getAccRef()));
+        JLabel ref = new JLabel(String.valueOf(rentAcc.getAccRef()));
         ref.setFont(boldFont);
 
         gc.gridx++;
@@ -165,7 +186,7 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseLength, gc);
 
-        JLabel length = new JLabel("£" + String.valueOf(leaseAcc.getRent()));
+        length = new JLabel("£" + String.valueOf(rentAcc.getRent()));
         length.setFont(boldFont);
 
         gc.gridx++;
@@ -181,7 +202,7 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(leaseAcc.getStartDate()));
+        startDate = new JLabel(formatter.format(rentAcc.getStartDate()));
         startDate.setFont(boldFont);
 
         gc.gridx++;
@@ -201,7 +222,7 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        JLabel start = new JLabel(leaseAcc.getAccName());
+        start = new JLabel(rentAcc.getAccName());
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -216,12 +237,13 @@ public class RentAccDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leasePropRef, gc);
-
+        
+        propRef = new JLabel("£" + String.valueOf(rentAcc.getBalance()));
+        propRef.setFont(boldFont);
+        
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel propRef = new JLabel("£" + String.valueOf(leaseAcc.getBalance()));
-        propRef.setFont(boldFont);
         detailsPanel.add(propRef, gc);
 
         JLabel leaseEndDate = new JLabel("End Date    ");
@@ -232,9 +254,8 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseEndDate, gc);
         
-        JLabel endDate;
-        if(leaseAcc.getEndDate() != null) {
-             endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(leaseAcc.getEndDate()));
+        if(rentAcc.getEndDate() != null) {
+             endDate = new JLabel(formatter.format(rentAcc.getEndDate()));
         } else {
             endDate  = new JLabel("");
         }
@@ -259,7 +280,7 @@ public class RentAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAccRef, gc);
 
-        JLabel accRef = new JLabel(String.valueOf(leaseAcc.getTenancyRef()));
+        JLabel accRef = new JLabel(String.valueOf(rentAcc.getTenancyRef()));
         accRef.setFont(boldFont);
         
         gc.gridx++;
@@ -289,26 +310,90 @@ public class RentAccDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    RentSearch leaseSearch = new RentSearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        } else if (pane == 1) {
+                            //Transactions
+                            createTransaction();
+                            System.out.println("TEST - Create Transaction");
+                            
+                        } else if (pane == 2) {
+                            //Documents
+                            createDocument();
+                            System.out.println("TEST - Create Document");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        } else if (pane == 2) {
+                            //Document
+                            updateDocument();
+                            System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            deleteTransaction();
+                            System.out.println("TEST - Delete Transaction");
+                            
+                        } else if (pane == 2) {
+                            //Document
+                            deleteDocument();
+                            System.out.println("TEST - Delete Document");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        } else if (pane == 1) {
+                            //Document
+                            viewTransaction();
+                            System.out.println("TEST - View Transaction");
+
+                        } else if (pane == 2) {
+                            //Document
+                            viewDocument();
+                            System.out.println("TEST - View Document");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -318,7 +403,7 @@ public class RentAccDetails extends JFrame {
         notePanel = new NotePanel("Notes");
         
         try {
-            notePanel.setData(leaseAcc.getNotes());
+            notePanel.setData(rentAcc.getNotes());
         } catch (RemoteException ex) {
             Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -328,16 +413,13 @@ public class RentAccDetails extends JFrame {
             public void intOmitted(int noteRef) {
                 if(noteRef > 0) {
                     try {
-                        Note note = leaseAcc.getNote(noteRef);
+                        Note note = rentAcc.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -348,26 +430,23 @@ public class RentAccDetails extends JFrame {
         transactionPanel = new TransactionPanel("Transactions");
         
         try {
-            transactionPanel.setData(leaseAcc.getTransactions());
+            transactionPanel.setData(rentAcc.getTransactions());
         } catch (RemoteException ex) {
             Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         transactionPanel.setTableListener(new IntegerListener() {
             @Override
-            public void intOmitted(int addressRef) {
-                if(addressRef > 0) {
+            public void intOmitted(int tranRef) {
+                if(tranRef > 0) {
                     try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
+                        TransactionInterface transaction = rentAcc.getTransaction(tranRef);
+                        if(transaction != null) {
+                            System.out.println(transaction.getTransactionRef());
+                            System.out.println("TEST1-Transaction");
+                            TransactionDetails transactionGUI=  new TransactionDetails(client, transaction, "Rent Account");
+                            transactionGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Landlords");
-//                        RentDetailsForm tenancyForm = new RentDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -378,7 +457,7 @@ public class RentAccDetails extends JFrame {
         documentPanel = new DocumentPanel("Documents");
         
         try {
-            documentPanel.setData(leaseAcc.getDocuments());
+            documentPanel.setData(rentAcc.getDocuments());
         } catch (RemoteException ex) {
             Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -388,16 +467,12 @@ public class RentAccDetails extends JFrame {
             public void intOmitted(int documentRef) {
                 if(documentRef > 0) {
                     try {
-                        Document document = leaseAcc.getDocument(documentRef);
+                        Document document = rentAcc.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadRentAccDocument(rentAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        RentDetailsForm tenancyForm = new RentDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -408,7 +483,7 @@ public class RentAccDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
         
         try {
-            modPanel.setData(leaseAcc.getModifiedBy());
+            modPanel.setData(rentAcc.getModifiedBy());
         } catch (RemoteException ex) {
             Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -422,13 +497,227 @@ public class RentAccDetails extends JFrame {
         
         centrePanel.add(tabbedPane);
         try {
-            centrePanel.add(new DetailsPanel(leaseAcc.getCreatedBy(), leaseAcc.getCreatedDate(), leaseAcc.getLastModifiedBy(), leaseAcc.getLastModifiedDate()));
+            centrePanel.add(new DetailsPanel(rentAcc.getCreatedBy(), rentAcc.getCreatedDate(), rentAcc.getLastModifiedBy(), rentAcc.getLastModifiedDate()));
         } catch (RemoteException ex) {
             Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+    
+    private void createTransaction() {
+        try {
+            CreateTransaction createTransaction = new CreateTransaction(client, "Rent Account", rentAcc.getAccRef());
+            createTransaction.setVisible(true);
+            System.out.println("TEST - Create Transaction");
+        } catch (RemoteException ex) {
+            Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void deleteTransaction() {
+        Integer selection = transactionPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE transaction " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Transaction - Yes button clicked");
+                    int result = client.deleteRentAccTransaction(rentAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Transaction " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    } else {
+                        String message = "Transaction " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewTransaction() {
+        if (transactionPanel.getSelectedObjectRef() != null) {
+            TransactionInterface transaction;
+            try {
+                transaction = rentAcc.getTransaction(transactionPanel.getSelectedObjectRef());
+                if (transaction != null) {
+                    TransactionDetails rentAccTransaction = new TransactionDetails(client, transaction, "Rent Account");
+                    rentAccTransaction.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Rent Account", rentAcc.getAccRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = rentAcc.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Rent Account", rentAcc.getAccRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteRentAccNote(rentAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = rentAcc.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails rentAccDetails = new NoteDetails(client, note);
+                    rentAccDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void createDocument() {
+        try {
+            CreateDocument createDoc = new CreateDocument(client, "Rent Account", rentAcc.getAccRef());
+            createDoc.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Document document = rentAcc.getDocument(selection);
+                if (document != null) {
+                    if(fileChooser.showOpenDialog(RentAccDetails.this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        int result = client.updateRentAccDocument(rentAcc.getAccRef(), document.getDocumentRef(), file.getPath());
+                        if (result > 0) {
+                            String message = "Document " + selection + " has been successfully updated";
+                            String title = "Information";
+                            OKDialog.okDialog(RentAccDetails.this, message, title);
+                        } else {
+                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
+                            String title = "Error";
+                            OKDialog.okDialog(RentAccDetails.this, message, title);
+                        }
+                        System.out.println(fileChooser.getSelectedFile());
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE document " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Document Delete - Yes button clicked");
+                    int result = client.deleteRentAccDocument(rentAcc.getAccRef(), selection);
+                    if (result > 0) {
+                        String message = "Document " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    } else {
+                        String message = "Document " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(RentAccDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            Document document;
+            try {
+                document = rentAcc.getDocument(documentPanel.getSelectedObjectRef());
+                client.downloadRentAccDocument(rentAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            length.setText("£" + String.valueOf(rentAcc.getRent()));
+            if (rentAcc.getStartDate() != null) {
+                startDate.setText(formatter.format(rentAcc.getStartDate()));
+            }
+            if (rentAcc.getAccName() != null) {
+                start.setText(rentAcc.getAccName());
+            }
+            if (rentAcc.getEndDate() != null) {
+                endDate.setText(formatter.format(rentAcc.getEndDate()));
+            }
+            
+            propRef = new JLabel("£" + String.valueOf(rentAcc.getBalance()));
+            
+            notePanel.setData(rentAcc.getNotes());
+            transactionPanel.setData(rentAcc.getTransactions());
+            documentPanel.setData(rentAcc.getDocuments());
+            modPanel.setData(rentAcc.getModifiedBy());
+            notePanel.refresh();
+            transactionPanel.refresh();
+            documentPanel.refresh();
+            modPanel.refresh();
+        } catch (RemoteException ex) {
+            Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

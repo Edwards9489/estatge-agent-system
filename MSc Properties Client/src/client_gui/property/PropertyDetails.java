@@ -5,15 +5,16 @@
  */
 package client_gui.property;
 
+import client_gui.propertyElement.PropElementPanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.LandlordPanel;
-import client_gui.lease.NotePanel;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.landlord.LandlordPanel;
+import client_gui.note.NotePanel;
 import interfaces.AddressUsageInterface;
 import interfaces.PropertyInterface;
 import interfaces.Document;
@@ -65,6 +66,7 @@ public class PropertyDetails extends JFrame {
     private LandlordPanel landlordPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public PropertyDetails(ClientImpl client, PropertyInterface app) {
         super("MSc Properties");
@@ -213,7 +215,7 @@ public class PropertyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(property.getAcquiredDate()));
+        JLabel startDate = new JLabel(formatter.format(property.getAcquiredDate()));
         startDate.setFont(boldFont);
 
         gc.gridx++;
@@ -307,7 +309,7 @@ public class PropertyDetails extends JFrame {
         
         JLabel endDate;
         if(property.getLeaseEndDate() != null) {
-            endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(property.getLeaseEndDate()));
+            endDate = new JLabel(formatter.format(property.getLeaseEndDate()));
         } else {
             endDate = new JLabel("");
         }

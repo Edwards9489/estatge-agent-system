@@ -22,7 +22,7 @@ public class EmployeeTableModel extends AbstractTableModel {
     
     private List<EmployeeInterface> db = new ArrayList();
     
-    private String[] colNames = {"Ref", "Name", "Job Role Code", "Office Code"};
+    private final String[] colNames = {"Ref", "Name", "Job Role Code", "Office Code"};
     
     public EmployeeTableModel() {
     }
@@ -59,7 +59,7 @@ public class EmployeeTableModel extends AbstractTableModel {
                 case 2:
                     ContractInterface contract = address.getContract();
                     if (contract != null) {
-                        return contract.getJobRole();
+                        return contract.getJobRole().getJobRoleCode();
                     } else {
                         return "";
                     }

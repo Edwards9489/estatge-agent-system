@@ -29,6 +29,7 @@ public class JobRoleBenefit extends UnicastRemoteObject implements JobRoleBenefi
     private Double doubleValue;
     private Date startDate;
     private Date endDate;
+    private final String jobRoleCode;
     private final Note note;
     private final List<ModifiedByInterface> modifiedBy;
     private final String createdBy;
@@ -46,11 +47,12 @@ public class JobRoleBenefit extends UnicastRemoteObject implements JobRoleBenefi
      * @param stringValue
      * @param doubleValue
      * @param note
+     * @param jobRoleCode
      * @param createdBy
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
-    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) throws RemoteException {
+    public JobRoleBenefit(int ref, Element benefit, Date startDate, boolean salaryBenefit, String stringValue, Double doubleValue, Note note, String jobRoleCode, String createdBy, Date createdDate) throws RemoteException {
         this.jobRoleBenefitRef = ref;
         this.benefit = benefit;
         this.startDate = startDate;
@@ -61,6 +63,7 @@ public class JobRoleBenefit extends UnicastRemoteObject implements JobRoleBenefi
         else if(!salaryBenefit) {
             setStringValue(stringValue);
         }
+        this.jobRoleCode = jobRoleCode;
         this.note = note;
         this.modifiedBy = new ArrayList();
         this.createdBy = createdBy;
@@ -236,6 +239,11 @@ public class JobRoleBenefit extends UnicastRemoteObject implements JobRoleBenefi
     @Override
     public boolean hasBeenModified() throws RemoteException {
         return !this.modifiedBy.isEmpty();
+    }
+    
+    @Override
+    public String getJobRoleCode() throws RemoteException {
+        return this.jobRoleCode;
     }
     
     /**

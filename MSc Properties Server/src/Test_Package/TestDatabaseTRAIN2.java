@@ -98,7 +98,7 @@ public class TestDatabaseTRAIN2 {
         
         ModifiedBy modTest = new ModifiedBy("TEST", "DEDWARDS", new Date());
         
-        JobRoleBenefit benefit = new JobRoleBenefit(1, element, new Date(), true, null, 29.00, note2, "DEDWARDS", new Date());
+        JobRoleBenefit benefit = new JobRoleBenefit(1, element, new Date(), true, null, 29.00, note2, "EDM", "DEDWARDS", new Date());
         
         Address address = new Address(1, "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", note3, "DEDWARDS", new Date());
         Address address2 = new Address(2, "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", note4, "DEDWARDS", new Date());

@@ -414,7 +414,10 @@ public class Database {
                 String code = results.getString("code");
                 String description = results.getString("description");
                 int noteRef = results.getInt("noteRef");
-                String comment = results.getString("comment");
+                String comment = "";
+                if (results.getString("comment") != null) {
+                    comment = results.getString("comment");
+                }
                 boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
@@ -573,7 +576,10 @@ public class Database {
                     String documentName = results.getString("documentName");
                     String documentPath = results.getString("documentPath");
                     int noteRef = results.getInt("noteRef");
-                    String comment = results.getString("comment");
+                    String comment = "";
+                    if (results.getString("comment") != null) {
+                        comment = results.getString("comment");
+                    }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
                     
@@ -617,7 +623,10 @@ public class Database {
                     String documentName = results.getString("documentName");
                     String documentPath = results.getString("documentPath");
                     int noteRef = results.getInt("noteRef");
-                    String comment = results.getString("comment");
+                    String comment = "";
+                    if (results.getString("comment") != null) {
+                        comment = results.getString("comment");
+                    }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
 
@@ -820,7 +829,7 @@ public class Database {
      * @return
      */
     public Document getDocument(int ref) {
-        if (this.noteExists(ref)) {
+        if (this.documentExists(ref)) {
             return documents.get(ref);
         }
         return null;
@@ -844,7 +853,10 @@ public class Database {
                 int noteRef = results.getInt("noteRef");
                 int ref = results.getInt("ref");
                 if (reference == ref) {
-                    String comment = results.getString("comment");
+                    String comment = "";
+                    if (results.getString("comment") != null) {
+                        comment = results.getString("comment");
+                    }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
 
@@ -877,7 +889,10 @@ public class Database {
                 int noteRef = results.getInt("noteRef");
                 String code = results.getString("code");
                 if (uniqueCode.equals(code)) {
-                    String comment = results.getString("comment");
+                    String comment = "";
+                    if (results.getString("comment") != null) {
+                        comment = results.getString("comment");
+                    }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
 
@@ -1264,7 +1279,10 @@ public class Database {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
                         int noteRef = results.getInt("noteRef");
-                        String comment = results.getString("comment");
+                        String comment = "";
+                        if (results.getString("comment") != null) {
+                            comment = results.getString("comment");
+                        }
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
 
@@ -1402,7 +1420,10 @@ public class Database {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
                         int noteRef = results.getInt("noteRef");
-                        String comment = results.getString("comment");
+                        String comment = "";
+                        if (results.getString("comment") != null) {
+                            comment = results.getString("comment");
+                        }
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
 
@@ -1550,7 +1571,10 @@ public class Database {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
                         int noteRef = results.getInt("noteRef");
-                        String comment = results.getString("comment");
+                        String comment = "";
+                        if (results.getString("comment") != null) {
+                            comment = results.getString("comment");
+                        }
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
 
@@ -1691,7 +1715,10 @@ public class Database {
                         Date startDate = results.getDate("startDate");
                         Date endDate = results.getDate("endDate");
                         int noteRef = results.getInt("noteRef");
-                        String comment = results.getString("comment");
+                        String comment = "";
+                        if (results.getString("comment") != null) {
+                            comment = results.getString("comment");
+                        }
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
 
@@ -2605,7 +2632,10 @@ public class Database {
                 String country = results.getString("country");
                 String postcode = results.getString("postcode");
                 int noteRef = results.getInt("noteRef");
-                String comment = results.getString("comment");
+                String comment = "";
+                if (results.getString("comment") != null) {
+                    comment = results.getString("comment");
+                }
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
 
@@ -2681,9 +2711,17 @@ public class Database {
                 insertStat.setInt(col++, property.getAddress().getAddressRef());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getAcquiredDate()));
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getLeaseEndDate()));
-                insertStat.setInt(col++, property.getLeaseRef());
+                if (property.getLeaseRef() != null) {
+                    insertStat.setInt(col++, property.getLeaseRef());
+                } else {
+                    insertStat.setString(col++, null);
+                }
                 insertStat.setString(col++, property.getPropType().getCode());
-                insertStat.setString(col++, property.getPropSubType().getCode());
+                if (property.getPropSubType() != null) {
+                    insertStat.setString(col++, property.getPropSubType().getCode());
+                } else {
+                    insertStat.setString(col++, "");
+                }
                 insertStat.setString(col++, property.getPropStatus());
                 insertStat.setString(col++, property.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getCreatedDate()));
@@ -2713,7 +2751,11 @@ public class Database {
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getLeaseEndDate()));
                 updateStat.setInt(col++, property.getLeaseRef());
                 updateStat.setString(col++, property.getPropType().getCode());
-                updateStat.setString(col++, property.getPropSubType().getCode());
+                if (property.getPropSubType() != null) {
+                    updateStat.setString(col++, property.getPropSubType().getCode());
+                } else {
+                    updateStat.setString(col++, "");
+                }
                 updateStat.setString(col++, property.getPropStatus());
                 updateStat.setInt(col++, property.getPropRef());
                 updateStat.executeUpdate();
@@ -3217,8 +3259,12 @@ public class Database {
      * @throws RemoteException
      */
     public void updatePropertyElementValue(int propertyRef, int propElementRef) throws SQLException, RemoteException {
+        System.out.println("\nDATABASE");
+        System.out.println("Property Exists? " + this.propertyExists(propertyRef));
+        System.out.println("Property Element Value Exists? " + this.propertyElementValueExists(propElementRef));
         if (this.propertyExists(propertyRef) && this.propertyElementValueExists(propElementRef)) {
             PropertyElementInterface propertyElement = this.getPropertyElementValue(propElementRef);
+            System.out.println("Prop Element Exists? " + this.propElementExists(propertyElement.getElementCode()));
             if (this.propElementExists(propertyElement.getElementCode())) {
                 String updateSql = "";
                 if (propertyElement.isCharge()) {
@@ -3226,6 +3272,8 @@ public class Database {
                 } else if (!propertyElement.isCharge()) {
                     updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 }
+                
+                System.out.println("Update SQL statement: " + updateSql);
                 try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                     int col = 1;
                     if (propertyElement.isCharge()) {
@@ -3303,7 +3351,10 @@ public class Database {
                             String stringValue = results.getString("stringValue");
                             double doubleValue = results.getDouble("doubleValue");
                             int noteRef = results.getInt("noteRef");
-                            String comment = results.getString("comment");
+                            String comment = "";
+                            if (results.getString("comment") != null) {
+                                comment = results.getString("comment");
+                            }
                             String createdBy = results.getString("createdBy");
                             Date createdDate = results.getDate("createdDate");
 
@@ -5129,7 +5180,7 @@ public class Database {
             }
             jobRoles.put(jobRole.getJobRoleCode(), jobRole);
             this.createJobRoleRequirements(jobRole.getJobRoleCode(), jobRole.getJobRequirements());
-            this.createJobRoleBenefits(jobRole.getJobRoleCode(), jobRole.getBenefits());
+            this.createJobRoleBenefits(jobRole.getBenefits());
         }
     }
 
@@ -5426,24 +5477,24 @@ public class Database {
      * @throws SQLException
      * @throws RemoteException
      */
-    private void createJobRoleBenefits(String code, List<JobRoleBenefitInterface> benefits) throws SQLException, RemoteException {
-        if (!benefits.isEmpty() && this.jobRoleExists(code)) {
+    private void createJobRoleBenefits(List<JobRoleBenefitInterface> benefits) throws SQLException, RemoteException {
+        if (!benefits.isEmpty()) {
             for (JobRoleBenefitInterface benefit : benefits) {
                 JobRoleBenefit temp = (JobRoleBenefit) benefit;
-                this.createJobRoleBenefit(code, temp);
+                if (this.jobRoleExists(benefit.getJobRoleCode())) {
+                    this.createJobRoleBenefit(temp);
+                }
             }
         }
     }
 
-    /**
-     *
-     * @param jobRoleCode
+    /***
      * @param benefit
      * @throws SQLException
      * @throws RemoteException
      */
-    public void createJobRoleBenefit(String jobRoleCode, JobRoleBenefit benefit) throws SQLException, RemoteException {
-        if (benefit != null && this.jobRoleExists(jobRoleCode) && this.jobBenefitExists(benefit.getBenefit().getCode()) && !this.jobRoleBenefitExists(benefit.getBenefitRef())) {
+    public void createJobRoleBenefit(JobRoleBenefit benefit) throws SQLException, RemoteException {
+        if (benefit != null && this.jobRoleExists(benefit.getJobRoleCode()) && this.jobBenefitExists(benefit.getBenefit().getCode()) && !this.jobRoleBenefitExists(benefit.getBenefitRef())) {
             String insertSql = "";
             if (benefit.isSalaryBenefit()) {
                 insertSql = "insert into jobRoleBenefits (jobBenefitRef, jobRoleCode, benefitCode, doubleValue, startDate, endDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -5453,7 +5504,7 @@ public class Database {
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, benefit.getBenefitRef());
-                insertStat.setString(col++, jobRoleCode);
+                insertStat.setString(col++, benefit.getJobRoleCode());
                 insertStat.setString(col++, benefit.getBenefitCode());
                 if (benefit.isSalaryBenefit()) {
                     insertStat.setDouble(col++, benefit.getDoubleValue());
@@ -5476,13 +5527,12 @@ public class Database {
 
     /**
      *
-     * @param code
      * @param benefitRef
      * @throws SQLException
      * @throws RemoteException
      */
-    public void updateJobRoleBenefit(String code, int benefitRef) throws SQLException, RemoteException {
-        if (this.jobRoleExists(code) && this.jobRoleBenefitExists(benefitRef)) {
+    public void updateJobRoleBenefit(int benefitRef) throws SQLException, RemoteException {
+        if (this.jobRoleBenefitExists(benefitRef)) {
             JobRoleBenefitInterface benefit = this.getJobRoleBenefit(benefitRef);
             String updateSql = "";
             if (benefit.isSalaryBenefit()) {
@@ -5502,7 +5552,7 @@ public class Database {
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(benefit.getEndDate()));
                 updateStat.setString(col++, benefit.getComment());
                 updateStat.setInt(col++, benefit.getBenefitRef());
-                updateStat.setString(col++, code);
+                updateStat.setString(col++, benefit.getJobRoleCode());
                 updateStat.executeUpdate();
                 updateStat.close();
             }
@@ -5513,13 +5563,12 @@ public class Database {
     /**
      *
      * @param benefitRef
-     * @param jobRoleCode
      * @throws SQLException
      * @throws RemoteException
      */
-    public void deleteJobRoleBenefit(int benefitRef, String jobRoleCode) throws SQLException, RemoteException {
-        if (this.jobRoleExists(jobRoleCode) && this.jobRoleBenefitExists(benefitRef) && !this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
-            String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef + "and jobRoleCode='" + jobRoleCode + "'";
+    public void deleteJobRoleBenefit(int benefitRef) throws SQLException, RemoteException {
+        if (this.jobRoleBenefitExists(benefitRef) && !this.getJobRoleBenefit(benefitRef).hasBeenModified()) {
+            String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
                     this.jobRoleBenefits.remove(benefitRef);
@@ -5554,12 +5603,15 @@ public class Database {
                             String stringValue = results.getString("stringValue");
                             double doubleValue = results.getDouble("doubleValue");
                             int noteRef = results.getInt("noteRef");
-                            String comment = results.getString("comment");
+                            String comment = "";
+                            if (results.getString("comment") != null) {
+                                comment = results.getString("comment");
+                            }
                             String createdBy = results.getString("createdBy");
                             Date createdDate = results.getDate("createdDate");
 
                             Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                            JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue != null, stringValue, doubleValue, note, createdBy, createdDate);
+                            JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue != null, stringValue, doubleValue, note, code, createdBy, createdDate);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
@@ -7363,9 +7415,10 @@ public class Database {
      * @throws RemoteException
      */
     public void createRentAccountTransaction(int rentAccRef, Transaction transaction) throws SQLException, RemoteException {
-        System.out.println("transaction is not null? - Database createRentAccTran - " + transaction != null);
-        System.out.println("transaction does not exist? - Database createRentAccTran - " + !this.transactionExists(transaction.getTransactionRef()));
-        System.out.println("rentAcc exists? - Database createRentAccTran - " + this.rentAccountExists(rentAccRef));
+        System.out.println("\nDATABASE");
+        System.out.println("transaction is not null? " + transaction != null);
+        System.out.println("transaction does not exist? " + !this.transactionExists(transaction.getTransactionRef()));
+        System.out.println("rentAcc exists? " + this.rentAccountExists(rentAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.rentAccountExists(rentAccRef)) {
             this.createTransaction("rentTransactions", transaction);
         }
@@ -7655,6 +7708,10 @@ public class Database {
      * @throws RemoteException
      */
     public void createLeaseAccountTransaction(int leaseAccRef, Transaction transaction) throws SQLException, RemoteException {
+        System.out.println("\nDATABASE");
+        System.out.println("Transaction is not null? " + transaction != null);
+        System.out.println("Transaction does not exists? " + (!this.transactionExists(transaction.getTransactionRef())));
+        System.out.println("Employee Account exists? " + this.leaseAccountExists(leaseAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.leaseAccountExists(leaseAccRef)) {
             this.createTransaction("leaseTransactions", transaction);
         }
@@ -7944,6 +8001,10 @@ public class Database {
      * @throws RemoteException
      */
     public void createEmployeeAccountTransaction(int employeeAccRef, Transaction transaction) throws SQLException, RemoteException {
+        System.out.println("\nDATABASE");
+        System.out.println("Transaction is not null? " + transaction != null);
+        System.out.println("Transaction does not exists? " + (!this.transactionExists(transaction.getTransactionRef())));
+        System.out.println("Employee Account exists? " + this.employeeAccountExists(employeeAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.employeeAccountExists(employeeAccRef)) {
             this.createTransaction("contractTransactions", transaction);
         }
@@ -8017,7 +8078,10 @@ public class Database {
                     boolean isDebit = results.getBoolean("isDebit");
                     Date transactionDate = results.getDate("transactionDate");
                     int noteRef = results.getInt("noteRef");
-                    String comment = results.getString("comment");
+                    String comment = "";
+                    if (results.getString("comment") != null) {
+                        comment = results.getString("comment");
+                    }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
 
@@ -8790,12 +8854,9 @@ public class Database {
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         List<PersonInterface> tempPeople = new ArrayList();
+        
         for (PersonInterface temp : this.getPeople()) {
             boolean add = true;
-            System.out.println("Title Code not equal to NULL?" + titleCode != null);
-            System.out.println("Title Code is not empty?" + !titleCode.isEmpty());
-            System.out.println("Title Exists?" + this.titleExists(titleCode));
-            System.out.println("Title Code is not equal to person title?" + !titleCode.equals(temp.getTitle().getCode()));
             if (titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
                 add = false;
             }
@@ -8849,45 +8910,95 @@ public class Database {
     public List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        
         List<AddressInterface> tempAddresses = new ArrayList<>();
         for (AddressInterface temp : this.getAddresses()) {
             boolean add = true;
+            
+            System.out.println("Building Number is not null? " + buildingNumber != null);
+            //System.out.println("Building Number is not empty? " + !buildingNumber.isEmpty());
+            //System.out.println("Building Number is not equal to address building number? " + !buildingNumber.equals(temp.getBuildingNumber()));
             if (buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
                 add = false;
             }
+            
+            System.out.println("Building Name is not null? " + buildingName != null);
+            //System.out.println("Building Name is not empty? " + !buildingName.isEmpty());
+            //System.out.println("Building Name is not equal to address building name? " + !buildingName.equals(temp.getBuildingName()));
             if (buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
                 add = false;
             }
+            
+            System.out.println("Sub Street Number is not null? " + subStreetNumber != null);
+            //System.out.println("Sub Street Number is not empty? " + !subStreetNumber.isEmpty());
+            //System.out.println("Sub Street Number is not equal to address sub street number? " + !subStreetNumber.equals(temp.getSubStreetNumber()));
             if (subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
                 add = false;
             }
+            
+            System.out.println("Sub Street is not null? " + subStreet != null);
+            //System.out.println("Sub Street is note empty? " + !subStreet.isEmpty());
+            //System.out.println("Sub Street is not equal to address sub street? " + !subStreet.equals(temp.getSubStreet()));
             if (subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
                 add = false;
             }
+            
+            System.out.println("Street Number is not null? " + streetNumber != null);
+            //System.out.println("Street Number is not empty? " + !streetNumber.isEmpty());
+            //System.out.println("Street Number is not equal to address street number? " + !streetNumber.equals(temp.getStreetNumber()));
             if (streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
                 add = false;
             }
+            
+            System.out.println("Street is not null? " + street != null);
+            //System.out.println("Street is note empty? " + !street.isEmpty());
+            //System.out.println("Street is not equal to address street? " + !street.equals(temp.getStreet()));
             if (street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
                 add = false;
             }
+            
+            System.out.println("Area is not null? " + area != null);
+            //System.out.println("Area is not empty? " + !area.isEmpty());
+            //System.out.println("Area is not equal to address area? " + !area.equals(temp.getArea()));
             if (area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
                 add = false;
             }
+            
+            System.out.println("Town is not null? " + town != null);
+            //System.out.println("Town is not empty? " + !town.isEmpty());
+            //System.out.println("Town is not equal to address country? " + !town.equals(temp.getTown()));
             if (town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
                 add = false;
             }
+            
+            System.out.println("Country is not null? " + country != null);
+            //System.out.println("Country is not empty? " + !country.isEmpty());
+            //System.out.println("Country is not equal to address country? " + !country.equals(temp.getCountry()));
             if (country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
                 add = false;
             }
+            
+            System.out.println("Postcode is not null? " + postcode != null);
+            //System.out.println("Postcode By is not empty? " + !postcode.isEmpty());
+            //System.out.println("Postcode By is not equal to address postcode? " + !postcode.equals(temp.getPostcode()));
             if (postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode()) && !postcode.equals(temp.getCountry())) {
                 add = false;
             }
+            
+            System.out.println("Created By is not null? " + createdBy != null);
+            //System.out.println("Created By is not empty? " + !createdBy.isEmpty());
+            //System.out.println("Created By is not equal to address created by? " + !createdBy.equals(temp.getCreatedBy()));
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
+            
+            System.out.println("Created Date is not null? " + createdDate != null);
+            //System.out.println("Created Date is not equal to address created date? " + (createdDate.compareTo(temp.getCreatedDate()) != 0));
             if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
                 add = false;
             }
+            
+            System.out.println("Should Add to FINAL list: " + add);
             if (add) {
                 tempAddresses.add(temp);
             }
@@ -8953,7 +9064,7 @@ public class Database {
             }
             return tempApplications;
         }
-        return null;
+        return tempApplications;
     }
 
     public List<ApplicationInterface> getAddressApplications(List<AddressInterface> tempAddresses) throws RemoteException {
@@ -8981,7 +9092,7 @@ public class Database {
             }
             return tempApplications;
         }
-        return null;
+        return tempApplications;
     }
 
     public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
@@ -8994,7 +9105,7 @@ public class Database {
             }
             return tempApplications;
         }
-        return null;
+        return tempApplications;
     }
 
     public ApplicationInterface getInvPartyApplcation(int invPartyRef) throws RemoteException {
@@ -9019,7 +9130,7 @@ public class Database {
             }
             return tempEmployees;
         }
-        return null;
+        return tempEmployees;
     }
 
     public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode,
@@ -9034,7 +9145,7 @@ public class Database {
             }
             return tempLandlords;
         }
-        return null;
+        return tempLandlords;
     }
 
     public List<PropertyInterface> getProperties(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
@@ -9137,7 +9248,7 @@ public class Database {
             }
             return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
 
     public List<TenancyInterface> getApplicationTenancies(int appRef) throws RemoteException {
@@ -9150,7 +9261,7 @@ public class Database {
             }
             return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
 
     public List<TenancyInterface> getPropertyTenancies(List<PropertyInterface> tempProperties) throws RemoteException {
@@ -9170,7 +9281,7 @@ public class Database {
             }
             return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
 
     public List<TenancyInterface> getPropertyTenancies(int propRef) throws RemoteException {
@@ -9184,7 +9295,7 @@ public class Database {
             }
             return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
 
     public List<TenancyInterface> getNameTenancies(String name) throws RemoteException {
@@ -9207,7 +9318,7 @@ public class Database {
             }
             return tempTenancies;
         }
-        return null;
+        return tempTenancies;
     }
 
     public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
@@ -9274,7 +9385,7 @@ public class Database {
             }
             return tempLeases;
         }
-        return null;
+        return tempLeases;
     }
 
     public List<LeaseInterface> getPropertyLeases(int propRef) throws RemoteException {
@@ -9288,7 +9399,7 @@ public class Database {
             }
             return tempLeases;
         }
-        return null;
+        return tempLeases;
     }
 
     public List<LeaseInterface> getNameLeases(String name) throws RemoteException {
@@ -9311,7 +9422,7 @@ public class Database {
             }
             return tempLeases;
         }
-        return null;
+        return tempLeases;
     }
 
     public List<LeaseInterface> getLandlordLeases(int landlordRef) throws RemoteException {
@@ -9332,7 +9443,7 @@ public class Database {
             }
             return tempLeases;
         }
-        return null;
+        return tempLeases;
     }
 
     public List<LeaseInterface> getLandlordLeases(List<LandlordInterface> tempLandlords) throws RemoteException {
@@ -9358,7 +9469,7 @@ public class Database {
             }
             return tempLeases;
         }
-        return null;
+        return tempLeases;
     }
 
     public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
@@ -9437,7 +9548,7 @@ public class Database {
             }
             return tempContracts;
         }
-        return null;
+        return tempContracts;
     }
 
     public List<ContractInterface> getJobRoleContracts(String code) throws RemoteException {
@@ -9450,7 +9561,7 @@ public class Database {
             }
             return tempContracts;
         }
-        return null;
+        return tempContracts;
     }
 
     public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {

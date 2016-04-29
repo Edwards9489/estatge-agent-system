@@ -8,6 +8,7 @@ package client_gui.home_screen;
 import interfaces.AccountInterface;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,9 +20,11 @@ import javax.swing.table.AbstractTableModel;
  */
 public class AccountTableModel extends AbstractTableModel {
     
-    private List<AccountInterface> db;
+    private List<AccountInterface> db = new ArrayList();
     
-    private String[] colNames = {"Ref", "Account Name", "Start Date", "Balance", "Office Code"};
+    private final String[] colNames = {"Ref", "Account Name", "Start Date", "Balance", "Office Code"};
+    
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
     public AccountTableModel() {
     }
@@ -56,7 +59,7 @@ public class AccountTableModel extends AbstractTableModel {
                 case 1:
                     return account.getAccName();
                 case 2:
-                    return new SimpleDateFormat("dd-MM-YYYY").format(account.getStartDate());
+                    return formatter.format(account.getStartDate());
                 case 3:
                     return "£" + account.getBalance();
                 case 4:

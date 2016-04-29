@@ -10,9 +10,15 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
-import client_gui.application.DocumentPanel;
-import client_gui.application.ModPanel;
-import client_gui.lease.NotePanel;
+import client_gui.OKDialog;
+import client_gui.PDFFileFilter;
+import client_gui.document.CreateDocument;
+import client_gui.document.DocumentPanel;
+import client_gui.modifications.ModPanel;
+import client_gui.note.NotePanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
+import client_gui.note.UpdateNote;
 import interfaces.ContractInterface;
 import interfaces.Document;
 import interfaces.Note;
@@ -27,13 +33,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -61,11 +68,18 @@ public class ContractDetails extends JFrame {
     private NotePanel notePanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private JFileChooser fileChooser;
+    private JLabel startDate;
+    private JLabel name;
+    private JLabel length;
+    private JLabel expectedEndDate;
+    private JLabel actualEndDate;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public ContractDetails(ClientImpl client, ContractInterface app) {
         super("MSc Properties");
         setClient(client);
-        setApplication(app);
+        setContract(app);
         layoutComponents();
     }
 
@@ -76,8 +90,8 @@ public class ContractDetails extends JFrame {
         }
     }
 
-    // Use of singleton pattern to ensure only one Application is initiated
-    private void setApplication(ContractInterface app) {
+    // Use of singleton pattern to ensure only one Contract is initiated
+    private void setContract(ContractInterface app) {
         if (contract == null) {
             this.contract = app;
         }
@@ -85,6 +99,9 @@ public class ContractDetails extends JFrame {
 
     private void layoutComponents() {
         try {
+            fileChooser = new JFileChooser();
+            // If you need more choosbale files then add more choosable files
+            fileChooser.addChoosableFileFilter(new PDFFileFilter());
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -178,7 +195,7 @@ public class ContractDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lStartDate, gc);
 
-        JLabel startDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(contract.getStartDate()));
+        startDate = new JLabel(formatter.format(contract.getStartDate()));
         startDate.setFont(boldFont);
 
         gc.gridx++;
@@ -198,13 +215,13 @@ public class ContractDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(contractName, gc);
 
-        JLabel start = new JLabel(contract.getAgreementName());
-        start.setFont(boldFont);
+        name = new JLabel(contract.getAgreementName());
+        name.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
+        detailsPanel.add(name, gc);
 
         JLabel contractLength = new JLabel("Length    ");
         contractLength.setFont(plainFont);
@@ -214,7 +231,7 @@ public class ContractDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(contractLength, gc);
 
-        JLabel length = new JLabel(String.valueOf(contract.getLength()));
+        length = new JLabel(String.valueOf(contract.getLength()));
         length.setFont(boldFont);
 
         gc.gridx++;
@@ -233,9 +250,9 @@ public class ContractDetails extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel endDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(contract.getExpectedEndDate()));
-        endDate.setFont(boldFont);
-        detailsPanel.add(endDate, gc);
+        expectedEndDate = new JLabel(formatter.format(contract.getExpectedEndDate()));
+        expectedEndDate.setFont(boldFont);
+        detailsPanel.add(expectedEndDate, gc);
         
         
         ////////// NEXT ROW //////////
@@ -283,18 +300,17 @@ public class ContractDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lAcEndDate, gc);
 
-        JLabel acEndDate;
         if(contract.getActualEndDate() != null) {
-            acEndDate = new JLabel(new SimpleDateFormat("dd-MM-YYYY").format(contract.getActualEndDate()));
+            actualEndDate = new JLabel(formatter.format(contract.getActualEndDate()));
         } else {
-            acEndDate = new JLabel("");
+            actualEndDate = new JLabel("");
         }
-        acEndDate.setFont(boldFont);
+        actualEndDate.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(acEndDate, gc);
+        detailsPanel.add(actualEndDate, gc);
 
             ////////// NEXT ROW //////////
         gc.gridx = 0;
@@ -340,26 +356,75 @@ public class ContractDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    ContractSearch contractSearch = new ContractSearch();
-//                    contractSearch.setClient(client);
-//                    setVisible(false);
-//                    contractSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        } else if (pane == 1) {
+                            //Documents
+                            createDocument();
+                            System.out.println("TEST - Create Document");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            updateDocument();
+                            System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        } else if (pane == 1) {
+                            //Document
+                            deleteDocument();
+                            System.out.println("TEST - Delete Document");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        } else if (pane == 1) {
+                            //Document
+                            viewDocument();
+                            System.out.println("TEST - View Note");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -382,13 +447,10 @@ public class ContractDetails extends JFrame {
                         Note note = contract.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -412,13 +474,9 @@ public class ContractDetails extends JFrame {
                         Document document = contract.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadContractDocument(contract.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        ContractDetailsForm tenancyForm = new ContractDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -449,6 +507,172 @@ public class ContractDetails extends JFrame {
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Contract", contract.getAgreementRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = contract.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Contract", contract.getAgreementRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteContractNote(contract.getAgreementRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(ContractDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(ContractDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = contract.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void createDocument() {
+        try {
+            CreateDocument createDoc = new CreateDocument(client, "Contract", contract.getAgreementRef());
+            createDoc.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Document document = contract.getDocument(selection);
+                if (document != null) {
+                    if(fileChooser.showOpenDialog(ContractDetails.this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        int result = client.updateContractDocument(contract.getAgreementRef(), document.getDocumentRef(), file.getPath());
+                        if (result > 0) {
+                            String message = "Document " + selection + " has been successfully updated";
+                            String title = "Information";
+                            OKDialog.okDialog(ContractDetails.this, message, title);
+                        } else {
+                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
+                            String title = "Error";
+                            OKDialog.okDialog(ContractDetails.this, message, title);
+                        }
+                        System.out.println(fileChooser.getSelectedFile());
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE document " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Document Delete - Yes button clicked");
+                    int result = client.deleteContractDocument(contract.getAgreementRef(), selection);
+                    if (result > 0) {
+                        String message = "Document " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(ContractDetails.this, message, title);
+                    } else {
+                        String message = "Document " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(ContractDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            Document document;
+            try {
+                document = contract.getDocument(documentPanel.getSelectedObjectRef());
+                client.downloadContractDocument(contract.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            if(contract.getStartDate() != null) {
+                startDate.setText(formatter.format(contract.getStartDate()));
+            }
+            if(contract.getAgreementName() != null) {
+                name.setText(contract.getAgreementName());
+            }
+            
+            length.setText(String.valueOf(contract.getLength()));
+            
+            if(contract.getExpectedEndDate() != null) {
+                expectedEndDate.setText(formatter.format(contract.getExpectedEndDate()));
+            }
+            if(contract.getActualEndDate() != null) {
+                actualEndDate.setText(formatter.format(contract.getActualEndDate()));
+            }
+            
+            notePanel.setData(contract.getNotes());
+            documentPanel.setData(contract.getDocuments());
+            modPanel.setData(contract.getModifiedBy());
+            notePanel.refresh();
+            documentPanel.refresh();
+            modPanel.refresh();
+        } catch (RemoteException ex) {
+            Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

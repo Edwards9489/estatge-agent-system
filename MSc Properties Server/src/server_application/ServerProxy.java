@@ -17,6 +17,7 @@ import interfaces.Element;
 import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
 import interfaces.InvolvedPartyInterface;
+import interfaces.JobRoleBenefitInterface;
 import interfaces.JobRoleInterface;
 import interfaces.LandlordInterface;
 import interfaces.LeaseAccountInterface;
@@ -32,7 +33,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.List;
-import javax.security.auth.*;
 
 /**
  *
@@ -684,10 +684,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException {
+    public int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String comment, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getWrite()) {
-                return theServer.createPersonContact(pRef, contactTypeCode, value, date, createdBy);
+                return theServer.createPersonContact(pRef, contactTypeCode, value, date, comment, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -717,10 +717,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate, String createdBy) throws RemoteException {
+    public int createPersonAddressUsage(int pRef, int addrRef, Date startDate, String comment, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getWrite()) {
-                return theServer.createPersonAddressUsage(pRef, addrRef, startDate, createdBy);
+                return theServer.createPersonAddressUsage(pRef, addrRef, startDate, comment, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -860,10 +860,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String createdBy) throws RemoteException {
+    public int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String comment, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeWrite()) {
-                return theServer.createOfficeContact(oCode, contactTypeCode, value, date, createdBy);
+                return theServer.createOfficeContact(oCode, contactTypeCode, value, date, comment, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -893,10 +893,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, int address, String createdBy) throws RemoteException {
+    public int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getWrite()) {
-                return theServer.createInvolvedParty(pRef, aRef, joint, main, start, relationshipCode, address, createdBy);
+                return theServer.createInvolvedParty(pRef, aRef, joint, main, start, relationshipCode, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -904,10 +904,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateInvolvedParty(int iRef, boolean joint, boolean main, Date start, String relationshipCode, String modifiedBy) throws RemoteException {
+    public int updateInvolvedParty(int iRef, boolean joint, Date start, String relationshipCode, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getUpdate()) {
-                return theServer.updateInvolvedParty(iRef, joint, main, start, relationshipCode, modifiedBy);
+                return theServer.updateInvolvedParty(iRef, joint, start, relationshipCode, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1124,10 +1124,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String createdBy) throws RemoteException {
+    public int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String comment, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getWrite()) {
-                return theServer.createApplicationAddressUsage(applicationRef, addrRef, startDate, createdBy);
+                return theServer.createApplicationAddressUsage(applicationRef, addrRef, startDate, comment, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1421,7 +1421,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     public int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getUpdate()) {
-                return theServer.updatePropertyElement(comment, modifiedBy, charge, comment, modifiedBy);
+                return theServer.updatePropertyElement(eRef, pRef, startDate, stringValue, doubleValue, charge, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1572,6 +1572,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public JobRoleBenefitInterface getJobRoleBenefit(int jobRoleBenefitRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getJobRoleBenefit(jobRoleBenefitRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public int createJobRequirement(String code, String description, String comment, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeWrite()) {
@@ -1653,6 +1664,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getUpdate()) {
                 return theServer.updateTenancy(tRef, name, startDate, length, tenTypeCode, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int endTenancy(int tRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.endTenancy(tRef, endDate, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1814,6 +1836,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public int endLease(int lRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.endLease(lRef, endDate, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public int deleteLease(int lRef, String deletedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getDelete()) {
@@ -1939,6 +1972,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeUpdate()) {
                 return theServer.updateContract(cRef, name, startDate, length, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public int endContract(int cRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.endContract(cRef, endDate, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2331,10 +2375,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getTitle(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getTitle(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getTitles() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getTitles();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getGender(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getGender(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2353,10 +2419,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getMaritalStatus(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getMaritalStatus(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getMaritalStatuses() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getMaritalStatuses();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getEthnicOrigin(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getEthnicOrigin(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2375,10 +2463,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getLanguage(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getLanguage(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getLanguages() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getLanguages();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getNationality(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getNationality(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2397,10 +2507,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getSexuality(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getSexuality(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getSexualities() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getSexualities();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getReligion(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getReligion(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2419,10 +2551,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getPropertyType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPropertyType(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getPropertyTypes() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getPropertyTypes();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getPropertySubType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPropertySubType(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2441,10 +2595,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getPropElement(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPropElement(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getPropElements() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getPropElements();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getContactType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getContactType(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2463,10 +2639,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getEndReason(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getEndReason(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getEndReasons() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getEndReasons();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getRelationship(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getRelationship(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2485,6 +2683,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getJobBenefit(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getJobBenefit(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getJobBenefits() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
@@ -2496,10 +2705,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public Element getJobRequirement(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getJobRequirement(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<Element> getJobRequirements() throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
                 return theServer.getJobRequirements();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public Element getTenancyType(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getTenancyType(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2768,6 +2999,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public boolean personExists(int pRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.personExists(pRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public boolean personEmployeeExists(int pRef) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
@@ -2783,6 +3025,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.personLandlordExists(pRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+    
+    @Override
+    public boolean addressExists(int aRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.addressExists(aRef);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2860,6 +3113,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getProperty(pRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public PersonInterface getPerson(int pRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPerson(pRef);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }

@@ -98,7 +98,7 @@ public class TestDatabaseTRAIN3 {
         
         ModifiedBy modTest = new ModifiedBy("TEST", "DEDWARDS", new Date());
         
-        JobRoleBenefit benefit = new JobRoleBenefit(1, element, new Date(), true, null, 29.00, note2, "DEDWARDS", new Date());
+        JobRoleBenefit benefit = new JobRoleBenefit(1, element, new Date(), true, null, 29.00, note2, "EDM", "DEDWARDS", new Date());
         
         Address address = new Address(1, "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", note3, "DEDWARDS", new Date());
         Address address2 = new Address(2, "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", "NFA", note4, "DEDWARDS", new Date());
@@ -248,7 +248,7 @@ public class TestDatabaseTRAIN3 {
             jobRole.createJobBenefit(benefit, modTest);
             db.updateJobRole(jobRole.getJobRoleCode());
             db.createJobRoleRequirement(jobRole.getJobRoleCode(), element.getCode());
-            db.createJobRoleBenefit(jobRole.getJobRoleCode(), benefit);
+            db.createJobRoleBenefit(benefit);
             jobRole.createNote(note22, modTest);
             db.createJobRoleNote(jobRole.getJobRoleCode(), note22);
             System.out.println("Job Role Code: " + jobRole.getJobRoleCode());
