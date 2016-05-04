@@ -380,9 +380,15 @@ public class CreateContract extends JFrame {
         repaint();
     }
 
-    private void setEmpField(int empRef) {
+    public void setEmpField(int empRef) {
         if (empField != null) {
             empField.setText(String.valueOf(empRef));
+        }
+    }
+
+    public void setOfficeField(String officeCode) {
+        if (officeField != null) {
+            officeField.setSelectedItem(officeCode);
         }
     }
 

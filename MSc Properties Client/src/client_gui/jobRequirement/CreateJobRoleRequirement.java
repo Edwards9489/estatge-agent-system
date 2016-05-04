@@ -37,7 +37,7 @@ import javax.swing.border.Border;
  *
  * @author Dwayne
  */
-public class CreateJobRequirement extends JFrame {
+public class CreateJobRoleRequirement extends JFrame {
 
     ClientImpl client = null;
     JobRoleInterface jobRole = null;
@@ -47,7 +47,7 @@ public class CreateJobRequirement extends JFrame {
     private JTextArea textArea;
     private JPanel detailsPanel;
 
-    public CreateJobRequirement(ClientImpl client, JobRoleInterface jobRole) {
+    public CreateJobRoleRequirement(ClientImpl client, JobRoleInterface jobRole) {
         super("MSc Properties");
         setClient(client);
         setJobRole(jobRole);
@@ -84,7 +84,7 @@ public class CreateJobRequirement extends JFrame {
                 }
             }
         } catch (RemoteException ex) {
-            Logger.getLogger(CreateJobRequirement.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CreateJobRoleRequirement.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         requirementsField.addActionListener(new ActionListener() {
@@ -96,7 +96,7 @@ public class CreateJobRequirement extends JFrame {
                         Element requirement = client.getJobRequirement(requirementCode);
                         textArea.setText(requirement.getDescription());
                     } catch (RemoteException ex) {
-                        Logger.getLogger(CreateJobRequirement.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(CreateJobRoleRequirement.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     textArea.setText("");
@@ -116,17 +116,17 @@ public class CreateJobRequirement extends JFrame {
                         if (result > 0 && !requirementCode.equals("-")) {
                             String message = "The Requirement has been assigned to the Job Role " + jobRole.getJobRoleCode();
                             String title = "Information";
-                            OKDialog.okDialog(CreateJobRequirement.this, message, title);
+                            OKDialog.okDialog(CreateJobRoleRequirement.this, message, title);
                             setVisible(false);
                             dispose();
                         } else {
                             String message = "There is some errors with the information supplied to CREATE the Note\nPlease check the information supplied";
                             String title = "Error";
-                            OKDialog.okDialog(CreateJobRequirement.this, message, title);
+                            OKDialog.okDialog(CreateJobRoleRequirement.this, message, title);
                         }
                     }
                 } catch (RemoteException ex) {
-                    Logger.getLogger(CreateJobRequirement.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CreateJobRoleRequirement.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

@@ -18,6 +18,7 @@ import client_gui.PDFFileFilter;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
 import client_gui.landlord.LandlordDetails;
+import client_gui.landlord.LandlordSearch;
 import client_gui.modifications.ModPanel;
 import client_gui.note.CreateNote;
 import client_gui.note.NoteDetails;
@@ -597,8 +598,8 @@ public class LeaseDetails extends JFrame {
     }
     
     private void createLandlord() {
-        CreateLandlord createLandlord = new CreateLandlord(client);
-        createLandlord.setVisible(true);
+        LandlordSearch landlordSearch = new LandlordSearch(client);
+        landlordSearch.setVisible(true);
         System.out.println("TEST - Create Landlord");
     }
     

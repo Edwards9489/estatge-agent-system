@@ -6,36 +6,24 @@
 package client_gui.propertyElement;
 
 import client_application.ClientImpl;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.address.AddressSearch;
-import interfaces.AddressInterface;
 import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -279,12 +267,12 @@ public class UpdatePropElement extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);;
+        controlsPanel.add(new JLabel(""), gc);
         
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);;
+        controlsPanel.add(new JLabel(""), gc);
         
         JLabel valueLabel = new JLabel("Value    ");
         valueLabel.setFont(boldFont);

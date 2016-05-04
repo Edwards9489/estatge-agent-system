@@ -14,7 +14,11 @@ import javax.swing.JFrame;
  */
 public class CreateDocument extends JFrame {
 
-    public CreateDocument(ClientImpl client, String application, int applicationRef) {
+    public CreateDocument(ClientImpl client, String application, int ref) {
+        
+    }
+    
+    public CreateDocument(ClientImpl client, String application, String code) {
         
     }
     

@@ -220,7 +220,7 @@ public class CreateContact extends JFrame {
 
             valueField.setFont(plainFont);
             Dimension dimension = valueField.getPreferredSize();
-            dimension.setSize(dimension.getWidth() + 300, dimension.getHeight());
+            dimension.setSize(dimension.getWidth() + 370, dimension.getHeight());
             valueField.setPreferredSize(dimension);
 
             gc.gridx++;

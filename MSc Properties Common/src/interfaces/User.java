@@ -20,12 +20,12 @@ public interface User extends Remote {
     String getPassword() throws RemoteException;
     String getOfficeCode() throws RemoteException;
     boolean getPasswordReset() throws RemoteException;
-    boolean getRead() throws RemoteException;
-    boolean getWrite() throws RemoteException;
-    boolean getUpdate() throws RemoteException;
-    boolean getDelete() throws RemoteException;
-    boolean getEmployeeRead() throws RemoteException;
-    boolean getEmployeeWrite() throws RemoteException;
-    boolean getEmployeeUpdate() throws RemoteException;
-    boolean getEmployeeDelete() throws RemoteException;
+    Boolean getRead() throws RemoteException;
+    Boolean getWrite() throws RemoteException;
+    Boolean getUpdate() throws RemoteException;
+    Boolean getDelete() throws RemoteException;
+    Boolean getEmployeeRead() throws RemoteException;
+    Boolean getEmployeeWrite() throws RemoteException;
+    Boolean getEmployeeUpdate() throws RemoteException;
+    Boolean getEmployeeDelete() throws RemoteException;
 }

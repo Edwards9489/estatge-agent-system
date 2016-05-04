@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.tenancy;
+package client_gui.landlord;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.person.PeopleSearchPanel;
 import client_gui.StringArrayListener;
-import client_gui.property.PropertyPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,20 +31,21 @@ import javax.swing.JPanel;
  *
  * @author Dwayne
  */
-public class PropertySearch extends JFrame {
+public class LandlordSearch extends JFrame {
 
     private ClientImpl client = null;
     private IntegerListener listener = null;
 
     private JButton okButton;
     private JButton cancelButton;
+    private JButton createButton;
 
-    private PropertyPanel propertyPanel;
+    private LandlordPanel landlordPanel;
     private JPanel searchResultsPanel;
 
     private SimpleDateFormat dateFormatter;
 
-    public PropertySearch(ClientImpl client) {
+    public LandlordSearch(ClientImpl client) {
         super("MSc Properties");
         setClient(client);
         this.layoutComponents();
@@ -70,12 +71,13 @@ public class PropertySearch extends JFrame {
 
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
+        createButton = new JButton("Create Landlord");
 
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (propertyPanel.getSelectedObjectRef() != null) {
-                    listener.intOmitted(propertyPanel.getSelectedObjectRef());
+                if (landlordPanel.getSelectedObjectRef() != null) {
+                    listener.intOmitted(landlordPanel.getSelectedObjectRef());
                     setVisible(false);
                     dispose();
                 }
@@ -89,37 +91,45 @@ public class PropertySearch extends JFrame {
                 dispose();
             }
         });
+        
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                CreateLandlord landlordGUI = new CreateLandlord(client);
+                landlordGUI.setVisible(true);
+            }
+        });
 
-        propertyPanel = new PropertyPanel("Properties");
+        landlordPanel = new LandlordPanel("Landlords");
 
         this.setSize(1200, 800);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
-//        PropertySearchPanel detailsPanel = new PeopleSearchPanel(client);
-//
-//        detailsPanel.setListener(new StringArrayListener() {
-//            @Override
-//            public void arrayOmitted(List<String> array) {
-//                if (array.size() == 15) {
-//                    try {
-//                        Date dob = null;
-//                        Date createdDate = null;
-//                        
-//                        if (array.get(4) != null) {
-//                            dob = dateFormatter.parse(array.get(4));
-//                        }
-//                        if (array.get(14) != null) {
-//                            createdDate = dateFormatter.parse(array.get(14));
-//                        }
-//                        propertyPanel.setData(client.getProperties(null, null, null, null, null, null, createdDate));
-//                        propertyPanel.refresh();
-//                    } catch (RemoteException | ParseException ex) {
-//                        Logger.getLogger(PropertySearch.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//        });
+        PeopleSearchPanel detailsPanel = new PeopleSearchPanel(client);
+
+        detailsPanel.setListener(new StringArrayListener() {
+            @Override
+            public void arrayOmitted(List<String> array) {
+                if (array.size() == 15) {
+                    try {
+                        Date dob = null;
+                        Date createdDate = null;
+                        
+                        if (array.get(4) != null) {
+                            dob = dateFormatter.parse(array.get(4));
+                        }
+                        if (array.get(14) != null) {
+                            createdDate = dateFormatter.parse(array.get(14));
+                        }
+                        landlordPanel.setData(client.getPeopleLandlords(array.get(0), array.get(1), array.get(2), array.get(3), dob, array.get(5), array.get(6), array.get(7), array.get(8), array.get(9), array.get(10), array.get(11), array.get(12), array.get(13), createdDate));
+                        landlordPanel.refresh();
+                    } catch (RemoteException | ParseException ex) {
+                        Logger.getLogger(LandlordSearch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
@@ -129,6 +139,7 @@ public class PropertySearch extends JFrame {
 
         ////////// BUTTONS PANEL //////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonsPanel.add(createButton);
         buttonsPanel.add(okButton);
         buttonsPanel.add(cancelButton);
 
@@ -136,12 +147,12 @@ public class PropertySearch extends JFrame {
         okButton.setPreferredSize(btnSize);
 
         //Add components to searchResultsPanel
-        searchResultsPanel.add(propertyPanel, BorderLayout.CENTER);
+        searchResultsPanel.add(landlordPanel, BorderLayout.CENTER);
         searchResultsPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         // Add sub panels to dialog
         setLayout(new BorderLayout());
-        //add(detailsPanel, BorderLayout.CENTER);
+        add(detailsPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
     }
 
@@ -149,7 +160,7 @@ public class PropertySearch extends JFrame {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                new PropertySearch().setVisible(true);
+//                new LandlordSearch().setVisible(true);
 //            }
 //        });
 //    }

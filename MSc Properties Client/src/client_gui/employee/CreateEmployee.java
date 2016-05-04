@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.addressUsage;
+package client_gui.employee;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.address.AddressSearch;
-import interfaces.AddressInterface;
+import client_gui.person.PersonSearch;
+import interfaces.PersonInterface;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -28,8 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -40,32 +37,27 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-import org.jdesktop.swingx.JXDatePicker;
 
 /**
  *
  * @author Dwayne
  */
-public class CreateAddressUsage extends JFrame {
+public class CreateEmployee extends JFrame {
     private ClientImpl client = null;
     private JButton okButton;
     private JButton cancelButton;
-    private final String addressType;
-    private final int ref;
     private JPanel controlsPanel;
-    private JTextField addrField;
-    private int addrRef = -1;
-    private JXDatePicker dateField;
-    private JTextArea textArea;
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
-    public CreateAddressUsage(ClientImpl client, String addressType, int ref) {
+    private JTextField personField;
+    private int personRef = -1;
+    
+    private JTextField usernameField;
+    private JTextField passwordField;
+    
+    public CreateEmployee(ClientImpl client) {
         setClient(client);
-        this.ref = ref;
-        this.addressType = addressType;
         layoutComponents();
     }
     
@@ -79,42 +71,46 @@ public class CreateAddressUsage extends JFrame {
     private void layoutComponents() {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
-        
-        addrField = new JTextField();
+        personField = new JTextField(30);
+        usernameField = new JTextField(10);
+        passwordField = new JTextField(10);
         
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 int result = 0;
-                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new Address Usage for " + addressType + ref + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                String username = usernameField.getText();
+                String password = passwordField.getText();
+                
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new Employee with username " + username + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION) {
-                    Date date = dateField.getDate();
-                    String comment = textArea.getText();
-                    try {
-                        switch (addressType) {
-                            case "Person":
-                                result = client.createPersonAddressUsage(ref, addrRef, date, comment);
-                                System.out.println("createPersonAddress");
-                                break;
-                            case "Application":
-                                result = client.createApplicationAddressUsage(ref, addrRef, date, comment);
-                                System.out.println("createApplicationAddress");
-                                break;
+                    if (username != null && !username.isEmpty() && password != null && !password.isEmpty() && personRef > 0) {
+                        try {
+                            result = client.createEmployee(personRef, username, password);
+                            
+                            System.out.println("Result: " + result);
+                            
+                            if (result > 0) {
+                                String message = "The new Employee has been created with username " + username + " and assigned Employee Ref " + result;
+                                String title = "Information";
+                                OKDialog.okDialog(CreateEmployee.this, message, title);
+                                setVisible(false);
+                                dispose();
+                                System.out.println("DISPOSED");
+                            } else {
+                                String message = "There is some errors with the information supplied to CREATE the new Employee\nPlease check the information supplied";
+                                String title = "Error";
+                                OKDialog.okDialog(CreateEmployee.this, message, title);
+                                System.out.println("ERRORS");
+                            }
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(CreateEmployee.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
-                        if (result > 0) {
-                            String message = "The new Address Usage  for " + addressType + ref + " has been created and assigned Address Usage Ref " + result;
-                            String title = "Information";
-                            OKDialog.okDialog(CreateAddressUsage.this, message, title);
-                            setVisible(false);
-                            dispose();
-                        } else {
-                            String message = "There is some errors with the information supplied to CREATE the Address Usage\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(CreateAddressUsage.this, message, title);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+                    } else {
+                        String message = "There is some errors with the information supplied to CREATE the new Employee\nPlease check the information supplied";
+                        String title = "Error";
+                        OKDialog.okDialog(CreateEmployee.this, message, title);
+                        System.out.println("ERRORS");
                     }
                 }
             }
@@ -128,88 +124,85 @@ public class CreateAddressUsage extends JFrame {
             }
         });
         
-        this.setSize(1100, 300);
+        this.setMinimumSize(new Dimension(650, 300));
+        this.setSize(650, 300);
+        
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-
+        
+        
         JPanel buttonsPanel = new JPanel();
-
+        
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("Create Address Usage");
-
+        Border titleBorder = BorderFactory.createTitledBorder("Create Employee");
+        
         controlsPanel = new JPanel();
         controlsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
-
         controlsPanel.setLayout(new GridBagLayout());
+        
         
         GridBagConstraints gc = new GridBagConstraints();
         
-        ////////// FIRST ROW //////////
+        //////////////// FIRST ROW ///////////////////
         
         gc.gridx = 0;
         gc.gridy = 0;
-
         gc.weightx = 1;
         gc.weighty = 1;
-
-        JLabel address = new JLabel("Address    ");
-        Font font = address.getFont();
+        
+        JLabel personLabel = new JLabel("Person  ");
+        Font font = personLabel.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 15);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 15);
-        address.setFont(boldFont);
+        personLabel.setFont(boldFont);
         
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(address, gc);
-
-        addrField.setFont(plainFont);
-        Dimension dimension = addrField.getPreferredSize();
-        dimension.setSize(dimension.getWidth() + 390, dimension.getHeight());
-        addrField.setPreferredSize(dimension);
-        addrField.setEnabled(false);
-        addrField.setDisabledTextColor(Color.BLACK);
-
+        controlsPanel.add(personLabel, gc);
+        
+        personField.setFont(plainFont);
+        
         gc.gridx++;
-        gc.gridwidth = 4;
+        gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(addrField, gc);
-
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(personField, gc);
+        
         Image srchImge = null;
-        JLabel addrThumb = new JLabel();
-
+        JLabel personThumb = new JLabel();
+        
         try {
             srchImge = ImageIO.read(new File("D:\\System Images\\search magnifying glass.png")).getScaledInstance(25, 25, BufferedImage.SCALE_SMOOTH);
         } catch (IOException ex) {
-            Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CreateEmployee.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         if (srchImge != null) {
             ImageIcon icon = new ImageIcon(srchImge);
-            addrThumb.setIcon(icon);
+            personThumb.setIcon(icon);
         }
-
-        addrThumb.addMouseListener(new MouseAdapter() {
+        
+        personThumb.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                AddressSearch addrSearch = new AddressSearch(client);
-                addrSearch.setVisible(true);
-                addrSearch.setListener(new IntegerListener() {
+                PersonSearch personSearch = new PersonSearch(client);
+                personSearch.setVisible(true);
+                personSearch.setListener(new IntegerListener() {
                     @Override
                     public void intOmitted(int addressRef) {
                         try {
-                            if (client.addressExists(addressRef)) {
-                                AddressInterface address = client.getAddress(addressRef);
-                                if (address != null) {
-                                    setAddrField(address.printAddress());
-                                    addrRef = address.getAddressRef();
+                            if (client.personExists(addressRef) && !client.personEmployeeExists(addressRef)) {
+                                PersonInterface person = client.getPerson(addressRef);
+                                if (person != null) {
+                                    setPersonField(person.getName());
+                                    personRef = person.getPersonRef();
                                 }
                             }
                         } catch (RemoteException ex) {
-                            Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(CreateEmployee.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
@@ -223,12 +216,6 @@ public class CreateAddressUsage extends JFrame {
         controlsPanel.add(new JLabel(""), gc);
         
         gc.gridx++;
-        gc.gridwidth = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);
-        
-        gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(new JLabel(""), gc);
@@ -236,68 +223,62 @@ public class CreateAddressUsage extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(addrThumb, gc);
-
-        ////////// NEXT ROW //////////
+        controlsPanel.add(personThumb, gc);
+        
+        ///////// NEXT ROW /////////////        
         
         gc.gridx = 0;
         gc.gridy++;
-
         gc.weightx = 1;
         gc.weighty = 1;
-
-        JLabel startDate = new JLabel("Start Date    ");
-        startDate.setFont(boldFont);
-
+        
+        JLabel usernameLabel = new JLabel("Username  ");
+        usernameLabel.setFont(boldFont);
+        
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(startDate, gc);
+        controlsPanel.add(usernameLabel, gc);
         
-        dateField = new JXDatePicker();
-        dateField.setFormats(formatter);
-        dateField.setFont(plainFont);
-
+        usernameField.setFont(plainFont);
+        
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(dateField, gc);
-
-        JLabel comment = new JLabel("Comment    ");
-        comment.setFont(boldFont);
-
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(usernameField, gc);
+        
         gc.gridx++;
-        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(new JLabel(""), gc);
+        
+        JLabel passwordLabel = new JLabel("Password  ");
+        passwordLabel.setFont(boldFont);
+        
+        gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(comment, gc);
+        controlsPanel.add(passwordLabel, gc);
         
-        textArea = new JTextArea(3, 30);
-        textArea.setLineWrap(true);
-        textArea.setFont(plainFont);
-
+        passwordField.setFont(plainFont);
         gc.gridx++;
-        gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(textArea, gc);
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(passwordField, gc);
         
-
-        ////////// BUTTONS PANEL //////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         buttonsPanel.add(okButton);
         buttonsPanel.add(cancelButton);
-
+        
         Dimension btnSize = cancelButton.getPreferredSize();
         okButton.setPreferredSize(btnSize);
-
-        // Add sub panels to dialog
+        
         setLayout(new BorderLayout());
         add(controlsPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
     }
     
-    private void setAddrField(String text) {
-        addrField.setText(text);
+    private void setPersonField(String text) {
+        personField.setText(text);
     }
 }

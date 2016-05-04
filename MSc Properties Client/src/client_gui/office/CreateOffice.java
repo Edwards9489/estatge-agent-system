@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.addressUsage;
+package client_gui.office;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
@@ -40,7 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import org.jdesktop.swingx.JXDatePicker;
@@ -49,23 +48,19 @@ import org.jdesktop.swingx.JXDatePicker;
  *
  * @author Dwayne
  */
-public class CreateAddressUsage extends JFrame {
+public class CreateOffice extends JFrame {
     private ClientImpl client = null;
     private JButton okButton;
     private JButton cancelButton;
-    private final String addressType;
-    private final int ref;
     private JPanel controlsPanel;
-    private JTextField addrField;
     private int addrRef = -1;
+    private JTextField addrField;
     private JXDatePicker dateField;
-    private JTextArea textArea;
+    private JTextField codeField;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
-    public CreateAddressUsage(ClientImpl client, String addressType, int ref) {
+    public CreateOffice(ClientImpl client) {
         setClient(client);
-        this.ref = ref;
-        this.addressType = addressType;
         layoutComponents();
     }
     
@@ -79,42 +74,36 @@ public class CreateAddressUsage extends JFrame {
     private void layoutComponents() {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
-        
-        addrField = new JTextField();
+        codeField = new JTextField(7);
+        addrField = new JTextField(50);
         
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 int result = 0;
-                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new Address Usage for " + addressType + ref + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new Office?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION) {
+                    String code = codeField.getText();
                     Date date = dateField.getDate();
-                    String comment = textArea.getText();
-                    try {
-                        switch (addressType) {
-                            case "Person":
-                                result = client.createPersonAddressUsage(ref, addrRef, date, comment);
-                                System.out.println("createPersonAddress");
-                                break;
-                            case "Application":
-                                result = client.createApplicationAddressUsage(ref, addrRef, date, comment);
-                                System.out.println("createApplicationAddress");
-                                break;
+                    if (code != null && date != null && addrRef > 0) {
+                        try {
+
+                            result = client.createOffice(code, addrRef, date);
+
+                            if (result > 0) {
+                                String message = "The new Office has been created with unique Office Code " + code;
+                                String title = "Information";
+                                OKDialog.okDialog(CreateOffice.this, message, title);
+                                setVisible(false);
+                                dispose();
+                            } else {
+                                String message = "There is some errors with the information supplied to CREATE the Office\nPlease check the information supplied";
+                                String title = "Error";
+                                OKDialog.okDialog(CreateOffice.this, message, title);
+                            }
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(CreateOffice.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
-                        if (result > 0) {
-                            String message = "The new Address Usage  for " + addressType + ref + " has been created and assigned Address Usage Ref " + result;
-                            String title = "Information";
-                            OKDialog.okDialog(CreateAddressUsage.this, message, title);
-                            setVisible(false);
-                            dispose();
-                        } else {
-                            String message = "There is some errors with the information supplied to CREATE the Address Usage\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(CreateAddressUsage.this, message, title);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -128,7 +117,7 @@ public class CreateAddressUsage extends JFrame {
             }
         });
         
-        this.setSize(1100, 300);
+        this.setSize(900, 250);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
@@ -136,7 +125,7 @@ public class CreateAddressUsage extends JFrame {
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("Create Address Usage");
+        Border titleBorder = BorderFactory.createTitledBorder("Create Office");
 
         controlsPanel = new JPanel();
         controlsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
@@ -154,10 +143,59 @@ public class CreateAddressUsage extends JFrame {
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel address = new JLabel("Address    ");
-        Font font = address.getFont();
+        JLabel office = new JLabel("Office Code *    ");
+        Font font = office.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 15);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 15);
+        office.setFont(boldFont);
+        
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(office, gc);
+        
+        codeField.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(codeField, gc);
+        
+        gc.gridx++;
+        gc.gridwidth = 1;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(new JLabel(""), gc);
+        
+        JLabel startDate = new JLabel("Start Date    ");
+        startDate.setFont(boldFont);
+        
+        startDate.setFont(boldFont);
+
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(startDate, gc);
+        
+        dateField = new JXDatePicker();
+        dateField.setFormats(formatter);
+        dateField.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(dateField, gc);
+        
+
+        ////////// NEXT ROW //////////
+        
+        gc.gridx = 0;
+        gc.gridy++;
+
+        gc.weightx = 1;
+        gc.weighty = 1;
+        
+        JLabel address = new JLabel("Address *    ");
         address.setFont(boldFont);
         
         gc.fill = GridBagConstraints.NONE;
@@ -166,14 +204,11 @@ public class CreateAddressUsage extends JFrame {
         controlsPanel.add(address, gc);
 
         addrField.setFont(plainFont);
-        Dimension dimension = addrField.getPreferredSize();
-        dimension.setSize(dimension.getWidth() + 390, dimension.getHeight());
-        addrField.setPreferredSize(dimension);
         addrField.setEnabled(false);
         addrField.setDisabledTextColor(Color.BLACK);
 
         gc.gridx++;
-        gc.gridwidth = 4;
+        gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 0);
         controlsPanel.add(addrField, gc);
@@ -184,7 +219,7 @@ public class CreateAddressUsage extends JFrame {
         try {
             srchImge = ImageIO.read(new File("D:\\System Images\\search magnifying glass.png")).getScaledInstance(25, 25, BufferedImage.SCALE_SMOOTH);
         } catch (IOException ex) {
-            Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CreateOffice.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         if (srchImge != null) {
@@ -209,7 +244,7 @@ public class CreateAddressUsage extends JFrame {
                                 }
                             }
                         } catch (RemoteException ex) {
-                            Logger.getLogger(CreateAddressUsage.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(CreateOffice.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
@@ -219,17 +254,11 @@ public class CreateAddressUsage extends JFrame {
         gc.gridx++;
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 5);
+        gc.insets = new Insets(0, 0, 0, 0);
         controlsPanel.add(new JLabel(""), gc);
         
         gc.gridx++;
-        gc.gridwidth = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);
-        
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
+        gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(new JLabel(""), gc);
         
@@ -237,50 +266,6 @@ public class CreateAddressUsage extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(addrThumb, gc);
-
-        ////////// NEXT ROW //////////
-        
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-
-        JLabel startDate = new JLabel("Start Date    ");
-        startDate.setFont(boldFont);
-
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(startDate, gc);
-        
-        dateField = new JXDatePicker();
-        dateField.setFormats(formatter);
-        dateField.setFont(plainFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(dateField, gc);
-
-        JLabel comment = new JLabel("Comment    ");
-        comment.setFont(boldFont);
-
-        gc.gridx++;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(comment, gc);
-        
-        textArea = new JTextArea(3, 30);
-        textArea.setLineWrap(true);
-        textArea.setFont(plainFont);
-
-        gc.gridx++;
-        gc.gridwidth = 3;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(textArea, gc);
         
 
         ////////// BUTTONS PANEL //////////

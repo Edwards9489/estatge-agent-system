@@ -73,6 +73,11 @@ public class Employee extends UnicastRemoteObject implements EmployeeInterface {
         temp.setOfficeCode(officeCode);
     }
     
+    public void setPasswordReset(boolean reset) {
+        UserImpl temp = (UserImpl) this.user;
+        temp.setPasswordReset(reset);
+    }
+    
     public void setMemorableLocation(String answer) {
         this.memorableLocation = answer;
     }

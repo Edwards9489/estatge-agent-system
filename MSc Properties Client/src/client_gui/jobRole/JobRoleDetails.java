@@ -5,9 +5,9 @@
  */
 package client_gui.jobRole;
 
-import client_gui.jobRequirement.CreateJobRequirement;
+import client_gui.jobRequirement.CreateJobRoleRequirement;
 import client_gui.jobBenefit.JobRoleBenefitDetails;
-import client_gui.jobBenefit.CreateJobBenefit;
+import client_gui.jobBenefit.CreateJobRoleBenefit;
 import client_gui.jobBenefit.UpdateJobRoleBenefit;
 import client_gui.jobBenefit.BenefitPanel;
 import client_application.ClientImpl;
@@ -141,7 +141,7 @@ public class JobRoleDetails extends JFrame {
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("JobRole Details");
+        Border titleBorder = BorderFactory.createTitledBorder("Job Role Details");
 
         detailsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
 
@@ -611,7 +611,7 @@ public class JobRoleDetails extends JFrame {
     }
     
     private void createJobRoleRequirement() {
-        CreateJobRequirement createJobRequirement = new CreateJobRequirement(client, jobRole);
+        CreateJobRoleRequirement createJobRequirement = new CreateJobRoleRequirement(client, jobRole);
         createJobRequirement.setVisible(true);
         System.out.println("TEST - Create Note");
     }
@@ -656,9 +656,13 @@ public class JobRoleDetails extends JFrame {
     }
     
     private void createJobRoleBenefit() {
-        CreateJobBenefit createJobBenefit = new CreateJobBenefit(client, jobRole);
-        createJobBenefit.setVisible(true);
-        System.out.println("TEST - Create Job Benefit");
+        try {
+            CreateJobRoleBenefit createJobBenefit = new CreateJobRoleBenefit(client, jobRole.getJobRoleCode());
+            createJobBenefit.setVisible(true);
+            System.out.println("TEST - Create Job Benefit");
+        } catch (RemoteException ex) {
+            Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void updateJobRoleBenefit() {
@@ -667,7 +671,7 @@ public class JobRoleDetails extends JFrame {
             try {
                 JobRoleBenefitInterface jobRoleBenefit = client.getJobRoleBenefit(selection);
                 if (jobRoleBenefit != null) {
-                    UpdateJobRoleBenefit jobRoleBenefitDetails = new UpdateJobRoleBenefit(client, jobRoleBenefit, jobRole.getJobRoleCode());
+                    UpdateJobRoleBenefit jobRoleBenefitDetails = new UpdateJobRoleBenefit(client, jobRoleBenefit);
                     jobRoleBenefitDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {

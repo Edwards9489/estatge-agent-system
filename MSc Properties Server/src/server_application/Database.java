@@ -2749,7 +2749,11 @@ public class Database {
                 updateStat.setInt(col++, property.getAddress().getAddressRef());
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getAcquiredDate()));
                 updateStat.setDate(col++, DateConversion.utilDateToSQLDate(property.getLeaseEndDate()));
-                updateStat.setInt(col++, property.getLeaseRef());
+                if (property.getLeaseRef() != null) {
+                    updateStat.setInt(col++, property.getLeaseRef());
+                } else {
+                    updateStat.setString(col++, null);
+                }
                 updateStat.setString(col++, property.getPropType().getCode());
                 if (property.getPropSubType() != null) {
                     updateStat.setString(col++, property.getPropSubType().getCode());
@@ -5611,7 +5615,17 @@ public class Database {
                             Date createdDate = results.getDate("createdDate");
 
                             Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                            JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue != null, stringValue, doubleValue, note, code, createdBy, createdDate);
+                            System.out.println();
+                            System.out.println("Job Role Benefit: " + jobBenefitRef);
+                            System.out.println("Job Benefit: " + benefitCode);
+                            System.out.println("Start Date: " + startDate);
+                            System.out.println("Is Salary Benefit? " + (stringValue == null));
+                            System.out.println("String Value: " + stringValue);
+                            System.out.println("Double Value: " + doubleValue);
+                            System.out.println("Comment: " + note);
+                            System.out.println("Job Role Code: " + code);
+                            System.out.println();
+                            JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue == null, stringValue, doubleValue, note, code, createdBy, createdDate);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
@@ -5923,7 +5937,7 @@ public class Database {
         this.employees.clear();
         String sql = "select employeeRef, personRef, officeCode, memorableLocation, createdBy, createdDate from employees order by employeeRef";
         String sql1 = "select count(employeeRef) as count from users where employeeRef=?";
-        String sql2 = "select username, password from users where employeeRef=?";
+        String sql2 = "select username, password, reset from users where employeeRef=?";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
@@ -5952,7 +5966,9 @@ public class Database {
                                     results2.next();
                                     String username = results2.getString("username");
                                     String password = results2.getString("password");
+                                    Boolean reset = results2.getBoolean("reset");
                                     Employee temp = new Employee(employeeRef, person, username, password, createdBy, createdDate);
+                                    temp.setPasswordReset(reset);
                                     temp.setMemorableLocation(memorableLocation);
                                     employees.put(temp.getEmployeeRef(), temp);
                                     users.put(temp.getUser().getUsername(), temp.getUser());
@@ -8104,21 +8120,12 @@ public class Database {
 
     public void createUser(User user) throws SQLException, RemoteException {
         if ((!this.userExists(user.getUsername())) && (this.employeeExists(user.getEmployeeRef()) || user.getUsername().equals("ADMIN"))) {
-            String insertSql = "insert into users (employeeRef, username, password, otherRead, otherWrite, "
-                    + "otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into users (employeeRef, username, password) values (?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, user.getEmployeeRef());
                 insertStat.setString(col++, user.getUsername());
                 insertStat.setString(col++, user.getPassword());
-                insertStat.setBoolean(col++, user.getRead());
-                insertStat.setBoolean(col++, user.getWrite());
-                insertStat.setBoolean(col++, user.getUpdate());
-                insertStat.setBoolean(col++, user.getDelete());
-                insertStat.setBoolean(col++, user.getEmployeeRead());
-                insertStat.setBoolean(col++, user.getEmployeeWrite());
-                insertStat.setBoolean(col++, user.getEmployeeUpdate());
-                insertStat.setBoolean(col++, user.getEmployeeDelete());
                 insertStat.executeUpdate();
                 insertStat.close();
             }
@@ -8130,18 +8137,51 @@ public class Database {
         if (this.userExists(username)) {
             User user = this.getUser(username);
             String updateSql = "update users set password=?, otherRead=?, otherWrite=?, otherUpdate=?, otherDelete=?, "
-                    + "employeeRead=?, employeeWrite=?, employeeUpdate=?, employeeDelete=? where username=? and employeeRef=?";
+                    + "employeeRead=?, employeeWrite=?, employeeUpdate=?, employeeDelete=?, reset=? where username=? and employeeRef=?";
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
                 updateStat.setString(col++, user.getPassword());
-                updateStat.setBoolean(col++, user.getRead());
-                updateStat.setBoolean(col++, user.getWrite());
-                updateStat.setBoolean(col++, user.getUpdate());
-                updateStat.setBoolean(col++, user.getDelete());
-                updateStat.setBoolean(col++, user.getEmployeeRead());
-                updateStat.setBoolean(col++, user.getEmployeeWrite());
-                updateStat.setBoolean(col++, user.getEmployeeUpdate());
-                updateStat.setBoolean(col++, user.getEmployeeDelete());
+                if (user.getRead() != null) {
+                    updateStat.setBoolean(col++, user.getRead());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getWrite() != null) {
+                    updateStat.setBoolean(col++, user.getWrite());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getUpdate() != null) {
+                    updateStat.setBoolean(col++, user.getUpdate());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getDelete() != null) {
+                    updateStat.setBoolean(col++, user.getDelete());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getEmployeeRead() != null) {
+                    updateStat.setBoolean(col++, user.getEmployeeRead());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getEmployeeWrite() != null) {
+                    updateStat.setBoolean(col++, user.getEmployeeWrite());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getEmployeeUpdate() != null) {
+                    updateStat.setBoolean(col++, user.getEmployeeUpdate());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                if (user.getEmployeeDelete() != null) {
+                    updateStat.setBoolean(col++, user.getEmployeeDelete());
+                } else {
+                    updateStat.setString(col++, null);
+                }
+                updateStat.setBoolean(col++, user.getPasswordReset());
                 updateStat.setString(col++, user.getUsername());
                 updateStat.setInt(col++, user.getEmployeeRef());
                 updateStat.executeUpdate();

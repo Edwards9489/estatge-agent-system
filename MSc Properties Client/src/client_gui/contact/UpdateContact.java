@@ -289,7 +289,7 @@ public class UpdateContact extends JFrame {
 
             valueField.setFont(plainFont);
             Dimension dimension = valueField.getPreferredSize();
-            dimension.setSize(dimension.getWidth() + 250, dimension.getHeight());
+            dimension.setSize(dimension.getWidth() + 160, dimension.getHeight());
             valueField.setPreferredSize(dimension);
 
             gc.gridx++;

@@ -1029,6 +1029,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int updateEmployeePassword(int empRef, String password) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.updateEmployeePassword(empRef, password, this.getUsername());
+        }
+        return 0;
+    }
 
     public int deleteEmployee(int eRef) throws RemoteException {
         if (this.server.isAlive()) {
@@ -1058,9 +1065,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createLandlord(int lRef) throws RemoteException {
+    public int createLandlord(int pRef) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createLandlord(lRef, this.getUsername());
+            return server.createLandlord(pRef, this.getUsername());
         }
         return 0;
     }
@@ -1270,9 +1277,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException {
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.updateJobRoleBenefit(benefitRef, jobRoleCode, benefitCode, startDate, salaryBenefit, stringValue, doubleValue, comment, this.getUsername());
+            return server.updateJobRoleBenefit(benefitRef, jobRoleCode, startDate, salaryBenefit, stringValue, doubleValue, comment, this.getUsername());
         }
         return 0;
     }
@@ -2710,7 +2717,7 @@ public class ClientImpl extends Observable implements Client {
     }
     
     public List<LandlordInterface> getPeopleLandlords(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, 
-            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, int addrRef, Date addressStartDate, String createdBy, Date createdDate) throws RemoteException {
+            String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getPeopleLandlords(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode,
                  languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);

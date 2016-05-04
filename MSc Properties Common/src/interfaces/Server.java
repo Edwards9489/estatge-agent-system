@@ -156,7 +156,7 @@ public interface Server extends Remote {
     int createJobRoleRequirement(String jobRoleCode, String requirement, String createdBy) throws RemoteException;
     int deleteJobRoleRequirement(String jobRoleCode, String requirement, String deletedBy) throws RemoteException;
     int createJobRoleBenefit(String jobRoleCode, String benefit, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String createdBy) throws RemoteException;
-    int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException;
+    int updateJobRoleBenefit(int benefitRef, String jobRoleCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException;
     int endJobRoleBenefit(int benefitRef, String jobRoleCode, Date endDate, String modifiedBy) throws RemoteException;
     int deleteJobRoleBenefit(String jobRoleCode, int benefit, String deletedBy) throws RemoteException;
     JobRoleBenefitInterface getJobRoleBenefit(int jobRoleBenefitRef) throws RemoteException;

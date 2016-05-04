@@ -7,6 +7,8 @@ package client_gui.login;
 
 import client_gui.home_screen.HomeForm;
 import client_application.ClientImpl;
+import client_gui.employee.UpdateEmployeeSecurity;
+import interfaces.User;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -79,7 +81,7 @@ public class LoginForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
 
-                String user = userField.getText();
+                String username = userField.getText();
                 char[] password = passwordField.getPassword();
                 String address = "127.0.0.1";
                 String envir = null;
@@ -91,12 +93,18 @@ public class LoginForm extends JFrame {
                 
                 
                 try {
-                    ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{address, envir, user, new String(password)});
-                    if (client.isServerSet()){
-                        if(client.isUser(user, new String(password))) {
-                            HomeForm home = new HomeForm(client);
-                            home.setVisible(true);
-                            setVisible(false);
+                    ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{address, envir, username, new String(password)});
+                    if (client != null && client.isServerSet()){
+                        if(client.isUser(username, new String(password))) {
+                            User user = client.getUser();
+                            if (user != null && user.getPasswordReset()) {
+                                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                                securityGUI.setVisible(true);
+                            } else {
+                                HomeForm home = new HomeForm(client);
+                                home.setVisible(true);
+                                setVisible(false);
+                            }
                         } else {
                             invUser = true;
                             layoutComponents();
@@ -106,7 +114,7 @@ public class LoginForm extends JFrame {
                     Logger.getLogger(LoginForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                System.out.println(user + " : " + new String(password));
+                System.out.println(username + " : " + new String(password));
                 
                 // by wrapping Array of chars in a String it allows you to read the password
                 // usually when you do sys out on Array of chars it outputs reference to Array object

@@ -402,6 +402,12 @@ public class CreateLease extends JFrame {
         }
     }
 
+    public void setOfficeField(String officeCode) {
+        if (officeField != null) {
+            officeField.setSelectedItem(officeCode);
+        }
+    }
+
 //    public static void main(String[] args) {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override

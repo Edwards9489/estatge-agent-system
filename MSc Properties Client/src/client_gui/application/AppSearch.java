@@ -74,7 +74,7 @@ public class AppSearch extends JFrame {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (applicationPanel.getSelectedObjectRef() != null) {
+                if (listener != null && applicationPanel.getSelectedObjectRef() != null) {
                     listener.intOmitted(applicationPanel.getSelectedObjectRef());
                     setVisible(false);
                     dispose();

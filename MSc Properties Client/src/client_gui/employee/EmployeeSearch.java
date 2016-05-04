@@ -38,6 +38,7 @@ public class EmployeeSearch extends JFrame {
 
     private JButton okButton;
     private JButton cancelButton;
+    private JButton createButton;
 
     private EmployeePanel employeePanel;
     private JPanel searchResultsPanel;
@@ -70,6 +71,7 @@ public class EmployeeSearch extends JFrame {
 
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
+        createButton = new JButton("Create Employee");
 
         okButton.addActionListener(new ActionListener() {
             @Override
@@ -87,6 +89,14 @@ public class EmployeeSearch extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 setVisible(false);
                 dispose();
+            }
+        });
+        
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                CreateEmployee employeeGUI = new CreateEmployee(client);
+                employeeGUI.setVisible(true);
             }
         });
 
@@ -129,6 +139,7 @@ public class EmployeeSearch extends JFrame {
 
         ////////// BUTTONS PANEL //////////
         buttonsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        buttonsPanel.add(createButton);
         buttonsPanel.add(okButton);
         buttonsPanel.add(cancelButton);
 

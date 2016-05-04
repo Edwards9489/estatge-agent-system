@@ -26,23 +26,23 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 /**
  *
  * @author Dwayne
  */
-public class UpdateEmployeeSecurity extends JFrame {
+public class UpdateEmployeePassword extends JFrame {
 
     private ClientImpl client = null;
     private JButton okButton;
     private JButton cancelButton;
-    private JTextField locationField;
+    private final int ref;
     private JPasswordField passwordField;
 
-    public UpdateEmployeeSecurity(ClientImpl client) {
+    public UpdateEmployeePassword(ClientImpl client, int empRef) {
         this.setClient(client);
+        this.ref = empRef;
         this.layoutComponents();
     }
 
@@ -55,7 +55,6 @@ public class UpdateEmployeeSecurity extends JFrame {
     private void layoutComponents() {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
-        locationField = new JTextField(10);
         passwordField = new JPasswordField(10);
         passwordField.setEchoChar('*');
 
@@ -63,34 +62,32 @@ public class UpdateEmployeeSecurity extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
 
-                String location = locationField.getText();
                 char[] password = passwordField.getPassword();
                 int result = 0;
-                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to UPDATE your security?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to UPDATE Employee " + ref +  " Password?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION) {
                     
-                    if (location != null && !location.isEmpty() && password != null) {
+                    if (password != null) {
                         try {
-                            result = client.setEmployeeMemorableLocation(location);
-                            result += client.updateEmployeePassword(new String(password));
-                            if (result > 1) {
-                                String message = "Your Security has been updated successfully";
+                            result = client.updateEmployeePassword(ref, new String(password));
+                            if (result > 0) {
+                                String message = "Employee " + ref +  " has been updated successfully";
                                 String title = "Information";
-                                OKDialog.okDialog(UpdateEmployeeSecurity.this, message, title);
+                                OKDialog.okDialog(UpdateEmployeePassword.this, message, title);
                                 setVisible(false);
                                 dispose();
                             } else {
-                                String message = "There is some errors with the information supplied to UPDATE your security\nPlease check the information supplied";
+                                String message = "There is some errors with the information supplied to UPDATE Employee " + ref + "\nPlease check the information supplied";
                                 String title = "Error";
-                                OKDialog.okDialog(UpdateEmployeeSecurity.this, message, title);
+                                OKDialog.okDialog(UpdateEmployeePassword.this, message, title);
                             }
                         } catch (RemoteException ex) {
-                            Logger.getLogger(UpdateEmployeeSecurity.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(UpdateEmployeePassword.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     } else {
-                        String message = "There is some errors with the information supplied to UPDATE your security\nPlease check the information supplied";
+                        String message = "There is some errors with the information supplied to UPDATE Employee " + ref + "\nPlease check the information supplied";
                         String title = "Error";
-                        OKDialog.okDialog(UpdateEmployeeSecurity.this, message, title);
+                        OKDialog.okDialog(UpdateEmployeePassword.this, message, title);
                     }
                 }
             }
@@ -103,7 +100,7 @@ public class UpdateEmployeeSecurity extends JFrame {
             }
         });
 
-        this.setSize(300, 300);
+        this.setSize(300, 200);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
@@ -112,7 +109,7 @@ public class UpdateEmployeeSecurity extends JFrame {
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("Update Security");
+        Border titleBorder = BorderFactory.createTitledBorder("Update Employee Password");
 
         controlsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
@@ -124,23 +121,6 @@ public class UpdateEmployeeSecurity extends JFrame {
         ////////// FIRST ROW //////////
         gc.gridx = 0;
         gc.gridy = 0;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(new JLabel("Memorable Location: "), gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(locationField, gc);
-
-        ////////// NEXT ROW //////////
-        gc.gridx = 0;
-        gc.gridy++;
 
         gc.weightx = 1;
         gc.weighty = 1;

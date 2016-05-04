@@ -98,7 +98,7 @@ public class UpdateTenancy extends JFrame {
             }
             tenTypeField.setSelectedItem(tenancy.getTenType().getCode());
         } catch (RemoteException ex) {
-            Logger.getLogger(CreateTenancy.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UpdateTenancy.class.getName()).log(Level.SEVERE, null, ex);
         }
             
             okButton.addActionListener(new ActionListener() {

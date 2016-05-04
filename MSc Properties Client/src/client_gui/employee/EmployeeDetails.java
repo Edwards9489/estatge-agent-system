@@ -494,9 +494,14 @@ public class EmployeeDetails extends JFrame {
     }
 
     private void createContract() {
-        CreateContract createContract = new CreateContract(client);
-        createContract.setVisible(true);
-        System.out.println("TEST - Create Contract");
+        try {
+            CreateContract createContract = new CreateContract(client);
+            createContract.setEmpField(employee.getEmployeeRef());
+            createContract.setVisible(true);
+            System.out.println("TEST - Create Contract");
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void updateContract() {

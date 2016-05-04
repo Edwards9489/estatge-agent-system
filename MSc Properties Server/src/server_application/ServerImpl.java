@@ -196,8 +196,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (!this.database.userExists("ADMIN")) {
             try {
                 UserImpl user = new UserImpl(-1, -1, "ADMIN", "MScProperties", null);
-                user.setUserPermissions(true, true, true, true, true, true, true, true);
                 this.database.createUser(user);
+                user.setUserPermissions(true, true, true, true, true, true, true, true);
+                user.setPasswordReset(false);
+                this.database.updateUser(user.getUsername());
             } catch (RemoteException | SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1930,6 +1932,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             Employee employee = (Employee) this.database.getEmployee(eRef);
             employee.updatePassword(password, new ModifiedBy("Updated Password of Employee " + eRef, modifiedBy, new Date()));
             User user = employee.getUser();
+            
+            if (modifiedBy.equals(user.getUsername())) {
+                employee.setPasswordReset(false);
+            } else {
+                employee.setPasswordReset(true);
+            }
+            
             try {
                 this.database.updateUser(user.getUsername());
                 this.database.updateEmployee(eRef);
@@ -2537,8 +2546,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException {
-        if (this.database.jobRoleExists(jobRoleCode) && this.database.jobRoleBenefitExists(benefitRef) && this.database.getJobRole(jobRoleCode).hasBenefit(benefitRef) && this.database.jobBenefitExists(benefitCode)) {
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException {
+        if (this.database.jobRoleExists(jobRoleCode) && this.database.jobRoleBenefitExists(benefitRef) && this.database.getJobRole(jobRoleCode).hasBenefit(benefitRef)) {
             JobRoleBenefit jobRoleBenefit = (JobRoleBenefit) this.database.getJobRoleBenefit(benefitRef);
             jobRoleBenefit.updateJobRoleBenefit(stringValue, doubleValue, salaryBenefit, startDate, comment, new ModifiedBy("Updated Job Role Benefit " + benefitRef, modifiedBy, new Date()));
             try {

@@ -184,7 +184,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getRead() throws RemoteException {
+    public Boolean getRead() throws RemoteException {
         return this.read;
     }
     
@@ -194,7 +194,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getWrite() throws RemoteException {
+    public Boolean getWrite() throws RemoteException {
         return this.write;
     }
     
@@ -204,7 +204,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getUpdate() throws RemoteException {
+    public Boolean getUpdate() throws RemoteException {
         return this.update;
     }
     
@@ -214,7 +214,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getDelete() throws RemoteException {
+    public Boolean getDelete() throws RemoteException {
         return this.delete;
     }
     
@@ -224,7 +224,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getEmployeeRead() throws RemoteException {
+    public Boolean getEmployeeRead() throws RemoteException {
         return this.employeeRead;
     }
     
@@ -234,7 +234,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getEmployeeWrite() throws RemoteException {
+    public Boolean getEmployeeWrite() throws RemoteException {
         return this.employeeWrite;
     }
     
@@ -244,7 +244,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getEmployeeUpdate() throws RemoteException {
+    public Boolean getEmployeeUpdate() throws RemoteException {
         return this.employeeUpdate;
     }
     
@@ -254,7 +254,7 @@ public class UserImpl extends UnicastRemoteObject implements User {
      * @throws java.rmi.RemoteException
      */
     @Override
-    public boolean getEmployeeDelete() throws RemoteException {
+    public Boolean getEmployeeDelete() throws RemoteException {
         return this.employeeDelete;
     }
 }

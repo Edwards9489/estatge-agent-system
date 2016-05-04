@@ -1189,6 +1189,9 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public int updateEmployeePassword(int employeeRef, String password, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
+            System.out.println("user is not null? " + user != null);
+            System.out.println("user empRef == empRef? " + (user.getEmployeeRef() == employeeRef));
+            System.out.println("user can update employees? " + user.getEmployeeUpdate());
             if (user != null && (user.getEmployeeRef() == employeeRef || user.getEmployeeUpdate())) {
                 return theServer.updateEmployeePassword(employeeRef, password, modifiedBy);
             }
@@ -1539,10 +1542,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, String benefitCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException {
+    public int updateJobRoleBenefit(int benefitRef, String jobRoleCode, Date startDate, boolean salaryBenefit, String stringValue, double doubleValue, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeUpdate()) {
-                return theServer.updateJobRoleBenefit(benefitRef, jobRoleCode, benefitCode, startDate, salaryBenefit, stringValue, doubleValue, comment, modifiedBy);
+                return theServer.updateJobRoleBenefit(benefitRef, jobRoleCode, startDate, salaryBenefit, stringValue, doubleValue, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
