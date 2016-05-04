@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.tenancy;
+package client_gui.property;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;

@@ -32,6 +32,7 @@ import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.OfficeInterface;
 import interfaces.PersonInterface;
+import interfaces.PropertyElementInterface;
 import interfaces.PropertyInterface;
 import interfaces.RegistryLoader;
 import interfaces.RentAccountInterface;
@@ -1133,6 +1134,25 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
         return 0;
     }
+    
+    @Override
+    public int endPersonContact(int pRef, int cRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (this.database.personExists(pRef) && this.database.contactExists(cRef)) {
+            Person person = (Person) this.database.getPerson(pRef);
+            if (person.hasContact(cRef)) {
+                ModifiedByInterface modified = new ModifiedBy("Ended Person Contact " + cRef, modifiedBy, new Date());
+                Contact contact = (Contact) this.database.getContact(cRef);
+                contact.setEndDate(endDate, modified);
+                try {
+                    this.database.updatePersonContact(contact.getContactRef(), person.getPersonRef());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
 
     @Override
     public int deletePersonContact(int pRef, int cRef, String modifiedBy) throws RemoteException {
@@ -1167,6 +1187,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.personExists(pRef) && this.database.addressUsageExists(addrUsageRef) && this.database.addressExists(addrRef)) {
             AddressUsage addressUsage = (AddressUsage) this.database.getAddressUsage(addrUsageRef);
             addressUsage.updateAddress(this.database.getAddress(addrRef), startDate, comment, new ModifiedBy("Updated Address Usage " + addrUsageRef, modifiedBy, new Date()));
+            try {
+                this.database.updatePersonAddressUsage(addrUsageRef, pRef);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public int endPersonAddressUsage(int pRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (this.database.personExists(pRef) && this.database.addressUsageExists(addrUsageRef)) {
+            AddressUsage addressUsage = (AddressUsage) this.database.getAddressUsage(addrUsageRef);
+            addressUsage.setEndDate(endDate, new ModifiedBy("Ended Address Usage " + addrUsageRef, modifiedBy, new Date()));
             try {
                 this.database.updatePersonAddressUsage(addrUsageRef, pRef);
             } catch (SQLException ex) {
@@ -1376,6 +1411,25 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 ModifiedByInterface modified = new ModifiedBy("Updated Office Contact " + cRef, modifiedBy, new Date());
                 Contact contact = (Contact) this.database.getContact(cRef);
                 contact.updateContact(this.database.getContactType(contactTypeCode), value, date, comment, modified);
+                try {
+                    this.database.updateOfficeContact(contact.getContactRef(), office.getOfficeCode());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int endOfficeContact(String oCode, int cRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (this.database.officeExists(oCode) && this.database.contactExists(cRef)) {
+            Office office = (Office) this.database.getOffice(oCode);
+            if (office.hasContact(cRef)) {
+                ModifiedByInterface modified = new ModifiedBy("Ended Office Contact " + cRef, modifiedBy, new Date());
+                Contact contact = (Contact) this.database.getContact(cRef);
+                contact.setEndDate(endDate, modified);
                 try {
                     this.database.updateOfficeContact(contact.getContactRef(), office.getOfficeCode());
                 } catch (SQLException ex) {
@@ -1867,12 +1921,43 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         return 0;
     }
 
+    @Override
+    public int endApplicationAddressUsage(int aRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (this.database.applicationExists(aRef) && this.database.addressUsageExists(addrUsageRef)) {
+            AddressUsage addressUsage = (AddressUsage) this.database.getAddressUsage(addrUsageRef);
+            addressUsage.setEndDate(endDate, new ModifiedBy("Ended Address Usage " + addrUsageRef, modifiedBy, new Date()));
+            try {
+                this.database.updateApplicationAddressUsage(addrUsageRef, aRef);
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.endHouseholdAddressUsage(this.database.getApplication(aRef),endDate, modifiedBy);
+            return 1;
+        }
+        return 0;
+    }
+
     private void updateHouseholdAddressUsage(ApplicationInterface application, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException {
         for (InvolvedPartyInterface invParty : application.getHousehold()) {
             if (invParty.isCurrent()) {
                 Person person = (Person) invParty.getPerson();
                 AddressUsage tempAddress = (AddressUsage) person.getCurrentAddress();
                 tempAddress.updateAddress(this.database.getAddress(addrRef), startDate, comment, new ModifiedBy("Updated Address Usage " + tempAddress.getAddressUsageRef(), modifiedBy, new Date()));
+                try {
+                    this.database.updatePersonAddressUsage(tempAddress.getAddressUsageRef(), person.getPersonRef());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+
+    private void endHouseholdAddressUsage(ApplicationInterface application, Date endDate, String modifiedBy) throws RemoteException {
+        for (InvolvedPartyInterface invParty : application.getHousehold()) {
+            if (invParty.isCurrent()) {
+                Person person = (Person) invParty.getPerson();
+                AddressUsage tempAddress = (AddressUsage) person.getCurrentAddress();
+                tempAddress.setEndDate(endDate, new ModifiedBy("Ended Address Usage " + tempAddress.getAddressUsageRef(), modifiedBy, new Date()));
                 try {
                     this.database.updatePersonAddressUsage(tempAddress.getAddressUsageRef(), person.getPersonRef());
                 } catch (SQLException ex) {
@@ -2325,7 +2410,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public int createPropertyElement(int pRef, String elementCode, Date startDate, boolean charge, String stringValue, Double doubleValue, String comment, String createdBy) throws RemoteException {
         if (this.database.propertyExists(pRef) && this.database.propElementExists(elementCode)) {
             Note note = this.createNote(comment, createdBy);
-            PropertyElement propElement = new PropertyElement(propertyElementRef++, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, note, createdBy, new Date());
+            PropertyElement propElement = new PropertyElement(propertyElementRef++, pRef, this.database.getPropElement(elementCode), startDate, charge, stringValue, doubleValue, note, createdBy, new Date());
             Property property = (Property) this.database.getProperty(pRef);
             property.createPropertyElement(propElement, new ModifiedBy("Created Property Element " + propElement.getPropertyElementRef(), createdBy, new Date()));
             try {
@@ -2341,7 +2426,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public int updatePropertyElement(int eRef, int pRef, Date startDate, String stringValue, Double doubleValue, boolean charge, String comment, String modifiedBy) throws RemoteException {
-        
         if (this.database.propertyExists(pRef)) {
             Property property = (Property) this.database.getProperty(pRef);
             if (property.hasPropElement(eRef)) {
@@ -2349,6 +2433,24 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 propElement.updatePropertyElement(startDate, stringValue, doubleValue, charge, comment, new ModifiedBy("Updated Property Element " + eRef, modifiedBy, new Date()));
                 try {
                     this.database.updatePropertyElementValue(pRef, propElement.getPropertyElementRef());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    @Override
+    public int endPropertyElement(int eRef, int pRef, Date endDate, String modifiedBy) throws RemoteException {
+        if (this.database.propertyExists(pRef)) {
+            Property property = (Property) this.database.getProperty(pRef);
+            if (property.hasPropElement(eRef)) {
+                property.endPropertyElement(eRef, endDate, new ModifiedBy("Ended Property Element " + eRef, modifiedBy, new Date()));
+                try {
+                    this.database.updateProperty(pRef);
+                    this.database.updatePropertyElementValue(pRef, eRef);
                 } catch (SQLException ex) {
                     Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -2369,6 +2471,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             return 1;
         }
         return 0;
+    }
+    
+    @Override
+    public PropertyElementInterface getPropertyElement(int eRef) throws RemoteException {
+        if (this.database.propertyElementValueExists(eRef)) {
+            return this.database.getPropertyElementValue(eRef);
+        }
+        return null;
     }
 
     //////     METHODS TO CREATE, UPDATE AND DELETE JOB ROLES     ////////

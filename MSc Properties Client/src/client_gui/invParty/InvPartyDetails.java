@@ -62,6 +62,13 @@ public class InvPartyDetails extends JFrame {
     private ButtonPanel buttonPanel;
     private NotePanel notePanel;
     private ModPanel modPanel;
+    private JLabel relation;
+    private JCheckBox main2;
+    private JCheckBox jnt;
+    private JLabel start;
+    private JLabel sDate;
+    private JLabel endDate;
+    private JLabel eReason;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
     public InvPartyDetails(ClientImpl client, InvolvedPartyInterface invParty) {
@@ -181,7 +188,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(relationship, gc);
         
-        JLabel relation = new JLabel(invParty.getRelationship().getCode());
+        relation = new JLabel(invParty.getRelationship().getCode());
         relation.setFont(boldFont);
 
         gc.gridx++;
@@ -197,7 +204,8 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(main, gc);
         
-        JCheckBox main2 = new JCheckBox("", invParty.isMainInd());
+        main2 = new JCheckBox();
+        main2.setSelected(invParty.isMainInd());
         main2.setEnabled(false);
         
         gc.gridx++;
@@ -213,7 +221,8 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(joint, gc);
         
-        JCheckBox jnt = new JCheckBox("", invParty.isJointInd());
+        jnt = new JCheckBox();
+        jnt.setSelected(invParty.isJointInd());
         jnt.setEnabled(false);
 
         gc.gridx++;
@@ -236,7 +245,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(startDate, gc);
 
-        JLabel start = new JLabel(invParty.getPerson().getName());
+        start = new JLabel(invParty.getPerson().getName());
         start.setFont(boldFont);
 
         gc.gridx++;
@@ -245,23 +254,17 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(start, gc);
         
-        JLabel empty = new JLabel("");
-        empty.setFont(plainFont);
-        
         gc.gridx++;
         gc.gridwidth = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty, gc);
-        
-        JLabel empty2 = new JLabel("");
-        empty2.setFont(plainFont);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(empty2, gc);
+        detailsPanel.add(new JLabel(""), gc);
         
         JLabel stDate = new JLabel("Start Date    ");
         stDate.setFont(plainFont);
@@ -272,7 +275,7 @@ public class InvPartyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(stDate, gc);
         
-        JLabel sDate = new JLabel(formatter.format(invParty.getStartDate()));
+        sDate = new JLabel(formatter.format(invParty.getStartDate()));
         sDate.setFont(boldFont);
 
         gc.gridx++;
@@ -288,8 +291,6 @@ public class InvPartyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(eDate, gc);
-        
-        JLabel endDate;
                 
         if (invParty.getEndDate() != null) {
             endDate = new JLabel(formatter.format(invParty.getEndDate()));
@@ -312,8 +313,6 @@ public class InvPartyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(endReason, gc);
-        
-        JLabel eReason;
                 
         if (invParty.getEndReason() != null) {
             eReason = new JLabel(invParty.getEndReason().getCode());
@@ -521,6 +520,21 @@ public class InvPartyDetails extends JFrame {
     
     private void refresh() {
         try {
+            relation.setText(invParty.getRelationship().getCode());
+            main2.setSelected(invParty.isMainInd());
+            jnt.setSelected(invParty.isJointInd());
+            start.setText(invParty.getPerson().getName());
+            sDate.setText(formatter.format(invParty.getStartDate()));
+            if (invParty.getEndDate() != null) {
+                endDate.setText(formatter.format(invParty.getEndDate()));
+            } else {
+                endDate.setText("");
+            }
+            if (invParty.getEndReason() != null) {
+                eReason.setText(invParty.getEndReason().getCode());
+            } else {
+                eReason.setText("");
+            }
             notePanel.setData(invParty.getNotes());
             modPanel.setData(invParty.getModifiedBy());
             notePanel.refresh();

@@ -106,8 +106,8 @@ public class OfficeDetails extends JFrame {
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
     private JFileChooser fileChooser;
-    private JLabel length;
-    private JLabel expenditure;
+    private JLabel startDate;
+    private JLabel endDate;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public OfficeDetails(ClientImpl client, OfficeInterface app) {
@@ -199,29 +199,29 @@ public class OfficeDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(officeCode, gc);
 
-        JLabel ref = new JLabel(office.getOfficeCode());
-        ref.setFont(boldFont);
+        JLabel code = new JLabel(office.getOfficeCode());
+        code.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(ref, gc);
+        detailsPanel.add(code, gc);
 
-        JLabel leaseLength = new JLabel("Start Date    ");
-        leaseLength.setFont(plainFont);
+        JLabel startLabel = new JLabel("Start Date    ");
+        startLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseLength, gc);
+        detailsPanel.add(startLabel, gc);
 
-        length = new JLabel(formatter.format(office.getStartDate()));
-        length.setFont(boldFont);
+        startDate = new JLabel(formatter.format(office.getStartDate()));
+        startDate.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(length, gc);
+        detailsPanel.add(startDate, gc);
 
         JLabel lExpenditure = new JLabel("End Date    ");
         lExpenditure.setFont(plainFont);
@@ -232,16 +232,16 @@ public class OfficeDetails extends JFrame {
         detailsPanel.add(lExpenditure, gc);
 
         if (office.getEndDate() != null) {
-            expenditure = new JLabel(formatter.format(office.getEndDate()));
+            endDate = new JLabel(formatter.format(office.getEndDate()));
         } else {
-            expenditure = new JLabel("");
+            endDate = new JLabel("");
         }
-        expenditure.setFont(boldFont);
+        endDate.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(expenditure, gc);
+        detailsPanel.add(endDate, gc);
 
         ////////// NEXT ROW //////////
         gc.gridx = 0;
@@ -264,37 +264,26 @@ public class OfficeDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(start, gc);
 
-        JLabel empty1 = new JLabel("");
-        empty1.setFont(plainFont);
-
         gc.gridx++;
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty1, gc);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty2 = new JLabel("");
-        empty2.setFont(boldFont);
-        detailsPanel.add(empty2, gc);
-
-        JLabel empty3 = new JLabel("");
-        empty3.setFont(plainFont);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
-        gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty3, gc);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty4 = new JLabel("");
-        empty4.setFont(boldFont);
-        detailsPanel.add(empty4, gc);
+        detailsPanel.add(new JLabel(""), gc);
     }
 
     private void setUpMainPanel() {
@@ -1280,15 +1269,30 @@ public class OfficeDetails extends JFrame {
 
     private void refresh() {
         try {
-            length.setText(formatter.format(office.getStartDate()));
+            startDate.setText(formatter.format(office.getStartDate()));
             if (office.getEndDate() != null) {
-                expenditure.setText(formatter.format(office.getEndDate()));
+                endDate.setText(formatter.format(office.getEndDate()));
             } else {
-                expenditure.setText("");
+                endDate.setText("");
             }
+            tenancyPanel.setData(office.getTenancies());
+            leasePanel.setData(office.getLeases());
+            contractPanel.setData(office.getContracts());
+            rentAccPanel.setData(office.getRentAccounts());
+            leaseAccPanel.setData(office.getLeaseAccounts());
+            empAccPanel.setData(office.getEmployeeAccounts());
+            contactPanel.setData(office.getContacts());
             notePanel.setData(office.getNotes());
             documentPanel.setData(office.getDocuments());
             modPanel.setData(office.getModifiedBy());
+            
+            tenancyPanel.refresh();
+            leasePanel.refresh();
+            contractPanel.refresh();
+            rentAccPanel.refresh();
+            leaseAccPanel.refresh();
+            empAccPanel.refresh();
+            contactPanel.refresh();
             notePanel.refresh();
             documentPanel.refresh();
             modPanel.refresh();

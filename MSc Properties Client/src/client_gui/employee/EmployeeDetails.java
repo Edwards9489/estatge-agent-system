@@ -344,7 +344,7 @@ public class EmployeeDetails extends JFrame {
 
         tabbedPane = new JTabbedPane();
 
-        contractPanel = new ContractPanel("Contacts");
+        contractPanel = new ContractPanel("Contracts");
 
         try {
             contractPanel.setData(employee.getContracts());
@@ -562,7 +562,6 @@ public class EmployeeDetails extends JFrame {
                 if (contract != null) {
                     ContractDetails contractDetails = new ContractDetails(client, contract);
                     contractDetails.setVisible(true);
-                    setVisible(false);
                 }
             } catch (RemoteException ex) {
                 Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);

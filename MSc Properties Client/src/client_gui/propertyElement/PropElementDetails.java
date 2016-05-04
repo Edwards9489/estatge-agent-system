@@ -71,8 +71,12 @@ public class PropElementDetails extends JFrame {
     // Use of singleton pattern to ensure only one Note is initiated
     private void setPropertyElement(PropertyElementInterface propElement) {
         if (this.propElement == null) {
+            System.out.println("ASSIGNING PROP ELEMENT");
             this.propElement = propElement;
         }
+        
+        System.out.println("Parameter: " + propElement != null);
+        System.out.println("System: " + this.propElement != null);
     }
 
     private void layoutComponents() {
@@ -98,7 +102,11 @@ public class PropElementDetails extends JFrame {
         modPanel = new ModPanel("Modifications");
 
         try {
-            modPanel.setData(propElement.getModifiedBy());
+            if (propElement != null && modPanel != null) {
+                if (propElement.getModifiedBy() != null) {
+                    modPanel.setData(propElement.getModifiedBy());
+                }
+            }
 
             ////////// CONTROLS PANEL /////////
             controlsPanel = new JPanel();

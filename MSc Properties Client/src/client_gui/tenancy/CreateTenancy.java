@@ -5,6 +5,7 @@
  */
 package client_gui.tenancy;
 
+import client_gui.property.PropertySearch;
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;

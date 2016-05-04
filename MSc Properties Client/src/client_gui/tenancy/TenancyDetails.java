@@ -217,13 +217,13 @@ public class TenancyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        JLabel start = new JLabel(tenancy.getAgreementName());
-        start.setFont(boldFont);
+        name = new JLabel(tenancy.getAgreementName());
+        name.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
+        detailsPanel.add(name, gc);
 
         JLabel leasePropRef = new JLabel("Property Ref    ");
         leasePropRef.setFont(plainFont);
@@ -232,12 +232,13 @@ public class TenancyDetails extends JFrame {
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leasePropRef, gc);
+        
+        JLabel propRef = new JLabel(String.valueOf(tenancy.getPropertyRef()));
+        propRef.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel propRef = new JLabel(String.valueOf(tenancy.getPropertyRef()));
-        propRef.setFont(boldFont);
         detailsPanel.add(propRef, gc);
 
         JLabel leaseEndDate = new JLabel("End Date    ");
@@ -474,7 +475,7 @@ public class TenancyDetails extends JFrame {
                         } else if (pane == 1) {
                             //Document
                             viewDocument();
-                            System.out.println("TEST - View Note");
+                            System.out.println("TEST - View Document");
 
                         }
                         break;

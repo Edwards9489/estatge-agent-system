@@ -288,14 +288,14 @@ public class JobRoleDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseEndDate, gc);
         
-        JCheckBox endDate = new JCheckBox();
-        endDate.setSelected(jobRole.getDelete());
-        endDate.setEnabled(false);
+        delete = new JCheckBox();
+        delete.setSelected(jobRole.getDelete());
+        delete.setEnabled(false);
         
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(endDate, gc);
+        detailsPanel.add(delete, gc);
         
         
         ////////// NEXT ROW //////////

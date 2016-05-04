@@ -16,6 +16,7 @@ import java.util.List;
  */
 public interface PropertyElementInterface extends Remote {
     int getPropertyElementRef() throws RemoteException;
+    int getPropRef() throws RemoteException;
     Element getElement() throws RemoteException;
     String getElementCode() throws RemoteException;
     String getStringValue() throws RemoteException;

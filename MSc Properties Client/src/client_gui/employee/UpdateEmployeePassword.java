@@ -96,7 +96,8 @@ public class UpdateEmployeePassword extends JFrame {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                System.exit(0);
+                setVisible(false);
+                dispose();
             }
         });
 

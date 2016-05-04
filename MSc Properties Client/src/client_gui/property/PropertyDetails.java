@@ -9,15 +9,27 @@ import client_gui.propertyElement.PropElementPanel;
 import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
+import client_gui.EndObject;
 import client_gui.StringListener;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.PDFFileFilter;
+import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.landlord.LandlordDetails;
 import client_gui.modifications.ModPanel;
 import client_gui.landlord.LandlordPanel;
+import client_gui.note.CreateNote;
+import client_gui.note.NoteDetails;
 import client_gui.note.NotePanel;
+import client_gui.note.UpdateNote;
+import client_gui.propertyElement.CreatePropElement;
+import client_gui.propertyElement.PropElementDetails;
+import client_gui.propertyElement.UpdatePropElement;
 import interfaces.AddressUsageInterface;
 import interfaces.PropertyInterface;
 import interfaces.Document;
+import interfaces.LandlordInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
@@ -31,12 +43,14 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -66,6 +80,15 @@ public class PropertyDetails extends JFrame {
     private LandlordPanel landlordPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
+    private JFileChooser fileChooser;
+    
+    private JLabel status;
+    private JLabel propType;
+    private JLabel propSubType;
+    private JLabel acquiredDate;
+    private JLabel address;
+    private JLabel leaseRef;
+    private JLabel endDate;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public PropertyDetails(ClientImpl client, PropertyInterface app) {
@@ -91,6 +114,9 @@ public class PropertyDetails extends JFrame {
 
     private void layoutComponents() {
         try {
+            fileChooser = new JFileChooser();
+            // If you need more choosbale files then add more choosable files
+            fileChooser.addChoosableFileFilter(new PDFFileFilter());
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -141,140 +167,130 @@ public class PropertyDetails extends JFrame {
         gc.weighty = 1;
         gc.ipady = 20;
 
-        JLabel leaseRef = new JLabel("Property Ref    ");
-        Font font = leaseRef.getFont();
+        JLabel propRefLabel = new JLabel("Property Ref    ");
+        Font font = propRefLabel.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 17);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 17);
 
-        leaseRef.setFont(plainFont);
+        propRefLabel.setFont(plainFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseRef, gc);
+        detailsPanel.add(propRefLabel, gc);
 
-        JLabel ref = new JLabel(String.valueOf(property.getPropRef()));
-        ref.setFont(boldFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(ref, gc);
-
-        JLabel leaseLength = new JLabel("Status    ");
-        leaseLength.setFont(plainFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseLength, gc);
-
-        JLabel length = new JLabel(property.getPropStatus());
-        length.setFont(boldFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(length, gc);
-
-        JLabel lExpenditure = new JLabel("Type Code    ");
-        lExpenditure.setFont(plainFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(lExpenditure, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        JLabel expenditure = new JLabel(property.getPropType().getCode());
-        expenditure.setFont(boldFont);
-        detailsPanel.add(expenditure, gc);
-        
-        JLabel leasePropRef = new JLabel("Sub Type Code    ");
-        leasePropRef.setFont(plainFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leasePropRef, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        JLabel propRef = new JLabel(property.getPropSubType().getCode());
+        JLabel propRef = new JLabel(String.valueOf(property.getPropRef()));
         propRef.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(propRef, gc);
 
-        JLabel lStartDate = new JLabel("Acquired Date    ");
-        lStartDate.setFont(plainFont);
+        JLabel statusLabel = new JLabel("Status    ");
+        statusLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(lStartDate, gc);
+        detailsPanel.add(statusLabel, gc);
 
-        JLabel startDate = new JLabel(formatter.format(property.getAcquiredDate()));
-        startDate.setFont(boldFont);
+        status = new JLabel(property.getPropStatus());
+        status.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(startDate, gc);
+        detailsPanel.add(status, gc);
+
+        JLabel typeLabel = new JLabel("Type Code    ");
+        typeLabel.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(typeLabel, gc);
+        
+        propType = new JLabel(property.getPropType().getCode());
+        propType.setFont(boldFont);
+        
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(propType, gc);
+        
+        JLabel subTypeLabel = new JLabel("Sub Type Code    ");
+        subTypeLabel.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(subTypeLabel, gc);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        propSubType = new JLabel(property.getPropSubType().getCode());
+        propSubType.setFont(boldFont);
+        detailsPanel.add(propSubType, gc);
+
+        JLabel acquiredLabel = new JLabel("Acquired Date    ");
+        acquiredLabel.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(acquiredLabel, gc);
+
+        acquiredDate = new JLabel(formatter.format(property.getAcquiredDate()));
+        acquiredDate.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        detailsPanel.add(acquiredDate, gc);
 
             ////////// NEXT ROW //////////
         gc.gridx = 0;
         gc.gridy++;
 
-        JLabel leaseName = new JLabel("Address    ");
-        leaseName.setFont(plainFont);
+        JLabel addressLabel = new JLabel("Address    ");
+        addressLabel.setFont(plainFont);
         
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseName, gc);
+        detailsPanel.add(addressLabel, gc);
 
-        JLabel start = new JLabel(property.getAddress().printAddress());
-        start.setFont(boldFont);
+        address = new JLabel(property.getAddress().printAddress());
+        address.setFont(boldFont);
 
         gc.gridx++;
         gc.gridwidth = 5;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
-
-        JLabel empty1 = new JLabel("");
-        empty1.setFont(plainFont);
+        detailsPanel.add(address, gc);
 
         gc.gridx++;
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty1, gc);
+        detailsPanel.add(new JLabel(), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty2 = new JLabel("");
-        empty2.setFont(boldFont);
-        detailsPanel.add(empty2, gc);
-
-        JLabel empty3 = new JLabel("");
-        empty3.setFont(plainFont);
+        detailsPanel.add(new JLabel(), gc);
 
         gc.gridx++;
-        gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty3, gc);
+        detailsPanel.add(new JLabel(), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty4 = new JLabel("");
-        empty4.setFont(boldFont);
-        detailsPanel.add(empty4, gc);
+        detailsPanel.add(new JLabel(), gc);
 
         JLabel propLeaseRef = new JLabel("Lease Ref    ");
         propLeaseRef.setFont(plainFont);
@@ -285,29 +301,26 @@ public class PropertyDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(propLeaseRef, gc);
         
-        JLabel propLRef;
-        if(property.getLeaseEndDate() != null) {
-            propLRef = new JLabel(String.valueOf(property.getLeaseRef()));
+        if(property.getLeaseRef() != null) {
+            leaseRef = new JLabel(String.valueOf(property.getLeaseRef()));
         } else {
-            propLRef = new JLabel("");
+            leaseRef = new JLabel("");
         }
-        propLRef.setFont(boldFont);
+        leaseRef.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        propLRef.setFont(boldFont);
-        detailsPanel.add(propLRef, gc);
+        detailsPanel.add(leaseRef, gc);
 
-        JLabel leaseEndDate = new JLabel("Lease End Date    ");
-        leaseEndDate.setFont(plainFont);
+        JLabel endDateLabel = new JLabel("Lease End Date    ");
+        endDateLabel.setFont(plainFont);
         
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseEndDate, gc);
+        detailsPanel.add(endDateLabel, gc);
         
-        JLabel endDate;
         if(property.getLeaseEndDate() != null) {
             endDate = new JLabel(formatter.format(property.getLeaseEndDate()));
         } else {
@@ -341,26 +354,111 @@ public class PropertyDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                if (text.equals("Create")) {
-//                    AppSearch appSearch = new AppSearch();
-//                    appSearch.setClient(client);
-//                    setVisible(false);
-//                    appSearch.setVisible(true);
-                } else if (text.equals("Update")) {
-//                    PropSearch propSearch = new PropSearch();
-//                    propSearch.setClient(client);
-//                    setVisible(false);
-//                    propSearch.setVisible(true);
-                } else if (text.equals("Delete")) {
-//                    TenSearch tenSearch = new TenSearch();
-//                    tenSearch.setClient(client);
-//                    setVisible(false);
-//                    tenSearch.setVisible(true);
-                } else if (text.equals("View Details")) {
-//                    PropertySearch leaseSearch = new PropertySearch();
-//                    leaseSearch.setClient(client);
-//                    setVisible(false);
-//                    leaseSearch.setVisible(true);
+                int pane = tabbedPane.getSelectedIndex();
+
+                System.out.println(text);
+                switch (text) {
+                    case "Create":
+                        System.out.println("TEST - Create Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            createPropElement();
+                            System.out.println("Create Prop Element");
+                            
+                        } else if (pane == 1) {
+                            //Notes
+                            createNote();
+                            System.out.println("Create Note");
+                            
+                        } else if (pane == 3) {
+                            //Documents
+                            createDocument();
+                            System.out.println("TEST - Create Document");
+                            
+                        }
+                        break;
+                        
+                    case "Update":
+                        System.out.println("TEST - Update Button");
+
+                        if (pane == 0) {
+                            //Notes
+                            updatePropElement();
+                            System.out.println("TEST - Update Prop Element");
+                            
+                        } else if (pane == 1) {
+                            //Notes
+                            updateNote();
+                            System.out.println("TEST - Update Note");
+                            
+                        } else if (pane == 3) {
+                            //Document
+                            updateDocument();
+                            System.out.println("TEST - Update Document");
+                            
+                        }
+                        break;
+                        
+                     case "End":
+                        System.out.println("TEST - End Button");
+
+                        if (pane == 0) {
+                            //Prop Elements
+                            endPropElement();
+                            System.out.println("TEST - End Prop Element");
+
+                        }
+                        break;
+
+                    case "Delete":
+                        System.out.println("TEST - Delete Button");
+                        if (pane == 0) {
+                            //Notes
+                            deletePropElement();
+                            System.out.println("TEST - Delete Prop Element");
+                            
+                        } else if (pane == 1) {
+                            //Notes
+                            deleteNote();
+                            System.out.println("TEST - Delete Note");
+                            
+                        } else if (pane == 3) {
+                            //Document
+                            deleteDocument();
+                            System.out.println("TEST - Delete Document");
+                            
+                        }
+                        break;
+
+                    case "View Details":
+                        System.out.println("TEST - View Details Button");
+                        if (pane == 0) {
+                            //Notes
+                            viewPropElement();
+                            System.out.println("TEST - View Prop Element");
+
+                        } else if (pane == 1) {
+                            //Notes
+                            viewNote();
+                            System.out.println("TEST - View Note");
+
+                        } else if (pane == 2) {
+                            //Notes
+                            viewLandlord();
+                            System.out.println("TEST - View Landlord");
+
+                        } else if (pane == 3) {
+                            //Document
+                            viewDocument();
+                            System.out.println("TEST - View Document");
+
+                        }
+                        break;
+                    
+                    case "Refresh":
+                        refresh();
+                        break;
                 }
             }
         });
@@ -383,13 +481,10 @@ public class PropertyDetails extends JFrame {
                         PropertyElementInterface propElement = property.getPropElement(propElementRef);
                         if(propElement != null) {
                             System.out.println(propElement.getPropertyElementRef());
+                            System.out.println("TEST1-Property Element");
+                            PropElementDetails propElementGUI = new PropElementDetails(client, propElement);
+                            propElementGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Property Element");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -413,13 +508,10 @@ public class PropertyDetails extends JFrame {
                         Note note = property.getNote(noteRef);
                         if(note != null) {
                             System.out.println(note.getReference());
+                            System.out.println("TEST1-Note");
+                            NoteDetails noteGUI=  new NoteDetails(client, note);
+                            noteGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Note");
-//                        TenancyDetailsForm tenancyForm = new TenancyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -440,16 +532,13 @@ public class PropertyDetails extends JFrame {
             public void intOmitted(int addressRef) {
                 if(addressRef > 0) {
                     try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
+                        LandlordInterface landlord = client.getLandlord(addressRef);
+                        if(landlord != null) {
+                            System.out.println(landlord.getPerson().getName());
+                            System.out.println("TEST1-Landlord");
+                            LandlordDetails invPartyGUI = new LandlordDetails(client, landlord);
+                            invPartyGUI.setVisible(true);
                         }
-                        System.out.println("TEST1-Landlords");
-//                        PropertyDetailsForm tenancyForm = new PropertyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -473,13 +562,9 @@ public class PropertyDetails extends JFrame {
                         Document document = property.getDocument(documentRef);
                         if(document != null) {
                             System.out.println(document.getCurrentDocumentName());
+                            System.out.println("TEST1-Document");
+                            client.downloadPropertyDocument(property.getPropRef(), document.getDocumentRef(), document.getCurrentVersion());
                         }
-                        System.out.println("TEST1-Document");
-//                        PropertyDetailsForm tenancyForm = new PropertyDetailsForm();
-//                        tenancyForm.setClient(client);
-//                        tenancyForm.setTenancy(tenancy);
-//                        tenancyForm.setVisible(true);
-//                        setVisible(false);
                     } catch (RemoteException ex) {
                         Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -512,6 +597,274 @@ public class PropertyDetails extends JFrame {
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
+    }
+    
+    private void createPropElement() {
+        try {
+            CreatePropElement createPropElement = new CreatePropElement(client, property.getPropRef());
+            createPropElement.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void updatePropElement() {
+        Integer selection = propElementPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                PropertyElementInterface propElement = property.getPropElement(selection);
+                if (propElement != null) {
+                    UpdatePropElement updatePropElement = new UpdatePropElement(client, propElement, property.getPropRef());
+                    updatePropElement.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void endPropElement() {
+        Integer selection = propElementPanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Prop Element Ref: " + selection);
+            EndObject endInvParty = new EndObject(client, "Property Element", selection);
+            endInvParty.setVisible(true);
+        }
+    }
+    
+    private void deletePropElement() {
+        Integer selection = propElementPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Property Element " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deleteLeaseNote(property.getPropRef(), selection);
+                    if (result > 0) {
+                        String message = "Property Element " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    } else {
+                        String message = "Property Element " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPropElement() {
+        if (propElementPanel.getSelectedObjectRef() != null) {
+            PropertyElementInterface propElement;
+            try {
+                propElement = property.getPropElement(propElementPanel.getSelectedObjectRef());
+                if (propElement != null) {
+                    PropElementDetails propElementDetails = new PropElementDetails(client, propElement);
+                    propElementDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
+
+    private void createNote() {
+        try {
+            CreateNote createNote = new CreateNote(client, "Property", property.getPropRef());
+            createNote.setVisible(true);
+            System.out.println("TEST - Create Note");
+        } catch (RemoteException ex) {
+            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Note note = property.getNote(selection);
+                if (note != null) {
+                    UpdateNote noteDetails = new UpdateNote(client, note, "Property", property.getPropRef());
+                    noteDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteNote() {
+        Integer selection = notePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE note " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Note Delete - Yes button clicked");
+                    int result = client.deletePropertyNote(property.getPropRef(), selection);
+                    if (result > 0) {
+                        String message = "Note " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    } else {
+                        String message = "Note " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewNote() {
+        if (notePanel.getSelectedObjectRef() != null) {
+            Note note;
+            try {
+                note = property.getNote(notePanel.getSelectedObjectRef());
+                if (note != null) {
+                    NoteDetails landlordDetails = new NoteDetails(client, note);
+                    landlordDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewLandlord() {
+        Integer selection = landlordPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                LandlordInterface landlord = client.getLandlord(selection);
+                if (landlord != null) {
+                    LandlordDetails landlordDetails = new LandlordDetails(client, landlord);
+                    landlordDetails.setVisible(true);
+                    setVisible(false);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createDocument() {
+        try {
+            CreateDocument createDoc = new CreateDocument(client, "Property", property.getPropRef());
+            createDoc.setVisible(true);
+            System.out.println("TEST - Create Document");
+        } catch (RemoteException ex) {
+            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                Document document = property.getDocument(selection);
+                if (document != null) {
+                    if(fileChooser.showOpenDialog(PropertyDetails.this) == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        int result = client.updatePropertyDocument(property.getPropRef(), document.getDocumentRef(), file.getPath());
+                        if (result > 0) {
+                            String message = "Document " + selection + " has been successfully updated";
+                            String title = "Information";
+                            OKDialog.okDialog(PropertyDetails.this, message, title);
+                        } else {
+                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPproperty check the information supplied";
+                            String title = "Error";
+                            OKDialog.okDialog(PropertyDetails.this, message, title);
+                        }
+                        System.out.println(fileChooser.getSelectedFile());
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteDocument() {
+        Integer selection = documentPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE document " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Document Delete - Yes button clicked");
+                    int result = client.deletePropertyDocument(property.getPropRef(), selection);
+                    if (result > 0) {
+                        String message = "Document " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    } else {
+                        String message = "Document " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(PropertyDetails.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            Document document;
+            try {
+                document = property.getDocument(documentPanel.getSelectedObjectRef());
+                client.downloadPropertyDocument(property.getPropRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        try {
+            status.setText(property.getPropStatus());
+            
+            propType.setText(property.getPropType().getCode());
+            
+            propSubType.setText(property.getPropSubType().getCode());
+            
+            acquiredDate.setText(formatter.format(property.getAcquiredDate()));
+            
+            address.setText(property.getAddress().printAddress());
+            
+            if(property.getLeaseRef() != null) {
+                leaseRef.setText(String.valueOf(property.getLeaseRef()));
+            } else {
+                leaseRef.setText("");
+            }
+            
+            if(property.getLeaseEndDate() != null) {
+                endDate.setText(formatter.format(property.getLeaseEndDate()));
+            } else {
+                endDate.setText("");
+            }
+            
+            propElementPanel.setData(property.getPropertyElements());
+            landlordPanel.setData(property.getLandlords());
+            notePanel.setData(property.getNotes());
+            documentPanel.setData(property.getDocuments());
+            modPanel.setData(property.getModifiedBy());
+            propElementPanel.refresh();
+            landlordPanel.refresh();
+            notePanel.refresh();
+            documentPanel.refresh();
+            modPanel.refresh();
+            repaint();
+        } catch (RemoteException ex) {
+            Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private JMenuBar createMenuBar() {

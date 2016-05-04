@@ -24,6 +24,7 @@ import interfaces.LeaseInterface;
 import interfaces.LoginInterface;
 import interfaces.OfficeInterface;
 import interfaces.PersonInterface;
+import interfaces.PropertyElementInterface;
 import interfaces.PropertyInterface;
 import interfaces.RMISecurityPolicyLoader;
 import interfaces.RentAccountInterface;
@@ -471,12 +472,26 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int endPropertyElement(int eRef, int pRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endPropertyElement(eRef, pRef, endDate, this.getUsername());
+        }
+        return 0;
+    }
 
     public int deletePropertyElement(String code) throws RemoteException {
         if (this.server.isAlive()) {
             return server.deletePropertyElement(code);
         }
         return 0;
+    }
+    
+    public PropertyElementInterface getPropertyElement(int eRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.getPropertyElement(eRef);
+        }
+        return null;
     }
 
     public int createContactType(String code, String description, String comment) throws RemoteException {
@@ -679,6 +694,13 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
+    
+    public int endPersonContact(int pRef, int cRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endPersonContact(pRef, cRef, endDate, this.getUsername());
+        }
+        return 0;
+    }
 
     public int deletePersonContact(int pRef, int cRef) throws RemoteException {
         if (this.server.isAlive()) {
@@ -697,6 +719,13 @@ public class ClientImpl extends Observable implements Client {
     public int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (this.server.isAlive()) {
             return server.updatePersonAddressUsage(pRef, addrUsageRef, addrRef, startDate, comment, this.getUsername());
+        }
+        return 0;
+    }
+
+    public int endPersonAddressUsage(int pRef, int aRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endPersonAddressUsage(pRef, aRef, endDate, user.getUsername());
         }
         return 0;
     }
@@ -809,6 +838,15 @@ public class ClientImpl extends Observable implements Client {
     public int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String comment) throws RemoteException {
         if (this.server.isAlive()) {
             return server.updateOfficeContact(oCode, cRef, contactTypeCode, value, date, comment, this.getUsername());
+        }
+        return 0;
+    }
+    
+    
+
+    public int endOfficeContact(String oCode, int cRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endOfficeContact(oCode, cRef, endDate, this.getUsername());
         }
         return 0;
     }
@@ -991,6 +1029,13 @@ public class ClientImpl extends Observable implements Client {
     public int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment) throws RemoteException {
         if (this.server.isAlive()) {
             return server.updateApplicationAddressUsage(aRef, addrUsageRef, addrRef, startDate, comment, this.getUsername());
+        }
+        return 0;
+    }
+
+    public int endApplicationAddressUsage(int addrRef, int aRef, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endApplicationAddressUsage(addrRef, aRef, endDate, user.getUsername());
         }
         return 0;
     }

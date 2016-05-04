@@ -47,7 +47,9 @@ public interface Server extends Remote {
     int deletePropertySubType(String code) throws RemoteException;
     int createPropertyElement(String code, String description, String comment, String createdBy) throws RemoteException;
     int updatePropertyElement(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException;
+    int endPropertyElement(int eRef, int pRef, Date endDate, String modifiedBy) throws RemoteException;
     int deletePropertyElement(String code) throws RemoteException;
+    PropertyElementInterface getPropertyElement(int eRef) throws RemoteException;
     int createContactType(String code, String description, String comment, String createdBy) throws RemoteException;
     int updateContactType(String code, String description, boolean current, String comment, String modifiedBy) throws RemoteException;
     int deleteContactType(String code) throws RemoteException;
@@ -78,9 +80,11 @@ public interface Server extends Remote {
     byte[] downloadPersonDocument(int pRef, int dRef, int version, String downloadedBy) throws RemoteException;
     int createPersonContact(int pRef, String contactTypeCode, String value, Date date, String comment, String createdBy) throws RemoteException;
     int updatePersonContact(int pRef, int cRef, String contactTypeCode, String value, Date date, String comment, String modifiedBy) throws  RemoteException;
+    int endPersonContact(int pRef, int cRef, Date endDate, String modifiedBy) throws RemoteException;
     int deletePersonContact(int pRef, int cRef, String modifiedBy) throws RemoteException;
     int createPersonAddressUsage(int pRef, int addrRef, Date startDate, String comment, String createdBy) throws RemoteException;
     int updatePersonAddressUsage(int pRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException;
+    int endPersonAddressUsage(int pRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException;
     int deletePersonAddressUsage(int pRef, int aRef) throws RemoteException;
     int createOffice(String officeCode, int addrRef, Date startDate, String createdBy) throws RemoteException;
     int updateOffice(String officeCode, Date startDate, String modifiedBy) throws RemoteException;
@@ -94,6 +98,7 @@ public interface Server extends Remote {
     byte[] downloadOfficeDocument(String oCode, int dRef, int version, String downloadedBy) throws RemoteException;
     int createOfficeContact(String oCode, String contactTypeCode, String value, Date date, String comment, String createdBy) throws RemoteException;
     int updateOfficeContact(String oCode, int cRef, String contactTypeCode, String value, Date date, String comment, String modifiedBy) throws  RemoteException;
+    int endOfficeContact(String oCode, int cRef, Date endDate, String modifiedBy) throws RemoteException;
     int deleteOfficeContact(String code, int cRef) throws RemoteException;
     int createInvolvedParty(int pRef, int aRef, boolean joint, boolean main, Date start, String relationshipCode, String createdBy) throws RemoteException;
     int updateInvolvedParty(int iRef, boolean joint, Date start, String relationshipCode, String modifiedBy) throws  RemoteException;
@@ -118,6 +123,7 @@ public interface Server extends Remote {
     byte[] downloadApplicationDocument(int aRef, int dRef, int version, String downloadedBy) throws RemoteException;
     int createApplicationAddressUsage(int applicationRef, int addrRef, Date startDate, String comment, String createdBy) throws RemoteException;
     int updateApplicationAddressUsage(int aRef, int addrUsageRef, int addrRef, Date startDate, String comment, String modifiedBy) throws RemoteException;
+    int endApplicationAddressUsage(int aRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException;
     int deleteApplicationAddressUsage(int addrRef, int aRef) throws RemoteException;
     int createEmployee(int pRef, String username, String password, String createdBy) throws RemoteException;
     int setEmployeeMemorableLocation(String memorableLocation, int eRef) throws RemoteException;

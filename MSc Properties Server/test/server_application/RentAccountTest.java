@@ -71,9 +71,9 @@ public class RentAccountTest {
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(1, 1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
-            PropertyElement rent = new PropertyElement(2, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(2, 1, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
             property.createPropertyElement(rent, modifiedBy2);
             TenancyInterface tenancy = new Tenancy(1, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());
             RentAccount instance = new RentAccount(1, tenancy, "DEDWARDS", new Date());
@@ -111,9 +111,9 @@ public class RentAccountTest {
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(1, 1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
-            PropertyElement rent = new PropertyElement(2, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(2, 1, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
             property.createPropertyElement(rent, modifiedBy2);
             TenancyInterface tenancy = new Tenancy(1, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());
             RentAccount instance = new RentAccount(1, tenancy, "DEDWARDS", new Date());
@@ -148,9 +148,9 @@ public class RentAccountTest {
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(1, 1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
-            PropertyElement rent = new PropertyElement(2, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(2, 1, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
             property.createPropertyElement(rent, modifiedBy2);
             TenancyInterface tenancy = new Tenancy(1, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());
             TenancyInterface tenancy2 = new Tenancy(2, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());
@@ -186,9 +186,9 @@ public class RentAccountTest {
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             ApplicationInterface application = new Application(1, "MR D L EDWARDS", date.getTime(), "DEDWARDS", new Date());
             Property property = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(1, 1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             property.createPropertyElement(charges, modifiedBy);
-            PropertyElement rent = new PropertyElement(2, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(2, 1, element2, date.getTime(), true, null, 1200.00, note5, "DEDWARDS", new Date());
             property.createPropertyElement(rent, modifiedBy2);
             TenancyInterface tenancy = new Tenancy(1, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());
             TenancyInterface tenancy2 = new Tenancy(2, date2.getTime(), 12, 1, property, application, element, "EDM", "DEDWARDS", new Date());

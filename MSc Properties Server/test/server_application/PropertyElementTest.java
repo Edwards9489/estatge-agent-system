@@ -61,7 +61,7 @@ public class PropertyElementTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = null;
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.modifiedBy(modifiedBy);
@@ -90,7 +90,7 @@ public class PropertyElementTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getStringValue());
             assertEquals(true, instance.getDoubleValue() == 1200.00);
@@ -145,7 +145,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
             instance.setEndDate(date.getTime(), modifiedBy);
@@ -170,7 +170,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(1, instance.getPropertyElementRef());
             assertEquals(false, instance.getPropertyElementRef() == 7);
@@ -192,7 +192,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Element element2 = new ElementImpl("TEST2", "TEST2", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(element, instance.getElement());
             assertEquals(false, instance.getElement().equals(element2));
@@ -213,7 +213,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals("TEST", instance.getElementCode());
             assertEquals(false, instance.getElementCode().equals("EDM"));
@@ -234,7 +234,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), false, "Testing String Value", null, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), false, "Testing String Value", null, note2, "DEDWARDS", new Date());
             
             assertEquals("Testing String Value", instance.getStringValue());
             assertEquals(false, instance.getStringValue().equals("TEST"));
@@ -255,7 +255,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(true, instance.getDoubleValue() == 1200.00);
             assertEquals(false, instance.getDoubleValue() == 900.00);
@@ -276,7 +276,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(true, instance.getStartDate().equals(date.getTime()));
             assertEquals(false, instance.getStartDate().equals(new Date()));
@@ -300,7 +300,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
             instance.setEndDate(date2.getTime(), modifiedBy);
@@ -326,7 +326,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(true, instance.isCurrent());
             instance.setEndDate(date.getTime(), modifiedBy);
@@ -351,7 +351,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             Boolean result = false;
             
             assertEquals(true, instance.isCharge());
@@ -376,7 +376,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(true, instance.isElementCode(element.getCode()));
             assertEquals(false, instance.isElementCode("RENT"));
@@ -398,7 +398,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasBeenModified());
             instance.updatePropertyElement(date.getTime(), "IS NO LONGER A SALARY BENEFIT", null, false, "UPDATED NOTE AGAIN", modifiedBy);
@@ -421,7 +421,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModifiedBy());
             instance.updatePropertyElement(date.getTime(), "IS NO LONGER A SALARY BENEFIT", null, false, "UPDATED NOTE AGAIN", modifiedBy);
@@ -445,7 +445,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", date.getTime());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModifiedDate());
             instance.updatePropertyElement(date.getTime(), "IS NO LONGER A SALARY BENEFIT", null, false, "UPDATED NOTE AGAIN", modifiedBy);
@@ -469,7 +469,7 @@ public class PropertyElementTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             List<ModifiedByInterface> modifiedByList = new ArrayList();
             List<ModifiedByInterface> modifiedByList2 = new ArrayList();
@@ -497,7 +497,7 @@ public class PropertyElementTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModification());
             instance.updatePropertyElement(date.getTime(), "IS NO LONGER A SALARY BENEFIT", null, false, "UPDATED NOTE", modifiedBy);
@@ -523,7 +523,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(note2, instance.getNote());
             assertEquals(false, instance.getNote().equals(note));
@@ -544,7 +544,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals("TEST NOTE2", instance.getComment());
             assertEquals(false, instance.getComment().equals("TEST"));
@@ -565,7 +565,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", new Date());
             
             assertEquals(false, instance.getCreatedBy().equals(null));
             assertEquals(true, instance.getCreatedBy().equals("DEDWARDS"));
@@ -587,7 +587,7 @@ public class PropertyElementTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
-            PropertyElement instance = new PropertyElement(1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", date.getTime());
+            PropertyElement instance = new PropertyElement(1, 1, element, date.getTime(), true, null, 1200.00, note2, "DEDWARDS", date.getTime());
             
             assertEquals(false, instance.getCreatedDate().equals(null));
             assertEquals(true, instance.getCreatedDate().equals(date.getTime()));

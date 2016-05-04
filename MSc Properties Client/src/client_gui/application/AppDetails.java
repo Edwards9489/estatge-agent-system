@@ -8,7 +8,7 @@ package client_gui.application;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
 import client_gui.modifications.ModPanel;
-import client_gui.property.PropSearch;
+import client_gui.property.PropertySearch;
 import client_gui.property.PropertyPanel;
 import client_gui.invParty.UpdateInvParty;
 import client_gui.invParty.InvPartyPanel;
@@ -748,7 +748,6 @@ public class AppDetails extends JFrame {
                 if (invParty != null) {
                     InvPartyDetails contractDetails = new InvPartyDetails(client, invParty);
                     contractDetails.setVisible(true);
-                    setVisible(false);
                 }
             } catch (RemoteException ex) {
                 Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
@@ -885,7 +884,7 @@ public class AppDetails extends JFrame {
     }
 
     private void createProperty() {
-        PropSearch createProperty = new PropSearch(client);
+        PropertySearch createProperty = new PropertySearch(client);
         createProperty.setVisible(true);
         System.out.println("TEST - Create Property");
     }

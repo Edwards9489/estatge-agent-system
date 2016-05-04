@@ -81,7 +81,7 @@ public class CreateJobRoleBenefit extends JFrame {
             elementField.addItem("-");
             try {
                 for (Element benefits : client.getCurrentJobBenefits()) {
-                    if (!jobRole.hasCurrentBenefit(jobRoleCode)) {
+                    if (!jobRole.hasCurrentBenefit(benefits.getCode())) {
                         elementField.addItem(benefits.getCode());
                     }
                 }

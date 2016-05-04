@@ -11,7 +11,7 @@ import client_gui.contract.ContractSearch;
 import client_gui.empAccount.EmpAccSearch;
 import client_gui.leaseAcc.LeaseAccSearch;
 import client_gui.lease.LeaseSearch;
-import client_gui.property.PropSearch;
+import client_gui.property.PropertySearch;
 import client_gui.rentAcc.RentAccSearch;
 import client_gui.reporting.ReportingFrame;
 import client_gui.StringListener;
@@ -137,7 +137,7 @@ public class HomeForm extends JFrame implements Observer {
                         break;
                         
                     case "Properties" :
-                        PropSearch propSearch = new PropSearch(client);
+                        PropertySearch propSearch = new PropertySearch(client);
                         propSearch.setVisible(true);
                         break;
                         

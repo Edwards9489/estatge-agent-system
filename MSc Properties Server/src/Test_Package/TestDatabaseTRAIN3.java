@@ -174,9 +174,9 @@ public class TestDatabaseTRAIN3 {
         
         application.addInvolvedParty(invParty, null);
         
-        PropertyElement propElement = new PropertyElement(1, element, new Date(), false, "2 BED", null, note18, "DEDWARDS", new Date());
-        PropertyElement propElement2 = new PropertyElement(2, element2, new Date(), true, null, 36.00, note19, "DEDWARDS", new Date());
-        PropertyElement propElement3 = new PropertyElement(3, element3, new Date(), true, null, 300.00, note21, "DEDWARDS", new Date());
+        PropertyElement propElement = new PropertyElement(1, 1, element, new Date(), false, "2 BED", null, note18, "DEDWARDS", new Date());
+        PropertyElement propElement2 = new PropertyElement(2, 1, element2, new Date(), true, null, 36.00, note19, "DEDWARDS", new Date());
+        PropertyElement propElement3 = new PropertyElement(3, 1, element3, new Date(), true, null, 300.00, note21, "DEDWARDS", new Date());
         
         Tenancy tenancy = new Tenancy(1, new Date(), 24, 1, property, application, element, "EDM", "DEDWARDS", new Date());
         RentAccount rentAcc = new RentAccount(1, tenancy, "DEDWARDS", new Date());

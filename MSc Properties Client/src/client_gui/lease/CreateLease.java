@@ -8,7 +8,7 @@ package client_gui.lease;
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.tenancy.PropertySearch;
+import client_gui.property.PropertySearch;
 import interfaces.OfficeInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;

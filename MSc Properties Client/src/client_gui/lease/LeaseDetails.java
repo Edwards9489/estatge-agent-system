@@ -5,7 +5,6 @@
  */
 package client_gui.lease;
 
-import client_gui.landlord.CreateLandlord;
 import client_gui.note.NotePanel;
 import client_gui.landlord.LandlordPanel;
 import client_application.ClientImpl;
@@ -251,27 +250,21 @@ public class LeaseDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(name, gc);
 
-        JLabel empty1 = new JLabel("");
-        empty1.setFont(plainFont);
-
         gc.gridx++;
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty1, gc);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        JLabel empty2 = new JLabel("");
-        empty2.setFont(boldFont);
-        detailsPanel.add(empty2, gc);
+        detailsPanel.add(new JLabel(""), gc);
 
         JLabel leasePropRef = new JLabel("Property Ref    ");
         leasePropRef.setFont(plainFont);
 
         gc.gridx++;
-        gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leasePropRef, gc);
@@ -329,7 +322,8 @@ public class LeaseDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(lfull, gc);
 
-        JCheckBox full = new JCheckBox("", lease.isFullManagement());
+        JCheckBox full = new JCheckBox();
+        full.setSelected(lease.isFullManagement());
         full.setEnabled(false);
 
         gc.gridx++;
@@ -405,7 +399,7 @@ public class LeaseDetails extends JFrame {
                         if (pane == 0) {
                             //Landlords
                             createLandlord();
-                            System.out.println("Create Involved Party");
+                            System.out.println("Create Landlord");
                             
                         } else if (pane == 1) {
                             //Notes
@@ -442,7 +436,7 @@ public class LeaseDetails extends JFrame {
                         if (pane == 0) {
                             //Landlords
                             endLandlord();
-                            System.out.println("TEST - End Involved Party");
+                            System.out.println("TEST - End Landlord");
 
                         }
                         break;
@@ -467,7 +461,7 @@ public class LeaseDetails extends JFrame {
                         if (pane == 0) {
                             //Landlords
                             viewLandlord();
-                            System.out.println("TEST - View Involved Party");
+                            System.out.println("TEST - View Landlord");
 
                         } else if (pane == 1) {
                             //Notes

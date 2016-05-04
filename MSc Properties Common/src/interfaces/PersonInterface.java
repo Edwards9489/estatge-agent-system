@@ -48,6 +48,7 @@ public interface PersonInterface extends Remote {
     String getCreatedBy() throws RemoteException;
     Date getCreatedDate() throws RemoteException;
     boolean hasContact(int contactRef) throws RemoteException;
+    ContactInterface getContact(int contactRef) throws RemoteException;
     List<ContactInterface> getContacts() throws RemoteException;
     List<AddressUsageInterface> getAddresses() throws RemoteException;
 }

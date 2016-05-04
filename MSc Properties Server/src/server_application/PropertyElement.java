@@ -25,6 +25,7 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
     ///   VARIABLES   ///
     
     private final int propertyElementRef;
+    private final int propRef;
     private final Element element;
     private String stringValue;
     private Double doubleValue;
@@ -42,6 +43,7 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
     /**
      * Constructor for objects of class PropertyElement
      * @param propElementRef
+     * @param propRef
      * @param element
      * @param startDate
      * @param charge
@@ -52,8 +54,9 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
-    public PropertyElement(int propElementRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) throws RemoteException {
+    public PropertyElement(int propElementRef, int propRef, Element element, Date startDate, boolean charge, String stringValue, Double doubleValue, Note note, String createdBy, Date createdDate) throws RemoteException {
         this.propertyElementRef = propElementRef;
+        this.propRef = propRef;
         this. element = element;
         this.startDate = startDate;
         this.charge = charge;
@@ -177,6 +180,16 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
     @Override
     public int getPropertyElementRef() throws RemoteException {
         return this.propertyElementRef;
+    }
+    
+    /**
+     * 
+     * @return propertyElementRef
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public int getPropRef() throws RemoteException {
+        return this.propRef;
     }
     
     /**

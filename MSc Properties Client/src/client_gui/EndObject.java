@@ -6,10 +6,10 @@
 package client_gui;
 
 import client_application.ClientImpl;
-import client_gui.OKDialog;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import interfaces.JobRoleBenefitInterface;
+import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -48,15 +48,35 @@ public class EndObject extends JFrame {
     private JComboBox endReasonField;
     private SimpleDateFormat formatter;
     private final String endType;
-    private final int ref;
+    private final int objectRef;
+    private String code;
+    private int ref;
     
     private JPanel controlsPanel;
 
-    public EndObject(ClientImpl client, String endType, int ref) {
+    public EndObject(ClientImpl client, String endType, int objectRef) {
         super("MSc Properties");
         setClient(client);
         this.endType = endType;
+        this.objectRef = objectRef;
+        layoutComponents();
+    }
+    
+    public EndObject(ClientImpl client, String endType, int objectRef, int ref) {
+        super("MSc Properties");
+        setClient(client);
+        this.endType = endType;
+        this.objectRef = objectRef;
         this.ref = ref;
+        layoutComponents();
+    }
+    
+    public EndObject(ClientImpl client, String endType, int objectRef, String code) {
+        super("MSc Properties");
+        setClient(client);
+        this.endType = endType;
+        this.objectRef = objectRef;
+        this.code = code;
         layoutComponents();
     }
 
@@ -101,29 +121,50 @@ public class EndObject extends JFrame {
                 int result = -1;
                 try {
                     if (endDate != null && (!endReasonText.equals("-") || !endType.equals("Involved Party"))) {
-                        int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to END " + endType + " " + ref + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to END " + endType + " " + objectRef + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (answer == JOptionPane.YES_OPTION) {
                             switch (endType) {
                                 case "Involved Party":
-                                    InvolvedPartyInterface invParty = client.getInvolvedParty(ref);
-                                    result = client.endInvolvedParty(invParty.getApplicationRef(), ref, endDate, endReasonText);
+                                    InvolvedPartyInterface invParty = client.getInvolvedParty(objectRef);
+                                    result = client.endInvolvedParty(invParty.getApplicationRef(), objectRef, endDate, endReasonText);
                                     break;
                                     
                                 case "Job Role Benefit":
-                                    JobRoleBenefitInterface benefit = client.getJobRoleBenefit(ref);
-                                    result = client.endJobRoleBenefit(ref, benefit.getJobRoleCode(), endDate);
+                                    JobRoleBenefitInterface benefit = client.getJobRoleBenefit(objectRef);
+                                    result = client.endJobRoleBenefit(objectRef, benefit.getJobRoleCode(), endDate);
+                                    break;
+                                    
+                                case "Property Element":
+                                    PropertyElementInterface propElement = client.getPropertyElement(objectRef);
+                                    result = client.endPropertyElement(objectRef, propElement.getPropRef(), endDate);
                                     break;
                                     
                                 case "Tenancy":
-                                    result = client.endTenancy(ref, endDate);
+                                    result = client.endTenancy(objectRef, endDate);
                                     break;
                                     
                                 case "Lease":
-                                    result = client.endLease(ref, endDate);
+                                    result = client.endLease(objectRef, endDate);
                                     break;
                                     
                                 case "Contract":
-                                    result = client.endContract(ref, endDate);
+                                    result = client.endContract(objectRef, endDate);
+                                    break;
+                                    
+                                case "Person Contact":
+                                    result = client.endPersonContact(objectRef, ref, endDate);
+                                    break;
+                                    
+                                case "Office Contact":
+                                    result = client.endOfficeContact(code, objectRef, endDate);
+                                    break;
+                                    
+                                case "Person Address":
+                                    result = client.endPersonAddressUsage(objectRef, ref, endDate);
+                                    break;
+                                    
+                                case "Application Address":
+                                    result = client.endApplicationAddressUsage(objectRef, ref, endDate);
                                     break;
                             }
                             if (result > 0) {
@@ -133,13 +174,13 @@ public class EndObject extends JFrame {
                                 setVisible(false);
                                 dispose();
                             } else {
-                                String message = "There is some errors with the information supplied to END " + endType + " " + ref + "\nPlease check the information supplied";
+                                String message = "There is some errors with the information supplied to END " + endType + " " + objectRef + "\nPlease check the information supplied";
                                 String title = "Error";
                                 OKDialog.okDialog(EndObject.this, message, title);
                             }
                         }
                     } else {
-                        String message = "There is some errors with the information supplied to END " + endType + " " + ref + "\nPlease check the information supplied";
+                        String message = "There is some errors with the information supplied to END " + endType + " " + objectRef + "\nPlease check the information supplied";
                         String title = "Error";
                         OKDialog.okDialog(EndObject.this, message, title);
                     }

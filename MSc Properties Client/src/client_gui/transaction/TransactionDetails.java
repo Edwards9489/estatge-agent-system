@@ -84,7 +84,7 @@ public class TransactionDetails extends JFrame {
         try {
             
             closeButton = new JButton("Close");
-            noteField = new JTextArea(2, 40);
+            noteField = new JTextArea(2, 50);
             noteField.setLineWrap(true);
             noteField.setEnabled(false);
             noteField.setDisabledTextColor(Color.BLACK);
@@ -118,9 +118,11 @@ public class TransactionDetails extends JFrame {
             try {
                 noteField.setText(transaction.getNote().getNote());
                 
-                this.setSize(600, 400);
+                this.setMinimumSize(new Dimension(650, 450));
+                this.setSize(650, 450);
                 Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
                 this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+                
                 
                 ///////// DETAILS PANEL ////////////
                 detailsPanel = new JPanel();
@@ -298,6 +300,7 @@ public class TransactionDetails extends JFrame {
                 
                 isDebitField = new JCheckBox();
                 isDebitField.setSelected(transaction.isDebit());
+                isDebitField.setEnabled(false);
                 
                 gc.gridx++;
                 gc.anchor = GridBagConstraints.WEST;

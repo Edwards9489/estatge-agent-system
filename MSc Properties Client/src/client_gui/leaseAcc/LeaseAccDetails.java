@@ -75,7 +75,7 @@ public class LeaseAccDetails extends JFrame {
     private ModPanel modPanel;
     private JFileChooser fileChooser;
     private JLabel expenditure;
-    private JLabel start;
+    private JLabel name;
     private JLabel startDate;
     private JLabel endDate;
     private JLabel propRef;
@@ -197,16 +197,14 @@ public class LeaseAccDetails extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(accRef, gc);
-        
-        
 
-        JLabel leaseLength = new JLabel("Expenditure    ");
-        leaseLength.setFont(plainFont);
+        JLabel expenditureLabel = new JLabel("Expenditure    ");
+        expenditureLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(leaseLength, gc);
+        detailsPanel.add(expenditureLabel, gc);
 
         expenditure = new JLabel("£" + String.valueOf(leaseAcc.getExpenditure()));
         expenditure.setFont(boldFont);
@@ -244,31 +242,25 @@ public class LeaseAccDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(leaseName, gc);
 
-        start = new JLabel(leaseAcc.getAccName());
-        start.setFont(boldFont);
+        name = new JLabel(leaseAcc.getAccName());
+        name.setFont(boldFont);
 
         gc.gridx++;
         gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(start, gc);
-
-        JLabel empty1 = new JLabel("");
-        empty1.setFont(plainFont);
+        detailsPanel.add(name, gc);
 
         gc.gridx++;
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(empty1, gc);
-        
-        JLabel empty2 = new JLabel("");
-        empty2.setFont(boldFont);
+        detailsPanel.add(new JLabel(""), gc);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(empty2, gc);
+        detailsPanel.add(new JLabel(""), gc);
         
         JLabel leasePropRef = new JLabel("Balance    ");
         leasePropRef.setFont(plainFont);
@@ -717,13 +709,13 @@ public class LeaseAccDetails extends JFrame {
                 startDate.setText(formatter.format(leaseAcc.getStartDate()));
             }
             if (leaseAcc.getAccName() != null) {
-                start.setText(leaseAcc.getAccName());
+                name.setText(leaseAcc.getAccName());
             }
             if (leaseAcc.getEndDate() != null) {
                 endDate.setText(formatter.format(leaseAcc.getEndDate()));
             }
             
-            propRef = new JLabel("£" + String.valueOf(leaseAcc.getBalance()));
+            propRef.setText("£" + String.valueOf(leaseAcc.getBalance()));
             
             notePanel.setData(leaseAcc.getNotes());
             transactionPanel.setData(leaseAcc.getTransactions());

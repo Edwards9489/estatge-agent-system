@@ -143,7 +143,7 @@ public class CreateTransaction extends JFrame {
             fromNameField.setDisabledTextColor(Color.BLACK);
             amountField = new JTextField(10);
             isDebitField = new JCheckBox();
-            textArea = new JTextArea(3, 30);
+            textArea = new JTextArea(3, 50);
 
             okButton.addActionListener(new ActionListener() {
                 @Override

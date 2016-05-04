@@ -3363,7 +3363,7 @@ public class Database {
                             Date createdDate = results.getDate("createdDate");
 
                             Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                            PropertyElement temp = new PropertyElement(propertyElementRef, element, startDate, stringValue == null, stringValue, doubleValue, note, createdBy, createdDate);
+                            PropertyElement temp = new PropertyElement(propertyElementRef, propRef, element, startDate, stringValue == null, stringValue, doubleValue, note, createdBy, createdDate);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
                             }
@@ -5560,7 +5560,7 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            this.createModifiedBy("jobBenefitModifications", benefit.getLastModification(), benefit.getBenefitRef()); // 
+            this.createModifiedBy("jobRoleBenefitModifications", benefit.getLastModification(), benefit.getBenefitRef()); // 
         }
     }
 

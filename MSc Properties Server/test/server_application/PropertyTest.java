@@ -245,8 +245,8 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(2, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(2, 1, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
             
             assertEquals(0, instance.getPropertyElements().size());
             assertEquals(0, instance.getModifiedBy().size());
@@ -286,7 +286,7 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date2.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date2.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             
             assertEquals(0, instance.getPropertyElements().size());
             assertEquals(false, instance.hasPropElement(rent.getPropertyElementRef()));
@@ -324,8 +324,8 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(2, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(2, 1, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
             
             assertEquals(0, instance.getPropertyElements().size());
             instance.createPropertyElement(rent, modifiedBy);
@@ -706,8 +706,8 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED3", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
-            PropertyElement charges = new PropertyElement(2, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(2, 1, element, date.getTime(), true, null, 300.00, note5, "DEDWARDS", new Date());
             
             assertEquals(0, instance.getPropertyElements().size());
             List<PropertyElement> expResult = new ArrayList();
@@ -748,7 +748,7 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getPropElement(rent.getPropertyElementRef()));
             assertEquals(false, instance.hasPropElement(rent.getElementCode()));
@@ -781,7 +781,7 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getPropElement(rent.getPropertyElementRef()));
             assertEquals(false, instance.hasCurrentPropElement(rent.getElementCode()));
@@ -813,7 +813,7 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getPropElement(rent.getPropertyElementRef()));
             assertEquals(false, instance.hasPropElement(rent.getPropertyElementRef()));
@@ -843,7 +843,7 @@ public class PropertyTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
             Property instance = new Property(1, address, date.getTime(), element, element, "DEDWARDS", new Date());
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             
             assertEquals(null, instance.getPropElement(rent.getPropertyElementRef()));
             assertEquals(false, instance.hasPropElement(rent.getPropertyElementRef()));
@@ -908,7 +908,7 @@ public class PropertyTest {
             
             assertEquals(true, instance.getRent() == 0);
             assertEquals(false, instance.getRent() == 1200.00);
-            PropertyElement rent = new PropertyElement(1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
+            PropertyElement rent = new PropertyElement(1, 1, element2, date.getTime(), true, null, 1200.00, note4, "DEDWARDS", new Date());
             instance.createPropertyElement(rent, modifiedBy);
             assertEquals(true, instance.getRent() == 1200.00);
             assertEquals(false, instance.getRent() == 0);
@@ -936,7 +936,7 @@ public class PropertyTest {
             
             assertEquals(true, instance.getCharges() == 0);
             assertEquals(false, instance.getCharges() == 300.00);
-            PropertyElement charges = new PropertyElement(1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
+            PropertyElement charges = new PropertyElement(1, 1, element, date.getTime(), true, null, 300.00, note3, "DEDWARDS", new Date());
             instance.createPropertyElement(charges, modifiedBy);
             assertEquals(true, instance.getCharges() == 300.00);
             assertEquals(false, instance.getCharges() == 0);

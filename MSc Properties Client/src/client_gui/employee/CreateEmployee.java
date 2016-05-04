@@ -124,8 +124,8 @@ public class CreateEmployee extends JFrame {
             }
         });
         
-        this.setMinimumSize(new Dimension(650, 300));
-        this.setSize(650, 300);
+        this.setMinimumSize(new Dimension(750, 300));
+        this.setSize(750, 300);
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);

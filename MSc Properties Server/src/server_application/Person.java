@@ -690,6 +690,14 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
         return false;
     }
     
+    @Override
+    public ContactInterface getContact(int contactRef) throws RemoteException {
+        if (this.hasContact(contactRef)) {
+            return contacts.get(contactRef);
+        }
+        return null;
+    }
+    
     /**
      * 
      * @return contacts

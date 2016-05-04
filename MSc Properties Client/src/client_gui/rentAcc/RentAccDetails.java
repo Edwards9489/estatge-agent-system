@@ -705,7 +705,7 @@ public class RentAccDetails extends JFrame {
                 endDate.setText(formatter.format(rentAcc.getEndDate()));
             }
             
-            propRef = new JLabel("£" + String.valueOf(rentAcc.getBalance()));
+            propRef.setText("£" + String.valueOf(rentAcc.getBalance()));
             
             notePanel.setData(rentAcc.getNotes());
             transactionPanel.setData(rentAcc.getTransactions());
