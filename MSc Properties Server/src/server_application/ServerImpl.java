@@ -2504,7 +2504,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             JobRole jobRole = (JobRole) this.database.getJobRole(code);
             ModifiedBy modified = new ModifiedBy("Updated Job Role " + code, modifiedBy, new Date());
             jobRole.updateJobRole(jobTitle, jobDescription, salary, current, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, modified);
-            List<ContractInterface> contracts = this.database.getContracts(null, null, null, null, null, null, null, code, null, null, null, null, null);
+            List<ContractInterface> contracts = this.database.getContracts(null, null, null, null, null, null, code, null, null, null, null);
             for (ContractInterface temp : contracts) {
                 if (temp.isCurrent()) {
                     Employee employee = (Employee) temp.getEmployee();
@@ -4655,8 +4655,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getApplications(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getApplications(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
     }
 
     @Override
@@ -4675,7 +4675,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
+    public List<ApplicationInterface> getCorrNameApplications(String name) throws RemoteException {
         return this.database.getCorrNameApplcations(name);
     }
 
@@ -4697,19 +4697,26 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public ApplicationInterface getInvPartyApplcation(int iPartyRef) throws RemoteException {
+    public List<PropertyInterface> getAddressProperties(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getAddressProperties(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+    }
+
+    @Override
+    public ApplicationInterface getInvPartyApplication(int iPartyRef) throws RemoteException {
         return this.database.getInvPartyApplcation(iPartyRef);
     }
 
     @Override
     public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef,
-            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
     }
 
     @Override
-    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<ApplicationInterface> tempApplications = this.getApplications(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
+        List<ApplicationInterface> tempApplications = this.getApplications(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
         return this.database.getApplicationTenancies(tempApplications);
     }
 
@@ -4728,6 +4735,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         List<PropertyInterface> tempProperties = this.getProperties(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
         return this.database.getPropertyTenancies(tempProperties);
     }
+    
+    @Override
+    public List<TenancyInterface> getAddressTenancies(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        List<PropertyInterface> properties = this.database.getAddressProperties(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+        return this.database.getPropertyTenancies(properties);
+    }
 
     @Override
     public List<TenancyInterface> getNameTenancies(String name) throws RemoteException {
@@ -4740,14 +4755,22 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
     }
 
     @Override
     public List<LeaseInterface> getPropertyLeases(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
         List<PropertyInterface> tempProperties = this.getProperties(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
         return this.database.getPropertyLeases(tempProperties);
+    }
+    
+    @Override
+    public List<LeaseInterface> getAddressLeases(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        List<PropertyInterface> properties = this.database.getAddressProperties(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+        return this.database.getPropertyLeases(properties);
     }
 
     @Override
@@ -4779,9 +4802,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Integer empRef,
-            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getContracts(name, startDate, expectedEndDate, endDate, length, propertyRef, empRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer empRef,
+            String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getContracts(name, startDate, expectedEndDate, endDate, length, empRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
     }
 
     @Override
@@ -4805,13 +4828,23 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, current, createdBy, createdDate);
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, createdBy, createdDate);
     }
 
     @Override
     public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
         return this.database.getNameRentAcc(name);
+    }
+
+    @Override
+    public List<RentAccountInterface> getPropRentAccounts(int propRef) throws RemoteException {
+        return this.database.getPropRentAccounts(propRef);
+    }
+
+    @Override
+    public List<RentAccountInterface> getApplicationRentAccounts(int propRef) throws RemoteException {
+        return this.database.getApplicationRentAccounts(propRef);
     }
 
     @Override
@@ -4821,8 +4854,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     @Override
     public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef,
-            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<TenancyInterface> tempTenancies = this.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+            Integer applicationRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        List<TenancyInterface> tempTenancies = this.getTenancies(name, startDate, expectedEndDate, endDate, length, propertyRef, applicationRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
         return this.database.getTenanciesRentAccounts(tempTenancies);
     }
 
@@ -4832,13 +4865,23 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, current, createdBy, createdDate);
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, createdBy, createdDate);
     }
 
     @Override
     public List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException {
         return this.database.getNameLeaseAcc(name);
+    }
+    
+    @Override
+    public List<LeaseAccountInterface> getPropLeaseAccounts(int propRef) throws RemoteException {
+        return this.database.getPropLeaseAccounts(propRef);
+    }
+    
+    @Override
+    public List<LeaseAccountInterface> getLandlordLeaseAccounts(int landlordRef) throws RemoteException {
+        return this.database.getLandlordLeaseAccounts(landlordRef);
     }
 
     @Override
@@ -4847,8 +4890,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<LeaseInterface> tempLeases = this.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        List<LeaseInterface> tempLeases = this.getLeases(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
         return this.database.getLeasesLeaseAccounts(tempLeases);
     }
 
@@ -4858,13 +4901,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, current, createdBy, createdDate);
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, createdBy, createdDate);
     }
 
     @Override
     public List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException {
         return this.database.getNameEmployeeAcc(name);
+    }
+    
+    @Override
+    public List<EmployeeAccountInterface> getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
+        return this.database.getJobRoleEmployeeAcc(jobRoleCode);
     }
 
     @Override
@@ -4873,9 +4921,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Integer empRef,
-            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        List<ContractInterface> tempContracts = this.getContracts(name, startDate, expectedEndDate, endDate, length, propertyRef, empRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer empRef,
+            String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
+        List<ContractInterface> tempContracts = this.getContracts(name, startDate, expectedEndDate, endDate, length, empRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
         return this.database.getContractsEmployeeAccounts(tempContracts);
     }
 
@@ -4885,8 +4933,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
-        return this.database.getOffices(addrRef, startDate, current, createdBy, createdDate);
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, String createdBy, Date createdDate) throws RemoteException {
+        return this.database.getOffices(addrRef, startDate, createdBy, createdDate);
     }
 
     /// REPORTING METHODS
@@ -4896,7 +4944,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
-                List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempTenancies.isEmpty()) {
                     for (TenancyInterface temp : tempTenancies) {
                         if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -4914,7 +4962,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<TenancyInterface> getTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<TenancyInterface> officeTenancies = new ArrayList();
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
-            List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempTenancies.isEmpty()) {
                 for (TenancyInterface temp : tempTenancies) {
                     if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -4933,7 +4981,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
-                List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempLeases.isEmpty()) {
                     for (LeaseInterface temp : tempLeases) {
                         if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -4951,7 +4999,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<LeaseInterface> getLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<LeaseInterface> officeLeases = new ArrayList();
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
-            List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempLeases.isEmpty()) {
                 for (LeaseInterface temp : tempLeases) {
                     if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -4971,7 +5019,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
-                List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
+                List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempContracts.isEmpty()) {
                     for (ContractInterface temp : tempContracts) {
                         if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -4989,7 +5037,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<ContractInterface> officeContracts = new ArrayList();
         if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
-            List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, officeCode, null, null, null);
+            List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempContracts.isEmpty()) {
                 for (ContractInterface temp : tempContracts) {
                     if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
@@ -5188,7 +5236,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     // SYSTEM METHODS
     public void processRentTransactions(Date date) {
         try {
-            List<RentAccountInterface> rentAccounts = this.getRentAccounts(null, date, null, null, null, null, null, null, null, null);
+            List<RentAccountInterface> rentAccounts = this.getRentAccounts(null, date, null, null, null, null, null, null, null);
             for (RentAccountInterface temp : rentAccounts) {
                 RentAccount temp2 = (RentAccount) temp;
                 Application app = (Application) temp.getTenancy().getApplication();
@@ -5205,7 +5253,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     public void processLeaseTransactions(Date date) {
         try {
-            List<LeaseAccountInterface> leaseAccounts = this.getLeaseAccounts(null, date, null, null, null, null, null, null, null, null);
+            List<LeaseAccountInterface> leaseAccounts = this.getLeaseAccounts(null, date, null, null, null, null, null, null, null);
             for (LeaseAccountInterface temp : leaseAccounts) {
                 LeaseAccount temp2 = (LeaseAccount) temp;
                 List<LandlordInterface> landlords = temp.getLease().getLandlords();
@@ -5226,7 +5274,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     public void processSalaryTransactions() {
         try {
-            List<EmployeeAccountInterface> employeeAccounts = this.getEmployeeAccounts(null, new Date(), null, null, null, null, null, null, null, null);
+            List<EmployeeAccountInterface> employeeAccounts = this.getEmployeeAccounts(null, new Date(), null, null, null, null, null, null, null);
             for (EmployeeAccountInterface temp : employeeAccounts) {
                 EmployeeAccount temp2 = (EmployeeAccount) temp;
                 EmployeeInterface employee = temp.getContract().getEmployee();
@@ -5352,7 +5400,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         while (i < count) {
             for (AgreementInterface temp : officeAgreements) {
                 if (tempAgreement != null && temp instanceof TenancyInterface) {
-                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) > 0) {
+                    if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
                         if (!tempAgreements.contains(temp)) {
                             tempAgreement = temp;
                         }
@@ -5397,7 +5445,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         while (i < count) {
             for (AgreementInterface temp : officeAgreements) {
                 if (tempAgreement != null && temp instanceof LeaseInterface) {
-                    if (tempAgreement.getExpectedEndDate().compareTo(temp.getExpectedEndDate()) > 0) {
+                    if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
                         if (!tempAgreements.contains(temp)) {
                             tempAgreement = temp;
                         }

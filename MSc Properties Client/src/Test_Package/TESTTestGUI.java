@@ -194,11 +194,11 @@ public class TESTTestGUI {
             AppDetails appDetails = new AppDetails(client, application);
             appDetails.setVisible(true);
             
-//            AppSearch appSearch = new AppSearch(client);
-//            appSearch.setVisible(true);
-//            
-//            AppAdvancedSearch appAdvSearch = new AppAdvancedSearch(client);
-//            appAdvSearch.setVisible(true);
+            AppSearch appSearch = new AppSearch(client);
+            appSearch.setVisible(true);
+            
+            AppAdvancedSearch appAdvSearch = new AppAdvancedSearch(client);
+            appAdvSearch.setVisible(true);
             
             
             // Contact Testing
@@ -222,8 +222,8 @@ public class TESTTestGUI {
             ContractDetails contractDetails = new ContractDetails(client, contract);
             contractDetails.setVisible(true);
             
-//            ContractSearch contractSearch = new ContractSearch(client);
-//            contractSearch.setVisible(true);
+            ContractSearch contractSearch = new ContractSearch(client);
+            contractSearch.setVisible(true);
 //            
 //            CreateContract createContract = new CreateContract(client);
 //            createContract.setVisible(true);
@@ -255,8 +255,8 @@ public class TESTTestGUI {
             EmpAccDetails empAccGUI = new EmpAccDetails(client, empAcc);
             empAccGUI.setVisible(true);
             
-//            EmpAccSearch empAccSearch = new EmpAccSearch(client);
-//            empAccSearch.setVisible(true);
+            EmpAccSearch empAccSearch = new EmpAccSearch(client);
+            empAccSearch.setVisible(true);
             
             
             // Employee Testing
@@ -349,8 +349,8 @@ public class TESTTestGUI {
 //            createLease.setPropField(3);
 //            createLease.setVisible(true);
 //            
-//            LeaseSearch leaseSearch = new LeaseSearch(client);
-//            leaseSearch.setVisible(true);
+            LeaseSearch leaseSearch = new LeaseSearch(client);
+            leaseSearch.setVisible(true);
 //            
 //            UpdateLease updateLease = new UpdateLease(client, lease);
 //            updateLease.setVisible(true);
@@ -361,8 +361,8 @@ public class TESTTestGUI {
             LeaseAccDetails leaseAccGUI = new LeaseAccDetails(client, leaseAcc);
             leaseAccGUI.setVisible(true);
             
-//            LeaseAccSearch leaseAccSearch = new LeaseAccSearch(client);
-//            leaseAccSearch.setVisible(true);
+            LeaseAccSearch leaseAccSearch = new LeaseAccSearch(client);
+            leaseAccSearch.setVisible(true);
             
             
             // Note Testing
@@ -397,8 +397,8 @@ public class TESTTestGUI {
 //            CreatePerson createPerson = new CreatePerson(client);
 //            createPerson.setVisible(true);
 //            
-//            PersonSearch personSearch = new PersonSearch(client);
-//            personSearch.setVisible(true);
+            PersonSearch personSearch = new PersonSearch(client);
+            personSearch.setVisible(true);
 //            
 //            UpdatePerson updatePerson = new UpdatePerson(client, person);
 //            updatePerson.setVisible(true);
@@ -412,8 +412,8 @@ public class TESTTestGUI {
 //            CreateProperty createProperty = new CreateProperty(client);
 //            createProperty.setVisible(true);
 //            
-//            PropertySearch propertySearch = new PropertySearch(client);
-//            propertySearch.setVisible(true);
+            PropertySearch propertySearch = new PropertySearch(client);
+            propertySearch.setVisible(true);
 //
 //            UpdateProperty updateProperty = new UpdateProperty(client, property);
 //            updateProperty.setVisible(true);
@@ -442,8 +442,8 @@ public class TESTTestGUI {
             RentAccDetails rentAccGUI = new RentAccDetails(client, rentAcc);
             rentAccGUI.setVisible(true);
             
-//            RentAccSearch rentAccSearch = new RentAccSearch(client);
-//            rentAccSearch.setVisible(true);
+            RentAccSearch rentAccSearch = new RentAccSearch(client);
+            rentAccSearch.setVisible(true);
             
             
             // Reporting Testing
@@ -468,8 +468,8 @@ public class TESTTestGUI {
 //            createTenancy.setPropField(5);
 //            createTenancy.setVisible(true);
 //            
-//            TenSearch tenancySearch = new TenSearch(client);
-//            tenancySearch.setVisible(true);
+            TenSearch tenancySearch = new TenSearch(client);
+            tenancySearch.setVisible(true);
 //            
 //            UpdateTenancy updateTenancy = new UpdateTenancy(client, tenancy);
 //            updateTenancy.setVisible(true);

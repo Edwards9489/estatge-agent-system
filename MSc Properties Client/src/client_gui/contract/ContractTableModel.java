@@ -22,7 +22,7 @@ public class ContractTableModel extends AbstractTableModel {
     
     private List<ContractInterface> db = new ArrayList();
     
-    private final String[] colNames = {"Ref", "Job Role Code", "Start Date", "End Date", "Account Ref"};
+    private final String[] colNames = {"Ref", "Name", "Job Role Code", "Start Date", "End Date", "Account Ref"};
     
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -45,7 +45,7 @@ public class ContractTableModel extends AbstractTableModel {
     
     @Override
     public int getColumnCount() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -57,16 +57,18 @@ public class ContractTableModel extends AbstractTableModel {
                 case 0:
                     return address.getAgreementRef();
                 case 1:
-                    return address.getJobRoleCode();
+                    return address.getAgreementName();
                 case 2:
-                    return formatter.format(address.getStartDate());
+                    return address.getJobRoleCode();
                 case 3:
+                    return formatter.format(address.getStartDate());
+                case 4:
                     if(address.getActualEndDate() != null) {
                         return formatter.format(address.getActualEndDate());
                     } else {
                         return "";
                     }
-                case 4:
+                case 5:
                     return address.getAccountRef();
             }
             return null;

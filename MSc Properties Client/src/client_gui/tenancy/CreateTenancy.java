@@ -262,14 +262,13 @@ public class CreateTenancy extends JFrame {
         appThumb.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                AppSearch appSearch = new AppSearch(client);
-                appSearch.setVisible(true);
-                appSearch.setListener(new IntegerListener() {
+                AppSearch appSearch = new AppSearch(client, new IntegerListener() {
                     @Override
                     public void intOmitted(int appRef) {
                         setAppField(appRef);
                     }
                 });
+                appSearch.setVisible(true);
             }
         });
         
@@ -351,14 +350,13 @@ public class CreateTenancy extends JFrame {
         propThumb.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                PropertySearch propSearch = new PropertySearch(client);
-                propSearch.setVisible(true);
-                propSearch.setListener(new IntegerListener() {
+                PropertySearch propSearch = new PropertySearch(client, new IntegerListener() {
                     @Override
                     public void intOmitted(int propRef) {
                         setPropField(propRef);
                     }
                 });
+                propSearch.setVisible(true);
             }
         });
         

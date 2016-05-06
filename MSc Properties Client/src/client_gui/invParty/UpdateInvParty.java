@@ -6,10 +6,7 @@
 package client_gui.invParty;
 
 import client_application.ClientImpl;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.application.AppAdvancedSearch;
-import client_gui.person.PersonSearch;
 import interfaces.Element;
 import interfaces.InvolvedPartyInterface;
 import java.awt.BorderLayout;
@@ -19,25 +16,17 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -231,7 +220,7 @@ public class UpdateInvParty extends JFrame {
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel personRef = new JLabel("Person Ref *    ");
+        JLabel personRef = new JLabel("Person Ref    ");
         Font font = personRef.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 15);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 15);
@@ -252,40 +241,7 @@ public class UpdateInvParty extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         controlsPanel.add(personRefField, gc);
 
-        Image srchImge = null;
-        JLabel perThumb = new JLabel();
-
-        try {
-            srchImge = ImageIO.read(new File("D:\\System Images\\search magnifying glass.png")).getScaledInstance(25, 25, BufferedImage.SCALE_SMOOTH);
-        } catch (IOException ex) {
-            Logger.getLogger(UpdateInvParty.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (srchImge != null) {
-            ImageIcon icon = new ImageIcon(srchImge);
-            perThumb.setIcon(icon);
-        }
-
-        perThumb.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                PersonSearch personSearch = new PersonSearch(client);
-                personSearch.setVisible(true);
-                personSearch.setListener(new IntegerListener() {
-                    @Override
-                    public void intOmitted(int empRef) {
-                        setPersonField(empRef);
-                    }
-                });
-            }
-        });
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(perThumb, gc);
-
-        JLabel appRef = new JLabel("App Ref *    ");
+        JLabel appRef = new JLabel("App Ref    ");
         appRef.setFont(boldFont);
 
         gc.gridx++;
@@ -302,33 +258,7 @@ public class UpdateInvParty extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(appRefField, gc);
 
-        JLabel appThumb = new JLabel();
-
-        if (srchImge != null) {
-            ImageIcon icon = new ImageIcon(srchImge);
-            appThumb.setIcon(icon);
-        }
-
-        appThumb.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                AppAdvancedSearch appSearch = new AppAdvancedSearch(client);
-                appSearch.setVisible(true);
-                appSearch.setListener(new IntegerListener() {
-                    @Override
-                    public void intOmitted(int appRef) {
-                        setAppField(appRef);
-                    }
-                });
-            }
-        });
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(appThumb, gc);
-
-        JLabel main = new JLabel("Main Ind *    ");
+        JLabel main = new JLabel("Main Ind    ");
         main.setFont(boldFont);
 
         gc.gridx++;
@@ -362,11 +292,6 @@ public class UpdateInvParty extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(dateField, gc);
 
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);
-
         JLabel relationship = new JLabel("Relationship *    ");
         relationship.setFont(boldFont);
 
@@ -380,11 +305,6 @@ public class UpdateInvParty extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(relationshipField, gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(new JLabel(""), gc);
 
         JLabel joint = new JLabel("Joint Ind *    ");
         joint.setFont(boldFont);

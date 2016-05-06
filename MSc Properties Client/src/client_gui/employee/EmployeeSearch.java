@@ -106,9 +106,9 @@ public class EmployeeSearch extends JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
-        PeopleSearchPanel detailsPanel = new PeopleSearchPanel(client);
+        PeopleSearchPanel personPanel = new PeopleSearchPanel(client);
 
-        detailsPanel.setListener(new StringArrayListener() {
+        personPanel.setListener(new StringArrayListener() {
             @Override
             public void arrayOmitted(List<String> array) {
                 if (array.size() == 15) {
@@ -152,7 +152,7 @@ public class EmployeeSearch extends JFrame {
 
         // Add sub panels to dialog
         setLayout(new BorderLayout());
-        add(detailsPanel, BorderLayout.CENTER);
+        add(personPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
     }
 

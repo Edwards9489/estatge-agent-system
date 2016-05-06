@@ -9,7 +9,6 @@ import client_application.ClientImpl;
 import client_gui.StringArrayListener;
 import interfaces.Element;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -279,7 +278,7 @@ public class PeopleSearchPanel extends JPanel {
 
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createTitledBorder("Search");
+        Border titleBorder = BorderFactory.createTitledBorder("Person Search Details");
 
         setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
         
@@ -310,9 +309,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(title, gc);
 
         titleField.setFont(plainFont);
-        Dimension dimension = titleField.getPreferredSize();
-        dimension.setSize(dimension.getWidth() + 80, dimension.getHeight());
-        titleField.setPreferredSize(dimension);
         
         
         gc.gridx++;
@@ -330,7 +326,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(forename, gc);
 
         forenameField.setFont(plainFont);
-        forenameField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -347,7 +342,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(mNames, gc);
 
         middleNameField.setFont(plainFont);
-        middleNameField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -364,7 +358,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(surname, gc);
 
         surnameField.setFont(plainFont);
-        surnameField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -403,7 +396,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(ni, gc);
         
         niField.setFont(plainFont);
-        niField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -419,7 +411,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(gender, gc);
         
         genderField.setFont(plainFont);
-        genderField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -436,7 +427,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(maritalStatus, gc);
         
         maritalStatusField.setFont(plainFont);
-        maritalStatusField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -460,7 +450,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(ethnicOrigin, gc);
         
         ethnicOriginField.setFont(plainFont);
-        ethnicOriginField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -476,7 +465,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(language, gc);
         
         languageField.setFont(plainFont);
-        languageField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -492,7 +480,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(nationality, gc);
         
         nationalityField.setFont(plainFont);
-        nationalityField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -509,7 +496,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(sexuality, gc);
         
         sexualityField.setFont(plainFont);
-        sexualityField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -533,7 +519,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(religion, gc);
         
         religionField.setFont(plainFont);
-        religionField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
@@ -549,7 +534,6 @@ public class PeopleSearchPanel extends JPanel {
         detailsPanel.add(createdByLabel, gc);
         
         createdByField.setFont(plainFont);
-        createdByField.setPreferredSize(dimension);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;

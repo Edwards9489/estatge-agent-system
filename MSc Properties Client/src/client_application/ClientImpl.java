@@ -206,7 +206,7 @@ public class ClientImpl extends Observable implements Client {
     
     public void logout() throws RemoteException {
         if (this.server.isAlive() && this.isUserSet()) {
-            server.unregister(this);
+            this.server.unregister(this);
         }
     }
     
@@ -2712,9 +2712,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
 
-    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.getApplications(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+            return server.getApplications(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2738,16 +2738,16 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
+    public List<ApplicationInterface> getCorrNameApplications(String name) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getCorrNameApplcations(name);
+            return this.server.getCorrNameApplications(name);
         }
         return null;
     }
     
-    public ApplicationInterface getInvPartyApplcation(int iPartyRef) throws RemoteException {
+    public ApplicationInterface getInvPartyApplication(int iPartyRef) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getInvPartyApplcation(iPartyRef);
+            return this.server.getInvPartyApplication(iPartyRef);
         }
         return null;
     }
@@ -2777,17 +2777,26 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, 
-            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<PropertyInterface> getAddressProperties(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getAddressProperties(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
         }
         return null;
     }
     
-    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, 
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getApplicationTenancies(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+            return this.server.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getApplicationTenancies(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2801,7 +2810,16 @@ public class ClientImpl extends Observable implements Client {
     
     public List<TenancyInterface> getPropertyTenancies(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getPropertyTenancies(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
+            return this.server.getPropertyTenancies(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public List<TenancyInterface> getAddressTenancies(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getAddressTenancies(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
         }
         return null;
     }
@@ -2824,9 +2842,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getLeases(name, startDate, expectedEndDate, endDate, length, propRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getLeases(name, startDate, expectedEndDate, endDate, length, propRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2834,6 +2852,15 @@ public class ClientImpl extends Observable implements Client {
     public List<LeaseInterface> getPropertyLeases(Date acquiredDate, Date leaseEndDate, String propTypeCode, String propSubTypeCode, String propStatus, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getPropertyLeases(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
+        }
+        return null;
+    }
+    
+    public List<LeaseInterface> getAddressLeases(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getAddressLeases(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
         }
         return null;
     }
@@ -2874,10 +2901,10 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, 
-            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer employeeRef, 
+            String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getContracts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getContracts(name, startDate, expectedEndDate, endDate, length, employeeRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2903,9 +2930,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef,  String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, current, createdBy, createdDate);
+            return this.server.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2913,6 +2940,20 @@ public class ClientImpl extends Observable implements Client {
     public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getNameRentAcc(name);
+        }
+        return null;
+    }
+    
+    public List<RentAccountInterface> getPropRentAccounts(int propRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getPropRentAccounts(propRef);
+        }
+        return null;
+    }
+    
+    public List<RentAccountInterface> getApplicationRentAccounts(int propRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getApplicationRentAccounts(propRef);
         }
         return null;
     }
@@ -2925,9 +2966,9 @@ public class ClientImpl extends Observable implements Client {
     }
     
     public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
-            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getTenanciesRentAccounts(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getTenanciesRentAccounts(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2939,9 +2980,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef,  String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, current, createdBy, createdDate);
+            return this.server.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2953,6 +2994,20 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
+    public List<LeaseAccountInterface> getPropLeaseAccounts(int propRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getPropLeaseAccounts(propRef);
+        }
+        return null;
+    }
+    
+    public List<LeaseAccountInterface> getLandlordLeaseAccounts(int landlordRef) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getLandlordLeaseAccounts(landlordRef);
+        }
+        return null;
+    }
+    
     public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getOfficeLeaseAcc(office);
@@ -2960,9 +3015,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getLeasesLeaseAccounts(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getLeasesLeaseAccounts(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2974,9 +3029,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef,  String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, current, createdBy, createdDate);
+            return this.server.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -2988,6 +3043,13 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
+    public List<EmployeeAccountInterface> getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.getJobRoleEmployeeAcc(jobRoleCode);
+        }
+        return null;
+    }
+    
     public List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getOfficeEmployeeAcc(office);
@@ -2995,10 +3057,10 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, 
-            String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer employeeRef, 
+            String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getContractsEmployeeAccounts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+            return this.server.getContractsEmployeeAccounts(name, startDate, expectedEndDate, endDate, length, employeeRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
         }
         return null;
     }
@@ -3010,9 +3072,9 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
-    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.server.getOffices(addrRef, startDate, current, createdBy, createdDate);
+            return this.server.getOffices(addrRef, startDate, createdBy, createdDate);
         }
         return null;
     }
@@ -3031,7 +3093,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getTenanciesByEmployee(eRef, startDate, endDate).size();
+            return this.server.getTenanciesByEmployee(eRef, startDate, endDate).size();
         }
         return null;
     }
@@ -3045,7 +3107,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getTenanciesByOffice(officeCode, startDate, endDate).size();
+            return this.server.getTenanciesByOffice(officeCode, startDate, endDate).size();
         }
         return null;
     }
@@ -3060,7 +3122,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getLeasesByEmployee(eRef, startDate, endDate).size();
+            return this.server.getLeasesByEmployee(eRef, startDate, endDate).size();
         }
         return null;
     }
@@ -3074,7 +3136,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getLeasesByOffice(officeCode, startDate, endDate).size();
+            return this.server.getLeasesByOffice(officeCode, startDate, endDate).size();
         }
         return null;
     }
@@ -3088,7 +3150,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfContractsByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getContractsByEmployee(eRef, startDate, endDate).size();
+            return this.server.getContractsByEmployee(eRef, startDate, endDate).size();
         }
         return null;
     }
@@ -3102,7 +3164,7 @@ public class ClientImpl extends Observable implements Client {
     
     public Integer getNumberOfContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return this.getContractsByOffice(officeCode, startDate, endDate).size();
+            return this.server.getContractsByOffice(officeCode, startDate, endDate).size();
         }
         return null;
     }

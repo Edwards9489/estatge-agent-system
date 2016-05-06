@@ -27,8 +27,23 @@ public class TestDateConversion {
         lastDay.set(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.getActualMaximum(Calendar.DAY_OF_MONTH));
         
         
-        System.out.println("TODAY: " + today.getTime());
-        System.out.println("LAST DAY: " + lastDay.getTime());
+//        System.out.println("TODAY: " + today.getTime());
+//        System.out.println("LAST DAY: " + lastDay.getTime());
+        
+        Calendar newDate = Calendar.getInstance();
+        newDate.set(2016, 04, 04);
+        
+        System.out.println("Date 1: " + today.getTime());
+        System.out.println("Date 2: " + newDate.getTime());
+        System.out.println();
+        System.out.println("Date Equal: " + DateConversion.dateEqual(today.getTime(), newDate.getTime()));
+        System.out.println("Date 1 Before Date 2: " + DateConversion.firstDateBeforeSecondDate(today.getTime(), newDate.getTime()));
+        System.out.println("Date 1 After Date 2: " + DateConversion.firstDateAfterSecondDate(today.getTime(), newDate.getTime()));
+        
+        System.out.println();
+        System.out.println("Date Equal (int): " + DateConversion.dateEqual2(today.getTime(), newDate.getTime()));
+        System.out.println("Date 1 Before Date 2 (int): " + DateConversion.firstDateBeforeSecondDate2(today.getTime(), newDate.getTime()));
+        System.out.println("Date 1 After Date 2 (int): " + DateConversion.firstDateAfterSecondDate2(today.getTime(), newDate.getTime()));
     }
     
     public static void main(String[] args) {

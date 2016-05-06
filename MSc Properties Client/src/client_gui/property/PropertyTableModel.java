@@ -63,9 +63,17 @@ public class PropertyTableModel extends AbstractTableModel {
                 case 3:
                     return property.getPropType().getCode();
                 case 4:
-                    return property.getPropSubType().getCode();
+                    if (property.getPropSubType() != null) {
+                        return property.getPropSubType().getCode();
+                    } else {
+                        return "";
+                    }
                 case 5:
-                    return formatter.format(property.getLeaseEndDate());
+                    if (property.getLeaseEndDate() != null) {
+                        return formatter.format(property.getLeaseEndDate());
+                    } else {
+                        return "";
+                    }
             }
             return null;
         } catch (RemoteException ex) {

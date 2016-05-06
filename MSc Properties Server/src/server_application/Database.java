@@ -315,12 +315,12 @@ public class Database {
             System.out.println("Connection is null");
         }
     }
-    
+
     private void loadSuperUser() throws RemoteException, SQLException {
         String sql = "select username, employeeRef, password, otherRead, otherWrite, otherUpdate, otherDelete, employeeRead, employeeWrite, employeeUpdate, employeeDelete from users where username='ADMIN'";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-            
+
             while (results.next()) {
                 int employeeRef = results.getInt("employeeRef");
                 String username = results.getString("username");
@@ -335,7 +335,7 @@ public class Database {
                 boolean employeeDelete = results.getBoolean("employeeDelete");
                 UserImpl temp = new UserImpl(employeeRef, -1, username, password, null);
                 temp.setUserPermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete);
-                
+
                 users.put(username, temp);
             }
             selectStat.close();
@@ -582,9 +582,8 @@ public class Database {
                     }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
-                    
-                    //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
 
+                    //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
                     File document = new File(documentPath); // Possibly might not work once File is used, may need to use getResourceAsStream
                     if (!this.documentExists(documentRef)) {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
@@ -664,7 +663,7 @@ public class Database {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1));   
+                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1));
                 insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
@@ -809,7 +808,7 @@ public class Database {
     public boolean canDeleteDocument(int documentRef) {
         return (this.documentExists(documentRef));
     }
-    
+
     private void createDocumentMods(DocumentImpl doc, Map<Integer, ModifiedByInterface> loadadMods) throws RemoteException {
         if (doc != null && this.documentExists(doc.getDocumentRef()) && !loadadMods.isEmpty()) {
             Iterator it = loadadMods.entrySet().iterator();
@@ -862,7 +861,7 @@ public class Database {
 
                     NoteImpl temp = new NoteImpl(noteRef, comment, createdBy, createdDate);
                     this.createNoteMods(temp, this.loadModMap("noteModifications", noteRef));
-                    
+
                     noteMap.put(noteRef, temp);
                 }
             }
@@ -3016,7 +3015,7 @@ public class Database {
             this.deleteNote("propertyNotes", propRef, noteRef);
         }
     }
-    
+
     /**
      *
      * @param type
@@ -3276,7 +3275,7 @@ public class Database {
                 } else if (!propertyElement.isCharge()) {
                     updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 }
-                
+
                 System.out.println("Update SQL statement: " + updateSql);
                 try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                     int col = 1;
@@ -5492,7 +5491,8 @@ public class Database {
         }
     }
 
-    /***
+    /**
+     * *
      * @param benefit
      * @throws SQLException
      * @throws RemoteException
@@ -8509,14 +8509,14 @@ public class Database {
         }
         return 0;
     }
-    
+
     public int getAgreementRef() {
         int ten = countTenancies();
         int lease = countLeases();
         int contract = countContracts();
         return Collections.max(Arrays.asList(ten, lease, contract));
     }
-    
+
     public int getAccountRef() {
         int rentAcc = countRentAccounts();
         int leaseAcc = countLeaseAccounts();
@@ -8826,7 +8826,7 @@ public class Database {
     public List<Element> getReligions() {
         return Collections.unmodifiableList(new ArrayList<>(religions.values()));
     }
-    
+
     public List<Element> getPropertyTypes() {
         return Collections.unmodifiableList(new ArrayList<>(propertyTypes.values()));
     }
@@ -8894,7 +8894,7 @@ public class Database {
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode,
             String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         List<PersonInterface> tempPeople = new ArrayList();
-        
+
         for (PersonInterface temp : this.getPeople()) {
             boolean add = true;
             if (titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
@@ -8909,7 +8909,7 @@ public class Database {
             if (surname != null && !surname.isEmpty() && !surname.equals(temp.getSurname())) {
                 add = false;
             }
-            if (dateOfBirth != null && dateOfBirth.compareTo(temp.getDateOfBirth()) != 0) {
+            if (dateOfBirth != null && !DateConversion.dateEqual(dateOfBirth, temp.getDateOfBirth())) {
                 add = false;
             }
             if (nationalInsurance != null && !nationalInsurance.isEmpty() && !nationalInsurance.equals(temp.getNI())) {
@@ -8936,7 +8936,7 @@ public class Database {
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -8950,94 +8950,94 @@ public class Database {
     public List<AddressInterface> getAddresses(String buildingNumber, String buildingName, String subStreetNumber,
             String subStreet, String streetNumber, String street, String area, String town,
             String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
-        
+
         List<AddressInterface> tempAddresses = new ArrayList<>();
         for (AddressInterface temp : this.getAddresses()) {
             boolean add = true;
-            
+
             System.out.println("Building Number is not null? " + buildingNumber != null);
             //System.out.println("Building Number is not empty? " + !buildingNumber.isEmpty());
             //System.out.println("Building Number is not equal to address building number? " + !buildingNumber.equals(temp.getBuildingNumber()));
             if (buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
                 add = false;
             }
-            
+
             System.out.println("Building Name is not null? " + buildingName != null);
             //System.out.println("Building Name is not empty? " + !buildingName.isEmpty());
             //System.out.println("Building Name is not equal to address building name? " + !buildingName.equals(temp.getBuildingName()));
             if (buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
                 add = false;
             }
-            
+
             System.out.println("Sub Street Number is not null? " + subStreetNumber != null);
             //System.out.println("Sub Street Number is not empty? " + !subStreetNumber.isEmpty());
             //System.out.println("Sub Street Number is not equal to address sub street number? " + !subStreetNumber.equals(temp.getSubStreetNumber()));
             if (subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
                 add = false;
             }
-            
+
             System.out.println("Sub Street is not null? " + subStreet != null);
             //System.out.println("Sub Street is note empty? " + !subStreet.isEmpty());
             //System.out.println("Sub Street is not equal to address sub street? " + !subStreet.equals(temp.getSubStreet()));
             if (subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
                 add = false;
             }
-            
+
             System.out.println("Street Number is not null? " + streetNumber != null);
             //System.out.println("Street Number is not empty? " + !streetNumber.isEmpty());
             //System.out.println("Street Number is not equal to address street number? " + !streetNumber.equals(temp.getStreetNumber()));
             if (streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
                 add = false;
             }
-            
+
             System.out.println("Street is not null? " + street != null);
             //System.out.println("Street is note empty? " + !street.isEmpty());
             //System.out.println("Street is not equal to address street? " + !street.equals(temp.getStreet()));
             if (street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
                 add = false;
             }
-            
+
             System.out.println("Area is not null? " + area != null);
             //System.out.println("Area is not empty? " + !area.isEmpty());
             //System.out.println("Area is not equal to address area? " + !area.equals(temp.getArea()));
             if (area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
                 add = false;
             }
-            
+
             System.out.println("Town is not null? " + town != null);
             //System.out.println("Town is not empty? " + !town.isEmpty());
             //System.out.println("Town is not equal to address country? " + !town.equals(temp.getTown()));
             if (town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
                 add = false;
             }
-            
+
             System.out.println("Country is not null? " + country != null);
             //System.out.println("Country is not empty? " + !country.isEmpty());
             //System.out.println("Country is not equal to address country? " + !country.equals(temp.getCountry()));
             if (country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
                 add = false;
             }
-            
+
             System.out.println("Postcode is not null? " + postcode != null);
             //System.out.println("Postcode By is not empty? " + !postcode.isEmpty());
             //System.out.println("Postcode By is not equal to address postcode? " + !postcode.equals(temp.getPostcode()));
             if (postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode()) && !postcode.equals(temp.getCountry())) {
                 add = false;
             }
-            
+
             System.out.println("Created By is not null? " + createdBy != null);
             //System.out.println("Created By is not empty? " + !createdBy.isEmpty());
             //System.out.println("Created By is not equal to address created by? " + !createdBy.equals(temp.getCreatedBy()));
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            
+
             System.out.println("Created Date is not null? " + createdDate != null);
-            //System.out.println("Created Date is not equal to address created date? " + (createdDate.compareTo(temp.getCreatedDate()) != 0));
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            //System.out.println("Created Date is not equal to address created date? " + (!DateConversion.dateEqual(createdDate, temp.getCreatedDate())));
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
-            
+
             System.out.println("Should Add to FINAL list: " + add);
             if (add) {
                 tempAddresses.add(temp);
@@ -9046,30 +9046,27 @@ public class Database {
         return tempAddresses;
     }
 
-    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode,
-            Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate,
+            String statusCode, String createdBy, Date createdDate) throws RemoteException {
         List<ApplicationInterface> tempApplications = new ArrayList<>();
         for (ApplicationInterface temp : this.getApplications()) {
             boolean add = true;
             if (corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
                 add = false;
             }
-            if (appStartDate != null && appStartDate.compareTo(temp.getAppStartDate()) != 0) {
+            if (appStartDate != null && !DateConversion.dateEqual(appStartDate, temp.getAppStartDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getAppEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (statusCode != null && !statusCode.isEmpty() && !statusCode.equals(temp.getAppStatusCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9192,25 +9189,25 @@ public class Database {
         List<PropertyInterface> tempProperties = new ArrayList();
         for (PropertyInterface temp : this.getProperties()) {
             boolean add = true;
-            if (acquiredDate != null && acquiredDate.compareTo(temp.getAcquiredDate()) != 0) {
+            if (acquiredDate != null && !DateConversion.dateEqual(acquiredDate, temp.getAcquiredDate())) {
                 add = false;
             }
-            if (leaseEndDate != null && leaseEndDate.compareTo(temp.getLeaseEndDate()) != 0) {
+            if (leaseEndDate != null && !DateConversion.dateEqual(leaseEndDate, temp.getLeaseEndDate())) {
                 add = false;
             }
             if (propTypeCode != null && this.propTypeExists(propTypeCode) && !propTypeCode.equals(temp.getPropType().getCode())) {
                 add = false;
             }
-            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && !propSubTypeCode.equals(temp.getPropSubType().getCode())) {
+            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && temp.getPropSubType() != null && !propSubTypeCode.equals(temp.getPropSubType().getCode())) {
                 add = false;
             }
-            if (propStatus != null && propStatus.equals(temp.getPropStatus())) {
+            if (propStatus != null && !propStatus.equals(temp.getPropStatus())) {
                 add = false;
             }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9220,21 +9217,44 @@ public class Database {
         return tempProperties;
     }
 
+    public List<PropertyInterface> getAddressProperties(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+
+        List<AddressInterface> addressList = this.getAddresses(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
+        List<PropertyInterface> propertyList = new ArrayList();
+        if (!addressList.isEmpty()) {
+            for (PropertyInterface tempProperty : this.getProperties()) {
+                boolean cont = true;
+                int i = 0;
+                while (cont && i < addressList.size()) {
+                    AddressInterface tempAddress = addressList.get(i);
+                    if (tempProperty.getAddress().getAddressRef() == tempAddress.getAddressRef()) {
+                        propertyList.add(tempProperty);
+                        cont = false;
+                    }
+                    i++;
+                }
+            }
+        }
+        return propertyList;
+    }
+
     public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef,
-            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+            Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<TenancyInterface> tempTenancies = new ArrayList();
         for (TenancyInterface temp : this.getTenancies()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+            if (expectedEndDate != null && !DateConversion.dateEqual(expectedEndDate, temp.getExpectedEndDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getActualEndDate())) {
                 add = false;
             }
             if (length != null && length != temp.getLength()) {
@@ -9255,13 +9275,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9361,20 +9378,20 @@ public class Database {
         return tempTenancies;
     }
 
-    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<LeaseInterface> tempLeases = new ArrayList();
         for (LeaseInterface temp : this.getLeases()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+            if (expectedEndDate != null && !DateConversion.dateEqual(expectedEndDate, temp.getExpectedEndDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getActualEndDate())) {
                 add = false;
             }
             if (length != null && length != temp.getLength()) {
@@ -9392,13 +9409,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9512,20 +9526,20 @@ public class Database {
         return tempLeases;
     }
 
-    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<ContractInterface> tempContracts = new ArrayList();
         for (ContractInterface temp : this.getContracts()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (expectedEndDate != null && expectedEndDate.compareTo(temp.getExpectedEndDate()) != 0) {
+            if (expectedEndDate != null && !DateConversion.dateEqual(expectedEndDate, temp.getExpectedEndDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getActualEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getActualEndDate())) {
                 add = false;
             }
             if (length != null && length != temp.getLength()) {
@@ -9540,13 +9554,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9604,17 +9615,17 @@ public class Database {
         return tempContracts;
     }
 
-    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<RentAccountInterface> tempRentAccounts = new ArrayList();
         for (RentAccountInterface temp : this.getRentAccounts()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getEndDate())) {
                 add = false;
             }
             if (balance != null && balance != temp.getBalance()) {
@@ -9629,13 +9640,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9650,6 +9658,30 @@ public class Database {
         for (RentAccountInterface temp : this.getRentAccounts()) {
             if (name.equals(temp.getAccName())) {
                 tempRentAcc.add(temp);
+            }
+        }
+        return tempRentAcc;
+    }
+
+    public List<RentAccountInterface> getPropRentAccounts(int propRef) throws RemoteException {
+        List<RentAccountInterface> tempRentAcc = new ArrayList();
+        for (TenancyInterface temp : this.getTenancies()) {
+            if (propRef == temp.getPropertyRef()) {
+                if (this.rentAccountExists(temp.getAccountRef())) {
+                    tempRentAcc.add(this.getRentAccount(temp.getAccountRef()));
+                }
+            }
+        }
+        return tempRentAcc;
+    }
+
+    public List<RentAccountInterface> getApplicationRentAccounts(int appRef) throws RemoteException {
+        List<RentAccountInterface> tempRentAcc = new ArrayList();
+        for (TenancyInterface temp : this.getTenancies()) {
+            if (appRef == temp.getApplicationRef()) {
+                if (this.rentAccountExists(temp.getAccountRef())) {
+                    tempRentAcc.add(this.getRentAccount(temp.getAccountRef()));
+                }
             }
         }
         return tempRentAcc;
@@ -9696,17 +9728,17 @@ public class Database {
         return null;
     }
 
-    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList();
         for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getEndDate())) {
                 add = false;
             }
             if (balance != null && balance != temp.getBalance()) {
@@ -9721,13 +9753,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9745,6 +9774,30 @@ public class Database {
             }
         }
         return tempLeaseAcc;
+    }
+
+    public List<LeaseAccountInterface> getPropLeaseAccounts(int propRef) throws RemoteException {
+        List<LeaseAccountInterface> tempRentAcc = new ArrayList();
+        for (LeaseInterface temp : this.getLeases()) {
+            if (propRef == temp.getPropertyRef()) {
+                if (this.leaseAccountExists(temp.getAccountRef())) {
+                    tempRentAcc.add(this.getLeaseAccount(temp.getAccountRef()));
+                }
+            }
+        }
+        return tempRentAcc;
+    }
+
+    public List<LeaseAccountInterface> getLandlordLeaseAccounts(int landlordRef) throws RemoteException {
+        List<LeaseAccountInterface> tempRentAcc = new ArrayList();
+        for (LeaseInterface temp : this.getLeases()) {
+            if (temp.isAlreadyLandlord(landlordRef)) {
+                if (this.leaseAccountExists(temp.getAccountRef())) {
+                    tempRentAcc.add(this.getLeaseAccount(temp.getAccountRef()));
+                }
+            }
+        }
+        return tempRentAcc;
     }
 
     public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
@@ -9788,17 +9841,17 @@ public class Database {
         return null;
     }
 
-    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList();
         for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
             boolean add = true;
-            if (name != null && name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (endDate != null && endDate.compareTo(temp.getEndDate()) != 0) {
+            if (endDate != null && !DateConversion.dateEqual(endDate, temp.getEndDate())) {
                 add = false;
             }
             if (balance != null && balance != temp.getBalance()) {
@@ -9813,13 +9866,10 @@ public class Database {
             if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
                 add = false;
             }
-            if (current != null && current != temp.isCurrent()) {
-                add = false;
-            }
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-            if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {
@@ -9834,6 +9884,18 @@ public class Database {
         for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
             if (name.equals(temp.getAccName())) {
                 tempEmployeeAcc.add(temp);
+            }
+        }
+        return tempEmployeeAcc;
+    }
+    
+    public List<EmployeeAccountInterface    > getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
+        List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
+        for (ContractInterface temp : this.getContracts()) {
+            if (jobRoleCode.equals(temp.getJobRoleCode())) {
+                if (this.employeeAccountExists(temp.getAccountRef())) {
+                    tempEmployeeAcc.add(this.getEmployeeAccount(temp.getAccountRef()));
+                }
             }
         }
         return tempEmployeeAcc;
@@ -9880,20 +9942,20 @@ public class Database {
         return null;
     }
 
-    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         List<OfficeInterface> tempOffices = new ArrayList();
         for (OfficeInterface temp : this.getOffices()) {
             boolean add = true;
             if (addrRef != null && addrRef != temp.getAddress().getAddressRef()) {
                 add = false;
             }
-            if (startDate != null && startDate.compareTo(temp.getStartDate()) != 0) {
+            if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
-            } else if (current != null && current != temp.isCurrent()) {
+            }
+            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
-            } else if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
-                add = false;
-            } else if (createdDate != null && createdDate.compareTo(temp.getCreatedDate()) != 0) {
+            }
+            if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
             if (add) {

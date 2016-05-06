@@ -179,7 +179,6 @@ public class HomeForm extends JFrame implements Observer {
                     case "System Config" :
                         SysConfigFrame config = new SysConfigFrame(client);
                         config.setVisible(true);
-                        System.out.println("Sys Config Parameter: " + text);
                         break;
                         
                 }

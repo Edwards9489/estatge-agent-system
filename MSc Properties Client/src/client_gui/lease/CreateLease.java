@@ -252,14 +252,13 @@ public class CreateLease extends JFrame {
         propThumb.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                PropertySearch propSearch = new PropertySearch(client);
-                propSearch.setVisible(true);
-                propSearch.setListener(new IntegerListener() {
+                PropertySearch propSearch = new PropertySearch(client, new IntegerListener() {
                     @Override
                     public void intOmitted(int propRef) {
                         setPropField(propRef);
                     }
                 });
+                propSearch.setVisible(true);
             }
         });
         

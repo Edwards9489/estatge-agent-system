@@ -8,7 +8,7 @@ package client_gui.invParty;
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.application.AppAdvancedSearch;
+import client_gui.application.AppSearch;
 import client_gui.person.PersonSearch;
 import interfaces.Element;
 import java.awt.BorderLayout;
@@ -296,14 +296,13 @@ public class CreateInvParty extends JFrame {
         appThumb.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                AppAdvancedSearch appSearch = new AppAdvancedSearch(client);
-                appSearch.setVisible(true);
-                appSearch.setListener(new IntegerListener() {
+                AppSearch appSearch = new AppSearch(client, new IntegerListener() {
                     @Override
                     public void intOmitted(int appRef) {
                         setAppField(appRef);
                     }
                 });
+                appSearch.setVisible(true);
             }
         });
         

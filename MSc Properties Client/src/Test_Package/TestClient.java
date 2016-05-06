@@ -105,8 +105,8 @@ public class TestClient  implements Observer {
             System.out.println(client.createRentAccTransaction(1, 1, 2, 500.00, true, new Date(), "Test Transaction") > 0);
             System.out.println("Rent Account 1 Balance (after transaction): " + client.getRentAccount(1).getBalance());
             System.out.println("\nContract Ref 1 (Name): " + client.getContract(1).getAgreementName());
-            System.out.println("\nContracts for Office EDM: " + client.getContracts(null, null, null, null, null, null, null, null, null, "EDM", null, null, null).size());
-            System.out.println("\nContracts for Office BHP: " + client.getContracts(null, null, null, null, null, null, null, null, null, "BHP", null, null, null).size());
+            System.out.println("\nContracts for Office EDM: " + client.getContracts(null, null, null, null, null, null, null, null, "EDM", null, null).size());
+            System.out.println("\nContracts for Office BHP: " + client.getContracts(null, null, null, null, null, null, null, null, "BHP", null, null).size());
             System.out.println("\nNumber of Tenancies by Employee Ref 1: " + client.getNumberOfTenanciesByEmployee(1, date.getTime(), date2.getTime()));
             System.out.println("\nNumber of Contracts by Employee Ref 1: " + client.getNumberOfContractsByEmployee(1, date.getTime(), date2.getTime()));
             System.out.println("\nNumber of Leases by Employee Ref 1: " + client.getNumberOfLeasesByEmployee(1, date.getTime(), date2.getTime()));

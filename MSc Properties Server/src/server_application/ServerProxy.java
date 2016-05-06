@@ -3310,10 +3310,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ApplicationInterface> getApplications(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getApplications(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+                return theServer.getApplications(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3343,10 +3343,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ApplicationInterface> getCorrNameApplcations(String name) throws RemoteException {
+    public List<ApplicationInterface> getCorrNameApplications(String name) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getCorrNameApplcations(name);
+                return theServer.getCorrNameApplications(name);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3354,10 +3354,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public ApplicationInterface getInvPartyApplcation(int invPartyRef) throws RemoteException {
+    public ApplicationInterface getInvPartyApplication(int invPartyRef) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getInvPartyApplcation(invPartyRef);
+                return theServer.getInvPartyApplication(invPartyRef);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3396,12 +3396,14 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         }
         throw new RemoteException();
     }
-
+    
     @Override
-    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<PropertyInterface> getAddressProperties(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getAddressProperties(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3409,10 +3411,21 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<TenancyInterface> getTenancies(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getApplicationTenancies(corrName, appStartDate, endDate, statusCode, current, createdBy, createdDate);
+                return theServer.getTenancies(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public List<TenancyInterface> getApplicationTenancies(String corrName, Date appStartDate, Date endDate, String statusCode, String createdBy, Date createdDate) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getApplicationTenancies(corrName, appStartDate, endDate, statusCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3435,6 +3448,19 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getPropertyTenancies(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public List<TenancyInterface> getAddressTenancies(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getAddressTenancies(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3475,10 +3501,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseInterface> getLeases(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getLeases(name, startDate, expectedEndDate, endDate, length, propRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getLeases(name, startDate, expectedEndDate, endDate, length, propRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3490,6 +3516,19 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getPropertyLeases(acquiredDate, leaseEndDate, propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public List<LeaseInterface> getAddressLeases(String buildingNumber, String buildingName, String subStreetNumber,
+            String subStreet, String streetNumber, String street, String area, String town,
+            String country, String postcode, String createdBy, Date createdDate) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getAddressLeases(buildingNumber, buildingName, subStreetNumber, subStreet, streetNumber, street, area, town, country, postcode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3552,10 +3591,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<ContractInterface> getContracts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
-                return theServer.getContracts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getContracts(name, startDate, expectedEndDate, endDate, length, employeeRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3607,10 +3646,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<RentAccountInterface> getRentAccounts(String name, Date startDate, Date endDate, Integer balance, Double rent, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, current, createdBy, createdDate);
+                return theServer.getRentAccounts(name, startDate, endDate, balance, rent, agreementRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3629,6 +3668,28 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public List<RentAccountInterface> getPropRentAccounts(int propRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPropRentAccounts(propRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public List<RentAccountInterface> getApplicationRentAccounts(int appRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getApplicationRentAccounts(appRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<RentAccountInterface> getOfficeRentAcc(String office) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
@@ -3640,10 +3701,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<RentAccountInterface> getTenanciesRentAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer appRef, String tenTypeCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getTenanciesRentAccounts(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getTenanciesRentAccounts(name, startDate, expectedEndDate, endDate, length, propRef, appRef, tenTypeCode, accountRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3662,10 +3723,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeaseAccounts(String name, Date startDate, Date endDate, Integer balance, Double expenditure, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, current, createdBy, createdDate);
+                return theServer.getLeaseAccounts(name, startDate, endDate, balance, expenditure, agreementRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3684,6 +3745,28 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public List<LeaseAccountInterface> getPropLeaseAccounts(int propRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPropLeaseAccounts(propRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public List<LeaseAccountInterface> getLandlordLeaseAccounts(int landlordRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getLandlordLeaseAccounts(landlordRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public List<LeaseAccountInterface> getOfficeLeaseAcc(String office) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
@@ -3695,10 +3778,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<LeaseAccountInterface> getLeasesLeaseAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propertyRef, Boolean management, Double expenditure, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getLeasesLeaseAccounts(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getLeasesLeaseAccounts(name, startDate, expectedEndDate, endDate, length, propertyRef, management, expenditure, accountRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3717,10 +3800,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<EmployeeAccountInterface> getEmployeeAccounts(String name, Date startDate, Date endDate, Integer balance, Double salary, Integer agreementRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
-                return theServer.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, current, createdBy, createdDate);
+                return theServer.getEmployeeAccounts(name, startDate, endDate, balance, salary, agreementRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3737,7 +3820,18 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         }
         throw new RemoteException();
     }
-
+    
+    @Override
+    public List<EmployeeAccountInterface> getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getEmployeeRead()) {
+                return theServer.getJobRoleEmployeeAcc(jobRoleCode);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+    
     @Override
     public List<EmployeeAccountInterface> getOfficeEmployeeAcc(String office) throws RemoteException {
         if (theServer.isAlive()) {
@@ -3750,10 +3844,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer propRef, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<EmployeeAccountInterface> getContractsEmployeeAccounts(String name, Date startDate, Date expectedEndDate, Date endDate, Integer length, Integer employeeRef, String jobRoleCode, Integer accountRef, String officeCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeRead()) {
-                return theServer.getContractsEmployeeAccounts(name, startDate, expectedEndDate, endDate, length, propRef, employeeRef, jobRoleCode, accountRef, officeCode, current, createdBy, createdDate);
+                return theServer.getContractsEmployeeAccounts(name, startDate, expectedEndDate, endDate, length, employeeRef, jobRoleCode, accountRef, officeCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3772,10 +3866,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, Boolean current, String createdBy, Date createdDate) throws RemoteException {
+    public List<OfficeInterface> getOffices(Integer addrRef, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
-                return theServer.getOffices(addrRef, startDate, current, createdBy, createdDate);
+                return theServer.getOffices(addrRef, startDate, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
