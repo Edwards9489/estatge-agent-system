@@ -172,6 +172,22 @@ public class EmployeeSearch extends JFrame {
         createEmployee.setVisible(true);
         System.out.println("TEST - Create Employee");
     }
+
+    private void updateEmployee() {
+        Integer selection = employeePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                EmployeeInterface employee = client.getEmployee(selection);
+                if (employee != null) {
+                    UpdateEmployeePassword updateEmployeePassword = new UpdateEmployeePassword(client, employee.getEmployeeRef());
+                    updateEmployeePassword.setVisible(true);
+                    System.out.println("TEST - Update Employee Security");
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
     private void viewEmployee() {
         Integer selection = employeePanel.getSelectedObjectRef();
@@ -227,6 +243,11 @@ public class EmployeeSearch extends JFrame {
                 deleteEmployee();
                 System.out.println("TEST - Delete Employee");
                 break;
+
+            case "Update":
+                updateEmployee();
+                System.out.println("TEST - Update Employee Security");
+                break;
             
             case "View Details":
                 viewEmployee();
@@ -238,13 +259,4 @@ public class EmployeeSearch extends JFrame {
                 break;
         }
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new EmployeeSearch().setVisible(true);
-//            }
-//        });
-//    }
 }

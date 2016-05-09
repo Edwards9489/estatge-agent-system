@@ -652,6 +652,32 @@ public class LandlordDetails extends JFrame {
                 refresh();
             }
         });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Landlord " + landlord.getLandlordRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Landlord Delete - Yes button clicked");
+                        int result = client.deleteLandlord(landlord.getLandlordRef());
+                        if (result > 0) {
+                            String message = "Landlord " + landlord.getLandlordRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(LandlordDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Landlord " + landlord.getLandlordRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(LandlordDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
         
         
         // Links Menu

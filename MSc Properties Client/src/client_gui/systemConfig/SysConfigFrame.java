@@ -22,6 +22,7 @@ import client_gui.element.ElementPanel;
 import client_gui.employee.CreateEmployee;
 import client_gui.employee.EmployeeDetails;
 import client_gui.employee.EmployeePanel;
+import client_gui.employee.UpdateEmployeePassword;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.jobRole.CreateJobRole;
 import client_gui.jobRole.JobRoleDetails;
@@ -122,7 +123,7 @@ public class SysConfigFrame extends JFrame {
                         endOffice();
                         break;
                     
-                    case "View":
+                    case "View Details":
                         viewOffice();
                         break;
                         
@@ -148,7 +149,7 @@ public class SysConfigFrame extends JFrame {
                         createProperty();
                         break;
                     
-                    case "View":
+                    case "View Details":
                         viewProperty();
                         break;
                         
@@ -174,7 +175,7 @@ public class SysConfigFrame extends JFrame {
                         createJobRole();
                         break;
                     
-                    case "View":
+                    case "View Details":
                         viewJobRole();
                         break;
                         
@@ -184,6 +185,54 @@ public class SysConfigFrame extends JFrame {
                         
                     case "Delete":
                         deleteJobRole();
+                        break;
+                }
+            }
+        });
+        
+        employeePanel = new EmployeePanel("Employees");
+        
+        employeePanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String action) {
+                action = action.trim();
+                switch (action) {
+                    case "Create":
+                        createEmployee();
+                        break;
+                    
+                    case "Update":
+                        updateEmployee();
+                        break;
+                    
+                    case "View Details":
+                        viewEmployee();
+                        break;
+                        
+                    case "Delete":
+                        deleteEmployee();
+                        break;
+                }
+            }
+        }); 
+        
+        landlordPanel = new LandlordPanel("Landlords");
+        
+        landlordPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String action) {
+                action = action.trim();
+                switch (action) {
+                    case "Create":
+                        createLandlord();
+                        break;
+                    
+                    case "View Details":
+                        viewLandlord();
+                        break;
+                        
+                    case "Delete":
+                        deleteLandlord();
                         break;
                 }
             }
@@ -200,7 +249,7 @@ public class SysConfigFrame extends JFrame {
                         createAddress();
                         break;
                     
-                    case "View":
+                    case "View Details":
                         viewAddress();
                         break;
                         
@@ -505,6 +554,58 @@ public class SysConfigFrame extends JFrame {
                             System.out.println("View Titles");
                             viewElements(client.getTitles());
                             break;
+                            
+                        case 37:
+                            System.out.println("Create Office");
+                            createOffice();
+                            break;
+                            
+                        case 38:
+                            System.out.println("View Offices");
+                            viewOffices();
+                            break;
+                            
+                        case 39:
+                            System.out.println("Create Job Role");
+                            createJobRole();
+                            break;
+                            
+                        case 40:
+                            System.out.println("View Job Roles");
+                            viewJobRoles();
+                            break;
+                            
+                        case 41:
+                            System.out.println("Create Property");
+                            createProperty();
+                            break;
+                            
+                        case 42:
+                            System.out.println("View Properties");
+                            viewProperties();
+                            break;
+                            
+                        case 43:
+                            System.out.println("Create Employee");
+                            createEmployee();
+                            break;
+                            
+                        case 44:
+                            System.out.println("View Employees");
+                            viewEmployees();
+                            break;
+                            
+                        case 45:
+                            System.out.println("Create Landlord");
+                            createTitle();
+                            break;
+                            
+                        case 46:
+                            System.out.println("View Landlords");
+                            viewLandlords();
+                            break;
+                        
+                        
                     }
                 } catch (RemoteException ex) {
                     Logger.getLogger(SysConfigFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -753,6 +854,22 @@ public class SysConfigFrame extends JFrame {
         createEmployee.setVisible(true);
     }
 
+    private void updateEmployee() {
+        Integer selection = employeePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                EmployeeInterface employee = client.getEmployee(selection);
+                if (employee != null) {
+                    UpdateEmployeePassword updateEmployeePassword = new UpdateEmployeePassword(client, employee.getEmployeeRef());
+                    updateEmployeePassword.setVisible(true);
+                    System.out.println("TEST - Update Employee Security");
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(SysConfigFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     private void deleteEmployee() {
         Integer selection = employeePanel.getSelectedObjectRef();
         if (selection != null) {
@@ -778,11 +895,15 @@ public class SysConfigFrame extends JFrame {
     }
 
     private void viewEmployee() {
+        System.out.println("View Employee TEST 1");
         if (employeePanel.getSelectedObjectRef() != null) {
+            System.out.println("View Employee TEST 2");
             EmployeeInterface employee;
             try {
                 employee = client.getEmployee(employeePanel.getSelectedObjectRef());
+                System.out.println("View Employee TEST 3");
                 if (employee != null) {
+                    System.out.println("View Employee TEST 4 - " + employee.getEmployeeRef());
                     EmployeeDetails employeeDetails = new EmployeeDetails(client, employee);
                     employeeDetails.setVisible(true);
                 }

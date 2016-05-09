@@ -45,6 +45,7 @@ public class EmployeePanel extends JPanel {
         
         JMenuItem createItem = new JMenuItem("Create Employee");
         JMenuItem viewItem = new JMenuItem("View Employee");
+        JMenuItem updateItem = new JMenuItem("Update Employee Password");
         JMenuItem deleteItem = new JMenuItem("Delete Employee");
         JMenuItem refreshItem = new JMenuItem("Refresh Employees");
         
@@ -71,6 +72,15 @@ public class EmployeePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if(actionListener != null) {
                     actionListener.textOmitted("Create");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
                 }
             }
         });

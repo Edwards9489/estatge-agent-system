@@ -178,7 +178,47 @@ public class SystemConfigHome extends JPanel {
 
         branch18.add(branch18Leaf1);
         branch18.add(branch18Leaf2);
+        
+        DefaultMutableTreeNode branch19 = new DefaultMutableTreeNode("Offices");
+        DefaultMutableTreeNode branch19Leaf1 = new DefaultMutableTreeNode(new JTreeInfo("Create Office", 37));
+        DefaultMutableTreeNode branch19Leaf2 = new DefaultMutableTreeNode(new JTreeInfo("View Offices", 38));
 
+        branch19.add(branch19Leaf1);
+        branch19.add(branch19Leaf2);
+        
+        DefaultMutableTreeNode branch20 = new DefaultMutableTreeNode("Job Roles");
+        DefaultMutableTreeNode branch20Leaf1 = new DefaultMutableTreeNode(new JTreeInfo("Create Job Role", 39));
+        DefaultMutableTreeNode branch20Leaf2 = new DefaultMutableTreeNode(new JTreeInfo("View Job Roles", 40));
+
+        branch20.add(branch20Leaf1);
+        branch20.add(branch20Leaf2);
+        
+        DefaultMutableTreeNode branch21 = new DefaultMutableTreeNode("Properties");
+        DefaultMutableTreeNode branch21Leaf1 = new DefaultMutableTreeNode(new JTreeInfo("Create Property", 41));
+        DefaultMutableTreeNode branch21Leaf2 = new DefaultMutableTreeNode(new JTreeInfo("View Properties", 42));
+
+        branch21.add(branch21Leaf1);
+        branch21.add(branch21Leaf2);
+        
+        DefaultMutableTreeNode branch22 = new DefaultMutableTreeNode("Employees");
+        DefaultMutableTreeNode branch22Leaf1 = new DefaultMutableTreeNode(new JTreeInfo("Create Employee", 43));
+        DefaultMutableTreeNode branch22Leaf2 = new DefaultMutableTreeNode(new JTreeInfo("View Employees", 44));
+
+        branch22.add(branch22Leaf1);
+        branch22.add(branch22Leaf2);
+        
+        DefaultMutableTreeNode branch23 = new DefaultMutableTreeNode("Landlords");
+        DefaultMutableTreeNode branch23Leaf1 = new DefaultMutableTreeNode(new JTreeInfo("Create Landlord", 45));
+        DefaultMutableTreeNode branch23Leaf2 = new DefaultMutableTreeNode(new JTreeInfo("View Landlord", 46));
+
+        branch23.add(branch23Leaf1);
+        branch23.add(branch23Leaf2);
+        
+        top.add(branch19);
+        top.add(branch20);
+        top.add(branch21);
+        top.add(branch22);
+        top.add(branch23);
         top.add(branch1);
         top.add(branch2);
         top.add(branch3);

@@ -26,6 +26,7 @@ import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.note.CreateNote;
 import client_gui.EndObject;
+import client_gui.IntegerListener;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
@@ -626,7 +627,16 @@ public class AppDetails extends JFrame {
     }
 
     private void createProperty() {
-        PropertySearch createProperty = new PropertySearch(client);
+        PropertySearch createProperty = new PropertySearch(client, new IntegerListener() {
+            @Override
+            public void intOmitted(int propRef) {
+                try {
+                    client.addInterestedProperty(application.getApplicationRef(), propRef);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
         createProperty.setVisible(true);
         System.out.println("TEST - Create Property");
     }
@@ -943,20 +953,6 @@ public class AppDetails extends JFrame {
         actionsMenu.add(deleteItem);
         actionsMenu.add(refreshItem);
         
-        
-        // Link to Menu
-        JMenu linksMenu = new JMenu("Link To");
-
-        JMenuItem tenancyItem = new JMenuItem("Tenancy");
-        
-        try {
-            if (application.hasTenancyRef()) {
-                linksMenu.add(tenancyItem);
-            }
-        } catch (RemoteException ex) {
-            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
 
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
@@ -971,7 +967,18 @@ public class AppDetails extends JFrame {
         // Add Menubar items
         menuBar.add(fileMenu);
         menuBar.add(actionsMenu);
-        menuBar.add(linksMenu);
+        JMenuItem tenancyItem = null;
+        try {
+            if (application.hasTenancyRef()) {
+                // Link to Menu
+                JMenu linksMenu = new JMenu("Link To");
+                tenancyItem = new JMenuItem("Tenancy");
+                linksMenu.add(tenancyItem);
+                menuBar.add(linksMenu);
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
         menuBar.add(helpMenu);
 
         // Set up Mnemonics for Menus
@@ -1085,20 +1092,21 @@ public class AppDetails extends JFrame {
         
         // Links Menu
 
-        tenancyItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                try {
-                    if (application.hasTenancyRef()) {
+        if (tenancyItem != null) {
+            tenancyItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                    try {
                         TenancyInterface tenancy = client.getTenancy(application.getTenancyRef());
                         TenancyDetails tenDetails = new TenancyDetails(client, tenancy);
                         tenDetails.setVisible(true);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (RemoteException ex) {
-                    Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-        });
+            });
+        }
+            
         
         
         // Help Menu

@@ -2042,6 +2042,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                     if (email.equals(empEmail)) {
                         String newPassword = new BigInteger(130, this.random).toString(32);
                         if (this.updateEmployeePassword(user.getEmployeeRef(), newPassword, user.getUsername()) > 0) {
+                            employee.setPasswordReset(true);
                             String subject = "Password Reset - Employee Ref: " + user.getEmployeeRef();
                             String message = "Your password has been reset to " + newPassword;
                             this.sendEmail.sendEmail(empEmail, subject, message);

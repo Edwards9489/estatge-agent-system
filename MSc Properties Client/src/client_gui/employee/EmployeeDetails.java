@@ -701,6 +701,52 @@ public class EmployeeDetails extends JFrame {
                 refresh();
             }
         });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Employee " + employee.getEmployeeRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Employee Delete - Yes button clicked");
+                        int result = client.deleteEmployee(employee.getEmployeeRef());
+                        if (result > 0) {
+                            String message = "Employee " + employee.getEmployeeRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(EmployeeDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Employee " + employee.getEmployeeRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(EmployeeDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        try {
+            if (client.getUser().getEmployeeUpdate()) {
+                JMenuItem updateItem = new JMenuItem("Update Employee Security");
+                actionsMenu.add(updateItem);
+                updateItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ev) {
+                        try {
+                            UpdateEmployeePassword updateEmployee = new UpdateEmployeePassword(client, employee.getEmployeeRef());
+                            updateEmployee.setVisible(true);
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(EmployeeDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
         // Links Menu

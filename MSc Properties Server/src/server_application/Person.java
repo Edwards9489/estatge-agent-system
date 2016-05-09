@@ -693,7 +693,11 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
     @Override
     public ContactInterface getContact(int contactRef) throws RemoteException {
         if (this.hasContact(contactRef)) {
-            return contacts.get(contactRef);
+            for(ContactInterface contact : contacts) {
+                if(contact.getContactRef() == contactRef) {
+                    return contact;
+                }
+            }
         }
         return null;
     }
