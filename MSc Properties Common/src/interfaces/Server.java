@@ -107,7 +107,7 @@ public interface Server extends Remote {
     int createInvolvedPartyNote(int iRef, String comment, String createdBy) throws RemoteException;
     int updateInvolvedPartyNote(int eRef, int nRef, String comment, String modifiedBy) throws RemoteException;
     int deleteInvolvedPartyNote(int iRef, int nRef, String modifiedBy) throws RemoteException;
-    int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException;
+    int createApplication(String corrName, Date appStartDate, int pRef, int addrRef, Date addressStartDate, String createdBy) throws RemoteException;
     int updateApplication(int aRef, String corrName, Date appStartDate, String modifiedBy) throws RemoteException;
     int deleteApplication(int aRef, String modifiedBy) throws RemoteException;
     int addInvolvedParty(int aRef, int pRef, boolean joint, Date start, String relationshipCode, String createdBy) throws RemoteException;

@@ -1552,13 +1552,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
     //////     METHODS TO CREATE, UPDATE AND DELETE A APPLICATION     ////////
     @Override
-    public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
-        if (this.database.personExists(pRef) && this.database.addressExists(addrRef) && this.database.relationshipExists(relationshipCode)) {
+    public int createApplication(String corrName, Date appStartDate, int pRef, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
+        if (this.database.personExists(pRef) && this.database.addressExists(addrRef)) {
             Application application = new Application(this.appRef++, corrName, appStartDate, this.createAddressUsage(addrRef, appStartDate, "", createdBy), createdBy, new Date());
             try {
                 this.database.createApplication(application);
                 this.database.createApplicationAddressUsage((AddressUsage) application.getCurrentApplicationAddress(), application.getApplicationRef());
-                int mainAppRef = this.createInvolvedParty(pRef, application.getApplicationRef(), true, true, appStartDate, relationshipCode, createdBy);
+                int mainAppRef = this.createInvolvedParty(pRef, application.getApplicationRef(), true, true, appStartDate, "APPL", createdBy);
                 application.addInvolvedParty(this.database.getInvolvedParty(mainAppRef), null);
             } catch (SQLException ex) {
                 Logger.getLogger(ServerImpl.class.getName()).log(Level.SEVERE, null, ex);

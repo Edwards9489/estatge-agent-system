@@ -905,9 +905,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate) throws RemoteException {
+    public int createApplication(String corrName, Date appStartDate, int pRef, int addrRef, Date addressStartDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createApplication(corrName, appStartDate, pRef, relationshipCode, addrRef, addressStartDate, this.getUsername());
+            return server.createApplication(corrName, appStartDate, pRef, addrRef, addressStartDate, this.getUsername());
         }
         return 0;
     }

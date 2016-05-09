@@ -1025,10 +1025,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createApplication(String corrName, Date appStartDate, int pRef, String relationshipCode, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
+    public int createApplication(String corrName, Date appStartDate, int pRef, int addrRef, Date addressStartDate, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getWrite()) {
-                return theServer.createApplication(corrName, appStartDate, pRef, relationshipCode, addrRef, addressStartDate, createdBy);
+                return theServer.createApplication(corrName, appStartDate, pRef, addrRef, addressStartDate, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }

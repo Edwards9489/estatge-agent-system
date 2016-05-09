@@ -7,8 +7,6 @@ package client_gui.reporting;
 
 import client_application.ClientImpl;
 import client_gui.AboutFrame;
-import client_gui.OKDialog;
-import client_gui.address.UpdateAddress;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.login.LoginForm;
 import java.awt.BorderLayout;

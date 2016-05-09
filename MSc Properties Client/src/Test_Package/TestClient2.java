@@ -6,20 +6,11 @@
 package Test_Package;
 
 import client_application.ClientImpl;
-import interfaces.AccountInterface;
-import interfaces.AgreementInterface;
-import interfaces.ContractInterface;
-import interfaces.LeaseInterface;
-import interfaces.OfficeInterface;
-import interfaces.PersonInterface;
-import interfaces.RentAccountInterface;
-import interfaces.TenancyInterface;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -104,7 +95,7 @@ public class TestClient2  implements Observer {
             
             
             
-            System.out.println("Create Application: " + client.createApplication("TEST8", new Date(), 16, "APPL", 21, new Date()));
+            System.out.println("Create Application: " + client.createApplication("TEST8", new Date(), 16, 21, new Date()));
             
             client.logout();
             

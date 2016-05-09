@@ -19,6 +19,8 @@ import client_gui.addressUsage.UpdateAddressUsage;
 import client_gui.application.AppAdvancedSearch;
 import client_gui.application.AppSearch;
 import client_gui.application.AppSearch;
+import client_gui.application.CreateApp;
+import client_gui.application.UpdateApp;
 import client_gui.contact.ContactDetails;
 import client_gui.contact.CreateContact;
 import client_gui.contact.UpdateContact;
@@ -158,8 +160,14 @@ public class NEWTEST {
                 }
             }
             
-            HomeForm homeForm = new HomeForm(client);
-            homeForm.setVisible(true);
+            CreateApp createApp = new CreateApp(client);
+            createApp.setVisible(true);
+            
+            UpdateApp updateApp = new UpdateApp(client, application);
+            updateApp.setVisible(true);
+            
+//            HomeForm homeForm = new HomeForm(client);
+//            homeForm.setVisible(true);
             
 //            PersonSearch personSearch = new PersonSearch(client);
 //            personSearch.setVisible(true);
