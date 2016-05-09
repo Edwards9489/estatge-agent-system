@@ -7,6 +7,8 @@ package client_gui.address;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.StringListener;
 import interfaces.AddressInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -84,7 +87,6 @@ public class AddressSearch extends JFrame {
         cancelButton = new JButton("Cancel");
         searchButton = new JButton("Search");
         createButton = new JButton("Create Address");
-        addressPanel = new AddressPanel("Addresses");
 
         buildingNumberField = new JTextField(3);
         buildingNameField = new JTextField(15);
@@ -200,8 +202,16 @@ public class AddressSearch extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateAddress addressGUI = new CreateAddress(client);
-                addressGUI.setVisible(true);
+                createAddress();
+            }
+        });
+        
+        addressPanel = new AddressPanel("Addresses");
+        
+        addressPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
 
@@ -515,5 +525,92 @@ public class AddressSearch extends JFrame {
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
+    }
+    
+    private void createAddress() {
+        CreateAddress createAddress = new CreateAddress(client);
+        createAddress.setVisible(true);
+    }
+
+    private void updateAddress() {
+        Integer selection = addressPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                AddressInterface address = client.getAddress(selection);
+                if (address != null) {
+                    UpdateAddress updateAddress = new UpdateAddress(client, address);
+                    updateAddress.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AddressSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteAddress() {
+        Integer selection = addressPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE address " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Address Delete - Yes button clicked");
+                    int result = client.deleteAddress(selection);
+                    if (result > 0) {
+                        String message = "Address " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(AddressSearch.this, message, title);
+                    } else {
+                        String message = "Address " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(AddressSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AddressSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewAddress() {
+        if (addressPanel.getSelectedObjectRef() != null) {
+            AddressInterface address;
+            try {
+                address = client.getAddress(addressPanel.getSelectedObjectRef());
+                if (address != null) {
+                    AddressDetails addressDetails = new AddressDetails(client, address);
+                    addressDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AddressSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        addressPanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createAddress();
+                break;
+
+            case "View":
+                viewAddress();
+                break;
+
+            case "Update":
+                updateAddress();
+                break;
+
+            case "Delete":
+                deleteAddress();
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
     }
 }

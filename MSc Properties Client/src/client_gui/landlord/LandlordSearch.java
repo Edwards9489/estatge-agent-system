@@ -7,8 +7,11 @@ package client_gui.landlord;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
 import client_gui.person.PeopleSearchPanel;
 import client_gui.StringArrayListener;
+import client_gui.StringListener;
+import interfaces.LandlordInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -25,6 +28,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -95,12 +99,65 @@ public class LandlordSearch extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateLandlord landlordGUI = new CreateLandlord(client);
-                landlordGUI.setVisible(true);
+                createLandlord();
             }
         });
 
         landlordPanel = new LandlordPanel("Landlords");
+        
+        landlordPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                Integer selection = landlordPanel.getSelectedObjectRef();
+                switch (text) {
+                    case "Create":
+                        createLandlord();
+                        break;
+                        
+                    case "Delete":
+                        if (selection != null) {
+                            try {
+                                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Landlord " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                                if (answer == JOptionPane.YES_OPTION) {
+                                    System.out.println("Landlord Delete - Yes button clicked");
+                                    int result = client.deleteLandlord(selection);
+                                    if (result > 0) {
+                                        String message = "Landlord " + selection + " has been successfully deleted";
+                                        String title = "Information";
+                                        OKDialog.okDialog(LandlordSearch.this, message, title);
+                                    } else {
+                                        String message = "Landlord " + selection + " has dependent records and is not able to be deleted";
+                                        String title = "Error";
+                                        OKDialog.okDialog(LandlordSearch.this, message, title);
+                                    }
+                                }
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LandlordSearch.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        break;
+                        
+                    case "View Details":
+                        if (selection != null) {
+                            try {
+                                LandlordInterface landlord = client.getLandlord(selection);
+                                if (landlord != null) {
+                                    LandlordDetails landlordDetails = new LandlordDetails(client, landlord);
+                                    landlordDetails.setVisible(true);
+                                }
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LandlordSearch.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        break;
+                        
+                    case "Refresh":
+                        refresh();
+                        break;
+                    
+                }
+            }
+        });
 
         this.setSize(1200, 800);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -154,6 +211,16 @@ public class LandlordSearch extends JFrame {
         setLayout(new BorderLayout());
         add(detailsPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
+    }
+    
+    private void createLandlord() {
+        CreateLandlord createLandlord = new CreateLandlord(client);
+        createLandlord.setVisible(true);
+        System.out.println("TEST - Create Application");
+    }
+    
+    private void refresh() {
+        landlordPanel.refresh();
     }
 
 //    public static void main(String[] args) {

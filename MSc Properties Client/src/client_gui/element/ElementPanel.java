@@ -29,7 +29,7 @@ import javax.swing.border.Border;
  */
 public class ElementPanel extends JPanel {
     private JTable table;
-    private ElementTableModel tableModel;
+    private final ElementTableModel tableModel;
     private JPopupMenu popup;
     private StringListener tableListener;
     
@@ -38,8 +38,8 @@ public class ElementPanel extends JPanel {
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Elements");
-        popup.add(addressItem);
+        JMenuItem viewItem = new JMenuItem("View Element");
+        popup.add(viewItem);
         
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
@@ -59,7 +59,7 @@ public class ElementPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        viewItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
@@ -69,12 +69,8 @@ public class ElementPanel extends JPanel {
                     
                     System.out.println(code);
                     tableListener.textOmitted(code);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
                 }
             }
-            
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

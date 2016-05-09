@@ -9,21 +9,25 @@ import client_gui.lease.LeasePanel;
 import client_gui.lease.UpdateLease;
 import client_gui.lease.CreateLease;
 import client_application.ClientImpl;
+import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
 import client_gui.StringListener;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
+import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.lease.LeaseDetails;
+import client_gui.login.LoginForm;
 import client_gui.modifications.ModPanel;
 import client_gui.note.NotePanel;
 import client_gui.note.CreateNote;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
+import client_gui.person.PersonDetails;
 import interfaces.LandlordInterface;
 import interfaces.LeaseInterface;
 import interfaces.Note;
+import interfaces.PersonInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -230,79 +235,7 @@ public class LandlordDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                int pane = tabbedPane.getSelectedIndex();
-
-                System.out.println(text);
-                switch (text) {
-                    case "Create":
-                        System.out.println("TEST - Create Button");
-
-                        if (pane == 0) {
-                            //Leases
-                            createLease();
-                        } else if (pane == 1) {
-                            //Notes
-                            createNote();
-
-                        }
-                        break;
-
-                    case "Update":
-                        System.out.println("TEST - Update");
-
-                        if (pane == 0) {
-                            //Leases
-                            updateLease();
-                            System.out.println("TEST - Update Lease");
-
-                        } else if (pane == 1) {
-                            //Notes
-                            updateNote();
-                            System.out.println("TEST - Update Note");
-
-                        }
-                        break;
-
-                    case "End":
-                        if (pane == 0) {
-                            //Leases
-                            endLease();
-                            System.out.println("TEST - End Lease");
-
-                        }
-                        break;
-                    case "Delete":
-                        if (pane == 0) {
-                            //Leases
-                            deleteLease();
-                            System.out.println("TEST - Delete Lease");
-
-                        } else if (pane == 1) {
-                            //Notes
-                            deleteNote();
-                            System.out.println("TEST - Delete Note");
-
-                        }
-                        break;
-
-                    case "View Details":
-                        if (pane == 0) {
-                            //Leases
-                            viewLease();
-                            System.out.println("TEST - View Lease");
-
-                        } else if (pane == 1) {
-                            //Notes
-                            viewNote();
-                            System.out.println("TEST - View Note");
-
-                        }
-                        break;
-                    
-                    case "Refresh":
-                        refresh();
-                        break;
-                }
+                actionChoice(text);
             }
         });
         
@@ -316,22 +249,10 @@ public class LandlordDetails extends JFrame {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        leasePanel.setTableListener(new IntegerListener() {
+        leasePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int leaseRef) {
-                if (leaseRef > 0) {
-                    try {
-                        LeaseInterface lease = client.getLease(leaseRef);
-                        if(lease != null) {
-                            System.out.println(lease.getAgreementRef());
-                            System.out.println("TEST1-Lease");
-                            LeaseDetails leaseGUI=  new LeaseDetails(client, lease);
-                            leaseGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -343,22 +264,10 @@ public class LandlordDetails extends JFrame {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new IntegerListener() {
+        notePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int noteRef) {
-                if (noteRef > 0) {
-                    try {
-                        Note note = landlord.getNote(noteRef);
-                        if(note != null) {
-                            System.out.println(note.getReference());
-                            System.out.println("TEST1-Note");
-                            NoteDetails noteGUI=  new NoteDetails(client, note);
-                            noteGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -514,7 +423,7 @@ public class LandlordDetails extends JFrame {
             try {
                 note = landlord.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails leaseDetails = new NoteDetails(client, note);
+                    NoteDetails leaseDetails = new NoteDetails(client, note, "Landlord", landlord.getLandlordRef());
                     leaseDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -543,6 +452,82 @@ public class LandlordDetails extends JFrame {
             Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void actionChoice(String text) {
+        int pane = tabbedPane.getSelectedIndex();
+
+        System.out.println(text);
+        switch (text) {
+            case "Create":
+                System.out.println("TEST - Create Button");
+
+                if (pane == 0) {
+                    //Leases
+                    createLease();
+                } else if (pane == 1) {
+                    //Notes
+                    createNote();
+
+                }
+                break;
+
+            case "Update":
+                System.out.println("TEST - Update");
+
+                if (pane == 0) {
+                    //Leases
+                    updateLease();
+                    System.out.println("TEST - Update Lease");
+
+                } else if (pane == 1) {
+                    //Notes
+                    updateNote();
+                    System.out.println("TEST - Update Note");
+
+                }
+                break;
+
+            case "End":
+                if (pane == 0) {
+                    //Leases
+                    endLease();
+                    System.out.println("TEST - End Lease");
+
+                }
+                break;
+            case "Delete":
+                if (pane == 0) {
+                    //Leases
+                    deleteLease();
+                    System.out.println("TEST - Delete Lease");
+
+                } else if (pane == 1) {
+                    //Notes
+                    deleteNote();
+                    System.out.println("TEST - Delete Note");
+
+                }
+                break;
+
+            case "View Details":
+                if (pane == 0) {
+                    //Leases
+                    viewLease();
+                    System.out.println("TEST - View Lease");
+
+                } else if (pane == 1) {
+                    //Notes
+                    viewNote();
+                    System.out.println("TEST - View Note");
+
+                }
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -558,15 +543,40 @@ public class LandlordDetails extends JFrame {
         fileMenu.add(changeUser);
         fileMenu.addSeparator(); // Is the faint lines between grouped menu items
         fileMenu.add(exitItem);
+        
+        
+        // Actions Menu
+        JMenu actionsMenu = new JMenu("Actions");
+        
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem refreshItem = new JMenuItem("Refresh");
+        
+        actionsMenu.add(deleteItem);
+        actionsMenu.add(refreshItem);
+        
+        
+        // Link to Menu
+        JMenu linksMenu = new JMenu("Link To");
+
+        JMenuItem personItem = new JMenuItem("Person");
+        
+        linksMenu.add(personItem);
+        
 
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
 
         JMenuItem manualItem = new JMenuItem("User Manual");
         JMenuItem aboutItem = new JMenuItem("About");
+        
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
+        
 
         // Add Menubar items
         menuBar.add(fileMenu);
+        menuBar.add(actionsMenu);
+        menuBar.add(linksMenu);
         menuBar.add(helpMenu);
 
         // Set up Mnemonics for Menus
@@ -579,20 +589,41 @@ public class LandlordDetails extends JFrame {
         userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 
+        
         //Set up ActionListeners
+        
+        //File Menu
+        
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                int action = JOptionPane.showConfirmDialog(LandlordDetails.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
             }
         });
-
+        
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(LandlordDetails.this,
@@ -611,17 +642,55 @@ public class LandlordDetails extends JFrame {
                 }
             }
         });
+        
+        
+        // Actions Menu
+
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                refresh();
+            }
+        });
+        
+        
+        // Links Menu
+
+        personItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    PersonInterface person = landlord.getPerson();
+                    if (person != null) {
+                        PersonDetails personDetails = new PersonDetails(client, person);
+                        personDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(LandlordDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
         return menuBar;
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new LandlordDetails().setVisible(true);
-//            }
-//        });
-//    }
 }
 
 

@@ -5,7 +5,7 @@
  */
 package client_gui.rentAcc;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.RentAccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,9 +29,9 @@ import javax.swing.border.Border;
  */
 public class RentAccPanel extends JPanel {
     private JTable table;
-    private RentAccTableModel tableModel;
+    private final RentAccTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public RentAccPanel(String text) {
         tableModel = new RentAccTableModel();
@@ -46,6 +46,12 @@ public class RentAccPanel extends JPanel {
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
         
+        JMenuItem viewItem = new JMenuItem("View Rent Account");
+        JMenuItem refreshItem = new JMenuItem("Refresh Rent Accounts");
+        
+        popup.add(viewItem);
+        popup.add(refreshItem);
+        
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -59,22 +65,22 @@ public class RentAccPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        viewItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
                 }
             }
-            
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -104,8 +110,8 @@ public class RentAccPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

@@ -5,7 +5,7 @@
  */
 package client_gui.empAccount;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.EmployeeAccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +29,25 @@ import javax.swing.border.Border;
  */
 public class EmpAccPanel extends JPanel {
     private JTable table;
-    private EmpAccTableModel tableModel;
+    private final EmpAccTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public EmpAccPanel(String text) {
         tableModel = new EmpAccTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Employee Accounts");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem viewItem = new JMenuItem("View Employee Account");
+        JMenuItem refreshItem = new JMenuItem("Refresh Employee Accounts");
+        
+        popup.add(viewItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +62,22 @@ public class EmpAccPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        viewItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
                 }
             }
-            
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -104,8 +107,8 @@ public class EmpAccPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

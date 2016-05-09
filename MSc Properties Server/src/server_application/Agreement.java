@@ -293,14 +293,6 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
     
     @Override
     public boolean hasBeenModified() throws RemoteException {
-        System.out.println("Account Modifications size: " + modifiedBy.size());
-        System.out.println("Account Modifications is empty? " + modifiedBy.isEmpty());
-        System.out.println("Account Has Been Modified? " + !modifiedBy.isEmpty());
-        int count = 1;
-        for (ModifiedByInterface temp : modifiedBy) {
-            System.out.println("Modification Description " + count + " : " + temp.getDescription());
-            count++;
-        }
         return !this.modifiedBy.isEmpty();
     }
     

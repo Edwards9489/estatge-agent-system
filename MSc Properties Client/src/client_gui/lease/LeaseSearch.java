@@ -6,7 +6,10 @@
 package client_gui.lease;
 
 import client_application.ClientImpl;
+import client_gui.EndObject;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.StringListener;
 import interfaces.LeaseInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -168,9 +172,7 @@ public class LeaseSearch extends JFrame {
         createButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateLease createApp = new CreateLease(client);
-                createApp.setVisible(true);
-                System.out.println("TEST - Create Lease");
+                createLease();
             }
         });
         
@@ -207,6 +209,13 @@ public class LeaseSearch extends JFrame {
         searchResultsPanel.setLayout(new BorderLayout());
         
         leasePanel = new LeasePanel("Leases");
+        
+        leasePanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
         
         searchResultsPanel.add(leasePanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
@@ -318,6 +327,108 @@ public class LeaseSearch extends JFrame {
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+
+    private void createLease() {
+        CreateLease createLease = new CreateLease(client);
+        createLease.setVisible(true);
+        System.out.println("TEST - Create Lease");
+    }
+
+    private void updateLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                LeaseInterface lease = client.getLease(selection);
+                if (lease != null) {
+                    UpdateLease updateLease = new UpdateLease(client, lease);
+                    updateLease.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LeaseSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void endLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Lease Ref: " + selection);
+            EndObject endLease = new EndObject(client, "Lease", selection);
+            endLease.setVisible(true);
+        }
+    }
+
+    private void deleteLease() {
+        Integer selection = leasePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Lease " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Lease Delete - Yes button clicked");
+                    int result = client.deleteLease(selection);
+                    if (result > 0) {
+                        String message = "Lease " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(LeaseSearch.this, message, title);
+                    } else {
+                        String message = "Lease " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(LeaseSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LeaseSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewLease() {
+        if (leasePanel.getSelectedObjectRef() != null) {
+            LeaseInterface lease;
+            try {
+                lease = client.getLease(leasePanel.getSelectedObjectRef());
+                if (lease != null) {
+                    LeaseDetails leaseDetails = new LeaseDetails(client, lease);
+                    leaseDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(LeaseSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        leasePanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createLease();
+                break;
+
+            case "Update":
+                updateLease();
+                break;
+
+            case "End":
+                endLease();
+                break;
+
+            case "Delete":
+                deleteLease();
+                break;
+
+            case "View Details":
+                viewLease();
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+
+        }
     }
     
     private void setData(List<LeaseInterface> leases) {

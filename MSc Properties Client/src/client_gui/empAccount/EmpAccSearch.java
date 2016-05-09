@@ -7,6 +7,7 @@ package client_gui.empAccount;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.EmployeeAccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -197,6 +198,13 @@ public class EmpAccSearch extends JFrame {
         searchResultsPanel.setLayout(new BorderLayout());
         
         empAccPanel = new EmpAccPanel("Employee Accounts");
+
+        empAccPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
         
         searchResultsPanel.add(empAccPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
@@ -306,6 +314,38 @@ public class EmpAccSearch extends JFrame {
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+    
+    private void viewEmpAcc() {
+        Integer selection = empAccPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                EmployeeAccountInterface empAcc = client.getEmployeeAccount(selection);
+                if (empAcc != null) {
+                    EmpAccDetails empAccDetails = new EmpAccDetails(client, empAcc);
+                    empAccDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmpAccSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        empAccPanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "View Details":
+                viewEmpAcc();
+                System.out.println("TEST - View EMployee Account");
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
     }
     
     private void setData(List<EmployeeAccountInterface> empAccounts) {

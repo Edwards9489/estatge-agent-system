@@ -6,6 +6,7 @@
 package client_gui.property;
 
 import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.PropertyInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +30,31 @@ import javax.swing.border.Border;
  */
 public class PropertyPanel extends JPanel {
     private JTable table;
-    private PropertyTableModel tableModel;
+    private final PropertyTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public PropertyPanel(String text) {
         tableModel = new PropertyTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Prop Interests");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem createItem = new JMenuItem("Create Property");
+        JMenuItem viewItem = new JMenuItem("View Property");
+        JMenuItem updateItem = new JMenuItem("Update Property");
+        JMenuItem deleteItem = new JMenuItem("Delete Property");
+        JMenuItem refreshItem = new JMenuItem("Refresh Properties");
+        
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +69,49 @@ public class PropertyPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -103,8 +140,8 @@ public class PropertyPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

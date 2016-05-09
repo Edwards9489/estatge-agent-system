@@ -5,7 +5,7 @@
  */
 package client_gui.leaseAcc;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.LeaseAccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +29,25 @@ import javax.swing.border.Border;
  */
 public class LeaseAccPanel extends JPanel {
     private JTable table;
-    private LeaseAccTableModel tableModel;
+    private final LeaseAccTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public LeaseAccPanel(String text) {
         tableModel = new LeaseAccTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Lease Accounts");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem viewItem = new JMenuItem("View Lease Account");
+        JMenuItem refreshItem = new JMenuItem("Refresh Lease Accounts");
+        
+        popup.add(viewItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +62,22 @@ public class LeaseAccPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        viewItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
                 }
             }
-            
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -104,8 +107,8 @@ public class LeaseAccPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

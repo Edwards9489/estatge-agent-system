@@ -6,7 +6,10 @@
 package client_gui.contract;
 
 import client_application.ClientImpl;
+import client_gui.EndObject;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.StringListener;
 import interfaces.ContractInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -166,9 +170,7 @@ public class ContractSearch extends JFrame {
         createButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateContract createContract = new CreateContract(client);
-                createContract.setVisible(true);
-                System.out.println("TEST - Create Contract");
+                createContract();
             }
         });
         
@@ -205,6 +207,13 @@ public class ContractSearch extends JFrame {
         searchResultsPanel.setLayout(new BorderLayout());
         
         contractPanel = new ContractPanel("Contracts");
+
+        contractPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
         
         searchResultsPanel.add(contractPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
@@ -316,6 +325,114 @@ public class ContractSearch extends JFrame {
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+    
+    private void createContract() {
+        CreateContract createContract = new CreateContract(client);
+        createContract.setVisible(true);
+    }
+    
+    private void updateContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Contract Ref: " + selection);
+                ContractInterface contract = client.getContract(selection);
+                if (contract != null) {
+                    System.out.println("Contract Name: " + contract.getAgreementName());
+                    UpdateContract contractDetails = new UpdateContract(client, contract);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void endContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Contract Ref: " + selection);
+            EndObject endContract = new EndObject(client, "Contract", selection);
+            endContract.setVisible(true);
+        }
+    }
+    
+    private void deleteContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE contract " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Contract Delete - Yes button clicked");
+                    int result = client.deleteContract(selection);
+                    if (result > 0) {
+                        String message = "Contract " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(ContractSearch.this, message, title);
+                    } else {
+                        String message = "Contract " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(ContractSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewContract() {
+        Integer selection = contractPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                ContractInterface contract = client.getContract(selection);
+                if (contract != null) {
+                    ContractDetails contractDetails = new ContractDetails(client, contract);
+                    contractDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(ContractSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        contractPanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createContract();
+                System.out.println("TEST - Create Contract");
+                break;
+
+            case "Update":
+                updateContract();
+                System.out.println("TEST - Update Contract");
+                break;
+
+            case "End":
+                case "Contracts":
+                endContract();
+                System.out.println("TEST - End Contract");
+                break;
+
+            case "Delete":
+                deleteContract();
+                System.out.println("TEST - Delete Contract");
+                break;
+
+            case "View Details":
+                viewContract();
+                System.out.println("TEST - View Contract");
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
     }
     
     private void setData(List<ContractInterface> tenancies) {

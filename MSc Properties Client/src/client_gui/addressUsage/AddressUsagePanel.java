@@ -5,7 +5,7 @@
  */
 package client_gui.addressUsage;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.AddressUsageInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +29,33 @@ import javax.swing.border.Border;
  */
 public class AddressUsagePanel extends JPanel {
     private JTable table;
-    private AddressUsageTableModel tableModel;
+    private final AddressUsageTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public AddressUsagePanel(String text) {
         tableModel = new AddressUsageTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Addresses");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem createItem = new JMenuItem("Create Address Usage");
+        JMenuItem viewItem = new JMenuItem("View Address Usage");
+        JMenuItem endItem = new JMenuItem("End Address Usage");
+        JMenuItem updateItem = new JMenuItem("Update Address Usage");
+        JMenuItem deleteItem = new JMenuItem("Delete Address Usage");
+        JMenuItem refreshItem = new JMenuItem("Refresh Address Usages");
+        
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(endItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +70,58 @@ public class AddressUsagePanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("End");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -101,8 +148,8 @@ public class AddressUsagePanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

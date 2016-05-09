@@ -591,7 +591,6 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
     }
     
     public boolean canCloseOffice() throws RemoteException {
-        System.out.println(!(this.hasCurrentAccount() || this.hasCurrentAgreement()));
         return !(this.hasCurrentAccount() || this.hasCurrentAgreement());
     }
     

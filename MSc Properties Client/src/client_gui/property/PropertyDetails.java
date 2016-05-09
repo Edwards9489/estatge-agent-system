@@ -7,18 +7,24 @@ package client_gui.property;
 
 import client_gui.propertyElement.PropElementPanel;
 import client_application.ClientImpl;
+import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
 import client_gui.StringListener;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
+import client_gui.address.AddressDetails;
+import client_gui.contact.ContactDetails;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.element.ElementDetails;
+import client_gui.employee.EmployeeDetails;
+import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.landlord.LandlordDetails;
 import client_gui.modifications.ModPanel;
 import client_gui.landlord.LandlordPanel;
+import client_gui.login.LoginForm;
 import client_gui.note.CreateNote;
 import client_gui.note.NoteDetails;
 import client_gui.note.NotePanel;
@@ -26,9 +32,11 @@ import client_gui.note.UpdateNote;
 import client_gui.propertyElement.CreatePropElement;
 import client_gui.propertyElement.PropElementDetails;
 import client_gui.propertyElement.UpdatePropElement;
-import interfaces.AddressUsageInterface;
+import interfaces.AddressInterface;
 import interfaces.PropertyInterface;
 import interfaces.Document;
+import interfaces.Element;
+import interfaces.EmployeeInterface;
 import interfaces.LandlordInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
@@ -40,6 +48,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -354,112 +363,7 @@ public class PropertyDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                int pane = tabbedPane.getSelectedIndex();
-
-                System.out.println(text);
-                switch (text) {
-                    case "Create":
-                        System.out.println("TEST - Create Button");
-
-                        if (pane == 0) {
-                            //Notes
-                            createPropElement();
-                            System.out.println("Create Prop Element");
-                            
-                        } else if (pane == 1) {
-                            //Notes
-                            createNote();
-                            System.out.println("Create Note");
-                            
-                        } else if (pane == 3) {
-                            //Documents
-                            createDocument();
-                            System.out.println("TEST - Create Document");
-                            
-                        }
-                        break;
-                        
-                    case "Update":
-                        System.out.println("TEST - Update Button");
-
-                        if (pane == 0) {
-                            //Notes
-                            updatePropElement();
-                            System.out.println("TEST - Update Prop Element");
-                            
-                        } else if (pane == 1) {
-                            //Notes
-                            updateNote();
-                            System.out.println("TEST - Update Note");
-                            
-                        } else if (pane == 3) {
-                            //Document
-                            updateDocument();
-                            System.out.println("TEST - Update Document");
-                            
-                        }
-                        break;
-                        
-                     case "End":
-                        System.out.println("TEST - End Button");
-
-                        if (pane == 0) {
-                            //Prop Elements
-                            endPropElement();
-                            System.out.println("TEST - End Prop Element");
-
-                        }
-                        break;
-
-                    case "Delete":
-                        System.out.println("TEST - Delete Button");
-                        if (pane == 0) {
-                            //Notes
-                            deletePropElement();
-                            System.out.println("TEST - Delete Prop Element");
-                            
-                        } else if (pane == 1) {
-                            //Notes
-                            deleteNote();
-                            System.out.println("TEST - Delete Note");
-                            
-                        } else if (pane == 3) {
-                            //Document
-                            deleteDocument();
-                            System.out.println("TEST - Delete Document");
-                            
-                        }
-                        break;
-
-                    case "View Details":
-                        System.out.println("TEST - View Details Button");
-                        if (pane == 0) {
-                            //Notes
-                            viewPropElement();
-                            System.out.println("TEST - View Prop Element");
-
-                        } else if (pane == 1) {
-                            //Notes
-                            viewNote();
-                            System.out.println("TEST - View Note");
-
-                        } else if (pane == 2) {
-                            //Notes
-                            viewLandlord();
-                            System.out.println("TEST - View Landlord");
-
-                        } else if (pane == 3) {
-                            //Document
-                            viewDocument();
-                            System.out.println("TEST - View Document");
-
-                        }
-                        break;
-                    
-                    case "Refresh":
-                        refresh();
-                        break;
-                }
+                actionChoice(text);
             }
         });
         
@@ -473,22 +377,10 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        propElementPanel.setTableListener(new IntegerListener() {
+        propElementPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int propElementRef) {
-                if(propElementRef > 0) {
-                    try {
-                        PropertyElementInterface propElement = property.getPropElement(propElementRef);
-                        if(propElement != null) {
-                            System.out.println(propElement.getPropertyElementRef());
-                            System.out.println("TEST1-Property Element");
-                            PropElementDetails propElementGUI = new PropElementDetails(client, propElement);
-                            propElementGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -500,22 +392,10 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new IntegerListener() {
+        notePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int noteRef) {
-                if(noteRef > 0) {
-                    try {
-                        Note note = property.getNote(noteRef);
-                        if(note != null) {
-                            System.out.println(note.getReference());
-                            System.out.println("TEST1-Note");
-                            NoteDetails noteGUI=  new NoteDetails(client, note);
-                            noteGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -527,21 +407,30 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        landlordPanel.setTableListener(new IntegerListener() {
+        landlordPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int addressRef) {
-                if(addressRef > 0) {
-                    try {
-                        LandlordInterface landlord = client.getLandlord(addressRef);
-                        if(landlord != null) {
-                            System.out.println(landlord.getPerson().getName());
-                            System.out.println("TEST1-Landlord");
-                            LandlordDetails invPartyGUI = new LandlordDetails(client, landlord);
-                            invPartyGUI.setVisible(true);
+            public void textOmitted(String text) {
+                Integer selection = landlordPanel.getSelectedObjectRef();
+                switch (text) {
+                        
+                    case "View Details":
+                        if (selection != null) {
+                            try {
+                                LandlordInterface landlord = client.getLandlord(selection);
+                                if (landlord != null) {
+                                    LandlordDetails landlordDetails = new LandlordDetails(client, landlord);
+                                    landlordDetails.setVisible(true);
+                                }
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                        break;
+                        
+                    case "Refresh":
+                        refresh();
+                        break;
+                    
                 }
             }
         });
@@ -554,21 +443,10 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new IntegerListener() {
+        documentPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int documentRef) {
-                if(documentRef > 0) {
-                    try {
-                        Document document = property.getDocument(documentRef);
-                        if(document != null) {
-                            System.out.println(document.getCurrentDocumentName());
-                            System.out.println("TEST1-Document");
-                            client.downloadPropertyDocument(property.getPropRef(), document.getDocumentRef(), document.getCurrentVersion());
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -729,7 +607,7 @@ public class PropertyDetails extends JFrame {
             try {
                 note = property.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails landlordDetails = new NoteDetails(client, note);
+                    NoteDetails landlordDetails = new NoteDetails(client, note, "Property", property.getPropRef());
                     landlordDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -866,6 +744,115 @@ public class PropertyDetails extends JFrame {
             Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void actionChoice(String text) {
+        int pane = tabbedPane.getSelectedIndex();
+
+        System.out.println(text);
+        switch (text) {
+            case "Create":
+                System.out.println("TEST - Create Button");
+
+                if (pane == 0) {
+                    //Notes
+                    createPropElement();
+                    System.out.println("Create Prop Element");
+
+                } else if (pane == 1) {
+                    //Notes
+                    createNote();
+                    System.out.println("Create Note");
+
+                } else if (pane == 3) {
+                    //Documents
+                    createDocument();
+                    System.out.println("TEST - Create Document");
+
+                }
+                break;
+
+            case "Update":
+                System.out.println("TEST - Update Button");
+
+                if (pane == 0) {
+                    //Notes
+                    updatePropElement();
+                    System.out.println("TEST - Update Prop Element");
+
+                } else if (pane == 1) {
+                    //Notes
+                    updateNote();
+                    System.out.println("TEST - Update Note");
+
+                } else if (pane == 3) {
+                    //Document
+                    updateDocument();
+                    System.out.println("TEST - Update Document");
+
+                }
+                break;
+
+             case "End":
+                System.out.println("TEST - End Button");
+
+                if (pane == 0) {
+                    //Prop Elements
+                    endPropElement();
+                    System.out.println("TEST - End Prop Element");
+
+                }
+                break;
+
+            case "Delete":
+                System.out.println("TEST - Delete Button");
+                if (pane == 0) {
+                    //Notes
+                    deletePropElement();
+                    System.out.println("TEST - Delete Prop Element");
+
+                } else if (pane == 1) {
+                    //Notes
+                    deleteNote();
+                    System.out.println("TEST - Delete Note");
+
+                } else if (pane == 3) {
+                    //Document
+                    deleteDocument();
+                    System.out.println("TEST - Delete Document");
+
+                }
+                break;
+
+            case "View Details":
+                System.out.println("TEST - View Details Button");
+                if (pane == 0) {
+                    //Notes
+                    viewPropElement();
+                    System.out.println("TEST - View Prop Element");
+
+                } else if (pane == 1) {
+                    //Notes
+                    viewNote();
+                    System.out.println("TEST - View Note");
+
+                } else if (pane == 2) {
+                    //Notes
+                    viewLandlord();
+                    System.out.println("TEST - View Landlord");
+
+                } else if (pane == 3) {
+                    //Document
+                    viewDocument();
+                    System.out.println("TEST - View Document");
+
+                }
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -881,15 +868,45 @@ public class PropertyDetails extends JFrame {
         fileMenu.add(changeUser);
         fileMenu.addSeparator(); // Is the faint lines between grouped menu items
         fileMenu.add(exitItem);
+        
+        
+        // Actions Menu
+        JMenu actionsMenu = new JMenu("Actions");
+
+        JMenuItem updateItem = new JMenuItem("Update");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem refreshItem = new JMenuItem("Refresh");
+        
+        actionsMenu.add(updateItem);
+        actionsMenu.add(deleteItem);
+        actionsMenu.add(refreshItem);
+        
+        // Link To Menu
+        
+        JMenu links = new JMenu("Link To");
+        
+        JMenuItem addressItem = new JMenuItem("Address");
+        JMenuItem propTypeItem = new JMenuItem("Prop Type");
+        JMenuItem propSubTypeItem = new JMenuItem("Prop Sub Type");
+        
+        links.add(addressItem);
+        links.add(propTypeItem);
+        links.add(propSubTypeItem);
+        
 
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
 
         JMenuItem manualItem = new JMenuItem("User Manual");
         JMenuItem aboutItem = new JMenuItem("About");
+        
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
+        
 
         // Add Menubar items
         menuBar.add(fileMenu);
+        menuBar.add(actionsMenu);
         menuBar.add(helpMenu);
 
         // Set up Mnemonics for Menus
@@ -901,21 +918,42 @@ public class PropertyDetails extends JFrame {
         changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
-
+        
+        
         //Set up ActionListeners
+        
+        //File Menu
+        
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                int action = JOptionPane.showConfirmDialog(PropertyDetails.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
             }
         });
-
+        
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(PropertyDetails.this,
@@ -934,15 +972,110 @@ public class PropertyDetails extends JFrame {
                 }
             }
         });
+        
+        
+        // Actions Menu
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                UpdateProperty propertyDetails = new UpdateProperty(client, property);
+                propertyDetails.setVisible(true);
+            }
+        });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Property " + property.getPropRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Property Delete - Yes button clicked");
+                        int result = client.deleteProperty(property.getPropRef());
+                        if (result > 0) {
+                            String message = "Property " + property.getPropRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(PropertyDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Property " + property.getPropRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(PropertyDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                refresh();
+            }
+        });
+        
+        
+        // Links Menu
+
+        addressItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    AddressInterface address = property.getAddress();
+                    AddressDetails addressDetails = new AddressDetails(client, address);
+                    addressDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        propTypeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = property.getPropType();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Property Type");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        propSubTypeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = property.getPropSubType();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Property Sub Type");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
         return menuBar;
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new PropertyDetails().setVisible(true);
-//            }
-//        });
-//    }
 }

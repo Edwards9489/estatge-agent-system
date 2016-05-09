@@ -6,12 +6,9 @@
 package server_application;
 
 import interfaces.Server;
-import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

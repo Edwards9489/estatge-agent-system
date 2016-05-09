@@ -6,6 +6,7 @@
 package client_gui.propertyElement;
 
 import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +30,33 @@ import javax.swing.border.Border;
  */
 public class PropElementPanel extends JPanel {
     private JTable table;
-    private PropElementTableModel tableModel;
+    private final PropElementTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public PropElementPanel(String text) {
         tableModel = new PropElementTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem accountItem = new JMenuItem("Elements");
-        popup.add(accountItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem createItem = new JMenuItem("Create Property Element");
+        JMenuItem viewItem = new JMenuItem("View Property Element");
+        JMenuItem endItem = new JMenuItem("End Property Element");
+        JMenuItem updateItem = new JMenuItem("Update Property Element");
+        JMenuItem deleteItem = new JMenuItem("Delete Property Element");
+        JMenuItem refreshItem = new JMenuItem("Refresh Property Elements");
+        
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(endItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +71,58 @@ public class PropElementPanel extends JPanel {
             }
         });
         
-        accountItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int accountRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(accountRef);
-                    tableListener.intOmitted(accountRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("End");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -102,8 +150,8 @@ public class PropElementPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

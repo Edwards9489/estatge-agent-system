@@ -5,6 +5,7 @@
  */
 package client_gui.application;
 
+import client_gui.AboutFrame;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
 import client_gui.modifications.ModPanel;
@@ -21,22 +22,25 @@ import client_application.ClientImpl;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.note.CreateNote;
 import client_gui.EndObject;
+import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
 import client_gui.invParty.InvPartyDetails;
+import client_gui.login.LoginForm;
 import client_gui.note.NotePanel;
 import client_gui.property.PropertyDetails;
+import client_gui.tenancy.TenancyDetails;
 import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
 import interfaces.Document;
 import interfaces.InvolvedPartyInterface;
 import interfaces.Note;
 import interfaces.PropertyInterface;
+import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,6 +49,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -121,6 +126,7 @@ public class AppDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -306,142 +312,7 @@ public class AppDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                int pane = tabbedPane.getSelectedIndex();
-
-                System.out.println(text);
-                switch (text) {
-                    case "Create":
-                        System.out.println("TEST - Create Button");
-
-                        if (pane == 0) {
-                            //Involved Partys
-                            createInvolvedParty();
-                            System.out.println("Create Involved Party");
-                            
-                        } else if (pane == 1) {
-                            //Addresses
-                            createAddress();
-                            System.out.println("Create Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            createNote();
-                            System.out.println("Create Note");
-                            
-                        } else if (pane == 3) {
-                            //Properties
-                            createProperty();
-                            System.out.println("Create Property");
-                            
-                        } else if (pane == 4) {
-                            //Documents
-                            createDocument();
-                            System.out.println("TEST - Create Document");
-                            
-                        }
-                        break;
-                        
-                    case "Update":
-                        System.out.println("TEST - Update Button");
-
-                        if (pane == 0) {
-                            //Involved Partys
-                            updateInvolvedParty();
-                            System.out.println("TEST - Update Involved Party");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            updateAddress();
-                            System.out.println("TEST - Update Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            updateNote();
-                            System.out.println("TEST - Update Note");
-                            
-                        } else if (pane == 4) {
-                            //Document
-                            updateDocument();
-                            System.out.println("TEST - Update Document");
-                            
-                        }
-                        break;
-                        
-                     case "End":
-                        System.out.println("TEST - End Button");
-
-                        if (pane == 0) {
-                            //Involved Partys
-                            endInvolvedParty();
-                            System.out.println("TEST - End Involved Party");
-
-                        } else if (pane == 3) {
-                            //Addresses
-                            endProperty();
-                            System.out.println("TEST - End Property");
-                            
-                        }
-                        break;
-
-                    case "Delete":
-                        System.out.println("TEST - Delete Button");
-                        if (pane == 0) {
-                            //Involved Partys
-                            deleteInvolvedParty();
-                            System.out.println("TEST - Delete Involved Party");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            deleteAddress();
-                            System.out.println("TEST - Delete Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            deleteNote();
-                            System.out.println("TEST - Delete Note");
-                            
-                        } else if (pane == 4) {
-                            //Document
-                            deleteDocument();
-                            System.out.println("TEST - Delete Document");
-                            
-                        }
-                        break;
-
-                    case "View Details":
-                        System.out.println("TEST - View Details Button");
-                        if (pane == 0) {
-                            //Involved Parties
-                            viewInvolvedParty();
-                            System.out.println("TEST - View Involved Party");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            viewAddress();
-                            System.out.println("TEST - View Addresses");
-
-                        } else if (pane == 2) {
-                            //Notes
-                            viewNote();
-                            System.out.println("TEST - View Note");
-
-                        } else if (pane == 3) {
-                            //Property
-                            viewProperty();
-                            System.out.println("TEST - View Property");
-
-                        } else if (pane == 3) {
-                            //Document
-                            viewDocument();
-                            System.out.println("TEST - View Note");
-
-                        }
-                        break;
-                    
-                    case "Refresh":
-                        refresh();
-                        break;
-                }
+                actionChoice(text);
             }
         });
         
@@ -455,22 +326,10 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        invPartyPanel.setTableListener(new IntegerListener() {
+        invPartyPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int invPartyRef) {
-                if(invPartyRef > 0) {
-                    try {
-                        InvolvedPartyInterface invParty = client.getInvolvedParty(invPartyRef);
-                        if(invParty != null) {
-                            System.out.println(invParty.getPerson().getName());
-                            System.out.println("TEST1-Involved Party");
-                            InvPartyDetails invPartyGUI = new InvPartyDetails(client, invParty);
-                            invPartyGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -482,22 +341,10 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        addressPanel.setTableListener(new IntegerListener() {
+        addressPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int addressRef) {
-                if(addressRef > 0) {
-                    try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
-                            System.out.println("TEST1-Address Usage");
-                            AddressUsageDetails addressGUI = new AddressUsageDetails(client, address);
-                            addressGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -509,22 +356,10 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new IntegerListener() {
+        notePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int noteRef) {
-                if(noteRef > 0) {
-                    try {
-                        Note note = application.getNote(noteRef);
-                        if(note != null) {
-                            System.out.println(note.getReference());
-                            System.out.println("TEST1-Note");
-                            NoteDetails noteGUI=  new NoteDetails(client, note);
-                            noteGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -536,22 +371,10 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        propInterestPanel.setTableListener(new IntegerListener() {
+        propInterestPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int propRef) {
-                if(propRef > 0) {
-                    try {
-                        PropertyInterface property = client.getProperty(propRef);
-                        if(property != null) {
-                            System.out.println(property.getAddress().printAddress());
-                            System.out.println("TEST1-Prop Interests");
-                            PropertyDetails propertyGUI = new PropertyDetails(client, property);
-                            propertyGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -563,21 +386,10 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new IntegerListener() {
+        documentPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int documentRef) {
-                if(documentRef > 0) {
-                    try {
-                        Document document = application.getDocument(documentRef);
-                        if(document != null) {
-                            System.out.println(document.getCurrentDocumentName());
-                            System.out.println("TEST1-Document");
-                            client.downloadApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), document.getCurrentVersion());
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -607,76 +419,6 @@ public class AppDetails extends JFrame {
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
-    }
-
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        // File Menu
-        JMenu fileMenu = new JMenu("File");
-
-        JMenuItem userAccount = new JMenuItem("User Account");
-        JMenuItem changeUser = new JMenuItem("Change User");
-        JMenuItem exitItem = new JMenuItem("Exit");
-
-        fileMenu.add(userAccount);
-        fileMenu.add(changeUser);
-        fileMenu.addSeparator(); // Is the faint lines between grouped menu items
-        fileMenu.add(exitItem);
-
-        // Help Menu
-        JMenu helpMenu = new JMenu("Help");
-
-        JMenuItem manualItem = new JMenuItem("User Manual");
-        JMenuItem aboutItem = new JMenuItem("About");
-
-        // Add Menubar items
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-
-        // Set up Mnemonics for Menus
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        exitItem.setMnemonic(KeyEvent.VK_X);
-
-        // Set up Accelerators
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
-        changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-        userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
-        manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
-
-        //Set up ActionListeners
-        changeUser.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-
-            }
-        });
-
-        userAccount.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-
-            }
-        });
-
-        exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-
-                int action = JOptionPane.showConfirmDialog(AppDetails.this,
-                        "Do you really want to exit the application?",
-                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
-
-                if (action == JOptionPane.OK_OPTION) {
-                    if (client != null) {
-                        try {
-                            client.logout();
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    System.exit(0);
-                }
-            }
-        });
-        return menuBar;
     }
 
     private void createInvolvedParty() {
@@ -810,7 +552,7 @@ public class AppDetails extends JFrame {
             try {
                 address = client.getAddressUsage(addressPanel.getSelectedObjectRef());
                 if (address != null) {
-                    AddressUsageDetails addressDetails = new AddressUsageDetails(client, address);
+                    AddressUsageDetails addressDetails = new AddressUsageDetails(client, address, "Application", application.getApplicationRef());
                     addressDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -874,7 +616,7 @@ public class AppDetails extends JFrame {
             try {
                 note = application.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    NoteDetails contractDetails = new NoteDetails(client, note, "Application", application.getApplicationRef());
                     contractDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -1036,13 +778,346 @@ public class AppDetails extends JFrame {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void actionChoice(String action) {
+        int ref = tabbedPane.getSelectedIndex();
+        switch (action) {
+            case "Create":
+                System.out.println("TEST - Create Button");
 
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new AppDetails().setVisible(true);
-//            }
-//        });
-//    }
+                if (ref == 0) {
+                    //Involved Partys
+                    createInvolvedParty();
+                    System.out.println("Create Involved Party");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    createAddress();
+                    System.out.println("Create Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    createNote();
+                    System.out.println("Create Note");
+
+                } else if (ref == 3) {
+                    //Properties
+                    createProperty();
+                    System.out.println("Create Property");
+
+                } else if (ref == 4) {
+                    //Documents
+                    createDocument();
+                    System.out.println("TEST - Create Document");
+
+                }
+                break;
+
+            case "Update":
+                System.out.println("TEST - Update Button");
+
+                if (ref == 0) {
+                    //Involved Partys
+                    updateInvolvedParty();
+                    System.out.println("TEST - Update Involved Party");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    updateAddress();
+                    System.out.println("TEST - Update Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    updateNote();
+                    System.out.println("TEST - Update Note");
+
+                } else if (ref == 4) {
+                    //Document
+                    updateDocument();
+                    System.out.println("TEST - Update Document");
+
+                }
+                break;
+
+             case "End":
+                System.out.println("TEST - End Button");
+
+                if (ref == 0) {
+                    //Involved Partys
+                    endInvolvedParty();
+                    System.out.println("TEST - End Involved Party");
+
+                } else if (ref == 3) {
+                    //Addresses
+                    endProperty();
+                    System.out.println("TEST - End Property");
+
+                }
+                break;
+
+            case "Delete":
+                System.out.println("TEST - Delete Button");
+                if (ref == 0) {
+                    //Involved Partys
+                    deleteInvolvedParty();
+                    System.out.println("TEST - Delete Involved Party");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    deleteAddress();
+                    System.out.println("TEST - Delete Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    deleteNote();
+                    System.out.println("TEST - Delete Note");
+
+                } else if (ref == 4) {
+                    //Document
+                    deleteDocument();
+                    System.out.println("TEST - Delete Document");
+
+                }
+                break;
+
+            case "View Details":
+                System.out.println("TEST - View Details Button");
+                if (ref == 0) {
+                    //Involved Parties
+                    viewInvolvedParty();
+                    System.out.println("TEST - View Involved Party");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    viewAddress();
+                    System.out.println("TEST - View Addresses");
+
+                } else if (ref == 2) {
+                    //Notes
+                    viewNote();
+                    System.out.println("TEST - View Note");
+
+                } else if (ref == 3) {
+                    //Property
+                    viewProperty();
+                    System.out.println("TEST - View Property");
+
+                } else if (ref == 3) {
+                    //Document
+                    viewDocument();
+                    System.out.println("TEST - View Note");
+
+                }
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
+
+    private JMenuBar createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // File Menu
+        JMenu fileMenu = new JMenu("File");
+
+        JMenuItem userAccount = new JMenuItem("User Account");
+        JMenuItem changeUser = new JMenuItem("Change User");
+        JMenuItem exitItem = new JMenuItem("Exit");
+
+        fileMenu.add(userAccount);
+        fileMenu.add(changeUser);
+        fileMenu.addSeparator(); // Is the faint lines between grouped menu items
+        fileMenu.add(exitItem);
+        
+        
+        // Actions Menu
+        JMenu actionsMenu = new JMenu("Actions");
+
+        JMenuItem updateItem = new JMenuItem("Update");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem refreshItem = new JMenuItem("Refresh");
+        
+        actionsMenu.add(updateItem);
+        actionsMenu.add(deleteItem);
+        actionsMenu.add(refreshItem);
+        
+        
+        // Link to Menu
+        JMenu linksMenu = new JMenu("Link To");
+
+        JMenuItem tenancyItem = new JMenuItem("Tenancy");
+        
+        try {
+            if (application.hasTenancyRef()) {
+                linksMenu.add(tenancyItem);
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+        // Help Menu
+        JMenu helpMenu = new JMenu("Help");
+
+        JMenuItem manualItem = new JMenuItem("User Manual");
+        JMenuItem aboutItem = new JMenuItem("About");
+        
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
+        
+
+        // Add Menubar items
+        menuBar.add(fileMenu);
+        menuBar.add(actionsMenu);
+        menuBar.add(linksMenu);
+        menuBar.add(helpMenu);
+
+        // Set up Mnemonics for Menus
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        exitItem.setMnemonic(KeyEvent.VK_X);
+
+        // Set up Accelerators
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+        changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+        userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+        manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+
+        
+        //Set up ActionListeners
+        
+        //File Menu
+        
+        changeUser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                int action = JOptionPane.showConfirmDialog(AppDetails.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
+            }
+        });
+
+        userAccount.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
+            }
+        });
+        
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+
+                int action = JOptionPane.showConfirmDialog(AppDetails.this,
+                        "Do you really want to exit the application?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+
+                if (action == JOptionPane.OK_OPTION) {
+                    if (client != null) {
+                        try {
+                            client.logout();
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    System.exit(0);
+                }
+            }
+        });
+        
+        
+        // Actions Menu
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                UpdateApp appDetails = new UpdateApp(client, application);
+                appDetails.setVisible(true);
+            }
+        });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Application " + application.getApplicationRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Application Delete - Yes button clicked");
+                        int result = client.deleteApplication(application.getApplicationRef());
+                        if (result > 0) {
+                            String message = "Application " + application.getApplicationRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(AppDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Application " + application.getApplicationRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(AppDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                refresh();
+            }
+        });
+        
+        
+        // Links Menu
+
+        tenancyItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    if (application.hasTenancyRef()) {
+                        TenancyInterface tenancy = client.getTenancy(application.getTenancyRef());
+                        TenancyDetails tenDetails = new TenancyDetails(client, tenancy);
+                        tenDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
+        return menuBar;
+    }
 }

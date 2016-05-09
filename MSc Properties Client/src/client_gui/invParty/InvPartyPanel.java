@@ -6,6 +6,7 @@
 package client_gui.invParty;
 
 import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.InvolvedPartyInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +30,31 @@ import javax.swing.border.Border;
  */
 public class InvPartyPanel extends JPanel {
     private JTable table;
-    private InvPartyTableModel tableModel;
+    private final InvPartyTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public InvPartyPanel(String text) {
         tableModel = new InvPartyTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem accountItem = new JMenuItem("Involved Party");
-        popup.add(accountItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem viewItem = new JMenuItem("View Involved Party");
+        JMenuItem endItem = new JMenuItem("End Involved Party");
+        JMenuItem updateItem = new JMenuItem("Update Involved Party");
+        JMenuItem deleteItem = new JMenuItem("Delete Involved Party");
+        JMenuItem refreshItem = new JMenuItem("Refresh Involved Parties");
+        
+        popup.add(viewItem);
+        popup.add(endItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +69,49 @@ public class InvPartyPanel extends JPanel {
             }
         });
         
-        accountItem.addActionListener(new ActionListener() {
+        viewItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null && row > -1) {
-                    int accountRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(accountRef);
-                    tableListener.intOmitted(accountRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
                 }
             }
-            
+        });
+        
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("End");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -105,8 +142,8 @@ public class InvPartyPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

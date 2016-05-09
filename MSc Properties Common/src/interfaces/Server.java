@@ -88,6 +88,7 @@ public interface Server extends Remote {
     int deletePersonAddressUsage(int pRef, int aRef) throws RemoteException;
     int createOffice(String officeCode, int addrRef, Date startDate, String createdBy) throws RemoteException;
     int updateOffice(String officeCode, Date startDate, String modifiedBy) throws RemoteException;
+    int endOffice(String officeCode, Date endDate, String modifiedBy) throws RemoteException;
     int deleteOffice(String code) throws RemoteException;
     int createOfficeNote(String officeCode, String comment, String createdBy) throws RemoteException;
     int updateOfficeNote(String officeCode, int nRef, String comment, String modifiedBy) throws RemoteException;
@@ -278,6 +279,7 @@ public interface Server extends Remote {
     List<LandlordInterface> getLandlords() throws RemoteException;
     List<EmployeeInterface> getEmployees() throws RemoteException;
     List<JobRoleInterface> getJobRoles() throws RemoteException;
+    List<PropertyInterface> getProperties() throws RemoteException;
     
     boolean titleExists(String code) throws RemoteException;
     boolean genderExists(String code) throws RemoteException;
@@ -293,6 +295,9 @@ public interface Server extends Remote {
     boolean propElementExists(String code) throws RemoteException;
     boolean endReasonExists(String code) throws RemoteException;
     boolean relationshipExists(String code) throws RemoteException;
+    boolean jobRoleRequirementExists(String code) throws RemoteException;
+    boolean jobRoleBenefitExists(String code) throws RemoteException;
+    boolean tenancyTypeExists(String code) throws RemoteException;
     boolean officeExists(String code) throws RemoteException;
     boolean jobRoleExists(String code) throws RemoteException;
     boolean isUser(String username, String password) throws RemoteException;
@@ -314,7 +319,9 @@ public interface Server extends Remote {
     PropertyInterface getProperty(int pRef) throws RemoteException;
     PersonInterface getPerson(int pRef) throws RemoteException;
     EmployeeInterface getEmployee(int eRef) throws RemoteException;
+    EmployeeInterface getPersonEmployee(int pRef) throws RemoteException;
     LandlordInterface getLandlord(int lRef) throws RemoteException;
+    LandlordInterface getPersonLandlord(int pRef) throws RemoteException;
     TenancyInterface getTenancy(int tRef) throws RemoteException;
     LeaseInterface getLease(int lRef) throws RemoteException;
     ContractInterface getContract(int cRef) throws RemoteException;

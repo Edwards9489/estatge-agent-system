@@ -5,7 +5,7 @@
  */
 package client_gui.jobBenefit;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.JobRoleBenefitInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +29,33 @@ import javax.swing.border.Border;
  */
 public class BenefitPanel extends JPanel {
     private JTable table;
-    private BenefitTableModel tableModel;
+    private final BenefitTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public BenefitPanel(String text) {
         tableModel = new BenefitTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Benefits");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem createItem = new JMenuItem("Create Job Benefit");
+        JMenuItem viewItem = new JMenuItem("View Job Benefit");
+        JMenuItem endItem = new JMenuItem("End Job Benefit");
+        JMenuItem updateItem = new JMenuItem("Update Job Benefit");
+        JMenuItem deleteItem = new JMenuItem("Delete Job Benefit");
+        JMenuItem refreshItem = new JMenuItem("Refresh Job Benefits");
+        
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(endItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +70,58 @@ public class BenefitPanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int addressRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(addressRef);
-                    tableListener.intOmitted(addressRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("End");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -103,8 +150,8 @@ public class BenefitPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

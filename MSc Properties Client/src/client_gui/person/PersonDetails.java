@@ -7,11 +7,11 @@ package client_gui.person;
 
 import client_gui.contact.ContactPanel;
 import client_application.ClientImpl;
+import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
 import client_gui.StringListener;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.addressUsage.AddressUsageDetails;
@@ -23,6 +23,11 @@ import client_gui.contact.CreateContact;
 import client_gui.contact.UpdateContact;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.element.ElementDetails;
+import client_gui.employee.EmployeeDetails;
+import client_gui.employee.UpdateEmployeeSecurity;
+import client_gui.landlord.LandlordDetails;
+import client_gui.login.LoginForm;
 import client_gui.modifications.ModPanel;
 import client_gui.note.CreateNote;
 import client_gui.note.NoteDetails;
@@ -32,6 +37,9 @@ import interfaces.AddressUsageInterface;
 import interfaces.PersonInterface;
 import interfaces.Document;
 import interfaces.ContactInterface;
+import interfaces.Element;
+import interfaces.EmployeeInterface;
+import interfaces.LandlordInterface;
 import interfaces.Note;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +49,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -84,15 +93,15 @@ public class PersonDetails extends JFrame {
     private JFileChooser fileChooser;
     
     private JLabel niNumber;
-    private JLabel gender;
-    private JLabel ethnic;
-    private JLabel name;
-    private JLabel language;
-    private JLabel nationality;
-    private JLabel dob;
-    private JLabel marStatus;
-    private JLabel religion;
-    private JLabel sex;
+    private JLabel pGender;
+    private JLabel pEthnic;
+    private JLabel pName;
+    private JLabel pLanguage;
+    private JLabel pNationality;
+    private JLabel pDOB;
+    private JLabel pMarStatus;
+    private JLabel pReligion;
+    private JLabel pSex;
 
     
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -209,21 +218,21 @@ public class PersonDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(niNumber, gc);
 
-        JLabel pGender = new JLabel("Gender    ");
-        pGender.setFont(plainFont);
+        JLabel genderLabel = new JLabel("Gender    ");
+        genderLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(pGender, gc);
+        detailsPanel.add(genderLabel, gc);
 
-        gender = new JLabel(person.getGender().getCode());
-        gender.setFont(boldFont);
+        pGender = new JLabel(person.getGender().getCode());
+        pGender.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(gender, gc);
+        detailsPanel.add(pGender, gc);
 
         JLabel ethnicLabel = new JLabel("Ethnicity    ");
         ethnicLabel.setFont(plainFont);
@@ -233,13 +242,13 @@ public class PersonDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(ethnicLabel, gc);
 
-        ethnic = new JLabel(person.getEthnicOrigin().getCode());
-        ethnic.setFont(boldFont);
+        pEthnic = new JLabel(person.getEthnicOrigin().getCode());
+        pEthnic.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(ethnic, gc);
+        detailsPanel.add(pEthnic, gc);
 
             ////////// NEXT ROW //////////
         gc.gridx = 0;
@@ -256,14 +265,14 @@ public class PersonDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(nameLabel, gc);
 
-        name = new JLabel(person.getName());
-        name.setFont(boldFont);
+        pName = new JLabel(person.getName());
+        pName.setFont(boldFont);
 
         gc.gridx++;
         gc.gridwidth = 3;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(name, gc);
+        detailsPanel.add(pName, gc);
         
         gc.gridx++;
         gc.gridwidth = 1;
@@ -285,29 +294,29 @@ public class PersonDetails extends JFrame {
         gc.insets = new Insets(0, 0, 0, 0);
         detailsPanel.add(languageLabel, gc);
         
-        language = new JLabel(person.getLanguage().getCode());
-        language.setFont(boldFont);
+        pLanguage = new JLabel(person.getLanguage().getCode());
+        pLanguage.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(language, gc);
+        detailsPanel.add(pLanguage, gc);
 
-        JLabel pNationality = new JLabel("Nationality    ");
-        pNationality.setFont(plainFont);
+        JLabel nationalityLabel = new JLabel("Nationality    ");
+        nationalityLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(pNationality, gc);
+        detailsPanel.add(nationalityLabel, gc);
         
-        nationality = new JLabel(person.getNationality().getCode());
-        nationality.setFont(boldFont);
+        pNationality = new JLabel(person.getNationality().getCode());
+        pNationality.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(nationality, gc);
+        detailsPanel.add(pNationality, gc);
         
         
         /////////// NEXT ROW
@@ -315,68 +324,68 @@ public class PersonDetails extends JFrame {
         gc.gridx = 0;
         gc.gridy++;
         
-        JLabel pDOB = new JLabel("Date of Birth    ");
-        pDOB.setFont(plainFont);
+        JLabel dobLabel = new JLabel("Date of Birth    ");
+        dobLabel.setFont(plainFont);
 
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(pDOB, gc);
+        detailsPanel.add(dobLabel, gc);
         
-        dob = new JLabel(formatter.format(person.getDateOfBirth()));
-        dob.setFont(boldFont);
+        pDOB = new JLabel(formatter.format(person.getDateOfBirth()));
+        pDOB.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(dob, gc);
+        detailsPanel.add(pDOB, gc);
 
-        JLabel pMarStatus = new JLabel("Marital Status    ");
-        pMarStatus.setFont(plainFont);
+        JLabel marStatusLabel = new JLabel("Marital Status    ");
+        marStatusLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(marStatusLabel, gc);
+
+        pMarStatus = new JLabel(person.getMaritalStatus().getCode());
+        pMarStatus.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(pMarStatus, gc);
 
-        marStatus = new JLabel(person.getMaritalStatus().getCode());
-        marStatus.setFont(boldFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(marStatus, gc);
-
-        JLabel pReligion = new JLabel("Religion    ");
-        pReligion.setFont(plainFont);
+        JLabel religionLabel = new JLabel("Religion    ");
+        religionLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
+        detailsPanel.add(religionLabel, gc);
+
+        pReligion = new JLabel(person.getReligion().getCode());
+        pReligion.setFont(boldFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
         detailsPanel.add(pReligion, gc);
 
-        religion = new JLabel(person.getReligion().getCode());
-        religion.setFont(boldFont);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(religion, gc);
-
-        JLabel pSex = new JLabel("Sexuality    ");
-        pSex.setFont(plainFont);
+        JLabel sexLabel = new JLabel("Sexuality    ");
+        sexLabel.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        detailsPanel.add(pSex, gc);
+        detailsPanel.add(sexLabel, gc);
 
-        sex = new JLabel(person.getSexuality().getCode());
-        sex.setFont(boldFont);
+        pSex = new JLabel(person.getSexuality().getCode());
+        pSex.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        detailsPanel.add(sex, gc);
+        detailsPanel.add(pSex, gc);
     }
     
     private void setUpMainPanel() {
@@ -399,127 +408,7 @@ public class PersonDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                int pane = tabbedPane.getSelectedIndex();
-
-                System.out.println(text);
-                switch (text) {
-                    case "Create":
-                        System.out.println("TEST - Create Button");
-
-                        if (pane == 0) {
-                            //Contacts
-                            createContact();
-                            System.out.println("Create Contact");
-                            
-                        } else if (pane == 1) {
-                            //Addresses
-                            createAddress();
-                            System.out.println("Create Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            createNote();
-                            System.out.println("Create Note");
-                            
-                        } else if (pane == 3) {
-                            //Documents
-                            createDocument();
-                            System.out.println("TEST - Create Document");
-                            
-                        }
-                        break;
-                        
-                    case "Update":
-                        System.out.println("TEST - Update Button");
-
-                        if (pane == 0) {
-                            //Contacts
-                            updateContact();
-                            System.out.println("TEST - Update Contact");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            updateAddress();
-                            System.out.println("TEST - Update Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            updateNote();
-                            System.out.println("TEST - Update Note");
-                            
-                        } else if (pane == 3) {
-                            //Document
-                            updateDocument();
-                            System.out.println("TEST - Update Document");
-                            
-                        }
-                        break;
-                        
-                     case "End":
-                        System.out.println("TEST - End Button");
-
-                        if (pane == 0) {
-                            //Involved Partys
-                            endContact();
-                            System.out.println("TEST - End Contact");
-
-                        }
-                        break;
-
-                    case "Delete":
-                        System.out.println("TEST - Delete Button");
-                        if (pane == 0) {
-                            //Contacts
-                            deleteContact();
-                            System.out.println("TEST - Delete Contact");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            deleteAddress();
-                            System.out.println("TEST - Delete Address");
-                            
-                        } else if (pane == 2) {
-                            //Notes
-                            deleteNote();
-                            System.out.println("TEST - Delete Note");
-                            
-                        } else if (pane == 3) {
-                            //Document
-                            deleteDocument();
-                            System.out.println("TEST - Delete Document");
-                            
-                        }
-                        break;
-
-                    case "View Details":
-                        System.out.println("TEST - View Details Button");
-                        if (pane == 0) {
-                            //Contacts
-                            viewContact();
-                            System.out.println("TEST - View Contact");
-
-                        } else if (pane == 1) {
-                            //Addresses
-                            viewAddress();
-                            System.out.println("TEST - View Address");
-
-                        } else if (pane == 2) {
-                            //Notes
-                            viewNote();
-                            System.out.println("TEST - View Note");
-
-                        } else if (pane == 3) {
-                            //Document
-                            viewDocument();
-                            System.out.println("TEST - View Document");
-
-                        }
-                        break;
-                    
-                    case "Refresh":
-                        refresh();
-                        break;
-                }
+                actionChoice(text);
             }
         });
         
@@ -533,22 +422,10 @@ public class PersonDetails extends JFrame {
             Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        contactPanel.setTableListener(new IntegerListener() {
+        contactPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int contactRef) {
-                if(contactRef > 0) {
-                    try {
-                        ContactInterface contact = person.getContact(contactRef);
-                        if(contact != null) {
-                            System.out.println(contact.getContactValue());
-                            System.out.println("TEST1-Contact");
-                            ContactDetails contactGUI = new ContactDetails(client, contact);
-                            contactGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -560,22 +437,10 @@ public class PersonDetails extends JFrame {
             Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        addressPanel.setTableListener(new IntegerListener() {
+        addressPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int addressRef) {
-                if(addressRef > 0) {
-                    try {
-                        AddressUsageInterface address = client.getAddressUsage(addressRef);
-                        if(address != null) {
-                            System.out.println(address.getAddress().printAddress());
-                            System.out.println("TEST1-Address Usage");
-                            AddressUsageDetails addressGUI = new AddressUsageDetails(client, address);
-                            addressGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -587,22 +452,10 @@ public class PersonDetails extends JFrame {
             Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new IntegerListener() {
+        notePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int noteRef) {
-                if(noteRef > 0) {
-                    try {
-                        Note note = person.getNote(noteRef);
-                        if(note != null) {
-                            System.out.println(note.getReference());
-                            System.out.println("TEST1-Note");
-                            NoteDetails noteGUI=  new NoteDetails(client, note);
-                            noteGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -614,21 +467,10 @@ public class PersonDetails extends JFrame {
             Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new IntegerListener() {
+        documentPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int documentRef) {
-                if(documentRef > 0) {
-                    try {
-                        Document document = person.getDocument(documentRef);
-                        if(document != null) {
-                            System.out.println(document.getCurrentDocumentName());
-                            System.out.println("TEST1-Document");
-                            client.downloadPersonDocument(person.getPersonRef(), document.getDocumentRef(), document.getCurrentVersion());
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -729,8 +571,8 @@ public class PersonDetails extends JFrame {
             try {
                 ContactInterface contact = person.getContact(selection);
                 if (contact != null) {
-                    ContactDetails contractDetails = new ContactDetails(client, contact);
-                    contractDetails.setVisible(true);
+                    ContactDetails contactDetails = new ContactDetails(client, contact, "Person", person.getPersonRef());
+                    contactDetails.setVisible(true);
                     setVisible(false);
                 }
             } catch (RemoteException ex) {
@@ -794,7 +636,7 @@ public class PersonDetails extends JFrame {
             try {
                 address = client.getAddressUsage(addressPanel.getSelectedObjectRef());
                 if (address != null) {
-                    AddressUsageDetails addressDetails = new AddressUsageDetails(client, address);
+                    AddressUsageDetails addressDetails = new AddressUsageDetails(client, address, "Person", person.getPersonRef());
                     addressDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -858,7 +700,7 @@ public class PersonDetails extends JFrame {
             try {
                 note = person.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    NoteDetails contractDetails = new NoteDetails(client, note, "Person", person.getPersonRef());
                     contractDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -945,23 +787,23 @@ public class PersonDetails extends JFrame {
             
             niNumber.setText(person.getNI());
             
-            gender.setText(person.getGender().getCode());
+            pGender.setText(person.getGender().getCode());
             
-            ethnic.setText(person.getEthnicOrigin().getCode());
+            pEthnic.setText(person.getEthnicOrigin().getCode());
             
-            name.setText(person.getName());
+            pName.setText(person.getName());
             
-            language.setText(person.getLanguage().getCode());
+            pLanguage.setText(person.getLanguage().getCode());
             
-            nationality.setText(person.getNationality().getCode());
+            pNationality.setText(person.getNationality().getCode());
             
-            dob.setText(formatter.format(person.getDateOfBirth()));
+            pDOB.setText(formatter.format(person.getDateOfBirth()));
             
-            marStatus.setText(person.getMaritalStatus().getCode());
+            pMarStatus.setText(person.getMaritalStatus().getCode());
             
-            religion.setText(person.getReligion().getCode());
+            pReligion.setText(person.getReligion().getCode());
             
-            sex.setText(person.getSexuality().getCode());
+            pSex.setText(person.getSexuality().getCode());
             
             
             contactPanel.setData(person.getContacts());
@@ -979,6 +821,130 @@ public class PersonDetails extends JFrame {
             Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void actionChoice(String text) {
+        int ref = tabbedPane.getSelectedIndex();
+
+        System.out.println(text);
+        switch (text) {
+            case "Create":
+                System.out.println("TEST - Create Button");
+
+                if (ref == 0) {
+                    //Contacts
+                    createContact();
+                    System.out.println("Create Contact");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    createAddress();
+                    System.out.println("Create Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    createNote();
+                    System.out.println("Create Note");
+
+                } else if (ref == 3) {
+                    //Documents
+                    createDocument();
+                    System.out.println("TEST - Create Document");
+
+                }
+                break;
+
+            case "Update":
+                System.out.println("TEST - Update Button");
+
+                if (ref == 0) {
+                    //Contacts
+                    updateContact();
+                    System.out.println("TEST - Update Contact");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    updateAddress();
+                    System.out.println("TEST - Update Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    updateNote();
+                    System.out.println("TEST - Update Note");
+
+                } else if (ref == 3) {
+                    //Document
+                    updateDocument();
+                    System.out.println("TEST - Update Document");
+
+                }
+                break;
+
+             case "End":
+                System.out.println("TEST - End Button");
+
+                if (ref == 0) {
+                    //Involved Partys
+                    endContact();
+                    System.out.println("TEST - End Contact");
+
+                }
+                break;
+
+            case "Delete":
+                System.out.println("TEST - Delete Button");
+                if (ref == 0) {
+                    //Contacts
+                    deleteContact();
+                    System.out.println("TEST - Delete Contact");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    deleteAddress();
+                    System.out.println("TEST - Delete Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    deleteNote();
+                    System.out.println("TEST - Delete Note");
+
+                } else if (ref == 3) {
+                    //Document
+                    deleteDocument();
+                    System.out.println("TEST - Delete Document");
+
+                }
+                break;
+
+            case "View Details":
+                System.out.println("TEST - View Details Button");
+                if (ref == 0) {
+                    //Contacts
+                    viewContact();
+                    System.out.println("TEST - View Contact");
+
+                } else if (ref == 1) {
+                    //Addresses
+                    viewAddress();
+                    System.out.println("TEST - View Address");
+
+                } else if (ref == 2) {
+                    //Notes
+                    viewNote();
+                    System.out.println("TEST - View Note");
+
+                } else if (ref == 3) {
+                    //Document
+                    viewDocument();
+                    System.out.println("TEST - View Document");
+
+                }
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -994,15 +960,55 @@ public class PersonDetails extends JFrame {
         fileMenu.add(changeUser);
         fileMenu.addSeparator(); // Is the faint lines between grouped menu items
         fileMenu.add(exitItem);
+        
+        
+        // Actions Menu
+        JMenu actionsMenu = new JMenu("Actions");
+
+        JMenuItem updateItem = new JMenuItem("Update");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem refreshItem = new JMenuItem("Refresh");
+        
+        actionsMenu.add(updateItem);
+        actionsMenu.add(deleteItem);
+        actionsMenu.add(refreshItem);
+        
+        // Link To Menu
+        
+        JMenu links = new JMenu("Link To");
+        
+        JMenuItem titleItem = new JMenuItem("Title");
+        JMenuItem genderItem = new JMenuItem("Gender");
+        JMenuItem maritalStatusItem = new JMenuItem("Marital Status");
+        JMenuItem ethnicOriginItem = new JMenuItem("Ethnic Origin");
+        JMenuItem languageItem = new JMenuItem("Language");
+        JMenuItem nationalityItem = new JMenuItem("Nationality");
+        JMenuItem sexualityItem = new JMenuItem("Sexuality");
+        JMenuItem religionItem = new JMenuItem("Religion");
+        
+        links.add(titleItem);
+        links.add(genderItem);
+        links.add(maritalStatusItem);
+        links.add(ethnicOriginItem);
+        links.add(languageItem);
+        links.add(nationalityItem);
+        links.add(sexualityItem);
+        links.add(religionItem);
+        
 
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
 
         JMenuItem manualItem = new JMenuItem("User Manual");
         JMenuItem aboutItem = new JMenuItem("About");
+        
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
+        
 
         // Add Menubar items
         menuBar.add(fileMenu);
+        menuBar.add(actionsMenu);
         menuBar.add(helpMenu);
 
         // Set up Mnemonics for Menus
@@ -1014,25 +1020,46 @@ public class PersonDetails extends JFrame {
         changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
-
+        
+        
         //Set up ActionListeners
+        
+        //File Menu
+        
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                int action = JOptionPane.showConfirmDialog(PersonDetails.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
             }
         });
-
+        
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(PersonDetails.this,
-                        "Do you really want to exit the person?",
+                        "Do you really want to exit the application?",
                         "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
 
                 if (action == JOptionPane.OK_OPTION) {
@@ -1047,15 +1074,216 @@ public class PersonDetails extends JFrame {
                 }
             }
         });
+        
+        
+        // Actions Menu
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                UpdatePerson personDetails = new UpdatePerson(client, person);
+                personDetails.setVisible(true);
+            }
+        });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Person " + person.getPersonRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Person Delete - Yes button clicked");
+                        int result = client.deletePerson(person.getPersonRef());
+                        if (result > 0) {
+                            String message = "Person " + person.getPersonRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(PersonDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Person " + person.getPersonRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(PersonDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                refresh();
+            }
+        });
+        
+        
+        // Links Menu
+        
+        try {
+            if (client.personEmployeeExists(person.getPersonRef())) {
+                JMenuItem employee = new JMenuItem("Employee");
+                links.add(employee);
+
+                employee.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ev) {
+                        try {
+                            EmployeeInterface employee = client.getPersonEmployee(person.getPersonRef());
+                            EmployeeDetails empDetails = new EmployeeDetails(client, employee);
+                            empDetails.setVisible(true);
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+
+            if (client.personLandlordExists(person.getPersonRef())) {
+                JMenuItem landlord = new JMenuItem("Employee");
+                links.add(landlord);
+
+                landlord.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent ev) {
+                        try {
+                            LandlordInterface landlord = client.getPersonLandlord(person.getPersonRef());
+                            LandlordDetails landlordDetails = new LandlordDetails(client, landlord);
+                            landlordDetails.setVisible(true);
+                        } catch (RemoteException ex) {
+                            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        titleItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getTitle();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Title");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        genderItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getGender();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Gender");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        maritalStatusItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getMaritalStatus();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Marital Status");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        ethnicOriginItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getEthnicOrigin();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Ethnic Origin");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        languageItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getLanguage();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Language");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        nationalityItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getNationality();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Nationality");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        sexualityItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getSexuality();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Sexuality");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        religionItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    Element element = person.getReligion();
+                    ElementDetails elementDetails = new ElementDetails(client, element, "Religion");
+                    elementDetails.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
         return menuBar;
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new PersonDetails().setVisible(true);
-//            }
-//        });
-//    }
 }

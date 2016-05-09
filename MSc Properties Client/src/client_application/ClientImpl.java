@@ -751,6 +751,13 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
+    public int endOffice(String officeCode, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.endOffice(officeCode, endDate, this.getUsername());
+        }
+        return 0;
+    }
+
     public int deleteOffice(String code) throws RemoteException {
         if (this.server.isAlive()) {
             return server.deleteOffice(code);
@@ -841,8 +848,6 @@ public class ClientImpl extends Observable implements Client {
         }
         return 0;
     }
-    
-    
 
     public int endOfficeContact(String oCode, int cRef, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
@@ -2476,6 +2481,10 @@ public class ClientImpl extends Observable implements Client {
         return this.server.getJobRoles();
     }
     
+    public List<PropertyInterface> getProperties() throws RemoteException {
+        return this.server.getProperties();
+    }
+    
     public List<JobRoleInterface> getCurrentJobRoles() throws RemoteException {
         List<JobRoleInterface> tempJobRoles = new ArrayList();
         for (JobRoleInterface temp : this.getJobRoles()) {
@@ -2584,6 +2593,27 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
 
+    public Boolean jobRoleRequirementExists(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.jobRoleRequirementExists(code);
+        }
+        return null;
+    }
+
+    public Boolean jobRoleBenefitExists(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.jobRoleBenefitExists(code);
+        }
+        return null;
+    }
+
+    public Boolean tenancyTypeExists(String code) throws RemoteException {
+        if (this.server.isAlive()) {
+            return server.tenancyTypeExists(code);
+        }
+        return null;
+    }
+
     public Boolean officeExists(String code) throws RemoteException {
         if (this.server.isAlive()) {
             return server.officeExists(code);
@@ -2666,8 +2696,16 @@ public class ClientImpl extends Observable implements Client {
         return this.server.getEmployee(eRef);
     }
     
+    public EmployeeInterface getPersonEmployee(int pRef) throws RemoteException {
+        return this.server.getPersonEmployee(pRef);
+    }
+    
     public LandlordInterface getLandlord(int lRef) throws RemoteException {
         return this.server.getLandlord(lRef);
+    }
+    
+    public LandlordInterface getPersonLandlord(int pRef) throws RemoteException {
+        return this.server.getPersonLandlord(pRef);
     }
     
     public TenancyInterface getTenancy(int tRef) throws RemoteException {

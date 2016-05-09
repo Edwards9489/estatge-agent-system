@@ -142,7 +142,7 @@ public class TESTTestGUI {
             List<ContactInterface> contacts = person.getContacts();
             ContactInterface contact = null;
             EmployeeInterface employee = client.getEmployee(8);
-            Note note = employee.getNote(339);
+            Note note = employee.getNote(346);
             PropertyElementInterface propElement = property.getPropElement(164);
             PropertyElementInterface propElement2 = property.getPropElement(172);
             JobRoleBenefitInterface jobRoleBenefit = jobRole.getJobBenefit(1);
@@ -179,7 +179,7 @@ public class TESTTestGUI {
             
             // Address Usage Testing
             
-            AddressUsageDetails addressUsageDetails = new AddressUsageDetails(client, addressUsage);
+            AddressUsageDetails addressUsageDetails = new AddressUsageDetails(client, addressUsage, "Person", 2);
             addressUsageDetails.setVisible(true);
             
 //            CreateAddressUsage createAddressUsage = new CreateAddressUsage(client, "Person", 7);
@@ -204,7 +204,7 @@ public class TESTTestGUI {
             // Contact Testing
             
             if (contact != null) {
-                ContactDetails contactDetails = new ContactDetails(client, contact);
+                ContactDetails contactDetails = new ContactDetails(client, contact, "Person", 1);
                 contactDetails.setVisible(true);
             }
             
@@ -367,7 +367,7 @@ public class TESTTestGUI {
             
             // Note Testing
             
-            NoteDetails noteDetails = new NoteDetails(client, note);
+            NoteDetails noteDetails = new NoteDetails(client, note, "Application", 1);
             noteDetails.setVisible(true);
             
 //            CreateNote createNote = new CreateNote(client, "Person", 1);

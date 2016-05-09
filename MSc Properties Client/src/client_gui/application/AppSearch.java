@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.leaseAcc;
+package client_gui.application;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
 import client_gui.StringListener;
-import interfaces.LeaseAccountInterface;
+import interfaces.ApplicationInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -38,30 +40,31 @@ import javax.swing.border.Border;
  *
  * @author Dwayne
  */
-public class LeaseAccSearch extends JFrame {
+public class AppSearch extends JFrame {
 
     private ClientImpl client = null;
     private IntegerListener listener = null;
-    
+
     private JComboBox searchOn;
     private JTextField searchValue;
     private JButton searchButton;
     private JButton advSearchButton;
+    private JButton createButton;
 
     private JButton okButton;
     private JButton cancelButton;
-    
-    private LeaseAccPanel leaseAccPanel;
+
+    private ApplicationPanel applicationPanel;
     private JPanel searchResultsPanel;
     private JPanel detailsPanel;
 
-    public LeaseAccSearch(ClientImpl client) {
+    public AppSearch(ClientImpl client) {
         super("MSc Properties");
         setClient(client);
         this.layoutComponents();
     }
 
-    public LeaseAccSearch(ClientImpl client, IntegerListener listener) {
+    public AppSearch(ClientImpl client, IntegerListener listener) {
         super("MSc Properties");
         setListener(listener);
         setClient(client);
@@ -83,108 +86,93 @@ public class LeaseAccSearch extends JFrame {
     }
 
     private void layoutComponents() {
-        
+
         searchButton = new JButton("Search");
         advSearchButton = new JButton("Adv Search");
+        createButton = new JButton("Create");
         searchValue = new JTextField(15);
         searchOn = new JComboBox();
         searchOn.addItem("-");
-        searchOn.addItem("Account Ref");
-        searchOn.addItem("Prop Ref");
-        searchOn.addItem("Landlord Ref");
-        searchOn.addItem("Lease Ref");
-        searchOn.addItem("Office Code");
-        searchOn.addItem("Account Name");
-        
-        searchButton.addActionListener(new ActionListener() { 
+        searchOn.addItem("App Ref");
+        searchOn.addItem("Inv Party Ref");
+        searchOn.addItem("Corr Name");
+
+        searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
                     try {
-                        List<LeaseAccountInterface> leaseAccounts = new ArrayList();
+                        List<ApplicationInterface> applications = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();
                         searchOnText = searchOnText.trim();
-                        
                         switch (searchOnText) {
-                            case "Account Ref":
-                                int accountRef = Integer.parseInt(searchValue.getText());
-                                if (accountRef > 0) {
-                                    LeaseAccountInterface leaseAcc = client.getLeaseAccount(accountRef);
-                                    if (leaseAcc != null) {
-                                        leaseAccounts.add(leaseAcc);
+                            case "App Ref":
+                                int appRef = Integer.parseInt(searchValue.getText());
+                                if (appRef > 0) {
+                                    ApplicationInterface app = client.getApplication(appRef);
+                                    if (app != null) {
+                                        applications.add(app);
                                     }
                                 }
                                 break;
-                                
-                            case "Lease Ref":
-                                int leaseRef = Integer.parseInt(searchValue.getText());
-                                if (leaseRef > 0) {
-                                    LeaseAccountInterface leaseAcc = client.getLeaseLeaseAcc(leaseRef);
-                                    if (leaseAcc != null) {
-                                        leaseAccounts.add(leaseAcc);
+
+                            case "Inv Party Ref":
+                                int invPartyRef = Integer.parseInt(searchValue.getText());
+                                if (invPartyRef > 0) {
+                                    ApplicationInterface app = client.getInvPartyApplication(invPartyRef);
+                                    if (app != null) {
+                                        applications.add(app);
                                     }
                                 }
                                 break;
-                                
-                            case "Prop Ref":
-                                int propRef = Integer.parseInt(searchValue.getText());
-                                if (propRef > 0) {
-                                    leaseAccounts = client.getPropLeaseAccounts(propRef);
-                                }
-                                break;
-                                
-                            case "Landlord Ref":
-                                int landlordRef = Integer.parseInt(searchValue.getText());
-                                if (landlordRef > 0) {
-                                    leaseAccounts = client.getLandlordLeaseAccounts(landlordRef);
-                                }
-                                break;
-                                
-                            case "Office Code":
-                                String officeCode = searchValue.getText();
-                                leaseAccounts = client.getOfficeLeaseAcc(officeCode);
-                                break;
-                                
-                            case "Account Name":
-                                String name = searchValue.getText();
-                                leaseAccounts = client.getNameLeaseAcc(name);
+
+                            case "Corr Name":
+                                String corrName = searchValue.getText();
+                                applications = client.getCorrNameApplications(corrName);
                                 break;
                         }
-                        setData(leaseAccounts);
+                        setData(applications);
                     } catch (RemoteException ex) {
-                        Logger.getLogger(LeaseAccSearch.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(AppSearch.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
         });
-        
-        advSearchButton.addActionListener(new ActionListener() { 
+
+        advSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                LeaseAccAdvSearch advSearch = new LeaseAccAdvSearch(client);
-                advSearch.setListener(new LeaseAccArrayListener() {
+                AppAdvancedSearch advSearch = new AppAdvancedSearch(client);
+                advSearch.setListener(new ApplicationArrayListener() {
                     @Override
-                    public void arrayOmitted(List<LeaseAccountInterface> array) {
+                    public void arrayOmitted(List<ApplicationInterface> array) {
                         if (array != null) {
-                            leaseAccPanel.setData(array);
+                            applicationPanel.setData(array);
                         }
                     }
                 });
                 advSearch.setVisible(true);
-                System.out.println("TEST - Adv Lease Account Search");
+                System.out.println("TEST - Adv App Search");
             }
         });
-        
+
+        createButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                createApp();
+            }
+        });
+
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
-        
+
         if (listener != null) {
-            
+
             okButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
-                    if (listener != null && leaseAccPanel.getSelectedObjectRef() != null) {
-                        listener.intOmitted(leaseAccPanel.getSelectedObjectRef());
+                    if (listener != null && applicationPanel.getSelectedObjectRef() != null) {
+                        listener.intOmitted(applicationPanel.getSelectedObjectRef());
                         setVisible(false);
                         dispose();
                     }
@@ -199,28 +187,27 @@ public class LeaseAccSearch extends JFrame {
                 }
             });
         }
-        
-        
+
         // RESULTS PANEL
-        
-        
         searchResultsPanel = new JPanel();
         searchResultsPanel.setLayout(new BorderLayout());
-        
-        leaseAccPanel = new LeaseAccPanel("Lease Accounts");
 
-        leaseAccPanel.setTableListener(new StringListener() {
+        applicationPanel = new ApplicationPanel("Applications");
+
+        applicationPanel.setTableListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
                 actionChoice(text);
             }
         });
-        
-        searchResultsPanel.add(leaseAccPanel, BorderLayout.CENTER);
+
+        searchResultsPanel.add(applicationPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
-        
+
         if (listener != null) {
-            
+
+            System.out.println("ADDING BUTTON PANEL");
+
             ////////// BUTTONS PANEL //////////
             buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
 
@@ -232,134 +219,190 @@ public class LeaseAccSearch extends JFrame {
             okButton.setPreferredSize(btnSize);
             searchResultsPanel.add(buttonsPanel, BorderLayout.SOUTH);
         }
-        
-        
+
         // SEARCH PANEL
-        
         JPanel searchPanel = new JPanel();
         searchPanel.setBorder(BorderFactory.createEmptyBorder());
         searchPanel.setLayout(new GridBagLayout());
-        
+
         GridBagConstraints gc = new GridBagConstraints();
-        
+
         //////// FIRST ROW //////////
-        
         gc.gridy = 0;
         gc.gridx = 0;
-        
+
         gc.weightx = 1;
         gc.weighty = 1;
-        
+
         JLabel searchOnLabel = new JLabel("Search On");
         Font font = searchOnLabel.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 15);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 15);
         searchOnLabel.setFont(boldFont);
-        
+
         gc.gridwidth = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(25, 10, 10, 5);
         searchPanel.add(searchOnLabel, gc);
-        
+
         searchOn.setFont(boldFont);
-        
+
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(25, 5, 10, 10);
         searchPanel.add(searchOn, gc);
-        
+
         searchValue.setFont(plainFont);
-        
+
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(25, 10, 10, 10);
         searchPanel.add(searchValue, gc);
-        
+
         searchButton.setFont(plainFont);
-        
+
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(25, 10, 10, 20);
         searchPanel.add(searchButton, gc);
-        
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(25, 10, 10, 10);
-        searchPanel.add(new JLabel(""), gc);
-        
+
         advSearchButton.setFont(plainFont);
-        
+
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(25, 20, 10, 10);
         searchPanel.add(advSearchButton, gc);
-        
-        
+
+        createButton.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(25, 10, 10, 10);
+        searchPanel.add(createButton, gc);
+
         // DETAILS PANEL
-        
         detailsPanel = new JPanel();
         detailsPanel.setLayout(new BorderLayout());
-        
+
         int space = 15;
         Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
         Border titleBorder = BorderFactory.createLineBorder(new Color(184, 207, 229));
 
         detailsPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-        
-        JLabel title = new JLabel("Lease Account Search");
-        
+
+        JLabel titleLabel = new JLabel("Application Search");
+
         Font titleFont = new Font(font.getName(), Font.BOLD, font.getSize() + 10);
-        title.setFont(titleFont);
-        
-        detailsPanel.add(title, BorderLayout.NORTH);
+        titleLabel.setFont(titleFont);
+
+        detailsPanel.add(titleLabel, BorderLayout.NORTH);
         detailsPanel.add(searchPanel, BorderLayout.CENTER);
 
         // Add sub panels to dialog
         setLayout(new BorderLayout());
         add(detailsPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
-        
+
         pack();
-        
+
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
     }
-    
-    private void viewEmpAcc() {
-        Integer selection = leaseAccPanel.getSelectedObjectRef();
+
+    private void createApp() {
+        CreateApp createApp = new CreateApp(client);
+        createApp.setVisible(true);
+        System.out.println("TEST - Create Application");
+    }
+
+    private void updateApp() {
+        Integer selection = applicationPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                LeaseAccountInterface leaseAcc = client.getLeaseAccount(selection);
-                if (leaseAcc != null) {
-                    LeaseAccDetails leaseAccDetails = new LeaseAccDetails(client, leaseAcc);
-                    leaseAccDetails.setVisible(true);
+                System.out.println("Application Ref: " + selection);
+                ApplicationInterface app = client.getApplication(selection);
+                if (app != null) {
+                    System.out.println("Application Name: " + app.getAppCorrName());
+                    UpdateApp updateAppDetails = new UpdateApp(client, app);
+                    updateAppDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
-                Logger.getLogger(LeaseAccSearch.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteApp() {
+        Integer selection = applicationPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Application " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Application Delete - Yes button clicked");
+                    int result = client.deleteApplication(selection);
+                    if (result > 0) {
+                        String message = "Application " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(AppSearch.this, message, title);
+                    } else {
+                        String message = "Application " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(AppSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void refresh() {
-        leaseAccPanel.refresh();
+    private void viewApp() {
+        Integer selection = applicationPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                ApplicationInterface app = client.getApplication(selection);
+                if (app != null) {
+                    AppDetails appDetails = new AppDetails(client, app);
+                    appDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
-    
+
+    private void refresh() {
+        applicationPanel.refresh();
+    }
+
     private void actionChoice(String text) {
         switch (text) {
+            case "Create":
+                createApp();
+                break;
+
+            case "Update":
+                updateApp();
+                break;
+
+            case "Delete":
+                deleteApp();
+                break;
+
             case "View Details":
-                viewEmpAcc();
-                System.out.println("TEST - View Lease Account");
+                viewApp();
                 break;
 
             case "Refresh":
                 refresh();
                 break;
+
         }
     }
-    
-    private void setData(List<LeaseAccountInterface> leaseAccounts) {
-        leaseAccPanel.setData(leaseAccounts);
+
+    private void setData(List<ApplicationInterface> applications) {
+        applicationPanel.setData(applications);
         repaint();
     }
 
@@ -367,7 +410,7 @@ public class LeaseAccSearch extends JFrame {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            @Override
 //            public void run() {
-//                new LeaseAccSearch().setVisible(true);
+//                new AppSearch().setVisible(true);
 //            }
 //        });
 //    }

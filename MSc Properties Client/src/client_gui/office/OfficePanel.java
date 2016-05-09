@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.person;
+package client_gui.office;
 
-import client_gui.IntegerListener;
 import client_gui.StringListener;
-import interfaces.PersonInterface;
+import interfaces.OfficeInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -15,43 +14,38 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.Border;
 
 /**
  *
  * @author Dwayne
  */
-public class PersonPanel extends JPanel {
+public class OfficePanel extends JPanel {
     private JTable table;
-    private final PersonTableModel tableModel;
+    private final OfficeTableModel tableModel;
     private JPopupMenu popup;
     private StringListener actionListener;
     
-    public PersonPanel(String text) {
-        tableModel = new PersonTableModel();
+    public OfficePanel(String text) {
+        tableModel = new OfficeTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        // Set up Border for ButtonPanel
-        Border innerBorder = BorderFactory.createEtchedBorder();
-        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
-        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
-        
-        JMenuItem createItem = new JMenuItem("Create Person");
-        JMenuItem viewItem = new JMenuItem("View Person");
-        JMenuItem updateItem = new JMenuItem("Update Person");
-        JMenuItem deleteItem = new JMenuItem("Delete Person");
-        JMenuItem refreshItem = new JMenuItem("Refresh People");
+        JMenuItem createItem = new JMenuItem("Create Office");
+        JMenuItem viewItem = new JMenuItem("View Office");
+        JMenuItem endItem = new JMenuItem("End Office");
+        JMenuItem updateItem = new JMenuItem("Update Office");
+        JMenuItem deleteItem = new JMenuItem("Delete Office");
+        JMenuItem refreshItem = new JMenuItem("Refresh Offices");
         
         popup.add(createItem);
         popup.add(viewItem);
+        popup.add(endItem);
         popup.add(updateItem);
         popup.add(deleteItem);
         popup.add(refreshItem);
@@ -87,6 +81,15 @@ public class PersonPanel extends JPanel {
             }
         });
         
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("End");
+                }
+            }
+        });
+        
         updateItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,11 +118,10 @@ public class PersonPanel extends JPanel {
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.getColumnModel().getColumn(0).setPreferredWidth(40);
-        table.getColumnModel().getColumn(1).setPreferredWidth(300);
+        table.getColumnModel().getColumn(0).setPreferredWidth(50);
+        table.getColumnModel().getColumn(1).setPreferredWidth(400);
         table.getColumnModel().getColumn(2).setPreferredWidth(120);
-        table.getColumnModel().getColumn(3).setPreferredWidth(100);
-        table.getColumnModel().getColumn(4).setPreferredWidth(140);
+        table.getColumnModel().getColumn(3).setPreferredWidth(120);
         
         setLayout(new BorderLayout());
         
@@ -131,25 +133,24 @@ public class PersonPanel extends JPanel {
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
     
-    public void setData(List<PersonInterface> people) {
-        tableModel.setData(people);
+    public void setData(List<OfficeInterface> offices) {
+        tableModel.setData(offices);
     }
     
     public void refresh() {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(StringListener actionListener) {
-        this.actionListener = actionListener;
+    public void setTableListener(StringListener listener) {
+        this.actionListener = listener;
     }
     
-    public Integer getSelectedObjectRef() {
+    public String getSelectedObjectCode() {
         int row = table.getSelectedRow();
         if (row > -1) {
-            int ref = (Integer) table.getModel().getValueAt(row, 0);
-            return ref;
+            String code = (String) table.getModel().getValueAt(row, 0);
+            return code;
         }
         return null;
     }
 }
-

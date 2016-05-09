@@ -7,8 +7,12 @@ package client_gui.employee;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
 import client_gui.person.PeopleSearchPanel;
 import client_gui.StringArrayListener;
+import client_gui.StringListener;
+import client_gui.office.OfficeDetails;
+import interfaces.EmployeeInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -25,6 +29,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -95,12 +100,18 @@ public class EmployeeSearch extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateEmployee employeeGUI = new CreateEmployee(client);
-                employeeGUI.setVisible(true);
+                createEmployee();
             }
         });
 
         employeePanel = new EmployeePanel("Employees");
+
+        employeePanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
 
         this.setSize(1200, 800);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -154,6 +165,78 @@ public class EmployeeSearch extends JFrame {
         setLayout(new BorderLayout());
         add(personPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
+    }
+
+    private void createEmployee() {
+        CreateEmployee createEmployee = new CreateEmployee(client);
+        createEmployee.setVisible(true);
+        System.out.println("TEST - Create Employee");
+    }
+    
+    private void viewEmployee() {
+        Integer selection = employeePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                EmployeeInterface employee = client.getEmployee(selection);
+                if (employee != null) {
+                    EmployeeDetails employeeDetails = new EmployeeDetails(client, employee);
+                    employeeDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(EmployeeSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteEmployee() {
+        Integer selection = employeePanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE EMployee " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Contract Delete - Yes button clicked");
+                    int result = client.deleteContract(selection);
+                    if (result > 0) {
+                        String message = "Employee " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(EmployeeSearch.this, message, title);
+                    } else {
+                        String message = "Employye " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(EmployeeSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(OfficeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        employeePanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createEmployee();
+                System.out.println("TEST - Create Employee");
+                break;
+
+            case "Delete":
+                deleteEmployee();
+                System.out.println("TEST - Delete Employee");
+                break;
+            
+            case "View Details":
+                viewEmployee();
+                System.out.println("TEST - View Employee");
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
     }
 
 //    public static void main(String[] args) {

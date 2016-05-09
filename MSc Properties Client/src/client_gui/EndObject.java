@@ -48,36 +48,45 @@ public class EndObject extends JFrame {
     private JComboBox endReasonField;
     private SimpleDateFormat formatter;
     private final String endType;
-    private final int objectRef;
-    private String code;
-    private int ref;
+    private String objectCode;
+    private int objectRef;
+    private String parentCode;
+    private int parentRef;
     
     private JPanel controlsPanel;
 
     public EndObject(ClientImpl client, String endType, int objectRef) {
         super("MSc Properties");
-        setClient(client);
+        this.setClient(client);
         this.endType = endType;
         this.objectRef = objectRef;
-        layoutComponents();
+        this.layoutComponents();
     }
     
-    public EndObject(ClientImpl client, String endType, int objectRef, int ref) {
+    public EndObject(ClientImpl client, String endType, String objectCode) {
         super("MSc Properties");
-        setClient(client);
+        this.setClient(client);
         this.endType = endType;
-        this.objectRef = objectRef;
-        this.ref = ref;
-        layoutComponents();
+        this.objectCode = objectCode;
+        this.layoutComponents();
     }
     
-    public EndObject(ClientImpl client, String endType, int objectRef, String code) {
+    public EndObject(ClientImpl client, String endType, int objectRef, int parentRef) {
         super("MSc Properties");
-        setClient(client);
+        this.setClient(client);
         this.endType = endType;
         this.objectRef = objectRef;
-        this.code = code;
-        layoutComponents();
+        this.parentRef = parentRef;
+        this.layoutComponents();
+    }
+    
+    public EndObject(ClientImpl client, String endType, int objectRef, String parentCode) {
+        super("MSc Properties");
+        this.setClient(client);
+        this.endType = endType;
+        this.objectRef = objectRef;
+        this.parentCode = parentCode;
+        this.layoutComponents();
     }
 
     private void setClient(ClientImpl client) {
@@ -125,18 +134,15 @@ public class EndObject extends JFrame {
                         if (answer == JOptionPane.YES_OPTION) {
                             switch (endType) {
                                 case "Involved Party":
-                                    InvolvedPartyInterface invParty = client.getInvolvedParty(objectRef);
-                                    result = client.endInvolvedParty(invParty.getApplicationRef(), objectRef, endDate, endReasonText);
+                                    result = client.endInvolvedParty(parentRef, objectRef, endDate, endReasonText);
                                     break;
                                     
                                 case "Job Role Benefit":
-                                    JobRoleBenefitInterface benefit = client.getJobRoleBenefit(objectRef);
-                                    result = client.endJobRoleBenefit(objectRef, benefit.getJobRoleCode(), endDate);
+                                    result = client.endJobRoleBenefit(objectRef, parentCode, endDate);
                                     break;
                                     
                                 case "Property Element":
-                                    PropertyElementInterface propElement = client.getPropertyElement(objectRef);
-                                    result = client.endPropertyElement(objectRef, propElement.getPropRef(), endDate);
+                                    result = client.endPropertyElement(objectRef, parentRef, endDate);
                                     break;
                                     
                                 case "Tenancy":
@@ -151,20 +157,24 @@ public class EndObject extends JFrame {
                                     result = client.endContract(objectRef, endDate);
                                     break;
                                     
+                                case "Office":
+                                    result = client.endOffice(objectCode, endDate);
+                                    break;
+                                    
                                 case "Person Contact":
-                                    result = client.endPersonContact(objectRef, ref, endDate);
+                                    result = client.endPersonContact(parentRef, objectRef, endDate);
                                     break;
                                     
                                 case "Office Contact":
-                                    result = client.endOfficeContact(code, objectRef, endDate);
+                                    result = client.endOfficeContact(parentCode, objectRef, endDate);
                                     break;
                                     
                                 case "Person Address":
-                                    result = client.endPersonAddressUsage(objectRef, ref, endDate);
+                                    result = client.endPersonAddressUsage(parentRef, objectRef, endDate);
                                     break;
                                     
                                 case "Application Address":
-                                    result = client.endApplicationAddressUsage(objectRef, ref, endDate);
+                                    result = client.endApplicationAddressUsage(parentRef, objectRef, endDate);
                                     break;
                             }
                             if (result > 0) {

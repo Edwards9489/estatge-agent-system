@@ -5,7 +5,7 @@
  */
 package client_gui.landlord;
 
-import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.LandlordInterface;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,22 +29,29 @@ import javax.swing.border.Border;
  */
 public class LandlordPanel extends JPanel {
     private JTable table;
-    private LandlordTableModel tableModel;
+    private final LandlordTableModel tableModel;
     private JPopupMenu popup;
-    private IntegerListener tableListener;
+    private StringListener actionListener;
     
     public LandlordPanel(String text) {
         tableModel = new LandlordTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem accountItem = new JMenuItem("Landlords");
-        popup.add(accountItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        
+        JMenuItem createItem = new JMenuItem("Create Landlord");
+        JMenuItem viewItem = new JMenuItem("View Landlord");
+        JMenuItem deleteItem = new JMenuItem("Delete Landlord");
+        JMenuItem refreshItem = new JMenuItem("Refresh Landlords");
+        
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +66,40 @@ public class LandlordPanel extends JPanel {
             }
         });
         
-        accountItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    int accountRef = (Integer) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(accountRef);
-                    tableListener.intOmitted(accountRef);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -102,8 +127,8 @@ public class LandlordPanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(IntegerListener tenListener) {
-        this.tableListener = tenListener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public Integer getSelectedObjectRef() {

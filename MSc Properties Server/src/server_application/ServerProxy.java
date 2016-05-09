@@ -816,6 +816,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public int endOffice(String officeCode, Date endDate, String modifiedBy) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getEmployeeUpdate()) {
+                return theServer.endOffice(officeCode, endDate, modifiedBy);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public int deleteOffice(String code) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getEmployeeDelete()) {
@@ -2884,6 +2895,17 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public List<PropertyInterface> getProperties() throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getEmployeeRead()) {
+                return theServer.getProperties();
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public boolean titleExists(String code) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
@@ -3031,6 +3053,39 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.relationshipExists(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public boolean jobRoleRequirementExists(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.jobRoleRequirementExists(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public boolean jobRoleBenefitExists(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.jobRoleBenefitExists(code);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public boolean tenancyTypeExists(String code) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.tenancyTypeExists(code);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -3211,10 +3266,32 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public EmployeeInterface getPersonEmployee(int pRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getEmployeeRead()) {
+                return theServer.getPersonEmployee(pRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
     public LandlordInterface getLandlord(int lRef) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && user.getRead()) {
                 return theServer.getLandlord(lRef);
+            }
+            throw new InvalidSecurityPriviligies(user.getUsername());
+        }
+        throw new RemoteException();
+    }
+
+    @Override
+    public LandlordInterface getPersonLandlord(int pRef) throws RemoteException {
+        if (theServer.isAlive()) {
+            if (user != null && user.getRead()) {
+                return theServer.getPersonLandlord(pRef);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }

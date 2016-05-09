@@ -80,8 +80,6 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      * @param value
      */
     private void setStringValue(String value) {
-        System.out.println("\nPROP ELEMENT");
-        System.out.println("Updated String Value");
         this.stringValue = value;
     }
 
@@ -89,8 +87,6 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      * @param value
      */
     private void setDoubleValue(Double value) {
-        System.out.println("\nPROP ELEMENT");
-        System.out.println("Updated Double Value");
         this.doubleValue = value;
     }
     
@@ -99,8 +95,6 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      * @param charge 
      */
     private void setCharge(boolean charge) {
-        System.out.println("\nPROP ELEMENT");
-        System.out.println("Updated Is Charge");
         this.charge = charge;
     }
 
@@ -108,8 +102,6 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      * @param startDate
      */
     private void setStartDate(Date startDate) {
-        System.out.println("\nPROP ELEMENT");
-        System.out.println("Updated Start Date");
         this.startDate = startDate;
     }
     
@@ -119,15 +111,11 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      */
     public void modifiedBy(ModifiedByInterface modifiedBy) {
         if(modifiedBy != null) {
-            System.out.println("\nPROP ELEMENT");
-            System.out.println("Assigned Modified By");
             this.modifiedBy.add(modifiedBy);
         }
     }
     
     private void setComment(String comment, ModifiedByInterface modifiedBy) throws RemoteException {
-        System.out.println("\nPROP ELEMENT");
-        System.out.println("Updated Comment");
         NoteImpl temp = (NoteImpl) this.getNote();
         temp.setNote(comment, modifiedBy);
     }

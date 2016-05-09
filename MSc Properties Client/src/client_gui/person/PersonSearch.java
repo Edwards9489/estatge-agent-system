@@ -7,8 +7,10 @@ package client_gui.person;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
-import client_gui.person.PeopleSearchPanel;
+import client_gui.OKDialog;
 import client_gui.StringArrayListener;
+import client_gui.StringListener;
+import interfaces.PersonInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -25,6 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -95,12 +98,25 @@ public class PersonSearch extends JFrame {
         createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreatePerson personGUI = new CreatePerson(client);
-                personGUI.setVisible(true);
+                createPerson();
             }
         });
 
         personPanel = new PersonPanel("People");
+
+        personPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
+        
+        personPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
 
         this.setSize(1200, 800);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -154,6 +170,97 @@ public class PersonSearch extends JFrame {
         setLayout(new BorderLayout());
         add(detailsPanel, BorderLayout.CENTER);
         add(searchResultsPanel, BorderLayout.SOUTH);
+    }
+
+    private void createPerson() {
+        CreatePerson createPerson = new CreatePerson(client);
+        createPerson.setVisible(true);
+        System.out.println("TEST - Create Person");
+    }
+
+    private void updatePerson() {
+        Integer selection = personPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Person Ref: " + selection);
+                PersonInterface person = client.getPerson(selection);
+                if (person != null) {
+                    System.out.println("Person Name: " + person.getName());
+                    UpdatePerson updatePersonDetails = new UpdatePerson(client, person);
+                    updatePersonDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deletePerson() {
+        Integer selection = personPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Person " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Person Delete - Yes button clicked");
+                    int result = client.deletePerson(selection);
+                    if (result > 0) {
+                        String message = "Person " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(PersonSearch.this, message, title);
+                    } else {
+                        String message = "Person " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(PersonSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPerson() {
+        Integer selection = personPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                PersonInterface person = client.getPerson(selection);
+                if (person != null) {
+                    PersonDetails personDetails = new PersonDetails(client, person);
+                    personDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void refresh() {
+        personPanel.refresh();
+    }
+
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createPerson();
+                break;
+
+            case "Update":
+                updatePerson();
+                break;
+
+            case "Delete":
+                deletePerson();
+                break;
+
+            case "View Details":
+                viewPerson();
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+
+        }
     }
 
 //    public static void main(String[] args) {

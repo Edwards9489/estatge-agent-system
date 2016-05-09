@@ -7,6 +7,8 @@ package client_gui.property;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.StringListener;
 import interfaces.PropertyInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -107,9 +110,9 @@ public class PropertySearch extends JFrame {
                             case "Prop Ref":
                                 int propRef = Integer.parseInt(searchValue.getText());
                                 if (propRef > 0) {
-                                    PropertyInterface app = client.getProperty(propRef);
-                                    if (app != null) {
-                                        properties.add(app);
+                                    PropertyInterface property = client.getProperty(propRef);
+                                    if (property != null) {
+                                        properties.add(property);
                                     }
                                 }
                                 break;
@@ -150,16 +153,14 @@ public class PropertySearch extends JFrame {
                     }
                 });
                 advSearch.setVisible(true);
-                System.out.println("TEST - Adv App Search");
+                System.out.println("TEST - Adv Property Search");
             }
         });
         
         createButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                CreateProperty createApp = new CreateProperty(client);
-                createApp.setVisible(true);
-                System.out.println("TEST - Create Property");
+                createProperty();
             }
         });
         
@@ -196,6 +197,13 @@ public class PropertySearch extends JFrame {
         searchResultsPanel.setLayout(new BorderLayout());
         
         propertyPanel = new PropertyPanel("Properties");
+        propertyPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
+        
         
         searchResultsPanel.add(propertyPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
@@ -307,6 +315,97 @@ public class PropertySearch extends JFrame {
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+
+    private void createProperty() {
+        CreateProperty createProperty = new CreateProperty(client);
+        createProperty.setVisible(true);
+        System.out.println("TEST - Create Property");
+    }
+
+    private void updateProperty() {
+        Integer selection = propertyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Property Ref: " + selection);
+                PropertyInterface property = client.getProperty(selection);
+                if (property != null) {
+                    System.out.println("Property Address: " + property.getAddress());
+                    UpdateProperty updatePropertyDetails = new UpdateProperty(client, property);
+                    updatePropertyDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertySearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void deleteProperty() {
+        Integer selection = propertyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Property " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Property Delete - Yes button clicked");
+                    int result = client.deleteProperty(selection);
+                    if (result > 0) {
+                        String message = "Property " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(PropertySearch.this, message, title);
+                    } else {
+                        String message = "Property " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(PropertySearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertySearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewProperty() {
+        Integer selection = propertyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                PropertyInterface property = client.getProperty(selection);
+                if (property != null) {
+                    PropertyDetails propertyDetails = new PropertyDetails(client, property);
+                    propertyDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertySearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void refresh() {
+        propertyPanel.refresh();
+    }
+
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createProperty();
+                break;
+
+            case "Update":
+                updateProperty();
+                break;
+
+            case "Delete":
+                deleteProperty();
+                break;
+
+            case "View Details":
+                viewProperty();
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+
+        }
     }
     
     private void setData(List<PropertyInterface> propertys) {

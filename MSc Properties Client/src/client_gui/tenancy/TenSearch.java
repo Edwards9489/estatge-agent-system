@@ -6,7 +6,10 @@
 package client_gui.tenancy;
 
 import client_application.ClientImpl;
+import client_gui.EndObject;
 import client_gui.IntegerListener;
+import client_gui.OKDialog;
+import client_gui.StringListener;
 import interfaces.TenancyInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -207,6 +211,13 @@ public class TenSearch extends JFrame {
         
         tenancyPanel = new TenancyPanel("Tenancies");
         
+        tenancyPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
+        
         searchResultsPanel.add(tenancyPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
         
@@ -317,6 +328,108 @@ public class TenSearch extends JFrame {
         
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+
+    private void createTenancy() {
+        CreateTenancy createTenancy = new CreateTenancy(client);
+        createTenancy.setVisible(true);
+        System.out.println("TEST - Create Tenancy");
+    }
+
+    private void updateTenancy() {
+        Integer selection = tenancyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                TenancyInterface lease = client.getTenancy(selection);
+                if (lease != null) {
+                    UpdateTenancy updateTenancy = new UpdateTenancy(client, lease);
+                    updateTenancy.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void endTenancy() {
+        Integer selection = tenancyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            System.out.println("Tenancy Ref: " + selection);
+            EndObject endTenancy = new EndObject(client, "Tenancy", selection);
+            endTenancy.setVisible(true);
+        }
+    }
+
+    private void deleteTenancy() {
+        Integer selection = tenancyPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Tenancy " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (answer == JOptionPane.YES_OPTION) {
+                    System.out.println("Tenancy Delete - Yes button clicked");
+                    int result = client.deleteTenancy(selection);
+                    if (result > 0) {
+                        String message = "Tenancy " + selection + " has been successfully deleted";
+                        String title = "Information";
+                        OKDialog.okDialog(TenSearch.this, message, title);
+                    } else {
+                        String message = "Tenancy " + selection + " has dependent records and is not able to be deleted";
+                        String title = "Error";
+                        OKDialog.okDialog(TenSearch.this, message, title);
+                    }
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void viewTenancy() {
+        if (tenancyPanel.getSelectedObjectRef() != null) {
+            TenancyInterface lease;
+            try {
+                lease = client.getTenancy(tenancyPanel.getSelectedObjectRef());
+                if (lease != null) {
+                    TenancyDetails leaseDetails = new TenancyDetails(client, lease);
+                    leaseDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(TenSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        tenancyPanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "Create":
+                createTenancy();
+                break;
+
+            case "Update":
+                updateTenancy();
+                break;
+
+            case "End":
+                endTenancy();
+                break;
+
+            case "Delete":
+                deleteTenancy();
+                break;
+
+            case "View Details":
+                viewTenancy();
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+
+        }
     }
     
     private void setData(List<TenancyInterface> tenancies) {

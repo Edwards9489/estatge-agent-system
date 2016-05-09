@@ -1474,9 +1474,6 @@ public class Database {
      * @throws java.rmi.RemoteException
      */
     public void createPersonAddressUsage(AddressUsage address, int personRef) throws SQLException, RemoteException {
-        System.out.println("Is address not null? - Database createPersonAddr: " + address != null);
-        System.out.println("Does " + address.getAddressUsageRef() + " address usage not exist? - Database createPersonAddr: " + !this.addressUsageExists(address.getAddressUsageRef()));
-        System.out.println("Does person exist? - Database createPersonAddr: " + this.personExists(personRef));
         if (address != null && !this.addressUsageExists(address.getAddressUsageRef()) && this.personExists(personRef)) {
             String insertSql = "insert into personAddresses (addressUsageRef, addressRef, personRef, startDate, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = this.con.prepareStatement(insertSql)) {
@@ -2508,7 +2505,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createAddress(Address address) throws SQLException, RemoteException {
-        System.out.println("Address does not exist? - createAddressDatabase - " + !this.addressExists(address.getAddressRef()));
         if (!this.addressExists(address.getAddressRef())) {
             String insertSql = "insert into addresses (addressRef, buildingNumber, buildingName, subStreetNumber, subStreet, "
                     + "streetNumber, street, area, town, country, postcode, noteRef, comment, createdBy, createdDate) "
@@ -2700,7 +2696,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createProperty(Property property) throws SQLException, RemoteException {
-        System.out.println("Property does not exists? - Database" + !this.propertyExists(property.getPropRef()));
         if (!this.propertyExists(property.getPropRef())) {
             String insertSql = "insert into properties (propRef, addressRef, acquiredDate, leaseEndDate, leaseRef, "
                     + "propTypeCode, propSubTypeCode, propStatus, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -3262,12 +3257,8 @@ public class Database {
      * @throws RemoteException
      */
     public void updatePropertyElementValue(int propertyRef, int propElementRef) throws SQLException, RemoteException {
-        System.out.println("\nDATABASE");
-        System.out.println("Property Exists? " + this.propertyExists(propertyRef));
-        System.out.println("Property Element Value Exists? " + this.propertyElementValueExists(propElementRef));
         if (this.propertyExists(propertyRef) && this.propertyElementValueExists(propElementRef)) {
             PropertyElementInterface propertyElement = this.getPropertyElementValue(propElementRef);
-            System.out.println("Prop Element Exists? " + this.propElementExists(propertyElement.getElementCode()));
             if (this.propElementExists(propertyElement.getElementCode())) {
                 String updateSql = "";
                 if (propertyElement.isCharge()) {
@@ -3275,8 +3266,6 @@ public class Database {
                 } else if (!propertyElement.isCharge()) {
                     updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 }
-
-                System.out.println("Update SQL statement: " + updateSql);
                 try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                     int col = 1;
                     if (propertyElement.isCharge()) {
@@ -3502,7 +3491,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createPerson(Person person) throws SQLException, RemoteException {
-        System.out.println("Person exists? - createPersonDatabase - " + !this.personExists(person.getPersonRef()));
         if (!this.personExists(person.getPersonRef())) {
             String insertSql = "insert into people (personRef, titleCode, forename, middleNames, surname, dateOfBirth, "
                     + "nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, "
@@ -3563,7 +3551,6 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            System.out.println("Person Modification: " + person.getLastModification());
             this.createModifiedBy("personModifications", person.getLastModification(), person.getPersonRef());
         }
     }
@@ -4323,7 +4310,6 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            System.out.println("Application Modification: " + application.getLastModification());
             this.createModifiedBy("applicationModifications", application.getLastModification(), application.getApplicationRef());
         }
     }
@@ -4912,7 +4898,6 @@ public class Database {
      * @throws RemoteException
      */
     public void updateOffice(String officeCode) throws SQLException, RemoteException {
-        System.out.println("Office exists? - Database updateOffice - " + this.officeExists(officeCode));
         if (this.officeExists(officeCode)) {
             OfficeInterface office = this.getOffice(officeCode);
             String updateSql = "update Offices set addressRef=?, startDate=?, endDate=? where officeCode=?";
@@ -4925,7 +4910,6 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            System.out.println("Office Last Modification: " + office.getLastModification());
             this.createModifiedBy("officeModifications", office.getLastModification(), office.getOfficeCode());
         }
     }
@@ -5615,16 +5599,6 @@ public class Database {
                             Date createdDate = results.getDate("createdDate");
 
                             Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                            System.out.println();
-                            System.out.println("Job Role Benefit: " + jobBenefitRef);
-                            System.out.println("Job Benefit: " + benefitCode);
-                            System.out.println("Start Date: " + startDate);
-                            System.out.println("Is Salary Benefit? " + (stringValue == null));
-                            System.out.println("String Value: " + stringValue);
-                            System.out.println("Double Value: " + doubleValue);
-                            System.out.println("Comment: " + note);
-                            System.out.println("Job Role Code: " + code);
-                            System.out.println();
                             JobRoleBenefit temp = new JobRoleBenefit(jobBenefitRef, this.getJobBenefit(benefitCode), startDate, stringValue == null, stringValue, doubleValue, note, code, createdBy, createdDate);
                             if (endDate != null) {
                                 temp.setEndDate(endDate, null);
@@ -5944,12 +5918,10 @@ public class Database {
             while (results.next()) {
                 int employeeRef = results.getInt("employeeRef");
                 int personRef = results.getInt("personRef");
-                System.out.println("Person " + personRef + "exists? - " + this.personExists(personRef));
                 if (this.personExists(personRef)) {
                     PersonInterface person = this.getPerson(personRef);
                     String officeCode = results.getString("officeCode");
                     String memorableLocation = results.getString("memorableLocation");
-                    System.out.println("Office " + officeCode + "exists OR officeCode is NULL? - " + (officeCode == null || this.officeExists(officeCode)));
                     if ((officeCode == null || this.officeExists(officeCode))) {
                         String createdBy = results.getString("createdBy");
                         Date createdDate = results.getDate("createdDate");
@@ -5960,7 +5932,6 @@ public class Database {
                             int count = results1.getInt("count");
                             if (count == 1) {
                                 try (PreparedStatement selectStat2 = con.prepareStatement(sql2)) {
-                                    System.out.println("Employee should be added");
                                     selectStat2.setInt(1, employeeRef);
                                     ResultSet results2 = selectStat2.executeQuery();
                                     results2.next();
@@ -6095,7 +6066,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createTenancy(Tenancy tenancy) throws SQLException, RemoteException {
-        System.out.println("Tenancy does not exist? - Database createTenancy - " + !this.tenancyExists(tenancy.getAgreementRef()));
         if (!this.tenancyExists(tenancy.getAgreementRef())) {
             String insertSql = "insert into tenancies (tenancyRef, name, startDate, expectedEndDate, length, accountRef, officeCode, "
                     + "appRef, propRef, tenTypeCode, rent, charges, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -6948,9 +6918,6 @@ public class Database {
      * @throws RemoteException
      */
     public boolean canDeleteContract(int contractRef) throws RemoteException {
-        System.out.println("Contract exists?: " + this.contractExists(contractRef));
-        System.out.println("Contract has been modified? " + !this.getContract(contractRef).hasBeenModified());
-        System.out.println("Employment Account has been modified?" + !this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified());
         return this.contractExists(contractRef) && !this.getContract(contractRef).hasBeenModified() && !this.getEmployeeAccount(this.getContract(contractRef).getAccountRef()).hasBeenModified();
     }
 
@@ -7163,7 +7130,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createRentAccount(RentAccount rentAcc) throws SQLException, RemoteException {
-        System.out.println("Rent Account does not exist? - Database createRentAcc - " + !this.rentAccountExists(rentAcc.getAccRef()));
         if (!this.rentAccountExists(rentAcc.getAccRef())) {
             String insertSql = "insert into rentAccounts (rentAccRef, name, startDate, balance, "
                     + "officeCode, rent, tenancyRef, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -7209,7 +7175,6 @@ public class Database {
      * @throws RemoteException
      */
     public void updateRentAccount(int rentAccRef) throws SQLException, RemoteException {
-        System.out.println("RentAcc exists? - Database updateRentAcc - " + this.rentAccountExists(rentAccRef));
         if (this.rentAccountExists(rentAccRef)) {
             RentAccount rentAcc = (RentAccount) this.getRentAccount(rentAccRef);
             String updateSql = "update rentAccounts set name=?, startDate=?, endDate=?, "
@@ -7225,7 +7190,6 @@ public class Database {
                 updateStat.executeUpdate();
                 updateStat.close();
             }
-            System.out.println("RentAcc Modification - Database updateRentAcc - " + rentAcc.getLastModification());
             this.createModifiedBy("rentAccountModifications", rentAcc.getLastModification(), rentAcc.getAccRef());
         }
     }
@@ -7431,10 +7395,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createRentAccountTransaction(int rentAccRef, Transaction transaction) throws SQLException, RemoteException {
-        System.out.println("\nDATABASE");
-        System.out.println("transaction is not null? " + transaction != null);
-        System.out.println("transaction does not exist? " + !this.transactionExists(transaction.getTransactionRef()));
-        System.out.println("rentAcc exists? " + this.rentAccountExists(rentAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.rentAccountExists(rentAccRef)) {
             this.createTransaction("rentTransactions", transaction);
         }
@@ -7724,10 +7684,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createLeaseAccountTransaction(int leaseAccRef, Transaction transaction) throws SQLException, RemoteException {
-        System.out.println("\nDATABASE");
-        System.out.println("Transaction is not null? " + transaction != null);
-        System.out.println("Transaction does not exists? " + (!this.transactionExists(transaction.getTransactionRef())));
-        System.out.println("Employee Account exists? " + this.leaseAccountExists(leaseAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.leaseAccountExists(leaseAccRef)) {
             this.createTransaction("leaseTransactions", transaction);
         }
@@ -8017,10 +7973,6 @@ public class Database {
      * @throws RemoteException
      */
     public void createEmployeeAccountTransaction(int employeeAccRef, Transaction transaction) throws SQLException, RemoteException {
-        System.out.println("\nDATABASE");
-        System.out.println("Transaction is not null? " + transaction != null);
-        System.out.println("Transaction does not exists? " + (!this.transactionExists(transaction.getTransactionRef())));
-        System.out.println("Employee Account exists? " + this.employeeAccountExists(employeeAccRef));
         if (transaction != null && !this.transactionExists(transaction.getTransactionRef()) && this.employeeAccountExists(employeeAccRef)) {
             this.createTransaction("contractTransactions", transaction);
         }
@@ -8954,91 +8906,42 @@ public class Database {
         List<AddressInterface> tempAddresses = new ArrayList<>();
         for (AddressInterface temp : this.getAddresses()) {
             boolean add = true;
-
-            System.out.println("Building Number is not null? " + buildingNumber != null);
-            //System.out.println("Building Number is not empty? " + !buildingNumber.isEmpty());
-            //System.out.println("Building Number is not equal to address building number? " + !buildingNumber.equals(temp.getBuildingNumber()));
             if (buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
                 add = false;
             }
-
-            System.out.println("Building Name is not null? " + buildingName != null);
-            //System.out.println("Building Name is not empty? " + !buildingName.isEmpty());
-            //System.out.println("Building Name is not equal to address building name? " + !buildingName.equals(temp.getBuildingName()));
             if (buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
                 add = false;
             }
-
-            System.out.println("Sub Street Number is not null? " + subStreetNumber != null);
-            //System.out.println("Sub Street Number is not empty? " + !subStreetNumber.isEmpty());
-            //System.out.println("Sub Street Number is not equal to address sub street number? " + !subStreetNumber.equals(temp.getSubStreetNumber()));
             if (subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
                 add = false;
             }
-
-            System.out.println("Sub Street is not null? " + subStreet != null);
-            //System.out.println("Sub Street is note empty? " + !subStreet.isEmpty());
-            //System.out.println("Sub Street is not equal to address sub street? " + !subStreet.equals(temp.getSubStreet()));
             if (subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
                 add = false;
             }
-
-            System.out.println("Street Number is not null? " + streetNumber != null);
-            //System.out.println("Street Number is not empty? " + !streetNumber.isEmpty());
-            //System.out.println("Street Number is not equal to address street number? " + !streetNumber.equals(temp.getStreetNumber()));
             if (streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
                 add = false;
             }
-
-            System.out.println("Street is not null? " + street != null);
-            //System.out.println("Street is note empty? " + !street.isEmpty());
-            //System.out.println("Street is not equal to address street? " + !street.equals(temp.getStreet()));
             if (street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
                 add = false;
             }
-
-            System.out.println("Area is not null? " + area != null);
-            //System.out.println("Area is not empty? " + !area.isEmpty());
-            //System.out.println("Area is not equal to address area? " + !area.equals(temp.getArea()));
             if (area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
                 add = false;
             }
-
-            System.out.println("Town is not null? " + town != null);
-            //System.out.println("Town is not empty? " + !town.isEmpty());
-            //System.out.println("Town is not equal to address country? " + !town.equals(temp.getTown()));
             if (town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
                 add = false;
             }
-
-            System.out.println("Country is not null? " + country != null);
-            //System.out.println("Country is not empty? " + !country.isEmpty());
-            //System.out.println("Country is not equal to address country? " + !country.equals(temp.getCountry()));
             if (country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
                 add = false;
             }
-
-            System.out.println("Postcode is not null? " + postcode != null);
-            //System.out.println("Postcode By is not empty? " + !postcode.isEmpty());
-            //System.out.println("Postcode By is not equal to address postcode? " + !postcode.equals(temp.getPostcode()));
             if (postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode()) && !postcode.equals(temp.getCountry())) {
                 add = false;
             }
-
-            System.out.println("Created By is not null? " + createdBy != null);
-            //System.out.println("Created By is not empty? " + !createdBy.isEmpty());
-            //System.out.println("Created By is not equal to address created by? " + !createdBy.equals(temp.getCreatedBy()));
             if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
                 add = false;
             }
-
-            System.out.println("Created Date is not null? " + createdDate != null);
-            //System.out.println("Created Date is not equal to address created date? " + (!DateConversion.dateEqual(createdDate, temp.getCreatedDate())));
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
-
-            System.out.println("Should Add to FINAL list: " + add);
             if (add) {
                 tempAddresses.add(temp);
             }

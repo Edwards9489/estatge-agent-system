@@ -14,7 +14,6 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -200,6 +199,19 @@ public class SystemConfigHome extends JPanel {
         top.add(branch18);
 
         return top;
+    }
+    
+    public Integer getSelectedTreeBranch() {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) systemConfigTree.getLastSelectedPathComponent();
+        if (node != null) {
+            Object userSelection = node.getUserObject();
+
+            if (userSelection instanceof JTreeInfo) {
+                int id = ((JTreeInfo) userSelection).getId();
+                return id;
+            }
+        }
+        return null;
     }
 
     public void setListener(IntegerListener intListener) {

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui.document;
+package client_gui.office;
 
-import interfaces.Document;
+import interfaces.OfficeInterface;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,15 +18,15 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Dwayne
  */
-public class DocumentTableModel extends AbstractTableModel {
+public class OfficeTableModel extends AbstractTableModel {
     
-    private List<Document> db = new ArrayList();
+    private List<OfficeInterface> db = new ArrayList();
     
-    private final String[] colNames = {"Ref", "Document Name", "Created By", "Created Date"};
+    private final String[] colNames = {"Code", "Address", "Start Date", "End Date"};
     
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
-    public DocumentTableModel() {
+    public OfficeTableModel() {
     }
     
     @Override
@@ -34,7 +34,7 @@ public class DocumentTableModel extends AbstractTableModel {
         return colNames[column];
     }
     
-    public void setData(List<Document> db) {
+    public void setData(List<OfficeInterface> db) {
         this.db = db;
     }
     
@@ -51,21 +51,25 @@ public class DocumentTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
-            Document document = db.get(rowIndex);
+            OfficeInterface element = db.get(rowIndex);
             
             switch(columnIndex) {
                 case 0:
-                    return document.getDocumentRef();
+                    return element.getOfficeCode();
                 case 1:
-                    return document.getCurrentDocumentName();
+                    return element.getAddress();
                 case 2:
-                    return document.getLastModifiedBy();
+                    return formatter.format(element.getStartDate());
                 case 3:
-                    return formatter.format(document.getCreatedDate());
+                    if(element.getEndDate() != null) {
+                        return formatter.format(element.getEndDate());
+                    } else {
+                        return "";
+                    }
             }
             return null;
         } catch (RemoteException ex) {
-            Logger.getLogger(DocumentTableModel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OfficeTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

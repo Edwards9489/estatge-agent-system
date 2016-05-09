@@ -29,22 +29,26 @@ import javax.swing.border.Border;
  */
 public class JobRolePanel extends JPanel {
     private JTable table;
-    private JobRoleTableModel tableModel;
+    private final JobRoleTableModel tableModel;
     private JPopupMenu popup;
-    private StringListener tableListener;
+    private StringListener actionListener;
     
     public JobRolePanel(String text) {
         tableModel = new JobRoleTableModel();
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Job Roles");
-        popup.add(addressItem);
+        JMenuItem createItem = new JMenuItem("Create Job Role");
+        JMenuItem viewItem = new JMenuItem("View Job Role");
+        JMenuItem updateItem = new JMenuItem("Update Job Role");
+        JMenuItem deleteItem = new JMenuItem("Delete Job Role");
+        JMenuItem refreshItem = new JMenuItem("Refresh Job Roles");
         
-        // Set up Border for ButtonPanel
-        Border innerBorder = BorderFactory.createEtchedBorder();
-        Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
-        setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+        popup.add(createItem);
+        popup.add(viewItem);
+        popup.add(updateItem);
+        popup.add(deleteItem);
+        popup.add(refreshItem);
         
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -59,22 +63,49 @@ public class JobRolePanel extends JPanel {
             }
         });
         
-        addressItem.addActionListener(new ActionListener() {
+        createItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                
-                if(tableListener != null) {
-                    String code = (String) table.getModel().getValueAt(row, 0);
-                    
-                    System.out.println(code);
-                    tableListener.textOmitted(code);
-                    
-//                    tableModel.fireTableRowsDeleted(row, row);
-//                    System.out.println(row);
+                if(actionListener != null) {
+                    actionListener.textOmitted("Create");
                 }
             }
-            
+        });
+        
+        viewItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Update");
+                }
+            }
+        });
+        
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Delete");
+                }
+            }
+        });
+        
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("Refresh");
+                }
+            }
         });
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -103,8 +134,8 @@ public class JobRolePanel extends JPanel {
         tableModel.fireTableDataChanged();
     }
     
-    public void setTableListener(StringListener listener) {
-        this.tableListener = listener;
+    public void setTableListener(StringListener actionListener) {
+        this.actionListener = actionListener;
     }
     
     public String getSelectedObjectCode() {

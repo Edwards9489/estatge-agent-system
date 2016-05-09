@@ -6,10 +6,16 @@
 package client_gui.reporting;
 
 import client_application.ClientImpl;
+import client_gui.AboutFrame;
+import client_gui.OKDialog;
+import client_gui.address.UpdateAddress;
+import client_gui.employee.UpdateEmployeeSecurity;
+import client_gui.login.LoginForm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,7 +43,6 @@ public class ReportingFrame extends JFrame {
         super("MSc Properties");
         setClient(client);
         layoutComponents();
-        createMenuBar();
     }
     
     // Use of singleton pattern to ensure only one Client is initiated
@@ -48,6 +53,7 @@ public class ReportingFrame extends JFrame {
     }
     
     private void layoutComponents() {
+        setJMenuBar(createMenuBar());
         title = new JLabel("MSc Properties");
         Font font = title.getFont();
         title.setFont(new Font(font.getName(), Font.BOLD, font.getSize() + 10));
@@ -60,40 +66,39 @@ public class ReportingFrame extends JFrame {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        
+
         // File Menu
         JMenu fileMenu = new JMenu("File");
-        
+
         JMenuItem userAccount = new JMenuItem("User Account");
         JMenuItem changeUser = new JMenuItem("Change User");
         JMenuItem exitItem = new JMenuItem("Exit");
-        
+
         fileMenu.add(userAccount);
         fileMenu.add(changeUser);
         fileMenu.addSeparator(); // Is the faint lines between grouped menu items
         fileMenu.add(exitItem);
         
-        
+
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
-        
+
         JMenuItem manualItem = new JMenuItem("User Manual");
         JMenuItem aboutItem = new JMenuItem("About");
         
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
         
+
         // Add Menubar items
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
-        
-        
+
         // Set up Mnemonics for Menus
-        
         fileMenu.setMnemonic(KeyEvent.VK_F);
         exitItem.setMnemonic(KeyEvent.VK_X);
-        
-        
+
         // Set up Accelerators
-        
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         changeUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
@@ -102,25 +107,44 @@ public class ReportingFrame extends JFrame {
         
         //Set up ActionListeners
         
+        //File Menu
+        
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
+                int action = JOptionPane.showConfirmDialog(ReportingFrame.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
                 
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
             }
         });
-        
+
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-                
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
             }
         });
         
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-                
+
                 int action = JOptionPane.showConfirmDialog(ReportingFrame.this,
                         "Do you really want to exit the application?",
                         "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
-                
+
                 if (action == JOptionPane.OK_OPTION) {
                     if (client != null) {
                         try {
@@ -133,6 +157,25 @@ public class ReportingFrame extends JFrame {
                 }
             }
         });
+        
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
         return menuBar;
     }
 }

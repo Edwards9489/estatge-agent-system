@@ -94,10 +94,10 @@ public class InvolvedParty extends UnicastRemoteObject implements InvolvedPartyI
      * @param end
      */
     private void setEndDate(Date end) {
-        System.out.println("SET END" + end.after(this.startDate));
-        if(end.after(this.startDate)) {
-            System.out.println("IN IF STATEMENT");
-            this.endDate = end;
+        if (end != null) {
+            if(end.after(this.startDate)) {
+                this.endDate = end;
+            }
         }
     }
     
@@ -158,7 +158,6 @@ public class InvolvedParty extends UnicastRemoteObject implements InvolvedPartyI
      * @param modifiedBy 
      */
     public void endInvolvedParty(Date end, Element endReason, ModifiedByInterface modifiedBy) {
-        System.out.println(end.after(this.startDate));
         if(end.after(this.startDate)) {
             this.setEndDate(end);
             this.setEndReason(endReason);

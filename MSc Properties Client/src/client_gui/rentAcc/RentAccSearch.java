@@ -7,6 +7,7 @@ package client_gui.rentAcc;
 
 import client_application.ClientImpl;
 import client_gui.IntegerListener;
+import client_gui.StringListener;
 import interfaces.RentAccountInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,7 +51,7 @@ public class RentAccSearch extends JFrame {
     private JButton okButton;
     private JButton cancelButton;
     
-    private RentAccPanel leaseAccPanel;
+    private RentAccPanel rentAccPanel;
     private JPanel searchResultsPanel;
     private JPanel detailsPanel;
 
@@ -100,7 +101,7 @@ public class RentAccSearch extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
                     try {
-                        List<RentAccountInterface> leaseAccounts = new ArrayList();
+                        List<RentAccountInterface> rentAccounts = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();
                         searchOnText = searchOnText.trim();
                         
@@ -110,7 +111,7 @@ public class RentAccSearch extends JFrame {
                                 if (accountRef > 0) {
                                     RentAccountInterface rentAcc = client.getRentAccount(accountRef);
                                     if (rentAcc != null) {
-                                        leaseAccounts.add(rentAcc);
+                                        rentAccounts.add(rentAcc);
                                     }
                                 }
                                 break;
@@ -120,7 +121,7 @@ public class RentAccSearch extends JFrame {
                                 if (leaseRef > 0) {
                                     RentAccountInterface rentAcc = client.getTenancyRentAcc(leaseRef);
                                     if (rentAcc != null) {
-                                        leaseAccounts.add(rentAcc);
+                                        rentAccounts.add(rentAcc);
                                     }
                                 }
                                 break;
@@ -128,28 +129,28 @@ public class RentAccSearch extends JFrame {
                             case "Prop Ref":
                                 int propRef = Integer.parseInt(searchValue.getText());
                                 if (propRef > 0) {
-                                    leaseAccounts = client.getPropRentAccounts(propRef);
+                                    rentAccounts = client.getPropRentAccounts(propRef);
                                 }
                                 break;
                                 
                             case "App Ref":
                                 int appRef = Integer.parseInt(searchValue.getText());
                                 if (appRef > 0) {
-                                    leaseAccounts = client.getApplicationRentAccounts(appRef);
+                                    rentAccounts = client.getApplicationRentAccounts(appRef);
                                 }
                                 break;
                                 
                             case "Office Code":
                                 String officeCode = searchValue.getText();
-                                leaseAccounts = client.getOfficeRentAcc(officeCode);
+                                rentAccounts = client.getOfficeRentAcc(officeCode);
                                 break;
                                 
                             case "Account Name":
                                 String name = searchValue.getText();
-                                leaseAccounts = client.getNameRentAcc(name);
+                                rentAccounts = client.getNameRentAcc(name);
                                 break;
                         }
-                        setData(leaseAccounts);
+                        setData(rentAccounts);
                     } catch (RemoteException ex) {
                         Logger.getLogger(RentAccSearch.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -165,7 +166,7 @@ public class RentAccSearch extends JFrame {
                     @Override
                     public void arrayOmitted(List<RentAccountInterface> array) {
                         if (array != null) {
-                            leaseAccPanel.setData(array);
+                            rentAccPanel.setData(array);
                         }
                     }
                 });
@@ -182,8 +183,8 @@ public class RentAccSearch extends JFrame {
             okButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
-                    if (listener != null && leaseAccPanel.getSelectedObjectRef() != null) {
-                        listener.intOmitted(leaseAccPanel.getSelectedObjectRef());
+                    if (listener != null && rentAccPanel.getSelectedObjectRef() != null) {
+                        listener.intOmitted(rentAccPanel.getSelectedObjectRef());
                         setVisible(false);
                         dispose();
                     }
@@ -206,9 +207,16 @@ public class RentAccSearch extends JFrame {
         searchResultsPanel = new JPanel();
         searchResultsPanel.setLayout(new BorderLayout());
         
-        leaseAccPanel = new RentAccPanel("Rent Accounts");
+        rentAccPanel = new RentAccPanel("Rent Accounts");
+
+        rentAccPanel.setTableListener(new StringListener() {
+            @Override
+            public void textOmitted(String text) {
+                actionChoice(text);
+            }
+        });
         
-        searchResultsPanel.add(leaseAccPanel, BorderLayout.CENTER);
+        searchResultsPanel.add(rentAccPanel, BorderLayout.CENTER);
         JPanel buttonsPanel = new JPanel();
         
         if (listener != null) {
@@ -318,8 +326,40 @@ public class RentAccSearch extends JFrame {
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
     }
     
-    private void setData(List<RentAccountInterface> leaseAccounts) {
-        leaseAccPanel.setData(leaseAccounts);
+    private void viewRentAcc() {
+        Integer selection = rentAccPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                RentAccountInterface rentAcc = client.getRentAccount(selection);
+                if (rentAcc != null) {
+                    RentAccDetails rentAccDetails = new RentAccDetails(client, rentAcc);
+                    rentAccDetails.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(RentAccSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void refresh() {
+        rentAccPanel.refresh();
+    }
+    
+    private void actionChoice(String text) {
+        switch (text) {
+            case "View Details":
+                viewRentAcc();
+                System.out.println("TEST - View Rent Account");
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
+    
+    private void setData(List<RentAccountInterface> rentAccounts) {
+        rentAccPanel.setData(rentAccounts);
         repaint();
     }
 

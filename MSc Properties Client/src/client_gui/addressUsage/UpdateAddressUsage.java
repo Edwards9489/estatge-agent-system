@@ -92,6 +92,8 @@ public class UpdateAddressUsage extends JFrame {
     }
     
     private void layoutComponents() {
+        
+        
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
         
@@ -186,16 +188,16 @@ public class UpdateAddressUsage extends JFrame {
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel address = new JLabel("Address    ");
-        Font font = address.getFont();
+        JLabel addressLabel = new JLabel("Address    ");
+        Font font = addressLabel.getFont();
         Font boldFont = new Font(font.getName(), Font.BOLD, 15);
         Font plainFont = new Font(font.getName(), Font.PLAIN, 15);
-        address.setFont(boldFont);
+        addressLabel.setFont(boldFont);
         
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(address, gc);
+        controlsPanel.add(addressLabel, gc);
 
         addrField.setFont(plainFont);
         Dimension dimension = addrField.getPreferredSize();

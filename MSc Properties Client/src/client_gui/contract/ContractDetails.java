@@ -6,22 +6,33 @@
 package client_gui.contract;
 
 import client_application.ClientImpl;
+import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
+import client_gui.EndObject;
 import client_gui.StringListener;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.empAccount.EmpAccDetails;
+import client_gui.employee.EmployeeDetails;
+import client_gui.employee.UpdateEmployeeSecurity;
+import client_gui.jobRole.JobRoleDetails;
+import client_gui.login.LoginForm;
 import client_gui.modifications.ModPanel;
 import client_gui.note.NotePanel;
 import client_gui.note.CreateNote;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
+import client_gui.office.OfficeDetails;
 import interfaces.ContractInterface;
 import interfaces.Document;
+import interfaces.EmployeeAccountInterface;
+import interfaces.EmployeeInterface;
+import interfaces.JobRoleInterface;
 import interfaces.Note;
+import interfaces.OfficeInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,6 +41,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -356,76 +368,7 @@ public class ContractDetails extends JFrame {
         buttonPanel.setButtonListener(new StringListener() {
             @Override
             public void textOmitted(String text) {
-                int pane = tabbedPane.getSelectedIndex();
-
-                System.out.println(text);
-                switch (text) {
-                    case "Create":
-                        System.out.println("TEST - Create Button");
-
-                        if (pane == 0) {
-                            //Notes
-                            createNote();
-                            System.out.println("Create Note");
-                            
-                        } else if (pane == 1) {
-                            //Documents
-                            createDocument();
-                            System.out.println("TEST - Create Document");
-                            
-                        }
-                        break;
-                        
-                    case "Update":
-                        System.out.println("TEST - Update Button");
-
-                        if (pane == 0) {
-                            //Notes
-                            updateNote();
-                            System.out.println("TEST - Update Note");
-                            
-                        } else if (pane == 1) {
-                            //Document
-                            updateDocument();
-                            System.out.println("TEST - Update Document");
-                            
-                        }
-                        break;
-
-                    case "Delete":
-                        System.out.println("TEST - Delete Button");
-                        if (pane == 0) {
-                            //Notes
-                            deleteNote();
-                            System.out.println("TEST - Delete Note");
-                            
-                        } else if (pane == 1) {
-                            //Document
-                            deleteDocument();
-                            System.out.println("TEST - Delete Document");
-                            
-                        }
-                        break;
-
-                    case "View Details":
-                        System.out.println("TEST - View Details Button");
-                        if (pane == 0) {
-                            //Notes
-                            viewNote();
-                            System.out.println("TEST - View Note");
-
-                        } else if (pane == 1) {
-                            //Document
-                            viewDocument();
-                            System.out.println("TEST - View Note");
-
-                        }
-                        break;
-                    
-                    case "Refresh":
-                        refresh();
-                        break;
-                }
+                actionChoice(text);
             }
         });
         
@@ -439,22 +382,10 @@ public class ContractDetails extends JFrame {
             Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        notePanel.setTableListener(new IntegerListener() {
+        notePanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int noteRef) {
-                if(noteRef > 0) {
-                    try {
-                        Note note = contract.getNote(noteRef);
-                        if(note != null) {
-                            System.out.println(note.getReference());
-                            System.out.println("TEST1-Note");
-                            NoteDetails noteGUI=  new NoteDetails(client, note);
-                            noteGUI.setVisible(true);
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -466,21 +397,10 @@ public class ContractDetails extends JFrame {
             Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        documentPanel.setTableListener(new IntegerListener() {
+        documentPanel.setTableListener(new StringListener() {
             @Override
-            public void intOmitted(int documentRef) {
-                if(documentRef > 0) {
-                    try {
-                        Document document = contract.getDocument(documentRef);
-                        if(document != null) {
-                            System.out.println(document.getCurrentDocumentName());
-                            System.out.println("TEST1-Document");
-                            client.downloadContractDocument(contract.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
-                        }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+            public void textOmitted(String text) {
+                actionChoice(text);
             }
         });
         
@@ -564,7 +484,7 @@ public class ContractDetails extends JFrame {
             try {
                 note = contract.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails contractDetails = new NoteDetails(client, note);
+                    NoteDetails contractDetails = new NoteDetails(client, note, "Contract", contract.getAgreementRef());
                     contractDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
@@ -674,6 +594,79 @@ public class ContractDetails extends JFrame {
             Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void actionChoice(String text) {
+        int pane = tabbedPane.getSelectedIndex();
+
+        System.out.println(text);
+        switch (text) {
+            case "Create":
+                System.out.println("TEST - Create Button");
+
+                if (pane == 0) {
+                    //Notes
+                    createNote();
+                    System.out.println("Create Note");
+
+                } else if (pane == 1) {
+                    //Documents
+                    createDocument();
+                    System.out.println("TEST - Create Document");
+
+                }
+                break;
+
+            case "Update":
+                System.out.println("TEST - Update Button");
+
+                if (pane == 0) {
+                    //Notes
+                    updateNote();
+                    System.out.println("TEST - Update Note");
+
+                } else if (pane == 1) {
+                    //Document
+                    updateDocument();
+                    System.out.println("TEST - Update Document");
+
+                }
+                break;
+
+            case "Delete":
+                System.out.println("TEST - Delete Button");
+                if (pane == 0) {
+                    //Notes
+                    deleteNote();
+                    System.out.println("TEST - Delete Note");
+
+                } else if (pane == 1) {
+                    //Document
+                    deleteDocument();
+                    System.out.println("TEST - Delete Document");
+
+                }
+                break;
+
+            case "View Details":
+                System.out.println("TEST - View Details Button");
+                if (pane == 0) {
+                    //Notes
+                    viewNote();
+                    System.out.println("TEST - View Note");
+
+                } else if (pane == 1) {
+                    //Document
+                    viewDocument();
+                    System.out.println("TEST - View Note");
+
+                }
+                break;
+
+            case "Refresh":
+                refresh();
+                break;
+        }
+    }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -689,15 +682,50 @@ public class ContractDetails extends JFrame {
         fileMenu.add(changeUser);
         fileMenu.addSeparator(); // Is the faint lines between grouped menu items
         fileMenu.add(exitItem);
+        
+        
+        // Actions Menu
+        JMenu actionsMenu = new JMenu("Actions");
+
+        JMenuItem updateItem = new JMenuItem("Update");
+        JMenuItem endItem = new JMenuItem("End");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem refreshItem = new JMenuItem("Refresh");
+        
+        actionsMenu.add(updateItem);
+        actionsMenu.add(endItem);
+        actionsMenu.add(deleteItem);
+        actionsMenu.add(refreshItem);
+        
+        
+        // Link to Menu
+        JMenu linksMenu = new JMenu("Link To");
+
+        JMenuItem employeeItem = new JMenuItem("Employee");
+        JMenuItem jobRoleItem = new JMenuItem("Job Role");
+        JMenuItem accountItem = new JMenuItem("Account");
+        JMenuItem officeItem = new JMenuItem("Office");
+        
+        linksMenu.add(employeeItem);
+        linksMenu.add(jobRoleItem);
+        linksMenu.add(accountItem);
+        linksMenu.add(officeItem);
+        
 
         // Help Menu
         JMenu helpMenu = new JMenu("Help");
 
         JMenuItem manualItem = new JMenuItem("User Manual");
         JMenuItem aboutItem = new JMenuItem("About");
+        
+        helpMenu.add(manualItem);
+        helpMenu.add(aboutItem);
+        
 
         // Add Menubar items
         menuBar.add(fileMenu);
+        menuBar.add(actionsMenu);
+        menuBar.add(linksMenu);
         menuBar.add(helpMenu);
 
         // Set up Mnemonics for Menus
@@ -710,20 +738,41 @@ public class ContractDetails extends JFrame {
         userAccount.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         manualItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
 
+        
         //Set up ActionListeners
+        
+        //File Menu
+        
         changeUser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                int action = JOptionPane.showConfirmDialog(ContractDetails.this,
+                        "Do you really want to change user?",
+                        "Confirm Exit", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (action == JOptionPane.OK_OPTION) {
+                    System.gc();
+                    Window windows[] = Window.getWindows(); 
+                    for (int i=0; i<windows.length; i++) {
+                        windows[i].dispose(); 
+                        windows[i]=null;
+                    }
+                    new LoginForm().setVisible(true);
+                    dispose();
+                }
             }
         });
 
         userAccount.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
-
+                UpdateEmployeeSecurity securityGUI = new UpdateEmployeeSecurity(client);
+                securityGUI.setVisible(true);
             }
         });
-
+        
         exitItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
 
                 int action = JOptionPane.showConfirmDialog(ContractDetails.this,
@@ -742,15 +791,144 @@ public class ContractDetails extends JFrame {
                 }
             }
         });
+        
+        
+        // Actions Menu
+        
+        updateItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                UpdateContract updateContract = new UpdateContract(client, contract);
+                updateContract.setVisible(true);
+            }
+        });
+        
+        endItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    EndObject endAddress = new EndObject(client, "Contract", contract.getAgreementRef());
+                    endAddress.setVisible(true);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        deleteItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Contract " + contract.getAgreementRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        System.out.println("Contract Delete - Yes button clicked");
+                        int result = client.deleteContract(contract.getAgreementRef());
+                        if (result > 0) {
+                            String message = "Contract " + contract.getAgreementRef() + " has been successfully deleted";
+                            String title = "Information";
+                            OKDialog.okDialog(ContractDetails.this, message, title);
+                            setVisible(false);
+                            dispose();
+                        } else {
+                            String message = "Contract " + contract.getAgreementRef() + " has dependent records and is not able to be deleted";
+                            String title = "Error";
+                            OKDialog.okDialog(ContractDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        refreshItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                refresh();
+            }
+        });
+        
+        
+        // Links Menu
+
+        employeeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    EmployeeInterface employee = contract.getEmployee();
+                    if (employee != null) {
+                        EmployeeDetails empDetails = new EmployeeDetails(client, employee);
+                        empDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        jobRoleItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    JobRoleInterface jobRole = contract.getJobRole();
+                    if (jobRole != null) {
+                        JobRoleDetails jobRoleDetails = new JobRoleDetails(client, jobRole);
+                        jobRoleDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        accountItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    EmployeeAccountInterface empAcc = client.getEmployeeAccount(contract.getAccountRef());
+                    if (empAcc != null) {
+                        EmpAccDetails empAccDetails = new EmpAccDetails(client, empAcc);
+                        empAccDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        officeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    OfficeInterface office = client.getOffice(contract.getOfficeCode());
+                    if (office != null) {
+                        OfficeDetails officeDetails = new OfficeDetails(client, office);
+                        officeDetails.setVisible(true);
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+        
+        // Help Menu
+
+        manualItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                // NEED TO DEVELOP USER MANUAL
+            }
+        });
+
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                AboutFrame about = new AboutFrame(client);
+                about.setVisible(true);
+            }
+        });
+        
         return menuBar;
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new ContractDetails().setVisible(true);
-//            }
-//        });
-//    }
 }
