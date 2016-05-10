@@ -71,13 +71,13 @@ public class DetailsPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         add(cBy, gc);
 
-        JLabel ref = new JLabel(createdBy);
-        ref.setFont(boldFont);
+        JLabel createdByLabel = new JLabel(createdBy);
+        createdByLabel.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        add(ref, gc);
+        add(createdByLabel, gc);
 
         JLabel cDate = new JLabel("Created Date    ");
         cDate.setFont(plainFont);
@@ -87,26 +87,26 @@ public class DetailsPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 0);
         add(cDate, gc);
 
-        JLabel cDate2 = new JLabel(formatter.format(createdDate));
-        cDate2.setFont(boldFont);
+        JLabel createdDateLabel = new JLabel(formatter.format(createdDate));
+        createdDateLabel.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        add(cDate2, gc);
+        add(createdDateLabel, gc);
         
         
         ////////// NEXT ROW //////////
         
-        JLabel mBy2;
-        JLabel mDate2;
+        JLabel modifiedByLabel;
+        JLabel modifiedDateLabel;
         
         if (modifiedBy != null) {
-            mBy2 = new JLabel(modifiedBy);
-            mDate2 = new JLabel(formatter.format(modifiedDate));
+            modifiedByLabel = new JLabel(modifiedBy);
+            modifiedDateLabel = new JLabel(formatter.format(modifiedDate));
         } else {
-            mBy2 = new JLabel("");
-            mDate2 = new JLabel("");
+            modifiedByLabel = new JLabel("");
+            modifiedDateLabel = new JLabel("");
         }
         
         gc.gridx = 0;
@@ -118,27 +118,32 @@ public class DetailsPanel extends JPanel {
 
         JLabel mBy = new JLabel("Modified By    ");
         mBy.setFont(plainFont);
-
+        
+        gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         add(mBy, gc);
 
-        mBy2.setFont(boldFont);
+        modifiedByLabel.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        add(mBy2, gc);
+        add(modifiedByLabel, gc);
 
         JLabel mDate = new JLabel("Modified Date    ");
         mDate.setFont(plainFont);
         
         gc.gridx++;
-        gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
         add(mDate, gc);
         
-        mDate2.setFont(boldFont);
+        modifiedDateLabel.setFont(boldFont);
+        
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        add(modifiedDateLabel, gc);
     }
 }

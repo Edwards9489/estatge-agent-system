@@ -5245,7 +5245,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
                 int mainApp = app.getMainApp().getPersonRef();
                 Note note = new NoteImpl(noteRef++, "", "SYS", new Date());
                 Transaction tran = new Transaction(transactionRef++, temp.getAccRef(), 0, mainApp, temp2.getRent(), false, date, note, "SYS", new Date());
-                temp2.createTransaction(null, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
+                temp2.createTransaction(tran, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
                 this.database.createRentAccountTransaction(temp2.getAccRef(), tran);
             }
         } catch (RemoteException | SQLException ex) {
@@ -5266,7 +5266,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
                 Note note = new NoteImpl(noteRef++, "", "SYS", new Date());
                 Transaction tran = new Transaction(transactionRef++, temp.getAccRef(), 0, landlord, temp2.getExpenditure(), true, date, note, "SYS", new Date());
-                temp2.createTransaction(null, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
+                temp2.createTransaction(tran, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
                 this.database.createLeaseAccountTransaction(temp2.getAccRef(), tran);
             }
         } catch (RemoteException | SQLException ex) {
@@ -5284,7 +5284,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
 
                 Note note = new NoteImpl(noteRef++, "", "SYS", new Date());
                 Transaction tran = new Transaction(transactionRef++, temp.getAccRef(), 0, empRef, temp2.getSalary(), true, new Date(), note, "SYS", new Date());
-                temp2.createTransaction(null, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
+                temp2.createTransaction(tran, new ModifiedBy("Created Transaction " + tran.getTransactionRef(), "SYS", new Date()));
                 this.database.createEmployeeAccountTransaction(temp2.getAccRef(), tran);
             }
         } catch (RemoteException | SQLException ex) {

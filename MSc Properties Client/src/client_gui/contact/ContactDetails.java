@@ -567,7 +567,7 @@ public class ContactDetails extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                AboutFrame about = new AboutFrame(client);
+                AboutFrame about = new AboutFrame();
                 about.setVisible(true);
             }
         });

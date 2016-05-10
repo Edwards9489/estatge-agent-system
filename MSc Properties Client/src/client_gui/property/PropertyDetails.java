@@ -15,11 +15,9 @@ import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.address.AddressDetails;
-import client_gui.contact.ContactDetails;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
 import client_gui.element.ElementDetails;
-import client_gui.employee.EmployeeDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.landlord.LandlordDetails;
 import client_gui.modifications.ModPanel;
@@ -36,7 +34,6 @@ import interfaces.AddressInterface;
 import interfaces.PropertyInterface;
 import interfaces.Document;
 import interfaces.Element;
-import interfaces.EmployeeInterface;
 import interfaces.LandlordInterface;
 import interfaces.Note;
 import interfaces.PropertyElementInterface;
@@ -1071,7 +1068,7 @@ public class PropertyDetails extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                AboutFrame about = new AboutFrame(client);
+                AboutFrame about = new AboutFrame();
                 about.setVisible(true);
             }
         });

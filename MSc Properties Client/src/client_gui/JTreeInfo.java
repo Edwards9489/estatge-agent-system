@@ -10,8 +10,8 @@ package client_gui;
  * @author Dwayne
  */
 public class JTreeInfo {
-    private String name;
-    private int id;
+    private final String name;
+    private final int id;
     
     public JTreeInfo(String name, int id) {
         this.name = name;

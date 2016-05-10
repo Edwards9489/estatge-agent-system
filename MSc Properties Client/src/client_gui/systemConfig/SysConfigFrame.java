@@ -195,23 +195,29 @@ public class SysConfigFrame extends JFrame {
         employeePanel.setTableListener(new StringListener() {
             @Override
             public void textOmitted(String action) {
-                action = action.trim();
-                switch (action) {
-                    case "Create":
-                        createEmployee();
-                        break;
-                    
-                    case "Update":
-                        updateEmployee();
-                        break;
-                    
-                    case "View Details":
-                        viewEmployee();
-                        break;
-                        
-                    case "Delete":
-                        deleteEmployee();
-                        break;
+                try {
+                    action = action.trim();
+                    switch (action) {
+                        case "Create":
+                            createEmployee();
+                            break;
+                            
+                        case "Update":
+                            if (client.getUser().getEmployeeUpdate()) {
+                                updateEmployee();
+                            }
+                            break;
+                            
+                        case "View Details":
+                            viewEmployee();
+                            break;
+                            
+                        case "Delete":
+                            deleteEmployee();
+                            break;
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(SysConfigFrame.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }); 
@@ -1456,7 +1462,7 @@ public class SysConfigFrame extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                AboutFrame about = new AboutFrame(client);
+                AboutFrame about = new AboutFrame();
                 about.setVisible(true);
             }
         });

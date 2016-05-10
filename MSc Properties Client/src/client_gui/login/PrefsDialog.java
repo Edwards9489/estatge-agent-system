@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client_gui;
+package client_gui.login;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,12 +18,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 
 /**
@@ -31,12 +29,10 @@ import javax.swing.border.Border;
  * @author Dwayne
  */
 public class PrefsDialog extends JDialog {
-    private JButton okButton;
-    private JButton cancelButton;
-    private JSpinner portSpinner;
-    private SpinnerNumberModel spinnerModel;
+    private final JButton okButton;
+    private final JButton cancelButton;
     private JTextField addrField;
-    private JList envList;
+    private JComboBox envList;
     
     private PrefsListener prefsListener;
     
@@ -45,35 +41,31 @@ public class PrefsDialog extends JDialog {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
         
-        spinnerModel = new SpinnerNumberModel(3306, 0, 9999, 1);
-        portSpinner = new JSpinner(spinnerModel);
-        
-        addrField = new JTextField(30);
-        envList = new JList();
+        addrField = new JTextField(10);
+        envList = new JComboBox();
         
         // Set up List
+        
         DefaultListModel envModel = new DefaultListModel();
         envModel.addElement(new EnvCategory(0, "LIVE"));
         envModel.addElement(new EnvCategory(1, "TEST"));
         envModel.addElement(new EnvCategory(2, "TRAIN"));
-        envList.setModel(envModel);
-        envList.setPreferredSize(new Dimension(110, 70));
-        envList.setBorder(BorderFactory.createEtchedBorder());
+        envList.addItem(new EnvCategory(0, "LIVE"));
+        envList.addItem(new EnvCategory(1, "TEST"));
+        envList.addItem(new EnvCategory(2, "TRAIN"));
         envList.setSelectedIndex(0);
         
         layoutControls();
         
         // Add Action Listeners
-                okButton.addActionListener(new ActionListener() {
+        okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-
-                Integer port = (Integer) portSpinner.getValue();
                 String user = addrField.getText();
-                EnvCategory envCat = (EnvCategory) envList.getSelectedValue();
+                EnvCategory envCat = (EnvCategory) envList.getSelectedItem();
 
                 if (prefsListener != null) {
-                    prefsListener.preferenceSet(user, envCat.getId(), port);
+                    prefsListener.preferenceSet(user, envCat.getId());
                 }
                 setVisible(false);
             }
@@ -90,10 +82,9 @@ public class PrefsDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
     
-    public void setDefaults(String serverAddr, int environment, int port) {
+    public void setDefaults(String serverAddr, int environment) {
         addrField.setText(serverAddr);
-        portSpinner.setValue(port);
-        if(envList.isSelectedIndex(environment)) {
+        if(envList.getSelectedIndex() != environment) {
             envList.setSelectedIndex(environment);
         }
     }
@@ -152,23 +143,6 @@ public class PrefsDialog extends JDialog {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(addrField, gc);
-
-        ////////// NEXT ROW //////////
-        gc.gridx = 0;
-        gc.gridy++;
-
-        gc.weightx = 1;
-        gc.weighty = 1;
-
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(new JLabel("Port: "), gc);
-
-        gc.gridx++;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(portSpinner, gc);
 
         ////////// BUTTONS PANEL //////////
         

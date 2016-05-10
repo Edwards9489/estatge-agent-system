@@ -5,7 +5,6 @@
  */
 package client_gui;
 
-import client_application.ClientImpl;
 import javax.swing.JFrame;
 
 /**
@@ -14,7 +13,7 @@ import javax.swing.JFrame;
  */
 public class AboutFrame extends JFrame {
 
-    public AboutFrame(ClientImpl client) {
+    public AboutFrame() {
     }
     
 }

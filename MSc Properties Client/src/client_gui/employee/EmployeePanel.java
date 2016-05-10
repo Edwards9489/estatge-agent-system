@@ -51,6 +51,7 @@ public class EmployeePanel extends JPanel {
         
         popup.add(createItem);
         popup.add(viewItem);
+        popup.add(updateItem);
         popup.add(deleteItem);
         popup.add(refreshItem);
         

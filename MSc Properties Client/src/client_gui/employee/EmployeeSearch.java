@@ -245,7 +245,13 @@ public class EmployeeSearch extends JFrame {
                 break;
 
             case "Update":
-                updateEmployee();
+                try {
+                    if (client.getUser().getEmployeeUpdate()) {
+                        updateEmployee();
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(EmployeeSearch.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 System.out.println("TEST - Update Employee Security");
                 break;
             
