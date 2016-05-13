@@ -6,6 +6,7 @@
 package server_application;
 
 import classes.DateConversion;
+import classes.Utils;
 import interfaces.AgreementInterface;
 import interfaces.Document;
 import interfaces.ModifiedByInterface;
@@ -374,7 +375,7 @@ public class Agreement extends UnicastRemoteObject implements AgreementInterface
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getCurrentDocumentName())) {
+                if(Utils.compareStrings(fileName, document.getCurrentDocumentName())) {
                     return true;
                 }
             }

@@ -29,13 +29,10 @@ public class PDFFileFilter extends FileFilter{
             return false;
         }
         
-        if(extension.equals("pdf")) {
-            return true;
-        }
-        
-        return false;
+        return extension.equals("pdf");
     }
     
+    @Override
     public String getDescription() {
         return "PDF files (*.pdf)";
     }

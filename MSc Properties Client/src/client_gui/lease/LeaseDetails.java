@@ -12,11 +12,16 @@ import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
+import client_gui.IntegerListener;
+import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
+import client_gui.PNGFileFilter;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.document.UpdateDocument;
+import client_gui.document.ViewPreviousDocument;
 import client_gui.empAccount.EmpAccDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.landlord.LandlordDetails;
@@ -120,6 +125,8 @@ public class LeaseDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            fileChooser.addChoosableFileFilter(new PNGFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             
             setJMenuBar(createMenuBar());
 
@@ -525,6 +532,28 @@ public class LeaseDetails extends JFrame {
     
     private void createLandlord() {
         LandlordSearch landlordSearch = new LandlordSearch(client);
+        landlordSearch.setListener(new IntegerListener() {
+            @Override
+            public void intOmitted(int ref) {
+                try {
+                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to ADD Landlord " + ref + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        int result = client.createLeaseLandlord(lease.getAgreementRef(), ref);
+                        if (result > 0) {
+                            String message = "Landlord " + ref + " has been successfully added to Lease";
+                            String title = "Information";
+                            OKDialog.okDialog(LeaseDetails.this, message, title);
+                        } else if (result < 1) {
+                            String message = "Landlord " + ref + " is already assigned to Lease and can not be added again";
+                            String title = "Error";
+                            OKDialog.okDialog(LeaseDetails.this, message, title);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(LeaseDetails.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
         landlordSearch.setVisible(true);
         System.out.println("TEST - Create Landlord");
     }
@@ -647,23 +676,9 @@ public class LeaseDetails extends JFrame {
         Integer selection = documentPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                Document document = lease.getDocument(selection);
-                if (document != null) {
-                    if(fileChooser.showOpenDialog(LeaseDetails.this) == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        int result = client.updateLeaseDocument(lease.getAgreementRef(), document.getDocumentRef(), file.getPath());
-                        if (result > 0) {
-                            String message = "Document " + selection + " has been successfully updated";
-                            String title = "Information";
-                            OKDialog.okDialog(LeaseDetails.this, message, title);
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(LeaseDetails.this, message, title);
-                        }
-                        System.out.println(fileChooser.getSelectedFile());
-                    }
-                }
+                UpdateDocument updateDoc = new UpdateDocument(client, selection, "Lease", lease.getAgreementRef());
+                updateDoc.setVisible(true);
+                System.out.println("TEST - Update Document");
             } catch (RemoteException ex) {
                 Logger.getLogger(LeaseDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -700,6 +715,30 @@ public class LeaseDetails extends JFrame {
             try {
                 document = lease.getDocument(documentPanel.getSelectedObjectRef());
                 client.downloadLeaseDocument(lease.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(LeaseDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPreviousDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            final Document document;
+            try {
+                document = lease.getDocument(documentPanel.getSelectedObjectRef());
+                if (document != null) {
+                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                        @Override
+                        public void intOmitted(int ref) {
+                            try {
+                                client.downloadLeaseDocument(lease.getAgreementRef(), document.getDocumentRef(), ref);
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LeaseDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                    viewPreviousDocument.setVisible(true);
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(LeaseDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -825,6 +864,10 @@ public class LeaseDetails extends JFrame {
                     System.out.println("TEST - View Note");
 
                 }
+                break;
+                
+            case "View Previous":
+                viewPreviousDocument();
                 break;
 
             case "Refresh":

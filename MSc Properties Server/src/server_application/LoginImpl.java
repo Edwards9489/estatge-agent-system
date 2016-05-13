@@ -28,11 +28,9 @@ public class LoginImpl extends UnicastRemoteObject implements LoginInterface {
     
     @Override
     public Server login(String username, String password) throws RemoteException, SecurityException {
-        
         if (myServer != null && myServer.isAlive()) {
             try {
                 if (myServer.isUser(username, password)) {
-                    
                     Server proxyServer = new ServerProxy(myServer.getUser(username), myServer);
                     return proxyServer;
                 }

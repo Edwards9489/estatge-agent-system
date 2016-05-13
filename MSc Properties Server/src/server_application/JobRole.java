@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.Utils;
 import interfaces.Element;
 import interfaces.JobRoleBenefitInterface;
 import interfaces.JobRoleInterface;
@@ -330,6 +331,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     
     @Override
     public Element getJobRequirement(String requirementCode) throws RemoteException {
+        requirementCode = Utils.trimToUpperCase(requirementCode);
         if (this.hasRequirement(requirementCode)) {
             return requirements.get(requirementCode);
         }
@@ -380,6 +382,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
      */
     @Override
     public boolean hasRequirement(String code) throws RemoteException {
+        code = Utils.trimToUpperCase(code);
         return this.requirements.containsKey(code);
     }
     
@@ -391,7 +394,7 @@ public class JobRole extends UnicastRemoteObject implements JobRoleInterface {
     @Override
     public boolean hasCurrentBenefit(String code) throws RemoteException {
         for(JobRoleBenefitInterface benefit : benefits.values()) {
-            if(benefit.isCurrent() && code.equals(benefit.getBenefitCode())) {
+            if(benefit.isCurrent() && Utils.compareStrings(code, benefit.getBenefitCode())) {
                 return true;
             }
         }

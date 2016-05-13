@@ -5,6 +5,7 @@
  */
 package interfaces;
 
+import java.math.BigDecimal;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Date;

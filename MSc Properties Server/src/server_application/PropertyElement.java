@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.Utils;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
@@ -214,7 +215,11 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      */
     @Override
     public Double getDoubleValue() throws RemoteException {
-        return doubleValue;
+        if (doubleValue != null) {
+            return doubleValue;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -266,7 +271,7 @@ public class PropertyElement extends UnicastRemoteObject implements PropertyElem
      */
     @Override
     public boolean isElementCode(String code) throws RemoteException {
-        return code.equals(element.getCode());
+        return Utils.compareStrings(code, element.getCode());
     }
     
     @Override

@@ -10,11 +10,16 @@ import client_application.ClientImpl;
 import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
+import client_gui.IntegerListener;
+import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
+import client_gui.PNGFileFilter;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.document.UpdateDocument;
+import client_gui.document.ViewPreviousDocument;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.lease.LeaseDetails;
 import client_gui.login.LoginForm;
@@ -114,6 +119,8 @@ public class LeaseAccDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            fileChooser.addChoosableFileFilter(new PNGFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             
             setJMenuBar(createMenuBar());
 
@@ -531,23 +538,9 @@ public class LeaseAccDetails extends JFrame {
         Integer selection = documentPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                Document document = leaseAcc.getDocument(selection);
-                if (document != null) {
-                    if(fileChooser.showOpenDialog(LeaseAccDetails.this) == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        int result = client.updateLeaseAccDocument(leaseAcc.getAccRef(), document.getDocumentRef(), file.getPath());
-                        if (result > 0) {
-                            String message = "Document " + selection + " has been successfully updated";
-                            String title = "Information";
-                            OKDialog.okDialog(LeaseAccDetails.this, message, title);
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(LeaseAccDetails.this, message, title);
-                        }
-                        System.out.println(fileChooser.getSelectedFile());
-                    }
-                }
+                UpdateDocument updateDoc = new UpdateDocument(client, selection, "Lease Account", leaseAcc.getAccRef());
+                updateDoc.setVisible(true);
+                System.out.println("TEST - Update Document");
             } catch (RemoteException ex) {
                 Logger.getLogger(LeaseAccDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -584,6 +577,30 @@ public class LeaseAccDetails extends JFrame {
             try {
                 document = leaseAcc.getDocument(documentPanel.getSelectedObjectRef());
                 client.downloadLeaseAccDocument(leaseAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(LeaseAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPreviousDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            final Document document;
+            try {
+                document = leaseAcc.getDocument(documentPanel.getSelectedObjectRef());
+                if (document != null) {
+                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                        @Override
+                        public void intOmitted(int ref) {
+                            try {
+                                client.downloadLeaseAccDocument(leaseAcc.getAccRef(), document.getDocumentRef(), ref);
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LeaseAccDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                    viewPreviousDocument.setVisible(true);
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(LeaseAccDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -698,6 +715,10 @@ public class LeaseAccDetails extends JFrame {
                     System.out.println("TEST - View Document");
 
                 }
+                break;
+                
+            case "View Previous":
+                viewPreviousDocument();
                 break;
 
             case "Refresh":

@@ -6,6 +6,7 @@
 
 package server_application;
 import classes.DateConversion;
+import classes.Utils;
 import interfaces.AddressUsageInterface;
 import interfaces.ContactInterface;
 import interfaces.Document;
@@ -750,7 +751,7 @@ public class Person extends UnicastRemoteObject implements PersonInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getCurrentDocumentName())) {
+                if(Utils.compareStrings(fileName, document.getCurrentDocumentName())) {
                     return true;
                 }
             }

@@ -1,11 +1,13 @@
 
 package server_application;
 
+import classes.Utils;
 import interfaces.AccountInterface;
 import interfaces.Document;
 import interfaces.ModifiedByInterface;
 import interfaces.Note;
 import interfaces.TransactionInterface;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Collections;
@@ -128,10 +130,13 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public void createTransaction(TransactionInterface transaction, ModifiedByInterface modifiedBy) throws RemoteException {
         if (this.isCurrent()) {
             transactions.add(transaction);
+            BigDecimal decimalValue;
             if(transaction.isDebit()) {
-                this.setBalance(this.balance - transaction.getAmount());
+                decimalValue = Utils.convertDouble(this.balance - transaction.getAmount());
+                this.setBalance(decimalValue.doubleValue());
             } else {
-                this.setBalance(this.balance + transaction.getAmount());
+                decimalValue = Utils.convertDouble(this.balance + transaction.getAmount());
+                this.setBalance(decimalValue.doubleValue());
             }            
             this.modifiedBy(modifiedBy);
         }
@@ -146,10 +151,13 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
         if(this.hasTransaction(ref)) {
             TransactionInterface transaction = this.getTransaction(ref);
             this.transactions.remove(transaction);
+            BigDecimal decimalValue;
             if(transaction.isDebit()) {
-                this.setBalance(this.balance + transaction.getAmount());
+                decimalValue = Utils.convertDouble(this.balance + transaction.getAmount());
+                this.setBalance(decimalValue.doubleValue());
             } else {
-                this.setBalance(this.balance - transaction.getAmount());
+                decimalValue = Utils.convertDouble(this.balance - transaction.getAmount());
+                this.setBalance(decimalValue.doubleValue());
             }            
             this.modifiedBy(modifiedBy);
         }
@@ -329,7 +337,7 @@ public class Account extends UnicastRemoteObject implements AccountInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getCurrentDocumentName())) {
+                if(Utils.compareStrings(fileName, document.getCurrentDocumentName())) {
                     return true;
                 }
             }

@@ -27,6 +27,10 @@ import client_gui.PDFFileFilter;
 import client_gui.note.CreateNote;
 import client_gui.EndObject;
 import client_gui.IntegerListener;
+import client_gui.JPEGFileFilter;
+import client_gui.PNGFileFilter;
+import client_gui.document.UpdateDocument;
+import client_gui.document.ViewPreviousDocument;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
@@ -127,6 +131,8 @@ public class AppDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            fileChooser.addChoosableFileFilter(new PNGFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             
             setJMenuBar(createMenuBar());
 
@@ -685,7 +691,7 @@ public class AppDetails extends JFrame {
         try {
             CreateDocument createDoc = new CreateDocument(client, "Application", application.getApplicationRef());
             createDoc.setVisible(true);
-            System.out.println("TEST - Create Note");
+            System.out.println("TEST - Create Document");
         } catch (RemoteException ex) {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -695,23 +701,9 @@ public class AppDetails extends JFrame {
         Integer selection = documentPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                Document document = application.getDocument(selection);
-                if (document != null) {
-                    if(fileChooser.showOpenDialog(AppDetails.this) == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        int result = client.updateApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), file.getPath());
-                        if (result > 0) {
-                            String message = "Document " + selection + " has been successfully updated";
-                            String title = "Information";
-                            OKDialog.okDialog(AppDetails.this, message, title);
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(AppDetails.this, message, title);
-                        }
-                        System.out.println(fileChooser.getSelectedFile());
-                    }
-                }
+                UpdateDocument updateDoc = new UpdateDocument(client, selection, "Application", application.getApplicationRef());
+                updateDoc.setVisible(true);
+                System.out.println("TEST - Update Document");
             } catch (RemoteException ex) {
                 Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -748,6 +740,30 @@ public class AppDetails extends JFrame {
             try {
                 document = application.getDocument(documentPanel.getSelectedObjectRef());
                 client.downloadApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPreviousDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            final Document document;
+            try {
+                document = application.getDocument(documentPanel.getSelectedObjectRef());
+                if (document != null) {
+                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                        @Override
+                        public void intOmitted(int ref) {
+                            try {
+                                client.downloadApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), ref);
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                    viewPreviousDocument.setVisible(true);
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -912,12 +928,16 @@ public class AppDetails extends JFrame {
                     viewProperty();
                     System.out.println("TEST - View Property");
 
-                } else if (ref == 3) {
+                } else if (ref == 4) {
                     //Document
                     viewDocument();
                     System.out.println("TEST - View Note");
 
                 }
+                break;
+                
+            case "View Previous":
+                viewPreviousDocument();
                 break;
 
             case "Refresh":

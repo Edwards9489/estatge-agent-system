@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.Utils;
 import interfaces.AddressInterface;
 import interfaces.Document;
 import interfaces.Element;
@@ -359,7 +360,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
     public boolean hasPropElement(String code) throws RemoteException {
         if(!propertyElements.isEmpty()) {
             for(PropertyElementInterface element : propertyElements.values()) {
-                if(element.isCurrent() && code.equals(element.getElementCode())) {
+                if(element.isCurrent() && Utils.compareStrings(code, element.getElementCode())) {
                     return true;
                 }
             }
@@ -390,6 +391,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
      * @return true if propertyElements contains PropertyElement with ref == ref
      * @throws java.rmi.RemoteException
      */
+    @Override
     public boolean hasPropElement(int ref) throws RemoteException {
         return propertyElements.containsKey(ref);
     }
@@ -400,6 +402,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
      * @return
      * @throws RemoteException
      */
+    @Override
     public PropertyElementInterface getPropElement(int ref) throws RemoteException {
         if(this.hasPropElement(ref)) {
             return this.propertyElements.get(ref);
@@ -591,7 +594,7 @@ public class Property extends UnicastRemoteObject implements PropertyInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getCurrentDocumentName())) {
+                if(Utils.compareStrings(fileName, document.getCurrentDocumentName())) {
                     return true;
                 }
             }

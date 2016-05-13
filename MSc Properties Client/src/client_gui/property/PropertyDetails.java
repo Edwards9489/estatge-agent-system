@@ -11,12 +11,17 @@ import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
+import client_gui.IntegerListener;
+import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
+import client_gui.PNGFileFilter;
 import client_gui.address.AddressDetails;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.document.UpdateDocument;
+import client_gui.document.ViewPreviousDocument;
 import client_gui.element.ElementDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.landlord.LandlordDetails;
@@ -123,6 +128,8 @@ public class PropertyDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            fileChooser.addChoosableFileFilter(new PNGFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -236,7 +243,11 @@ public class PropertyDetails extends JFrame {
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        propSubType = new JLabel(property.getPropSubType().getCode());
+        if (property.getPropSubType() != null) {
+            propSubType = new JLabel(property.getPropSubType().getCode());
+        } else {
+            propSubType = new JLabel("");
+        }
         propSubType.setFont(boldFont);
         detailsPanel.add(propSubType, gc);
 
@@ -643,23 +654,9 @@ public class PropertyDetails extends JFrame {
         Integer selection = documentPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                Document document = property.getDocument(selection);
-                if (document != null) {
-                    if(fileChooser.showOpenDialog(PropertyDetails.this) == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        int result = client.updatePropertyDocument(property.getPropRef(), document.getDocumentRef(), file.getPath());
-                        if (result > 0) {
-                            String message = "Document " + selection + " has been successfully updated";
-                            String title = "Information";
-                            OKDialog.okDialog(PropertyDetails.this, message, title);
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPproperty check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(PropertyDetails.this, message, title);
-                        }
-                        System.out.println(fileChooser.getSelectedFile());
-                    }
-                }
+                UpdateDocument updateDoc = new UpdateDocument(client, selection, "Property", property.getPropRef());
+                updateDoc.setVisible(true);
+                System.out.println("TEST - Update Document");
             } catch (RemoteException ex) {
                 Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -702,12 +699,40 @@ public class PropertyDetails extends JFrame {
         }
     }
     
+    private void viewPreviousDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            final Document document;
+            try {
+                document = property.getDocument(documentPanel.getSelectedObjectRef());
+                if (document != null) {
+                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                        @Override
+                        public void intOmitted(int ref) {
+                            try {
+                                client.downloadPropertyDocument(property.getPropRef(), document.getDocumentRef(), ref);
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                    viewPreviousDocument.setVisible(true);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(PropertyDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     private void refresh() {
         try {
             status.setText(property.getPropStatus());
             
             propType.setText(property.getPropType().getCode());
-            
+            if (property.getPropSubType() != null) {
+                propSubType.setText(property.getPropSubType().getCode());
+            } else {
+                propSubType.setText("");
+            }
             propSubType.setText(property.getPropSubType().getCode());
             
             acquiredDate.setText(formatter.format(property.getAcquiredDate()));
@@ -843,6 +868,10 @@ public class PropertyDetails extends JFrame {
                     System.out.println("TEST - View Document");
 
                 }
+                break;
+                
+            case "View Previous":
+                viewPreviousDocument();
                 break;
 
             case "Refresh":

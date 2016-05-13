@@ -29,7 +29,7 @@ import javax.swing.border.Border;
  */
 public class AgreementPanel extends JPanel {
     private JTable table;
-    private AgreementTableModel tableModel;
+    private final AgreementTableModel tableModel;
     private JPopupMenu popup;
     private IntegerListener tableListener;
     
@@ -38,7 +38,7 @@ public class AgreementPanel extends JPanel {
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem agreementItem = new JMenuItem("Agreements");
+        JMenuItem agreementItem = new JMenuItem("View Agreement");
         popup.add(agreementItem);
         
         // Set up Border for ButtonPanel

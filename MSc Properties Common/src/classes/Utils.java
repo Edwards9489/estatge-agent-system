@@ -5,6 +5,8 @@
  */
 package classes;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author Dwayne
@@ -57,5 +59,30 @@ public class Utils {
         }
         
         return name.substring(0, pointIndex+1);
+    }
+    
+    public static BigDecimal convertDouble(double value) {
+        BigDecimal original = new BigDecimal(value);
+        BigDecimal scaled = original.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return scaled;
+    }
+    
+    public static boolean compareStrings(String firstString, String secondString) {
+        if (firstString != null && secondString != null) {
+            firstString = firstString.toUpperCase();
+            secondString = secondString.toUpperCase();
+            return firstString.equals(secondString);
+        } else {
+            return firstString == null && secondString == null;
+        }
+    }
+    
+    public static String trimToUpperCase(String text) {
+        if (text != null) {
+            text = text.trim();
+            text = text.toUpperCase();
+            return text;
+        }
+        return null;
     }
 }

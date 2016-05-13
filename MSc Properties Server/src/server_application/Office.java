@@ -5,6 +5,7 @@
  */
 package server_application;
 
+import classes.Utils;
 import interfaces.AccountInterface;
 import interfaces.AddressInterface;
 import interfaces.AgreementInterface;
@@ -635,7 +636,7 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
     public boolean hasDocument(String fileName) throws RemoteException {
         if(!documents.isEmpty()) {
             for(Document document : documents) {
-                if(fileName.equals(document.getCurrentDocumentName())) {
+                if(Utils.compareStrings(fileName, document.getCurrentDocumentName())) {
                     return true;
                 }
             }

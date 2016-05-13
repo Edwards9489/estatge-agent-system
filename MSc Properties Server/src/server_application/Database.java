@@ -6,6 +6,7 @@
 package server_application;
 
 import classes.DateConversion;
+import classes.Utils;
 import interfaces.AddressInterface;
 import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
@@ -32,6 +33,7 @@ import interfaces.TenancyInterface;
 import interfaces.TransactionInterface;
 import interfaces.User;
 import java.io.File;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -391,6 +393,7 @@ public class Database {
      * @throws SQLException
      */
     private void deleteElement(String from, String code) throws SQLException {
+        code = Utils.trimToUpperCase(code);
         String deleteSql = "delete from " + from + " where code='" + code + "'";
         try (Statement deleteStat = this.con.createStatement()) {
             deleteStat.executeUpdate(deleteSql);
@@ -523,7 +526,7 @@ public class Database {
             while (results.next()) {
                 int modificationRef = results.getInt("modificationRef");
                 String code = results.getString("code");
-                if (uniqueCode.equals(code)) {
+                if (Utils.compareStrings(uniqueCode, code)) {
                     String modifiedBy = results.getString("modifiedBy");
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
@@ -618,7 +621,7 @@ public class Database {
             while (results.next()) {
                 int documentRef = results.getInt("documentRef");
                 String code = results.getString("code");
-                if (uniqueCode.equals(code)) {
+                if (Utils.compareStrings(uniqueCode, code)) {
                     String documentName = results.getString("documentName");
                     String documentPath = results.getString("documentPath");
                     int noteRef = results.getInt("noteRef");
@@ -887,7 +890,7 @@ public class Database {
             while (results.next()) {
                 int noteRef = results.getInt("noteRef");
                 String code = results.getString("code");
-                if (uniqueCode.equals(code)) {
+                if (Utils.compareStrings(uniqueCode, code)) {
                     String comment = "";
                     if (results.getString("comment") != null) {
                         comment = results.getString("comment");
@@ -1040,6 +1043,7 @@ public class Database {
      */
     private void deleteNote(String from, String code, int noteRef) throws SQLException, RemoteException {
         if (this.noteExists(noteRef) && this.canDeleteNote(noteRef)) {
+            code = Utils.trimToUpperCase(code);
             String deleteSql = "delete from " + from + " where noteRef=" + noteRef + " and code='" + code + "'";
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
@@ -1142,7 +1146,7 @@ public class Database {
     public boolean canDeleteContactType(String contactTypeCode) throws RemoteException {
         if (this.contactTypeExists(contactTypeCode) && !this.getContactType(contactTypeCode).hasBeenModified()) {
             for (ContactInterface contact : this.getContacts()) {
-                if (contactTypeCode.equals(contact.getContactType().getCode())) {
+                if (Utils.compareStrings(contactTypeCode, contact.getContactType().getCode())) {
                     return false;
                 }
             }
@@ -1386,6 +1390,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteOfficeContact(int contactRef, String code) throws SQLException, RemoteException {
+        code = Utils.trimToUpperCase(code);
         if (this.contactExists(contactRef) && this.officeExists(code) && this.getOffice(code).hasContact(contactRef) && this.canDeleteContact(contactRef)) {
             String deleteSql = "delete from officeContacts where contactRef=" + contactRef + " and officeCode='" + code + "'";
             try (Statement deleteStat = this.con.createStatement()) {
@@ -1413,7 +1418,7 @@ public class Database {
                     Office office = (Office) this.getOffice(code);
                     int contactRef = results.getInt("contactRef");
                     String officeCode = results.getString("officeCode");
-                    if (code.equals(officeCode)) {
+                    if (Utils.compareStrings(code, officeCode)) {
                         Element contactType = this.getContactType(results.getString("contactTypeCode"));
                         String contactValue = results.getString("contactValue");
                         Date startDate = results.getDate("startDate");
@@ -1673,7 +1678,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteApplicationAddressUsage(int addrRef, int appRef) throws SQLException, RemoteException {
-        if (this.addressUsageExists(addrRef) && this.applicationExists(appRef) && this.getApplication(appRef).getCurrentApplicationAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
+        if (this.addressUsageExists(addrRef) && this.applicationExists(appRef) && this.getApplication(appRef).getCurrentApplicationAddress() != null && this.getApplication(appRef).getCurrentApplicationAddress().getAddressUsageRef() == addrRef && this.canDeleteAddressUsage(addrRef)) {
             String deleteSql = "delete from applicationAddresses where addressUsageRef=" + addrRef + " and appRef=" + appRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
@@ -1815,7 +1820,7 @@ public class Database {
     public boolean canDeleteTitle(String titleCode) throws RemoteException {
         if (this.titleExists(titleCode) && !this.getTitle(titleCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (titleCode.equals(person.getTitle().getCode())) {
+                if (Utils.compareStrings(titleCode, person.getTitle().getCode())) {
                     return false;
                 }
             }
@@ -1906,7 +1911,7 @@ public class Database {
     public boolean canDeleteGender(String genderCode) throws RemoteException {
         if (this.genderExists(genderCode) && !this.getGender(genderCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (genderCode.equals(person.getGender().getCode())) {
+                if (Utils.compareStrings(genderCode, person.getGender().getCode())) {
                     return false;
                 }
             }
@@ -1997,7 +2002,7 @@ public class Database {
     public boolean canDeleteMaritalStatus(String statusCode) throws RemoteException {
         if (this.maritalStatusExists(statusCode) && !this.getMaritalStatus(statusCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (statusCode.equals(person.getMaritalStatus().getCode())) {
+                if (Utils.compareStrings(statusCode, person.getMaritalStatus().getCode())) {
                     return false;
                 }
             }
@@ -2089,7 +2094,7 @@ public class Database {
     public boolean canDeleteEthnicOrigin(String originCode) throws RemoteException {
         if (this.ethnicOriginExists(originCode) && !this.getEthnicOrigin(originCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (originCode.equals(person.getEthnicOrigin().getCode())) {
+                if (Utils.compareStrings(originCode, person.getEthnicOrigin().getCode())) {
                     return false;
                 }
             }
@@ -2181,7 +2186,7 @@ public class Database {
     public boolean canDeleteLanguage(String languageCode) throws RemoteException {
         if (this.languageExists(languageCode) && !this.getLanguage(languageCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (languageCode.equals(person.getLanguage().getCode())) {
+                if (Utils.compareStrings(languageCode, person.getLanguage().getCode())) {
                     return false;
                 }
             }
@@ -2273,7 +2278,7 @@ public class Database {
     public boolean canDeleteNationality(String nationalityCode) throws RemoteException {
         if (this.nationalityExists(nationalityCode) && !this.getNationality(nationalityCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (nationalityCode.equals(person.getNationality().getCode())) {
+                if (Utils.compareStrings(nationalityCode, person.getNationality().getCode())) {
                     return false;
                 }
             }
@@ -2365,7 +2370,7 @@ public class Database {
     public boolean canDeleteSexuality(String sexualityCode) throws RemoteException {
         if (this.sexualityExists(sexualityCode) && !this.getSexuality(sexualityCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (sexualityCode.equals(person.getSexuality().getCode())) {
+                if (Utils.compareStrings(sexualityCode, person.getSexuality().getCode())) {
                     return false;
                 }
             }
@@ -2457,7 +2462,7 @@ public class Database {
     public boolean canDeleteReligion(String religionCode) throws RemoteException {
         if (this.religionExists(religionCode) && !this.getReligion(religionCode).hasBeenModified()) {
             for (PersonInterface person : this.getPeople()) {
-                if (religionCode.equals(person.getReligion().getCode())) {
+                if (Utils.compareStrings(religionCode, person.getReligion().getCode())) {
                     return false;
                 }
             }
@@ -2945,7 +2950,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deletePropertyDoc(int propertyRef, int documentRef) throws SQLException, RemoteException {
-        if (this.propertyExists(propertyRef) && this.documentExists(documentRef) && this.getProperty(propertyRef).hasDocument(documentRef)) {
+        if (this.propertyExists(propertyRef) && this.documentExists(documentRef)) {
             this.deleteDocument("propertyDocuments", propertyRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -3062,7 +3067,7 @@ public class Database {
     public boolean canDeletePropertyType(String typeCode) throws RemoteException {
         if (this.propTypeExists(typeCode) && !this.getPropertyType(typeCode).hasBeenModified()) {
             for (PropertyInterface property : this.getProperties()) {
-                if (typeCode.equals(property.getPropType().getCode())) {
+                if (Utils.compareStrings(typeCode, property.getPropType().getCode())) {
                     return false;
                 }
             }
@@ -3154,7 +3159,7 @@ public class Database {
     public boolean canDeletePropertySubType(String typeCode) throws RemoteException {
         if (this.propSubTypeExists(typeCode) && !this.getPropertySubType(typeCode).hasBeenModified()) {
             for (PropertyInterface property : this.getProperties()) {
-                if (typeCode.equals(property.getPropSubType().getCode())) {
+                if (Utils.compareStrings(typeCode, property.getPropSubType().getCode())) {
                     return false;
                 }
             }
@@ -3299,8 +3304,8 @@ public class Database {
             String deleteSql = "delete from PropertyElementValues where propertyElementRef=" + propElementRef + " and propRef=" + propRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    propertyElementValues.remove(propElementRef);
                     this.deleteNote(this.getPropertyElementValue(propElementRef).getNote().getReference());
+                    propertyElementValues.remove(propElementRef);
                     deleteStat.close();
                 }
             }
@@ -3324,6 +3329,7 @@ public class Database {
      * @throws SQLException
      * @throws RemoteException
      */
+    @SuppressWarnings("null")
     private void loadPropertyElementValues(int propRef) throws SQLException, RemoteException {
         if (this.propertyExists(propRef)) {
             Property property = (Property) this.getProperty(propRef);
@@ -3341,7 +3347,12 @@ public class Database {
                             Date startDate = results.getDate("startDate");
                             Date endDate = results.getDate("endDate");
                             String stringValue = results.getString("stringValue");
-                            double doubleValue = results.getDouble("doubleValue");
+                            Double doubleValue = results.getDouble("doubleValue");
+                            BigDecimal decimalValue;
+                            if (doubleValue != null) {
+                                decimalValue = Utils.convertDouble(doubleValue);
+                                doubleValue = decimalValue.doubleValue();
+                            }
                             int noteRef = results.getInt("noteRef");
                             String comment = "";
                             if (results.getString("comment") != null) {
@@ -3764,7 +3775,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deletePersonDoc(int personRef, int documentRef) throws SQLException, RemoteException {
-        if (this.personExists(personRef) && this.documentExists(documentRef) && this.getPerson(personRef).hasDocument(documentRef)) {
+        if (this.personExists(personRef) && this.documentExists(documentRef)) {
             this.deleteDocument("personDocuments", personRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -4121,7 +4132,7 @@ public class Database {
     public boolean canDeleteEndReason(String endReason) throws RemoteException {
         if (this.endReasonExists(endReason) && !this.getEndReason(endReason).hasBeenModified()) {
             for (InvolvedPartyInterface invParty : this.getInvolvedParties()) {
-                if (invParty.getEndReason() != null && endReason.equals(invParty.getEndReason().getCode())) {
+                if (invParty.getEndReason() != null && Utils.compareStrings(endReason, invParty.getEndReason().getCode())) {
                     return false;
                 }
             }
@@ -4213,7 +4224,7 @@ public class Database {
     public boolean canDeleteRelationship(String relationship) throws RemoteException {
         if (this.relationshipExists(relationship) && !this.getRelationship(relationship).hasBeenModified()) {
             for (InvolvedPartyInterface invParty : this.getInvolvedParties()) {
-                if (relationship.equals(invParty.getRelationship().getCode())) {
+                if (Utils.compareStrings(relationship, invParty.getRelationship().getCode())) {
                     return false;
                 }
             }
@@ -4493,7 +4504,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteApplicationDoc(int appRef, int documentRef) throws SQLException, RemoteException {
-        if (this.applicationExists(appRef) && this.documentExists(documentRef) && this.getApplication(appRef).hasDocument(documentRef)) {
+        if (this.applicationExists(appRef) && this.documentExists(documentRef)) {
             this.deleteDocument("applicationDocuments", appRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -4921,6 +4932,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteOffice(String officeCode) throws SQLException, RemoteException {
+        officeCode = Utils.trimToUpperCase(officeCode);
         if (this.officeExists(officeCode) && this.canDeleteOffice(officeCode)) {
             String deleteSql = "delete from offices where officeCode='" + officeCode + "'";
             try (Statement deleteStat = this.con.createStatement()) {
@@ -5067,7 +5079,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteOfficeDoc(String officeCode, int documentRef) throws SQLException, RemoteException {
-        if (this.officeExists(officeCode) && this.documentExists(documentRef) && this.getOffice(officeCode).hasDocument(documentRef)) {
+        if (this.officeExists(officeCode) && this.documentExists(documentRef)) {
             this.deleteDocument("officeDocuments", officeCode, documentRef);
             this.deleteNote(documentRef);
         }
@@ -5232,7 +5244,7 @@ public class Database {
     public boolean canDeleteJobRole(String jobRoleCode) throws RemoteException {
         if (this.jobRoleExists(jobRoleCode) && !this.getJobRole(jobRoleCode).hasBeenModified()) {
             for (ContractInterface contract : this.getContracts()) {
-                if (jobRoleCode.equals(contract.getJobRoleCode())) {
+                if (Utils.compareStrings(jobRoleCode, contract.getJobRoleCode())) {
                     return false;
                 }
             }
@@ -5267,10 +5279,12 @@ public class Database {
                 boolean employeeUpdate = results.getBoolean("employeeUpdate");
                 boolean employeeDelete = results.getBoolean("employeeDelete");
                 double salary = results.getDouble("salary");
+                BigDecimal decimalValue = Utils.convertDouble(salary);
+                salary = decimalValue.doubleValue();
                 boolean current = results.getBoolean("cur");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
-
+                
                 JobRole temp = new JobRole(jobRoleCode, jobTitle, jobDescription, fullTime, salary, read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete, createdBy, createdDate);
                 temp.setCurrent(current);
 
@@ -5443,7 +5457,7 @@ public class Database {
 
                 while (results.next()) {
                     String jobRoleCode = results.getString("jobRoleCode");
-                    if (code.equals(jobRoleCode));
+                    if (Utils.compareStrings(code, jobRoleCode));
                     {
                         String requirementCode = results.getString("requirementCode");
                         Element temp = this.getJobRequirement(requirementCode);
@@ -5559,8 +5573,8 @@ public class Database {
             String deleteSql = "delete from jobRoleBenefits where benefitRef=" + benefitRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    this.jobRoleBenefits.remove(benefitRef);
                     this.deleteNote(this.getJobRoleBenefit(benefitRef).getNote().getReference());
+                    this.jobRoleBenefits.remove(benefitRef);
                     deleteStat.close();
                 }
             }
@@ -5582,7 +5596,7 @@ public class Database {
 
                 while (results.next()) {
                     String jobRoleCode = results.getString("jobRoleCode");
-                    if (code.equals(jobRoleCode)) {
+                    if (Utils.compareStrings(code, jobRoleCode)) {
                         int jobBenefitRef = results.getInt("jobBenefitRef");
                         String benefitCode = results.getString("benefitCode");
                         if (this.jobBenefitExists(benefitCode)) {
@@ -5686,7 +5700,7 @@ public class Database {
         if (this.jobRequirementExists(requirementCode) && !this.getJobRequirement(requirementCode).hasBeenModified()) {
             for (JobRoleInterface jobRole : this.getJobRoles()) {
                 for (Element requirement : jobRole.getJobRequirements()) {
-                    if (requirementCode.equals(requirement.getCode())) {
+                    if (Utils.compareStrings(requirementCode, requirement.getCode())) {
                         return false;
                     }
                 }
@@ -5779,7 +5793,7 @@ public class Database {
     public boolean canDeleteJobBenefit(String benefitCode) throws RemoteException {
         if (this.jobBenefitExists(benefitCode) && !this.getJobBenefit(benefitCode).hasBeenModified()) {
             for (JobRoleBenefitInterface benefit : this.getJobRoleBenefits()) {
-                if (benefitCode.equals(benefit.getBenefitCode())) {
+                if (Utils.compareStrings(benefitCode, benefit.getBenefitCode())) {
                     return false;
                 }
             }
@@ -6132,8 +6146,8 @@ public class Database {
             String deleteSql = "delete from tenancies where tenancyRef=" + tenancyRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    tenancies.remove(tenancyRef);
                     this.deleteRentAccount(this.getTenancy(tenancyRef).getAccountRef());
+                    tenancies.remove(tenancyRef);
                     deleteStat.close();
                 }
             }
@@ -6188,6 +6202,7 @@ public class Database {
                                 if (actualEndDate != null) {
                                     temp.setActualEndDate(actualEndDate, null);
                                 }
+                                temp.updateAgreement(name, startDate, length, null);
                                 Office office = (Office) this.getOffice(officeCode);
                                 office.createAgreement(temp, null);
                                 this.loadTenancyMods(temp.getAgreementRef(), this.loadModMap("tenancyModifications", temp.getAgreementRef()));
@@ -6288,7 +6303,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteTenancyDoc(int tenancyRef, int documentRef) throws SQLException, RemoteException {
-        if (this.tenancyExists(tenancyRef) && this.documentExists(documentRef) && this.getTenancy(tenancyRef).hasDocument(documentRef)) {
+        if (this.tenancyExists(tenancyRef) && this.documentExists(documentRef)) {
             this.deleteDocument("tenancyDocuments", tenancyRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -6392,7 +6407,7 @@ public class Database {
         if (this.tenancyTypeExists(tenTypeCode) && this.canDeleteTitle(tenTypeCode)) {
             this.deleteElement("tenancyTypes", tenTypeCode);
             this.deleteNote(this.getTenancyType(tenTypeCode).getNote().getReference());
-            this.titles.remove(tenTypeCode);
+            this.tenancyTypes.remove(tenTypeCode);
         }
     }
 
@@ -6405,7 +6420,7 @@ public class Database {
     public boolean canDeleteTenancyType(String tenTypeCode) throws RemoteException {
         if (this.tenancyTypeExists(tenTypeCode) && !this.getTenancyType(tenTypeCode).hasBeenModified()) {
             for (TenancyInterface tenancy : this.getTenancies()) {
-                if (tenTypeCode.equals(tenancy.getTenType().getCode())) {
+                if (Utils.compareStrings(tenTypeCode, tenancy.getTenType().getCode())) {
                     return false;
                 }
             }
@@ -6514,8 +6529,8 @@ public class Database {
             String deleteSql = "delete from leases where leaseRef=" + leaseRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    leases.remove(leaseRef);
                     this.deleteLeaseAccount(this.getLease(leaseRef).getAccountRef());
+                    leases.remove(leaseRef);
                     deleteStat.close();
                 }
             }
@@ -6566,6 +6581,7 @@ public class Database {
                         if (actualEndDate != null) {
                             temp.setActualEndDate(actualEndDate, null);
                         }
+                        temp.updateAgreement(name, startDate, length, null);
                         Office office = (Office) this.getOffice(officeCode);
                         office.createAgreement(temp, null);
                         this.loadLeaseLandlords(temp.getAccountRef());
@@ -6666,7 +6682,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteLeaseDoc(int tenancyRef, int documentRef) throws SQLException, RemoteException {
-        if (this.leaseExists(tenancyRef) && this.documentExists(documentRef) && this.getLease(tenancyRef).hasDocument(documentRef)) {
+        if (this.leaseExists(tenancyRef) && this.documentExists(documentRef)) {
             this.deleteDocument("leaseDocuments", tenancyRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -6954,6 +6970,7 @@ public class Database {
                             if (actualEndDate != null) {
                                 temp.setActualEndDate(actualEndDate, null);
                             }
+                            temp.updateAgreement(name, startDate, length, null);
                             this.contracts.put(temp.getAgreementRef(), temp);
                             employee.createContract(temp, null);
                             UserImpl user = (UserImpl) employee.getUser();
@@ -7057,7 +7074,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteContractDoc(int contractRef, int documentRef) throws SQLException, RemoteException {
-        if (this.leaseExists(contractRef) && this.documentExists(documentRef) && this.getContract(contractRef).hasDocument(documentRef)) {
+        if (this.leaseExists(contractRef) && this.documentExists(documentRef)) {
             this.deleteDocument("contractDocuments", contractRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -7321,7 +7338,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteRentAccountDoc(int rentAccRef, int documentRef) throws SQLException, RemoteException {
-        if (this.rentAccountExists(rentAccRef) && this.documentExists(documentRef) && this.getRentAccount(rentAccRef).hasDocument(documentRef)) {
+        if (this.rentAccountExists(rentAccRef) && this.documentExists(documentRef)) {
             this.deleteDocument("rentAccountDocuments", rentAccRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -7610,7 +7627,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteLeaseAccountDoc(int leaseAccRef, int documentRef) throws SQLException, RemoteException {
-        if (this.leaseAccountExists(leaseAccRef) && this.documentExists(documentRef) && this.getLeaseAccount(leaseAccRef).hasDocument(documentRef)) {
+        if (this.leaseAccountExists(leaseAccRef) && this.documentExists(documentRef)) {
             this.deleteDocument("leaseAccountDocuments", leaseAccRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -7899,7 +7916,7 @@ public class Database {
      * @throws RemoteException
      */
     public void deleteEmployeeAccountDoc(int employeeAccRef, int documentRef) throws SQLException, RemoteException {
-        if (this.employeeAccountExists(employeeAccRef) && this.documentExists(documentRef) && this.getEmployeeAccount(employeeAccRef).hasDocument(documentRef)) {
+        if (this.employeeAccountExists(employeeAccRef) && this.documentExists(documentRef)) {
             this.deleteDocument("employeeAccountDocuments", employeeAccRef, documentRef);
             this.deleteNote(documentRef);
         }
@@ -8020,8 +8037,8 @@ public class Database {
             String deleteSql = "delete from " + from + " where transactionRef=" + transactionRef + " and accRef=" + accRef;
             try (Statement deleteStat = this.con.createStatement()) {
                 if (deleteStat.executeUpdate(deleteSql) >= 1) {
-                    transactions.remove(transactionRef);
                     this.deleteNote(this.getTransaction(transactionRef).getNote().getReference());
+                    transactions.remove(transactionRef);
                     deleteStat.close();
                 }
             }
@@ -8169,6 +8186,7 @@ public class Database {
     }
 
     public User getUser(String username) {
+        username = Utils.trimToUpperCase(username);
         if (this.userExists(username)) {
             return this.users.get(username);
         }
@@ -8185,50 +8203,62 @@ public class Database {
     }
 
     public boolean titleExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return titles.containsKey(code);
     }
 
     public boolean genderExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return genders.containsKey(code);
     }
 
     public boolean maritalStatusExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return maritalStatuses.containsKey(code);
     }
 
     public boolean ethnicOriginExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return ethnicOrigins.containsKey(code);
     }
 
     public boolean languageExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return languages.containsKey(code);
     }
 
     public boolean nationalityExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return nationalities.containsKey(code);
     }
 
     public boolean sexualityExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return sexualities.containsKey(code);
     }
 
     public boolean religionExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return religions.containsKey(code);
     }
 
     public boolean contactTypeExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.contactTypes.containsKey(code);
     }
 
     public boolean propTypeExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.propertyTypes.containsKey(code);
     }
 
     public boolean propSubTypeExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.propertySubTypes.containsKey(code);
     }
 
     public boolean propElementExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.propertyElements.containsKey(code);
     }
 
@@ -8254,10 +8284,12 @@ public class Database {
     }
 
     public boolean endReasonExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return endReasons.containsKey(code);
     }
 
     public boolean relationshipExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return relationships.containsKey(code);
     }
 
@@ -8287,10 +8319,12 @@ public class Database {
     }
 
     public boolean officeExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return offices.containsKey(code);
     }
 
     public boolean jobRoleExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return jobRoles.containsKey(code);
     }
 
@@ -8299,10 +8333,12 @@ public class Database {
     }
 
     public boolean jobBenefitExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.jobBenefits.containsKey(code);
     }
 
     public boolean jobRequirementExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.jobRequirements.containsKey(code);
     }
 
@@ -8332,6 +8368,7 @@ public class Database {
     }
 
     public boolean tenancyTypeExists(String code) {
+        code = Utils.trimToUpperCase(code);
         return this.tenancyTypes.containsKey(code);
     }
 
@@ -8368,10 +8405,12 @@ public class Database {
     }
 
     public boolean userExists(String username) {
+        username = Utils.trimToUpperCase(username);
         return this.users.containsKey(username);
     }
 
     public boolean isUser(String username, String password) throws RemoteException {
+        username = Utils.trimToUpperCase(username);
         if (this.userExists(username)) {
             return this.getUser(username).isUser(username, password);
         }
@@ -8849,43 +8888,43 @@ public class Database {
 
         for (PersonInterface temp : this.getPeople()) {
             boolean add = true;
-            if (titleCode != null && !titleCode.isEmpty() && this.titleExists(titleCode) && !titleCode.equals(temp.getTitle().getCode())) {
+            if (titleCode != null && !titleCode.isEmpty() && !Utils.compareStrings(titleCode, temp.getTitle().getCode())) {
                 add = false;
             }
-            if (forename != null && !forename.isEmpty() && !forename.equals(temp.getForename())) {
+            if (forename != null && !forename.isEmpty() && !Utils.compareStrings(forename, temp.getForename())) {
                 add = false;
             }
-            if (middleNames != null && !middleNames.isEmpty() && !middleNames.equals(temp.getMiddleNames())) {
+            if (middleNames != null && !middleNames.isEmpty() && !Utils.compareStrings(middleNames, temp.getMiddleNames())) {
                 add = false;
             }
-            if (surname != null && !surname.isEmpty() && !surname.equals(temp.getSurname())) {
+            if (surname != null && !surname.isEmpty() && !Utils.compareStrings(surname, temp.getSurname())) {
                 add = false;
             }
             if (dateOfBirth != null && !DateConversion.dateEqual(dateOfBirth, temp.getDateOfBirth())) {
                 add = false;
             }
-            if (nationalInsurance != null && !nationalInsurance.isEmpty() && !nationalInsurance.equals(temp.getNI())) {
+            if (nationalInsurance != null && !nationalInsurance.isEmpty() && !Utils.compareStrings(nationalInsurance, temp.getNI())) {
                 add = false;
             }
-            if (maritalStatusCode != null && !maritalStatusCode.isEmpty() && this.maritalStatusExists(maritalStatusCode) && !maritalStatusCode.equals(temp.getMaritalStatus().getCode())) {
+            if (maritalStatusCode != null && !maritalStatusCode.isEmpty() && !Utils.compareStrings(maritalStatusCode, temp.getMaritalStatus().getCode())) {
                 add = false;
             }
-            if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && this.ethnicOriginExists(ethnicOriginCode) && !ethnicOriginCode.equals(temp.getEthnicOrigin().getCode())) {
+            if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && !Utils.compareStrings(ethnicOriginCode, temp.getEthnicOrigin().getCode())) {
                 add = false;
             }
-            if (languageCode != null && !languageCode.isEmpty() && this.languageExists(languageCode) && !languageCode.equals(temp.getLanguage().getCode())) {
+            if (languageCode != null && !languageCode.isEmpty() && !Utils.compareStrings(ethnicOriginCode, temp.getLanguage().getCode())) {
                 add = false;
             }
-            if (nationalityCode != null && !nationalityCode.isEmpty() && this.nationalityExists(nationalityCode) && !nationalityCode.equals(temp.getNationality().getCode())) {
+            if (nationalityCode != null && !nationalityCode.isEmpty() && !Utils.compareStrings(nationalityCode, temp.getNationality().getCode())) {
                 add = false;
             }
-            if (sexualityCode != null && !sexualityCode.isEmpty() && this.sexualityExists(sexualityCode) && !sexualityCode.equals(temp.getSexuality().getCode())) {
+            if (sexualityCode != null && !sexualityCode.isEmpty() && !Utils.compareStrings(sexualityCode, temp.getSexuality().getCode())) {
                 add = false;
             }
-            if (religionCode != null && !religionCode.isEmpty() && this.religionExists(religionCode) && !religionCode.equals(temp.getReligion().getCode())) {
+            if (religionCode != null && !religionCode.isEmpty() && !Utils.compareStrings(religionCode, temp.getReligion().getCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -8906,37 +8945,37 @@ public class Database {
         List<AddressInterface> tempAddresses = new ArrayList<>();
         for (AddressInterface temp : this.getAddresses()) {
             boolean add = true;
-            if (buildingNumber != null && !buildingNumber.isEmpty() && !buildingNumber.equals(temp.getBuildingNumber())) {
+            if (buildingNumber != null && !buildingNumber.isEmpty() && !Utils.compareStrings(buildingNumber, temp.getBuildingNumber())) {
                 add = false;
             }
-            if (buildingName != null && !buildingName.isEmpty() && !buildingName.equals(temp.getBuildingName())) {
+            if (buildingName != null && !buildingName.isEmpty() && !Utils.compareStrings(buildingName, temp.getBuildingName())) {
                 add = false;
             }
-            if (subStreetNumber != null && !subStreetNumber.isEmpty() && !subStreetNumber.equals(temp.getSubStreetNumber())) {
+            if (subStreetNumber != null && !subStreetNumber.isEmpty() && !Utils.compareStrings(subStreetNumber, temp.getSubStreetNumber())) {
                 add = false;
             }
-            if (subStreet != null && !subStreet.isEmpty() && !subStreet.equals(temp.getSubStreet())) {
+            if (subStreet != null && !subStreet.isEmpty() && !Utils.compareStrings(subStreet, temp.getSubStreet())) {
                 add = false;
             }
-            if (streetNumber != null && !streetNumber.isEmpty() && !streetNumber.equals(temp.getStreetNumber())) {
+            if (streetNumber != null && !streetNumber.isEmpty() && !Utils.compareStrings(streetNumber, temp.getStreetNumber())) {
                 add = false;
             }
-            if (street != null && !street.isEmpty() && !street.equals(temp.getStreet())) {
+            if (street != null && !street.isEmpty() && !Utils.compareStrings(street, temp.getStreet())) {
                 add = false;
             }
-            if (area != null && !area.isEmpty() && !area.equals(temp.getArea())) {
+            if (area != null && !area.isEmpty() && !Utils.compareStrings(area, temp.getArea())) {
                 add = false;
             }
-            if (town != null && !town.isEmpty() && !town.equals(temp.getTown())) {
+            if (town != null && !town.isEmpty() && !Utils.compareStrings(town, temp.getTown())) {
                 add = false;
             }
-            if (country != null && !country.isEmpty() && !country.equals(temp.getCountry())) {
+            if (country != null && !country.isEmpty() && !Utils.compareStrings(country, temp.getCountry())) {
                 add = false;
             }
-            if (postcode != null && !postcode.isEmpty() && !postcode.equals(temp.getPostcode()) && !postcode.equals(temp.getCountry())) {
+            if (postcode != null && !postcode.isEmpty() && !Utils.compareStrings(postcode, temp.getPostcode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -8954,7 +8993,7 @@ public class Database {
         List<ApplicationInterface> tempApplications = new ArrayList<>();
         for (ApplicationInterface temp : this.getApplications()) {
             boolean add = true;
-            if (corrName != null && !corrName.isEmpty() && !corrName.equals(temp.getAppCorrName())) {
+            if (corrName != null && !corrName.isEmpty() && !Utils.compareStrings(corrName, temp.getAppCorrName())) {
                 add = false;
             }
             if (appStartDate != null && !DateConversion.dateEqual(appStartDate, temp.getAppStartDate())) {
@@ -8963,10 +9002,10 @@ public class Database {
             if (endDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
                 add = false;
             }
-            if (statusCode != null && !statusCode.isEmpty() && !statusCode.equals(temp.getAppStatusCode())) {
+            if (statusCode != null && !statusCode.isEmpty() && !Utils.compareStrings(statusCode, temp.getAppStatusCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9039,7 +9078,7 @@ public class Database {
         List<ApplicationInterface> tempApplications = new ArrayList();
         if (name != null && !name.isEmpty()) {
             for (ApplicationInterface tempApp : this.getApplications()) {
-                if (name.equals(tempApp.getAppCorrName())) {
+                if (Utils.compareStrings(name, tempApp.getAppCorrName())) {
                     tempApplications.add(tempApp);
                 }
             }
@@ -9079,7 +9118,7 @@ public class Database {
         List<LandlordInterface> tempLandlords = new ArrayList();
         if (!tempPeople.isEmpty()) {
             for (PersonInterface temp : tempPeople) {
-                if (this.personEmployeeExists(temp.getPersonRef())) {
+                if (this.personLandlordExists(temp.getPersonRef())) {
                     tempLandlords.add(this.getPersonLandlord(temp.getPersonRef()));
                 }
             }
@@ -9098,16 +9137,16 @@ public class Database {
             if (leaseEndDate != null && !DateConversion.dateEqual(leaseEndDate, temp.getLeaseEndDate())) {
                 add = false;
             }
-            if (propTypeCode != null && this.propTypeExists(propTypeCode) && !propTypeCode.equals(temp.getPropType().getCode())) {
+            if (propTypeCode != null && !propTypeCode.isEmpty() && !Utils.compareStrings(propTypeCode, temp.getPropType().getCode())) {
                 add = false;
             }
-            if (propSubTypeCode != null && this.propSubTypeExists(propSubTypeCode) && temp.getPropSubType() != null && !propSubTypeCode.equals(temp.getPropSubType().getCode())) {
+            if (propSubTypeCode != null && !propSubTypeCode.isEmpty() && temp.getPropSubType() != null && !Utils.compareStrings(propSubTypeCode, temp.getPropSubType().getCode())) {
                 add = false;
             }
-            if (propStatus != null && !propStatus.equals(temp.getPropStatus())) {
+            if (propStatus != null && !propStatus.isEmpty() && !Utils.compareStrings(propStatus, temp.getPropStatus())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9148,7 +9187,7 @@ public class Database {
         List<TenancyInterface> tempTenancies = new ArrayList();
         for (TenancyInterface temp : this.getTenancies()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAgreementName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9163,22 +9202,22 @@ public class Database {
             if (length != null && length != temp.getLength()) {
                 add = false;
             }
-            if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+            if (propRef != null && propRef != temp.getProperty().getPropRef()) {
                 add = false;
             }
-            if (appRef != null && this.applicationExists(appRef) && appRef != temp.getApplication().getApplicationRef()) {
+            if (appRef != null && appRef != temp.getApplication().getApplicationRef()) {
                 add = false;
             }
-            if (tenTypeCode != null && !tenTypeCode.isEmpty() && this.tenancyTypeExists(tenTypeCode) && !tenTypeCode.equals(temp.getTenType().getCode())) {
+            if (tenTypeCode != null && !tenTypeCode.isEmpty() && !Utils.compareStrings(tenTypeCode, temp.getTenType().getCode())) {
                 add = false;
             }
-            if (accountRef != null && this.rentAccountExists(accountRef) && accountRef != temp.getAccountRef()) {
+            if (accountRef != null && accountRef != temp.getAccountRef()) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9261,7 +9300,7 @@ public class Database {
     public List<TenancyInterface> getNameTenancies(String name) throws RemoteException {
         List<TenancyInterface> tempTenancies = new ArrayList();
         for (TenancyInterface temp : this.getTenancies()) {
-            if (name.equals(temp.getAgreementName())) {
+            if (Utils.compareStrings(name, temp.getAgreementName())) {
                 tempTenancies.add(temp);
             }
         }
@@ -9272,7 +9311,7 @@ public class Database {
         List<TenancyInterface> tempTenancies = new ArrayList();
         if (this.officeExists(office)) {
             for (TenancyInterface temp : this.getTenancies()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempTenancies.add(temp);
                 }
             }
@@ -9285,7 +9324,7 @@ public class Database {
         List<LeaseInterface> tempLeases = new ArrayList();
         for (LeaseInterface temp : this.getLeases()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAgreementName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9300,7 +9339,7 @@ public class Database {
             if (length != null && length != temp.getLength()) {
                 add = false;
             }
-            if (propRef != null && this.propertyExists(propRef) && propRef != temp.getProperty().getPropRef()) {
+            if (propRef != null && propRef != temp.getProperty().getPropRef()) {
                 add = false;
             }
             if (management != null && management != temp.isFullManagement()) {
@@ -9309,10 +9348,10 @@ public class Database {
             if (expenditure != null && expenditure != temp.getExpenditure()) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9362,7 +9401,7 @@ public class Database {
     public List<LeaseInterface> getNameLeases(String name) throws RemoteException {
         List<LeaseInterface> tempLeases = new ArrayList();
         for (LeaseInterface temp : this.getLeases()) {
-            if (name.equals(temp.getAgreementName())) {
+            if (Utils.compareStrings(name, temp.getAgreementName())) {
                 tempLeases.add(temp);
             }
         }
@@ -9373,7 +9412,7 @@ public class Database {
         List<LeaseInterface> tempLeases = new ArrayList();
         if (this.officeExists(office)) {
             for (LeaseInterface temp : this.getLeases()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempLeases.add(temp);
                 }
             }
@@ -9433,7 +9472,7 @@ public class Database {
         List<ContractInterface> tempContracts = new ArrayList();
         for (ContractInterface temp : this.getContracts()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAgreementName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAgreementName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9448,16 +9487,16 @@ public class Database {
             if (length != null && length != temp.getLength()) {
                 add = false;
             }
-            if (employeeRef != null && this.employeeExists(employeeRef) && employeeRef != temp.getEmployee().getEmployeeRef()) {
+            if (employeeRef != null && employeeRef != temp.getEmployee().getEmployeeRef()) {
                 add = false;
             }
-            if (jobRoleCode != null && this.jobRoleExists(jobRoleCode) && !jobRoleCode.equals(temp.getJobRole().getJobRoleCode())) {
+            if (jobRoleCode != null && !Utils.compareStrings(jobRoleCode, temp.getJobRole().getJobRoleCode())) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9473,7 +9512,7 @@ public class Database {
     public List<ContractInterface> getNameContracts(String name) throws RemoteException {
         List<ContractInterface> tempContracts = new ArrayList();
         for (ContractInterface temp : this.getContracts()) {
-            if (name.equals(temp.getAgreementName())) {
+            if (Utils.compareStrings(name, temp.getAgreementName())) {
                 tempContracts.add(temp);
             }
         }
@@ -9484,7 +9523,7 @@ public class Database {
         List<ContractInterface> tempContracts = new ArrayList();
         if (this.officeExists(office)) {
             for (ContractInterface temp : this.getContracts()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempContracts.add(temp);
                 }
             }
@@ -9509,7 +9548,7 @@ public class Database {
         List<ContractInterface> tempContracts = new ArrayList();
         if (this.jobRoleExists(code)) {
             for (ContractInterface temp : this.getContracts()) {
-                if (code.equals(temp.getJobRole().getJobRoleCode())) {
+                if (Utils.compareStrings(code, temp.getJobRole().getJobRoleCode())) {
                     tempContracts.add(temp);
                 }
             }
@@ -9522,7 +9561,7 @@ public class Database {
         List<RentAccountInterface> tempRentAccounts = new ArrayList();
         for (RentAccountInterface temp : this.getRentAccounts()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAccName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9537,13 +9576,13 @@ public class Database {
             if (rent != null && rent != temp.getRent()) {
                 add = false;
             }
-            if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getTenancyRef()) {
+            if (agreementRef != null && agreementRef != temp.getTenancyRef()) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9559,7 +9598,7 @@ public class Database {
     public List<RentAccountInterface> getNameRentAcc(String name) throws RemoteException {
         List<RentAccountInterface> tempRentAcc = new ArrayList();
         for (RentAccountInterface temp : this.getRentAccounts()) {
-            if (name.equals(temp.getAccName())) {
+            if (Utils.compareStrings(name, temp.getAccName())) {
                 tempRentAcc.add(temp);
             }
         }
@@ -9594,7 +9633,7 @@ public class Database {
         List<RentAccountInterface> tempRentAcc = new ArrayList();
         if (this.officeExists(office)) {
             for (RentAccountInterface temp : this.getRentAccounts()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempRentAcc.add(temp);
                 }
             }
@@ -9635,7 +9674,7 @@ public class Database {
         List<LeaseAccountInterface> tempLeaseAccounts = new ArrayList();
         for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAccName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9653,10 +9692,10 @@ public class Database {
             if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getLeaseRef()) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9672,7 +9711,7 @@ public class Database {
     public List<LeaseAccountInterface> getNameLeaseAcc(String name) throws RemoteException {
         List<LeaseAccountInterface> tempLeaseAcc = new ArrayList();
         for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
-            if (name.equals(temp.getAccName())) {
+            if (Utils.compareStrings(name, temp.getAccName())) {
                 tempLeaseAcc.add(temp);
             }
         }
@@ -9707,7 +9746,7 @@ public class Database {
         List<LeaseAccountInterface> tempLeaseAcc = new ArrayList();
         if (this.officeExists(office)) {
             for (LeaseAccountInterface temp : this.getLeaseAccounts()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (!Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempLeaseAcc.add(temp);
                 }
             }
@@ -9748,7 +9787,7 @@ public class Database {
         List<EmployeeAccountInterface> tempEmployeeAccounts = new ArrayList();
         for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
             boolean add = true;
-            if (name != null && !name.isEmpty() && !name.equals(temp.getAccName())) {
+            if (name != null && !name.isEmpty() && !Utils.compareStrings(name, temp.getAccName())) {
                 add = false;
             }
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
@@ -9766,10 +9805,10 @@ public class Database {
             if (agreementRef != null && this.tenancyExists(agreementRef) && agreementRef != temp.getContractRef()) {
                 add = false;
             }
-            if (officeCode != null && !officeCode.isEmpty() && this.officeExists(officeCode) && !officeCode.equals(temp.getOfficeCode())) {
+            if (officeCode != null && !officeCode.isEmpty() && !Utils.compareStrings(officeCode, temp.getOfficeCode())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {
@@ -9785,17 +9824,17 @@ public class Database {
     public List<EmployeeAccountInterface> getNameEmployeeAcc(String name) throws RemoteException {
         List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
         for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
-            if (name.equals(temp.getAccName())) {
+            if (Utils.compareStrings(name, temp.getAccName())) {
                 tempEmployeeAcc.add(temp);
             }
         }
         return tempEmployeeAcc;
     }
     
-    public List<EmployeeAccountInterface    > getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
+    public List<EmployeeAccountInterface> getJobRoleEmployeeAcc(String jobRoleCode) throws RemoteException {
         List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
         for (ContractInterface temp : this.getContracts()) {
-            if (jobRoleCode.equals(temp.getJobRoleCode())) {
+            if (Utils.compareStrings(jobRoleCode, temp.getJobRoleCode())) {
                 if (this.employeeAccountExists(temp.getAccountRef())) {
                     tempEmployeeAcc.add(this.getEmployeeAccount(temp.getAccountRef()));
                 }
@@ -9808,7 +9847,7 @@ public class Database {
         List<EmployeeAccountInterface> tempEmployeeAcc = new ArrayList();
         if (this.officeExists(office)) {
             for (EmployeeAccountInterface temp : this.getEmployeeAccounts()) {
-                if (office.equals(temp.getOfficeCode())) {
+                if (Utils.compareStrings(office, temp.getOfficeCode())) {
                     tempEmployeeAcc.add(temp);
                 }
             }
@@ -9855,7 +9894,7 @@ public class Database {
             if (startDate != null && !DateConversion.dateEqual(startDate, temp.getStartDate())) {
                 add = false;
             }
-            if (createdBy != null && !createdBy.isEmpty() && !createdBy.equals(temp.getCreatedBy())) {
+            if (createdBy != null && !createdBy.isEmpty() && !Utils.compareStrings(createdBy, temp.getCreatedBy())) {
                 add = false;
             }
             if (createdDate != null && !DateConversion.dateEqual(createdDate, temp.getCreatedDate())) {

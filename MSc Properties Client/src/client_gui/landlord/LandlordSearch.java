@@ -76,11 +76,12 @@ public class LandlordSearch extends JFrame {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
         createButton = new JButton("Create Landlord");
+        landlordPanel = new LandlordPanel("Landlords");
 
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (landlordPanel.getSelectedObjectRef() != null) {
+                if (listener != null && landlordPanel.getSelectedObjectRef() != null) {
                     listener.intOmitted(landlordPanel.getSelectedObjectRef());
                     setVisible(false);
                     dispose();
@@ -102,8 +103,6 @@ public class LandlordSearch extends JFrame {
                 createLandlord();
             }
         });
-
-        landlordPanel = new LandlordPanel("Landlords");
         
         landlordPanel.setTableListener(new StringListener() {
             @Override

@@ -11,9 +11,12 @@ import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
+import client_gui.IntegerListener;
+import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
+import client_gui.PNGFileFilter;
 import client_gui.addressUsage.AddressUsageDetails;
 import client_gui.addressUsage.AddressUsagePanel;
 import client_gui.addressUsage.CreateAddressUsage;
@@ -23,6 +26,8 @@ import client_gui.contact.CreateContact;
 import client_gui.contact.UpdateContact;
 import client_gui.document.CreateDocument;
 import client_gui.document.DocumentPanel;
+import client_gui.document.UpdateDocument;
+import client_gui.document.ViewPreviousDocument;
 import client_gui.element.ElementDetails;
 import client_gui.employee.EmployeeDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
@@ -53,7 +58,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
@@ -132,6 +136,8 @@ public class PersonDetails extends JFrame {
             fileChooser = new JFileChooser();
             // If you need more choosbale files then add more choosable files
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
+            fileChooser.addChoosableFileFilter(new PNGFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -700,8 +706,8 @@ public class PersonDetails extends JFrame {
             try {
                 note = person.getNote(notePanel.getSelectedObjectRef());
                 if (note != null) {
-                    NoteDetails contractDetails = new NoteDetails(client, note, "Person", person.getPersonRef());
-                    contractDetails.setVisible(true);
+                    NoteDetails noteDetails = new NoteDetails(client, note, "Person", person.getPersonRef());
+                    noteDetails.setVisible(true);
                 }
             } catch (RemoteException ex) {
                 Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
@@ -723,23 +729,9 @@ public class PersonDetails extends JFrame {
         Integer selection = documentPanel.getSelectedObjectRef();
         if (selection != null) {
             try {
-                Document document = person.getDocument(selection);
-                if (document != null) {
-                    if(fileChooser.showOpenDialog(PersonDetails.this) == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
-                        int result = client.updatePersonDocument(person.getPersonRef(), document.getDocumentRef(), file.getPath());
-                        if (result > 0) {
-                            String message = "Document " + selection + " has been successfully updated";
-                            String title = "Information";
-                            OKDialog.okDialog(PersonDetails.this, message, title);
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE Document " + document.getDocumentRef() + "\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(PersonDetails.this, message, title);
-                        }
-                        System.out.println(fileChooser.getSelectedFile());
-                    }
-                }
+                UpdateDocument updateDoc = new UpdateDocument(client, selection, "Person", person.getPersonRef());
+                updateDoc.setVisible(true);
+                System.out.println("TEST - Update Document");
             } catch (RemoteException ex) {
                 Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -776,6 +768,30 @@ public class PersonDetails extends JFrame {
             try {
                 document = person.getDocument(documentPanel.getSelectedObjectRef());
                 client.downloadPersonDocument(person.getPersonRef(), document.getDocumentRef(), document.getCurrentVersion());
+            } catch (RemoteException ex) {
+                Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void viewPreviousDocument() {
+        if (documentPanel.getSelectedObjectRef() != null) {
+            final Document document;
+            try {
+                document = person.getDocument(documentPanel.getSelectedObjectRef());
+                if (document != null) {
+                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                        @Override
+                        public void intOmitted(int ref) {
+                            try {
+                                client.downloadPersonDocument(person.getPersonRef(), document.getDocumentRef(), ref);
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                    viewPreviousDocument.setVisible(true);
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(PersonDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -938,6 +954,10 @@ public class PersonDetails extends JFrame {
                     System.out.println("TEST - View Document");
 
                 }
+                break;
+                
+            case "View Previous":
+                viewPreviousDocument();
                 break;
 
             case "Refresh":

@@ -47,13 +47,15 @@ public class DocumentPanel extends JPanel {
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
         
         JMenuItem createItem = new JMenuItem("Create Document");
-        JMenuItem viewItem = new JMenuItem("View Document");
+        JMenuItem viewItem = new JMenuItem("View Current Document");
+        JMenuItem viewPItem = new JMenuItem("View Previous Version");
         JMenuItem updateItem = new JMenuItem("Update Document");
         JMenuItem deleteItem = new JMenuItem("Delete Document");
         JMenuItem refreshItem = new JMenuItem("Refresh Documents");
         
         popup.add(createItem);
         popup.add(viewItem);
+        popup.add(viewPItem);
         popup.add(updateItem);
         popup.add(deleteItem);
         popup.add(refreshItem);
@@ -85,6 +87,15 @@ public class DocumentPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if(actionListener != null) {
                     actionListener.textOmitted("View Details");
+                }
+            }
+        });
+        
+        viewPItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(actionListener != null) {
+                    actionListener.textOmitted("View Previous");
                 }
             }
         });

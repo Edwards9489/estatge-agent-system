@@ -179,19 +179,19 @@ public class UpdateElement extends JFrame {
                                 
                             }
                             if (result > 0) {
-                                String message = "The new " + elementType + " Element has been updated with the unique code of " + element.getCode();
+                                String message = "The " + elementType + " Element with the unique code " + element.getCode() + " has been updated successfully";
                                 String title = "Information";
                                 OKDialog.okDialog(UpdateElement.this, message, title);
                                 setVisible(false);
                                 dispose();
                             } else {
-                                String message = "There is some errors with the information supplied to CREATE a new " + elementType + " Element\nPlease check the information supplied";
+                                String message = "There is some errors with the information supplied to UPDATE " + elementType + " Element\nPlease check the information supplied";
                                 String title = "Error";
                                 OKDialog.okDialog(UpdateElement.this, message, title);
                             }
                         }
                     } else {
-                        String message = "There is some errors with the information supplied to CREATE a new " + elementType + " Element\nPlease check the information supplied";
+                        String message = "There is some errors with the information supplied to UPDATE " + elementType + " Element\nPlease check the information supplied";
                         String title = "Error";
                         OKDialog.okDialog(UpdateElement.this, message, title);
                     }

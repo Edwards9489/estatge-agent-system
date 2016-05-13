@@ -6,6 +6,7 @@
 package Test_Package;
 
 import client_application.ClientImpl;
+import static client_application.ClientImpl.createClient;
 import client_gui.EndObject;
 import client_gui.IntegerListener;
 import client_gui.address.AddressDetails;
@@ -91,6 +92,7 @@ import interfaces.AddressUsageInterface;
 import interfaces.ApplicationInterface;
 import interfaces.ContactInterface;
 import interfaces.ContractInterface;
+import interfaces.Document;
 import interfaces.Element;
 import interfaces.EmployeeAccountInterface;
 import interfaces.EmployeeInterface;
@@ -124,7 +126,7 @@ public class NEWTEST {
     public static void main(String[] args) {
         
         try {
-            ClientImpl client = (ClientImpl) ClientImpl.createClient(new String[]{"127.0.0.1", "TEST", "DEDWARDS", "ToxicTEST"});
+            ClientImpl client = (ClientImpl) createClient(new String[]{"127.0.0.1", "TEST", "DEDWARDS", "ToxicTEST"});
             
             TenancyInterface tenancy = client.getTenancy(4);
             LeaseInterface lease = client.getLease(1);
@@ -160,11 +162,11 @@ public class NEWTEST {
                 }
             }
             
-            CreateApp createApp = new CreateApp(client);
-            createApp.setVisible(true);
-            
-            UpdateApp updateApp = new UpdateApp(client, application);
-            updateApp.setVisible(true);
+//            CreateApp createApp = new CreateApp(client);
+//            createApp.setVisible(true);
+//            
+//            UpdateApp updateApp = new UpdateApp(client, application);
+//            updateApp.setVisible(true);
             
 //            HomeForm homeForm = new HomeForm(client);
 //            homeForm.setVisible(true);
@@ -201,6 +203,13 @@ public class NEWTEST {
 //                
 //            });
 //            appSearchListener.setVisible(true);
+            
+            
+            System.out.println("Document Size: " + application.getDocuments().size());
+            
+            for (Document document : application.getDocuments()) {
+                System.out.println(document.getDocumentPath(document.getCurrentVersion()));
+            }
             
             
         } catch (RemoteException | NotBoundException | UnknownHostException | MalformedURLException ex) {

@@ -57,7 +57,7 @@ public class OfficeTableModel extends AbstractTableModel {
                 case 0:
                     return element.getOfficeCode();
                 case 1:
-                    return element.getAddress();
+                    return element.getAddress().printAddress();
                 case 2:
                     return formatter.format(element.getStartDate());
                 case 3:

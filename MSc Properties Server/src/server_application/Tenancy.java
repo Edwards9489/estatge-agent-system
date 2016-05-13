@@ -4,11 +4,13 @@
  * and open the template in the editor.
  */
 package server_application;
+import classes.Utils;
 import interfaces.ApplicationInterface;
 import interfaces.Element;
 import interfaces.ModifiedByInterface;
 import interfaces.PropertyInterface;
 import interfaces.TenancyInterface;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.Date;
 
@@ -156,6 +158,7 @@ public class Tenancy extends Agreement implements TenancyInterface {
      */
     @Override
     public double getExpectedRevenue() throws RemoteException {
-        return rent + charges;
+        BigDecimal decimalValue = Utils.convertDouble(rent + charges);
+        return decimalValue.doubleValue();
     }
 }

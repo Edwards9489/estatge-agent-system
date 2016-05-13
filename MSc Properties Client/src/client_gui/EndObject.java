@@ -7,9 +7,6 @@ package client_gui;
 
 import client_application.ClientImpl;
 import interfaces.Element;
-import interfaces.InvolvedPartyInterface;
-import interfaces.JobRoleBenefitInterface;
-import interfaces.PropertyElementInterface;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

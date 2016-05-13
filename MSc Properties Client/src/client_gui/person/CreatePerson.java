@@ -190,12 +190,16 @@ public class CreatePerson extends JFrame {
                         System.out.println("2: " + forename != null);
                         System.out.println("3: " + !forename.isEmpty());
                         System.out.println("4: " + middleName != null);
-                        System.out.println("5: " + !middleName.isEmpty());
+                        if (middleName != null) {
+                            System.out.println("5: " + !middleName.isEmpty());
+                        }
                         System.out.println("6: " + surname != null);
                         System.out.println("7: " + !surname.isEmpty());
                         System.out.println("8: " + dob != null);
                         System.out.println("9: " + niNumber != null);
-                        System.out.println("10: " + !niNumber.isEmpty());
+                        if (niNumber != null) {
+                            System.out.println("10: " + !niNumber.isEmpty());
+                        }
                         System.out.println("11: " + !genderCode.equals("-"));
                         System.out.println("12: " + !maritalCode.equals("-"));
                         System.out.println("13: " + !languageCode.equals("-"));
