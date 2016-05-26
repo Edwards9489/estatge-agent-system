@@ -131,25 +131,24 @@
 
 	</form>
 	</td>
-	<td style="padding-left: 20px"><img src="../featured_house/bayview_2.jpg" height="120" width="180"/></td>
+	<td style="padding-left: 20px"><img src="../images/office_front.jpg" height="120" width="180"/></td>
 	</tr>
 	</table>
 </div>
 
 <div id="careers">
 	<table border='0'>
-	<tr><td><h2>Careers/Vacancies</h2>
+	<tr><td><h2>Careers/Vacancies</h2> 
 	<p>Ever thought of a Career with<br>an Estate Agent?<br></p>
 	<p><a href="MSc Properties - Careers.php" border="0"> Find out more here.</a> </p>
 	</td>
-	<td style="padding-left: 20px"><br><img src="../featured_house/bayview_2.jpg" height="120" width="180"/></td>
+	<td style="padding-left: 20px"><br><img src="../images/careers_logo2.jpg" height="120" width="180"/></td>
 	</tr>
 	</table>
 </div>
 
 <div id="endpage" style="top: 965px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+	<p> MSc Properties (c) </p>
 </div>
 
 

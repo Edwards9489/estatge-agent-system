@@ -101,7 +101,7 @@ public class ClientImpl extends Observable implements Client {
         if (environment == null) {
             environment = "ServerLIVE";
         } else {
-            environment = "Server" + environment;
+            environment = "server" + environment;
         }
         System.out.println("Environment : " + environment);
         System.out.println("Trying host : " + host);
@@ -110,6 +110,7 @@ public class ClientImpl extends Observable implements Client {
         Registry registry = LocateRegistry.getRegistry(host);
 
         //lookup the server and get the login object
+        String lookup = "rmi://" + host + "/" + environment;
         loginObject = (LoginInterface) registry.lookup(environment);
         System.out.println("Server found! Trying to Login..." + host);
         
@@ -656,7 +657,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updatePersonDocument(pRef, dRef, documentData, comment, this.getUsername());
+                return server.updatePersonDocument(pRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -742,9 +743,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int createOffice(String officeCode, int addrRef, Date startDate) throws RemoteException {
+    public int createOffice(String officeCode, int addrRef, Double addrLong, Double addrLat, Date startDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.createOffice(officeCode, addrRef, startDate, this.getUsername());
+            return server.createOffice(officeCode, addrRef, addrLong, addrLat, startDate, this.getUsername());
         }
         return 0;
     }
@@ -815,7 +816,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateOfficeDocument(oCode, dRef, documentData, comment, this.getUsername());
+                return server.updateOfficeDocument(oCode, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1009,6 +1010,7 @@ public class ClientImpl extends Observable implements Client {
     
     public int updateApplicationDocument(int aRef, int dRef, File file, String comment) throws RemoteException {
         if(this.server.isAlive()) {
+            System.out.println("IN CLIENT METHOD");
             byte[] documentData = null;
             try {
                 documentData = this.uploadDocument(file);
@@ -1016,7 +1018,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateApplicationDocument(aRef, dRef, documentData, comment, this.getUsername());
+                return server.updateApplicationDocument(aRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1053,9 +1055,9 @@ public class ClientImpl extends Observable implements Client {
         return 0;
     }
 
-    public int endApplicationAddressUsage(int addrRef, int aRef, Date endDate) throws RemoteException {
+    public int endApplicationAddressUsage(int aRef, int addrRef, Date endDate) throws RemoteException {
         if (this.server.isAlive()) {
-            return server.endApplicationAddressUsage(addrRef, aRef, endDate, user.getUsername());
+            return server.endApplicationAddressUsage(aRef, addrRef, endDate, user.getUsername());
         }
         return 0;
     }
@@ -1231,7 +1233,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updatePropertyDocument(pRef, dRef, documentData, comment, this.getUsername());
+                return server.updatePropertyDocument(pRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1490,7 +1492,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateTenancyDocument(tRef, dRef, documentData, comment, this.getUsername());
+                return server.updateTenancyDocument(tRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1614,7 +1616,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateLeaseDocument(lRef, dRef, documentData, comment, this.getUsername());
+                return server.updateLeaseDocument(lRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1731,7 +1733,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateContractDocument(cRef, dRef, documentData, comment, this.getUsername());
+                return server.updateContractDocument(cRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1806,7 +1808,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateRentAccDocument(rAccRef, dRef, documentData, comment, this.getUsername());
+                return server.updateRentAccDocument(rAccRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1881,7 +1883,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateLeaseAccDocument(lAccRef, dRef, documentData, comment, this.getUsername());
+                return server.updateLeaseAccDocument(lAccRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -1956,7 +1958,7 @@ public class ClientImpl extends Observable implements Client {
                 Logger.getLogger(ClientImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (documentData != null && documentData.length >= 1) {
-                return server.updateEmployeeAccDocument(eAccRef, dRef, documentData, comment, this.getUsername());
+                return server.updateEmployeeAccDocument(eAccRef, dRef, file.getName(), documentData, comment, this.getUsername());
             }
         }
         return 0;
@@ -3299,6 +3301,41 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
     
+    public String generateEmployeeReport(Date startDate, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.generateEmployeeReport(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public String generateOfficeReport(Date startDate, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.generateOfficeReport(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public String generateOfficeFinanceReport(Date startDate, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.generateOfficeFinanceReport(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public String generateFinanceReport(Date startDate, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.generateFinanceReport(startDate, endDate);
+        }
+        return null;
+    }
+    
+    public String generateReport(Date startDate, Date endDate) throws RemoteException {
+        if (this.server.isAlive()) {
+            return this.server.generateReport(startDate, endDate);
+        }
+        return null;
+    }
+    
     public List<AgreementInterface> getUserTenancies() throws RemoteException {
         if (this.server.isAlive()) {
             return this.server.getUserTenancies(user.getOfficeCode());
@@ -3331,15 +3368,16 @@ public class ClientImpl extends Observable implements Client {
         return null;
     }
 
-    private File openDocument(byte[] documentData, String extension) throws IOException {
-        File file = File.createTempFile("msctmp", extension, new File("D:/"));
-        try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
-            output.write(documentData, 0, documentData.length);
-            output.flush();
+    private void openDocument(byte[] documentData, String extension) throws IOException {
+        if (documentData != null) {
+            File file = File.createTempFile("msctmp", extension, new File("D:/"));
+            try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
+                output.write(documentData, 0, documentData.length);
+                output.flush();
+            }
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(file);
+            file.deleteOnExit();
         }
-        Desktop desktop = Desktop.getDesktop();
-        desktop.open(file);
-
-        return file;
     }
 }

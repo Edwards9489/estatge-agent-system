@@ -90,7 +90,7 @@ public class UpdateJobRoleBenefit extends JFrame {
             charge.setSelected(jobRoleBenefit.isSalaryBenefit());
             
             elementField = new JComboBox();
-            elementField.addItem("-");
+            elementField.addItem("  ---  ");
             try {
                 for (Element benefits : client.getCurrentJobBenefits()) {
                     elementField.addItem(benefits.getCode());

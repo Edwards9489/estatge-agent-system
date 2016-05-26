@@ -25,10 +25,10 @@ public class SendEmail {
     private final String password;
 
     private final String host;
-    Properties properties;
+    private final Properties properties;
 
     public SendEmail(String from, String password, String host) {
-        this.from = from;
+        this.from = from;   
         this.password = password;
         this.host = host;
         properties = System.getProperties();

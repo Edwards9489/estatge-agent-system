@@ -6,10 +6,12 @@
 package client_gui.document;
 
 import client_application.ClientImpl;
+import client_gui.DOCFileFilter;
 import client_gui.JPEGFileFilter;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.PNGFileFilter;
+import client_gui.TXTFileFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -82,11 +84,13 @@ public class CreateDocument extends JFrame {
     }
     
     private void layoutComponents() {
+        
         fileChooser = new JFileChooser();
-        // If you need more choosbale files then add more choosable files
+        fileChooser.addChoosableFileFilter(new DOCFileFilter());
+        fileChooser.addChoosableFileFilter(new JPEGFileFilter());
         fileChooser.addChoosableFileFilter(new PDFFileFilter());
         fileChooser.addChoosableFileFilter(new PNGFileFilter());
-        fileChooser.addChoosableFileFilter(new JPEGFileFilter());
+        fileChooser.addChoosableFileFilter(new TXTFileFilter());
         
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
@@ -147,7 +151,7 @@ public class CreateDocument extends JFrame {
                             }
 
                             if (result > 0) {
-                                String message = "The new Document for " + documentType + " has been created and assigned Document Usage Ref " + result;
+                                String message = "The new Document for " + documentType + " has been created and assigned Document Ref " + result;
                                 String title = "Information";
                                 OKDialog.okDialog(CreateDocument.this, message, title);
                                 setVisible(false);

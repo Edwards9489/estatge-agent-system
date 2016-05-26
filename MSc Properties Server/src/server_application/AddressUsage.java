@@ -93,7 +93,7 @@ public class AddressUsage extends UnicastRemoteObject implements AddressUsageInt
      * @param modifiedBy
      */
     public void setEndDate(Date endDate, ModifiedByInterface modifiedBy) {
-        if(endDate == null || endDate.after(this.startDate)) {
+        if(endDate == null || !endDate.before(this.startDate)) {
             this.endDate = endDate;
             this.modifiedBy(modifiedBy);
         }

@@ -92,7 +92,7 @@ public class AppSearch extends JFrame {
         createButton = new JButton("Create");
         searchValue = new JTextField(15);
         searchOn = new JComboBox();
-        searchOn.addItem("-");
+        searchOn.addItem("  ---  ");
         searchOn.addItem("App Ref");
         searchOn.addItem("Inv Party Ref");
         searchOn.addItem("Corr Name");
@@ -100,7 +100,7 @@ public class AppSearch extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
+                if (!searchOn.getSelectedItem().equals("  ---  ") && !searchValue.getText().isEmpty()) {
                     try {
                         List<ApplicationInterface> applications = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();

@@ -689,7 +689,7 @@ public class InvPartyDetails extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 try {
-                    EndObject endInvParty = new EndObject(client, "Involved Party", invParty.getInvolvedPartyRef());
+                    EndObject endInvParty = new EndObject(client, "Involved Party", invParty.getInvolvedPartyRef(), invParty.getApplicationRef());
                     endInvParty.setVisible(true);
                 } catch (RemoteException ex) {
                     Logger.getLogger(InvPartyDetails.class.getName()).log(Level.SEVERE, null, ex);

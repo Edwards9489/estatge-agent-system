@@ -92,7 +92,7 @@ public class PropertySearch extends JFrame {
         createButton = new JButton("Create");
         searchValue = new JTextField(15);
         searchOn = new JComboBox();
-        searchOn.addItem("-");
+        searchOn.addItem("  ---  ");
         searchOn.addItem("Prop Ref");
         searchOn.addItem("Status");
         searchOn.addItem("Prop Type");
@@ -101,7 +101,7 @@ public class PropertySearch extends JFrame {
         searchButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
+                if (!searchOn.getSelectedItem().equals("  ---  ") && !searchValue.getText().isEmpty()) {
                     try {
                         List<PropertyInterface> properties = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();

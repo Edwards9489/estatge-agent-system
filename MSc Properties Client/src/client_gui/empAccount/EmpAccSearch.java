@@ -88,7 +88,7 @@ public class EmpAccSearch extends JFrame {
         advSearchButton = new JButton("Adv Search");
         searchValue = new JTextField(15);
         searchOn = new JComboBox();
-        searchOn.addItem("-");
+        searchOn.addItem("  ---  ");
         searchOn.addItem("Account Ref");
         searchOn.addItem("Contract Ref");
         searchOn.addItem("Job Role Code");
@@ -98,7 +98,7 @@ public class EmpAccSearch extends JFrame {
         searchButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
+                if (!searchOn.getSelectedItem().equals("  ---  ") && !searchValue.getText().isEmpty()) {
                     try {
                         List<EmployeeAccountInterface> empAccounts = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();

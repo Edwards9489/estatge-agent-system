@@ -97,13 +97,13 @@ public class UpdateProperty extends JFrame {
             startField.setFormats(formatter);
             startField.setDate(property.getAcquiredDate());
             propTypeField = new JComboBox();
-            propTypeField.addItem("-");
+            propTypeField.addItem("  ---  ");
             for (Element temp : client.getCurrentPropertyTypes()) {
                 propTypeField.addItem(temp.getCode());
             }
             propTypeField.setSelectedItem(property.getPropType().getCode());
             propSubTypeField = new JComboBox();
-            propSubTypeField.addItem("-");
+            propSubTypeField.addItem("  ---  ");
             for (Element temp : client.getCurrentPropertySubTypes()) {
                 propSubTypeField.addItem(temp.getCode());
             }
@@ -124,7 +124,7 @@ public class UpdateProperty extends JFrame {
                             String propSubTypeCode = (String) propSubTypeField.getSelectedItem();
                             
                             
-                            if (startDate != null && !propTypeCode.equals("-") && !propSubTypeCode.equals("-") && addrRef > 0) {
+                            if (startDate != null && !propTypeCode.equals("  ---  ") && !propSubTypeCode.equals("  ---  ") && addrRef > 0) {
                                 try {
                                     
                                     result = client.updateProperty(property.getPropRef(), addrRef, startDate, propTypeCode, propSubTypeCode);

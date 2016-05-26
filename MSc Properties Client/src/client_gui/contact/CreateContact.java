@@ -83,7 +83,7 @@ public class CreateContact extends JFrame {
             valueField = new JTextField();
             contactTypeField = new JComboBox();
 
-            contactTypeField.addItem("-");
+            contactTypeField.addItem("  ---  ");
             for (Element contactType : client.getCurrentContactTypes()) {
                 contactTypeField.addItem(contactType.getCode());
             }
@@ -99,7 +99,7 @@ public class CreateContact extends JFrame {
                         Date date = dateField.getDate();
                         String comment = textArea.getText();
 
-                        if (contactTypeCode != null && !contactTypeCode.equals("-") && value != null && !value.isEmpty() && date != null) {
+                        if (contactTypeCode != null && !contactTypeCode.equals("  ---  ") && value != null && !value.isEmpty() && date != null) {
                             try {
                                 switch (type) {
                                     case "Person":

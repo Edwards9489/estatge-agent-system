@@ -98,8 +98,8 @@ public class CreateContract extends JFrame {
         jobRoleField = new JComboBox();
         officeField = new JComboBox();
         
-        officeField.addItem("-");
-        jobRoleField.addItem("-");
+        officeField.addItem("  ---  ");
+        jobRoleField.addItem("  ---  ");
 
         try {
             for (OfficeInterface temp : client.getOffices()) {
@@ -153,7 +153,7 @@ public class CreateContract extends JFrame {
 
                     int result;
                     try {
-                        if (emp > -1 && length > -1 && startDate != null && jobCode != null && officeCode != null) {
+                        if (emp > -1 && length > -1 && startDate != null && jobCode != null && !jobCode.equals("  ---  ")  && officeCode != null && !officeCode.equals("  ---  ")) {
                             int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new contract for Employee " + emp + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                             if (answer == JOptionPane.YES_OPTION) {
                                 result = client.createContract(startDate, length, emp, jobCode, officeCode);
@@ -391,13 +391,4 @@ public class CreateContract extends JFrame {
             officeField.setSelectedItem(officeCode);
         }
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new CreateContract().setVisible(true);
-//            }
-//        });
-//    }
 }

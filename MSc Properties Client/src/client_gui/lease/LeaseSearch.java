@@ -93,7 +93,7 @@ public class LeaseSearch extends JFrame {
         createButton = new JButton("Create");
         searchValue = new JTextField(15);
         searchOn = new JComboBox();
-        searchOn.addItem("-");
+        searchOn.addItem("  ---  ");
         searchOn.addItem("Lease Ref");
         searchOn.addItem("Prop Ref");
         searchOn.addItem("Landlord Ref");
@@ -104,7 +104,7 @@ public class LeaseSearch extends JFrame {
         searchButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (!searchOn.getSelectedItem().equals("-") && !searchValue.getText().isEmpty()) {
+                if (!searchOn.getSelectedItem().equals("  ---  ") && !searchValue.getText().isEmpty()) {
                     try {
                         List<LeaseInterface> leases = new ArrayList();
                         String searchOnText = (String) searchOn.getSelectedItem();

@@ -675,10 +675,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updatePersonDocument(int pRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updatePersonDocument(int pRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updatePersonDocument(pRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updatePersonDocument(pRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -796,10 +796,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int createOffice(String officeCode, int addrRef, Date startDate, String createdBy) throws RemoteException {
+    public int createOffice(String officeCode, int addrRef, Double addrLong, Double addrLat, Date startDate, String createdBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getEmployeeWrite() != null) && user.getEmployeeWrite()) {
-                return theServer.createOffice(officeCode, addrRef, startDate, createdBy);
+                return theServer.createOffice(officeCode, addrRef, addrLong, addrLat, startDate, createdBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -884,10 +884,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateOfficeDocument(String oCode, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateOfficeDocument(String oCode, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getEmployeeUpdate() != null) && user.getEmployeeUpdate()) {
-                return theServer.updateOfficeDocument(oCode, dRef, buffer, comment, modifiedBy);
+                return theServer.updateOfficeDocument(oCode, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1159,10 +1159,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateApplicationDocument(int aRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateApplicationDocument(int aRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updateApplicationDocument(aRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateApplicationDocument(aRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1217,6 +1217,8 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     public int endApplicationAddressUsage(int aRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
+                System.out.println("\nServerProxy\nApp Ref: " + aRef);
+                System.out.println("\nAddress Ref: " + aRef);
                 return theServer.endApplicationAddressUsage(aRef, addrUsageRef, endDate, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -1453,10 +1455,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updatePropertyDocument(int pRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updatePropertyDocument(int pRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updatePropertyDocument(pRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updatePropertyDocument(pRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1816,10 +1818,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateTenancyDocument(int tRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateTenancyDocument(int tRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updateTenancyDocument(tRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateTenancyDocument(tRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -1981,10 +1983,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateLeaseDocument(int lRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateLeaseDocument(int lRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updateLeaseDocument(lRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateLeaseDocument(lRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2124,10 +2126,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateContractDocument(int cRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateContractDocument(int cRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getEmployeeUpdate() != null) && user.getEmployeeUpdate()) {
-                return theServer.updateContractDocument(cRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateContractDocument(cRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2201,10 +2203,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateRentAccDocument(int rRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateRentAccDocument(int rRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updateRentAccDocument(rRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateRentAccDocument(rRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2278,10 +2280,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateLeaseAccDocument(int lRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateLeaseAccDocument(int lRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                return theServer.updateLeaseAccDocument(lRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateLeaseAccDocument(lRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -2355,10 +2357,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public int updateEmployeeAccDocument(int eRef, int dRef, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
+    public int updateEmployeeAccDocument(int eRef, int dRef, String fileName, byte[] buffer, String comment, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getEmployeeUpdate() != null) && user.getEmployeeUpdate()) {
-                return theServer.updateEmployeeAccDocument(eRef, dRef, buffer, comment, modifiedBy);
+                return theServer.updateEmployeeAccDocument(eRef, dRef, fileName, buffer, comment, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
         }
@@ -4129,10 +4131,10 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public void generateReport(Date startDate, Date endDate) throws RemoteException {
+    public String generateReport(Date startDate, Date endDate) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
-                theServer.generateReport(startDate, endDate);
+                return theServer.generateReport(startDate, endDate);
             } else {
                 throw new InvalidSecurityPriviligies(user.getUsername());
             }

@@ -99,7 +99,7 @@ public class UpdateInvParty extends JFrame {
         dateField = new JXDatePicker();
         dateField.setFormats(formatter);
         relationshipField = new JComboBox();
-        relationshipField.addItem("-");
+        relationshipField.addItem("  ---  ");
 
         try {
             for (Element temp : client.getRelationships()) {
@@ -133,7 +133,7 @@ public class UpdateInvParty extends JFrame {
                 Date startDate = null;
                 boolean correctInput = false;
                 try {
-                    if (!relationshipField.getSelectedItem().equals("-")) {
+                    if (!relationshipField.getSelectedItem().equals("  ---  ")) {
                         if (dateField.getDate() != null) {
                             relationshipCode = (String) relationshipField.getSelectedItem();
                             startDate = dateField.getDate();
@@ -146,7 +146,6 @@ public class UpdateInvParty extends JFrame {
                 }
 
                 if (correctInput) {
-
                     try {
 
                         System.out.println("Person Ref: " + invParty.getInvolvedPartyRef());
@@ -371,13 +370,4 @@ public class UpdateInvParty extends JFrame {
             appRefField.setText(String.valueOf(appRef));
         }
     }
-
-//    public static void main(String[] args) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                new UpdateInvParty().setVisible(true);
-//            }
-//        });
-//    }
 }

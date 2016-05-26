@@ -149,8 +149,8 @@ public class TestDatabase_TEST {
         Contact contact = new Contact(1, element, "test@test.com", new Date(), note16, "DEDWARDS", new Date());
         Contact contact2 = new Contact(2, element, "test@test.com", new Date(), note17, "DEDWARDS", new Date());
         
-        Office office = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
-        Office office2 = new Office("BHP", address3, new Date(), "DEDWARDS", new Date());
+        Office office = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
+        Office office2 = new Office("BHP", address3, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
         
         Landlord landlord = new Landlord(1, person, "DEDWARDS", new Date());
         Landlord landlord2 = new Landlord(2, person2, "DEDWARDS", new Date());
@@ -230,7 +230,7 @@ public class TestDatabase_TEST {
             System.out.println("Person Documents: " + person.getDocuments().size());
             System.out.println("Person Addresses: " + person.getAddresses().size() + "\n");
             System.out.println("System People: " + db.countPeople() + "\n");
-            System.out.println("Document previous versions: " + document.getPreviousVersions().size());
+            System.out.println("Document versions: " + document.getCurrentVersion());
 
 
 

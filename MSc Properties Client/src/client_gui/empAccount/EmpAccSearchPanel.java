@@ -10,7 +10,6 @@ import client_gui.IntegerListener;
 import client_gui.StringArrayListener;
 import client_gui.contract.ContractSearch;
 import client_gui.rentAcc.RentAccSearchPanel;
-import client_gui.tenancy.TenSearch;
 import interfaces.OfficeInterface;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -94,7 +93,7 @@ public class EmpAccSearchPanel extends JPanel {
             salaryField = new JTextField(6);
             agreementRefField = new JTextField(3);
             officeField = new JComboBox();
-            officeField.addItem("-");
+            officeField.addItem("  ---  ");
             for (OfficeInterface temp : client.getOffices()) {
                 officeField.addItem(temp.getOfficeCode());
             }
@@ -124,7 +123,7 @@ public class EmpAccSearchPanel extends JPanel {
                     if (!salaryField.getText().isEmpty()) {
                         salary = salaryField.getText();
                     }
-                    if (!officeField.getSelectedItem().equals("-")) {
+                    if (!officeField.getSelectedItem().equals("  ---  ")) {
                         officeCode = (String) officeField.getSelectedItem();
                     }
                     if (!agreementRefField.getText().isEmpty()) {

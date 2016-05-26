@@ -34,8 +34,9 @@ import client_gui.contract.ContractDetails;
 import client_gui.contract.CreateContract;
 import client_gui.contract.UpdateContract;
 import client_gui.document.CreateDocument;
+import client_gui.document.DocumentDetails;
 import client_gui.document.UpdateDocument;
-import client_gui.document.ViewPreviousDocument;
+import client_gui.document.ViewDocument;
 import client_gui.empAccount.EmpAccDetails;
 import client_gui.employee.EmployeeDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
@@ -84,7 +85,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -119,7 +119,6 @@ public class OfficeDetails extends JFrame {
     private ContactPanel contactPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-    private JFileChooser fileChooser;
     private JLabel startDate;
     private JLabel endDate;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -147,12 +146,6 @@ public class OfficeDetails extends JFrame {
 
     private void layoutComponents() {
         try {
-            fileChooser = new JFileChooser();
-            // If you need more choosbale files then add more choosable files
-            fileChooser.addChoosableFileFilter(new PDFFileFilter());
-            fileChooser.addChoosableFileFilter(new PNGFileFilter());
-            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
-
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -861,9 +854,13 @@ public class OfficeDetails extends JFrame {
     private void endContact() {
         Integer selection = contactPanel.getSelectedObjectRef();
         if (selection != null) {
-            System.out.println("Contact Ref: " + selection);
-            EndObject endContact = new EndObject(client, "Contact", selection);
-            endContact.setVisible(true);
+            try {
+                System.out.println("Contact Ref: " + selection);
+                EndObject endContact = new EndObject(client, "Office Contact", selection, office.getOfficeCode());
+                endContact.setVisible(true);
+            } catch (RemoteException ex) {
+                Logger.getLogger(OfficeDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -953,25 +950,26 @@ public class OfficeDetails extends JFrame {
         }
     }
 
-    private void viewDocument() {
+    private void viewDocumentDetails() {
         if (documentPanel.getSelectedObjectRef() != null) {
             Document document;
             try {
                 document = office.getDocument(documentPanel.getSelectedObjectRef());
-                client.downloadOfficeDocument(office.getOfficeCode(), document.getDocumentRef(), document.getCurrentVersion());
+                DocumentDetails documentDetails = new DocumentDetails(client, document, "Office", office.getOfficeCode());
+                documentDetails.setVisible(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(OfficeDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void viewPreviousDocument() {
+    private void viewDocument() {
         if (documentPanel.getSelectedObjectRef() != null) {
             final Document document;
             try {
                 document = office.getDocument(documentPanel.getSelectedObjectRef());
                 if (document != null) {
-                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                    ViewDocument viewPreviousDocument = new ViewDocument(document.getCurrentVersion(), new IntegerListener() {
                         @Override
                         public void intOmitted(int ref) {
                             try {
@@ -1202,7 +1200,7 @@ public class OfficeDetails extends JFrame {
                         break;
                     case "Documents":
                         //Document
-                        viewDocument();
+                        viewDocumentDetails();
                         System.out.println("TEST - View Document");
                         break;
                     case "Contracts":
@@ -1219,7 +1217,7 @@ public class OfficeDetails extends JFrame {
                     break;
                 
                 case "View Previous":
-                    viewPreviousDocument();
+                    viewDocument();
                     break;
 
                 case "Refresh":

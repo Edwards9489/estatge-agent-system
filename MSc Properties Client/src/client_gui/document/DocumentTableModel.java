@@ -59,7 +59,7 @@ public class DocumentTableModel extends AbstractTableModel {
                 case 1:
                     return document.getCurrentDocumentName();
                 case 2:
-                    return document.getLastModifiedBy();
+                    return document.getCreatedBy();
                 case 3:
                     return formatter.format(document.getCreatedDate());
             }

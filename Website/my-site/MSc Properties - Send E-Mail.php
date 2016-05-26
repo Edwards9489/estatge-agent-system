@@ -27,7 +27,14 @@
 
 <div id="email">
 
-	<h3><strong>Hello </strong></h3>
+	<h3><strong>Confirmation</strong></h3>
+	<p> <br>Thank you for registering with MSc Properties </p>
+	<p> You will be contacted within 3 working days to arrange an interview <br> <br> </p>
+	<div>
+	<a href="MSc Properties - Home.php" border="0">
+	<p> Go Back Home <br> <br> <br> <br> <br> </p>
+	</a>
+	</div>
 	
 	<?php
 		include "MSc_Properties - Common_Functions.php";
@@ -74,12 +81,12 @@
 			
 			$emailFrom = "online@msc_properties.com";
 			
-			$subject = "RENTING";
+			$subject = $firstname." ".$lastname." RENTING INTEREST";
 			
-			$message = $firstname." ".$lastname." showed an interest in Renting\n\n";
-			$message .= "E-Mail: ".$email."\n";
-			$message .= "Tel: ".$phone."\n";
-			$message .= "Beds: ".$beds."\n";
+			$message = $firstname." ".$lastname." showed an interest in Renting<br><br>";
+			$message .= "E-Mail: ".$email."<br>";
+			$message .= "Tel: ".$phone."<br>";
+			$message .= "Beds: ".$beds."<br>";
 			
 			//mail($emailTo, $subject, $message); - need to have local SMTP server running
 			
@@ -104,10 +111,10 @@
 
 			$mail->SetFrom('mscproperties.online@gmail.com', 'test');
 			$mail->AddReplyTo('no-reply@mycomp.com','no-reply');
-			$mail->Subject    = 'subject';
+			$mail->Subject    = $subject;
 			$mail->MsgHTML($body);
 
-			$mail->AddAddress('dwayne.edwards9489@outlook.com', 'title1'); /* ... */
+			$mail->AddAddress('dwayne.edwards9489@outlook.com', 'Renting'); /* ... */
 			
 			$mail->send();
 		}
@@ -116,9 +123,8 @@
 	
 </div>
 
-<div id="endpage" style="top: 735px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+<div id="endpage" style="top: 535px;">
+	<p> MSc Properties (c) </p>
 </div>
 
 

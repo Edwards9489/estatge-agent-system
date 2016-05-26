@@ -15,9 +15,10 @@ import client_gui.StringListener;
 import client_gui.OKDialog;
 import client_gui.application.AppDetails;
 import client_gui.document.CreateDocument;
+import client_gui.document.DocumentDetails;
 import client_gui.document.DocumentPanel;
 import client_gui.document.UpdateDocument;
-import client_gui.document.ViewPreviousDocument;
+import client_gui.document.ViewDocument;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.login.LoginForm;
 import client_gui.modifications.ModPanel;
@@ -53,7 +54,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -81,7 +81,6 @@ public class TenancyDetails extends JFrame {
     private NotePanel notePanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-    private JFileChooser fileChooser;
     private JLabel length;
     private JLabel expenditure;
     private JLabel charges;
@@ -598,25 +597,26 @@ public class TenancyDetails extends JFrame {
         }
     }
 
-    private void viewDocument() {
+    private void viewDocumentDetails() {
         if (documentPanel.getSelectedObjectRef() != null) {
             Document document;
             try {
                 document = tenancy.getDocument(documentPanel.getSelectedObjectRef());
-                client.downloadTenancyDocument(tenancy.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
+                DocumentDetails documentDetails = new DocumentDetails(client, document, "Tenancy", tenancy.getAgreementRef());
+                documentDetails.setVisible(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(TenancyDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void viewPreviousDocument() {
+    private void viewDocument() {
         if (documentPanel.getSelectedObjectRef() != null) {
             final Document document;
             try {
                 document = tenancy.getDocument(documentPanel.getSelectedObjectRef());
                 if (document != null) {
-                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                    ViewDocument viewPreviousDocument = new ViewDocument(document.getCurrentVersion(), new IntegerListener() {
                         @Override
                         public void intOmitted(int ref) {
                             try {
@@ -731,14 +731,14 @@ public class TenancyDetails extends JFrame {
 
                 } else if (pane == 1) {
                     //Document
-                    viewDocument();
+                    viewDocumentDetails();
                     System.out.println("TEST - View Document");
 
                 }
                 break;
                 
             case "View Previous":
-                viewPreviousDocument();
+                viewDocument();
                 break;
 
             case "Refresh":

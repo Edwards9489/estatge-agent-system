@@ -17,6 +17,8 @@ import java.util.List;
 public interface OfficeInterface extends Remote {
     String getOfficeCode() throws RemoteException;
     AddressInterface getAddress() throws RemoteException;
+    double getAddrLong() throws RemoteException;
+    double getAddrLat() throws RemoteException;
     Date getStartDate() throws RemoteException;
     Date getEndDate() throws RemoteException;
     boolean hasAgreement(int ref) throws RemoteException;

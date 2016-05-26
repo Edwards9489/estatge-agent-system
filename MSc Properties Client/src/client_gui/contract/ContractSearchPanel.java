@@ -96,13 +96,13 @@ public class ContractSearchPanel extends JPanel {
             lengthField = new JTextField(3);
             empRefField = new JTextField(3);
             jobRoleField = new JComboBox();
-            jobRoleField.addItem("-");
+            jobRoleField.addItem("  ---  ");
             for (JobRoleInterface temp : client.getJobRoles()) {
                 jobRoleField.addItem(temp.getJobRoleCode());
             }
             accountRefField = new JTextField(3);
             officeField = new JComboBox();
-            officeField.addItem("-");
+            officeField.addItem("  ---  ");
             for (OfficeInterface temp : client.getOffices()) {
                 officeField.addItem(temp.getOfficeCode());
             }
@@ -134,10 +134,10 @@ public class ContractSearchPanel extends JPanel {
                     if (!empRefField.getText().isEmpty()) {
                         empRef = empRefField.getText();
                     }
-                    if (!jobRoleField.getSelectedItem().equals("-")) {
+                    if (!jobRoleField.getSelectedItem().equals("  ---  ")) {
                         jobRoleCode = (String) jobRoleField.getSelectedItem();
                     }
-                    if (!officeField.getSelectedItem().equals("-")) {
+                    if (!officeField.getSelectedItem().equals("  ---  ")) {
                         officeCode = (String) officeField.getSelectedItem();
                     }
                     if (!accountRefField.getText().isEmpty()) {

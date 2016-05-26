@@ -142,7 +142,7 @@ public class DetailsPanel extends JPanel {
         modifiedDateLabel.setFont(boldFont);
         
         gc.gridx++;
-        gc.anchor = GridBagConstraints.EAST;
+        gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 0);
         add(modifiedDateLabel, gc);
     }

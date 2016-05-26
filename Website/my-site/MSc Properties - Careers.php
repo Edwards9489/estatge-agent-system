@@ -72,8 +72,7 @@
 </div>
 
 <div id="endpage" style="top: 1375px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+	<p> MSc Properties (c) </p>
 </div>
 
 

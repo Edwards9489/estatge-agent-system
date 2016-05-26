@@ -57,9 +57,9 @@ textarea {
 	position: absolute;
 	top: 205px;
 	left: 10px;
-	width: 210px;
-	height: 320px;
+	width: 250px;
 	padding: 10px;
+	height: 320px;
 	background-color: #0033FF;
 }
 
@@ -68,7 +68,7 @@ textarea {
 	position: absolute;
 	top: 205px;
 	left: 10px;
-	width: 250px;
+	width: 280px;
 	height: 520px;
 	padding: 10px;
 	background-color: #0033FF;
@@ -78,8 +78,8 @@ textarea {
 {
 	position: absolute;
 	top: 205px;
-	left: 250px;
-	width: 720px;
+	left: 290px;
+	width: 680px;
 	height: 320px;
 	padding: 10px;
 	background-color: #0033FF;
@@ -101,8 +101,8 @@ textarea {
 	position: absolute;
 	top: 785px;
 	left: 10px;
-	width: 450px;
-	height: 120px;
+	width: 480px;
+	height: 150px;
 	padding: 10px;
 	background-color: #0033FF;
 }
@@ -111,9 +111,9 @@ textarea {
 {
 	position: absolute;
 	top: 785px;
-	left: 490px;
-	width: 480px;
-	height: 120px;
+	left: 520px;
+	width: 450px;
+	height: 150px;
 	padding: 10px;
 	background-color: #0033FF;
 }
@@ -122,8 +122,8 @@ textarea {
 {
 	position: absolute;
 	top: 205px;
-	left: 295px;
-	width: 375px;
+	left: 315px;
+	width: 355px;
 	height: 520px;
 	padding: 10px;
 	background-color: #0033FF;
@@ -133,8 +133,8 @@ textarea {
 {
 	position: absolute;
 	top: 205px;
-	left: 705;
-	width: 265;
+	left: 695;
+	width: 275;
 	height: 520px;
 	padding: 10px;
 	background-color: #0033FF;
@@ -144,9 +144,9 @@ textarea {
 {
 	position: absolute;
 	top: 205px;
-	left: 290px;
-	width: 680px;
-	height: 800px;
+	left: 320px;
+	width: 650px;
+	height: 1750px;
 	padding: 10px;
 	background-color: #0033FF;
 }
@@ -238,11 +238,24 @@ textarea {
 	padding: 10px;
 	background-color: #0033FF;
 }
+
+#email
+{
+	position: absolute;
+	top: 205px;
+	left: 10px;
+	width: 960px;
+	height: 300px;
+	padding: 10px;
+	background-color: #0033FF;
+}
 	
 #endpage
 {
 	position: absolute;
 	left: 10px;
 	width: 980px;
+	height: 40px;
+	text-align:center;
 	background-color: #0033FF;
 }

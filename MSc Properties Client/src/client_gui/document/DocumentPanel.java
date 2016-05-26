@@ -38,24 +38,21 @@ public class DocumentPanel extends JPanel {
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        JMenuItem addressItem = new JMenuItem("Documents");
-        popup.add(addressItem);
-        
         // Set up Border for ButtonPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
         
         JMenuItem createItem = new JMenuItem("Create Document");
-        JMenuItem viewItem = new JMenuItem("View Current Document");
-        JMenuItem viewPItem = new JMenuItem("View Previous Version");
+        JMenuItem viewItem = new JMenuItem("View Document Details");
+        JMenuItem viewDocumentItem = new JMenuItem("View Document");
         JMenuItem updateItem = new JMenuItem("Update Document");
         JMenuItem deleteItem = new JMenuItem("Delete Document");
         JMenuItem refreshItem = new JMenuItem("Refresh Documents");
         
         popup.add(createItem);
         popup.add(viewItem);
-        popup.add(viewPItem);
+        popup.add(viewDocumentItem);
         popup.add(updateItem);
         popup.add(deleteItem);
         popup.add(refreshItem);
@@ -91,7 +88,7 @@ public class DocumentPanel extends JPanel {
             }
         });
         
-        viewPItem.addActionListener(new ActionListener() {
+        viewDocumentItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(actionListener != null) {

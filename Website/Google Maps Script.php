@@ -14,8 +14,9 @@
 		marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(51.621148, -0.062838)});
 		infowindow = new google.maps.InfoWindow(
 		{
-			content:'<strong>address</strong><br>5 Brook Crescent, London, N9 0DJ<br>'
-		});google.maps.event.addListener(marker, 'click', function()
+			content:'<strong>address</strong><br>5 Brook Crescent NEW, London, N9 0DJ<br>'
+		});
+		google.maps.event.addListener(marker, 'click', function()
 		{
 			infowindow.open(map,marker);
 		});

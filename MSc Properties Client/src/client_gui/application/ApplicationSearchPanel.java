@@ -71,8 +71,9 @@ public class ApplicationSearchPanel extends JPanel {
         endDateField = new JXDatePicker();
         endDateField.setFormats(dateFormatter);
         statusField = new JComboBox();
-        statusField.addItem("-");
+        statusField.addItem("  ---  ");
         statusField.addItem("NEW");
+        statusField.addItem("OPEN");
         statusField.addItem("HSED");
         statusField.addItem("CLSD");
         createdByField = new JTextField(10);
@@ -92,7 +93,7 @@ public class ApplicationSearchPanel extends JPanel {
                 if (!corrNameField.getText().isEmpty()) {
                     corrName = corrNameField.getText();
                 }
-                if (!statusField.getSelectedItem().equals("-")) {
+                if (!statusField.getSelectedItem().equals("  ---  ")) {
                     statusCode = (String) statusField.getSelectedItem();
                 }
                 if (!createdByField.getText().isEmpty()) {

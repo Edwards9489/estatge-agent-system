@@ -66,14 +66,13 @@
 	<p><br>MSc Properties have a number of offices<br>
 	across most major cities in England, including<br>
 	London, Manchester, Liverpool and more.</p></td>
-	<td style="padding-left: 40px"><img src="../featured_house/bayview_2.jpg" height="100" width="200"/></td>
+	<td style="padding-left: 40px"><img src="../images/office_front.jpg" height="100" width="200"/></td>
 	</tr>
 	</table>
 </div>
 
 <div id="endpage" style="top: 630px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+	<p> MSc Properties (c) </p>
 </div>
 
 

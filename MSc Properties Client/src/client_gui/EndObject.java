@@ -100,7 +100,7 @@ public class EndObject extends JFrame {
         endDateField.setFormats(formatter);
         endReasonField = new JComboBox();
 
-        endReasonField.addItem("-");
+        endReasonField.addItem("  ---  ");
         endReasonField.setEnabled(endType.equals("Involved Party"));
 
         try {
@@ -125,10 +125,16 @@ public class EndObject extends JFrame {
                 System.out.println("End Reason: " + endReasonText);
 
                 int result = -1;
+                System.out.println("End Date is not null? " + endDate != null);
+                System.out.println("End Reason is not -? " + !endReasonText.equals("  ---  "));
+                System.out.println("End Type is not Involved Party? " + !endType.equals("Involved Party"));
+                System.out.println("COMBINATION? " + (!endReasonText.equals("  ---  ") || !endType.equals("Involved Party")));
+                System.out.println("ALL? " + (endDate != null && (!endReasonText.equals("  ---  ") || !endType.equals("Involved Party"))));
                 try {
-                    if (endDate != null && (!endReasonText.equals("-") || !endType.equals("Involved Party"))) {
+                    if (endDate != null && (!endReasonText.equals("  ---  ") || !endType.equals("Involved Party"))) {
                         int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to END " + endType + " " + objectRef + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (answer == JOptionPane.YES_OPTION) {
+                            System.out.println("End Type: " + endType);
                             switch (endType) {
                                 case "Involved Party":
                                     result = client.endInvolvedParty(parentRef, objectRef, endDate, endReasonText);
@@ -166,14 +172,18 @@ public class EndObject extends JFrame {
                                     result = client.endOfficeContact(parentCode, objectRef, endDate);
                                     break;
                                     
-                                case "Person Address":
+                                case "Person Address Usage":
                                     result = client.endPersonAddressUsage(parentRef, objectRef, endDate);
                                     break;
                                     
-                                case "Application Address":
+                                case "Application Address Usage":
+                                    System.out.println("Parent Ref: " + parentRef);
+                                    System.out.println("Object Ref: " + objectRef);
+                                    System.out.println("End Date: " + endDate);
                                     result = client.endApplicationAddressUsage(parentRef, objectRef, endDate);
                                     break;
                             }
+                            System.out.println(result);
                             if (result > 0) {
                                 String message = endType + " has been ended successfully";
                                 String title = "Information";
@@ -187,6 +197,7 @@ public class EndObject extends JFrame {
                             }
                         }
                     } else {
+                        System.out.println("ERROR IN INPUT");
                         String message = "There is some errors with the information supplied to END " + endType + " " + objectRef + "\nPlease check the information supplied";
                         String title = "Error";
                         OKDialog.okDialog(EndObject.this, message, title);

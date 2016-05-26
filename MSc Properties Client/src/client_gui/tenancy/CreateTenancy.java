@@ -101,8 +101,8 @@ public class CreateTenancy extends JFrame {
         tenTypeField = new JComboBox();
         officeField = new JComboBox();
         
-        officeField.addItem("-");
-        tenTypeField.addItem("-");
+        officeField.addItem("  ---  ");
+        tenTypeField.addItem("  ---  ");
 
         try {
             for (OfficeInterface temp : client.getOffices()) {
@@ -160,7 +160,7 @@ public class CreateTenancy extends JFrame {
 
                     int result;
                     try {
-                        if (appRef > 0 && propRef > 0 && length > 0 && startDate != null && tenTypeCode != null && officeCode != null) {
+                        if (appRef > 0 && propRef > 0 && length > 0 && startDate != null && tenTypeCode != null && !tenTypeCode.equals("  ---  ") && officeCode != null && !officeCode.equals("  ---  ")) {
                             int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new tenancy for Application " + appRef + " and Property " + propRef + " ?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                             if (answer == JOptionPane.YES_OPTION) {
                                 result = client.createTenancy(startDate, length, propRef, appRef, tenTypeCode, officeCode);

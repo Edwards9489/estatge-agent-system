@@ -76,15 +76,27 @@ public class HomeForm extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         try {
+            System.out.println("Update GUI");
+            System.out.println("arg is List? " + (arg instanceof List<?>));
             if (arg instanceof List<?>) {
+                System.out.println("List is not empty? " + (!((List<?>) arg).isEmpty()));
+                System.out.println("List element is Agreement? " + (((List<?>) arg).get(0) instanceof AgreementInterface));
+                System.out.println("List element is RentAccount? " + (((List<?>) arg).get(0) instanceof RentAccountInterface));
+                System.out.println("List element is Account? " + (((List<?>) arg).get(0) instanceof AccountInterface));
                 if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof AgreementInterface) {
+                    System.out.println("In Agreement Section");
                     List<AgreementInterface> agreements = (List<AgreementInterface>) arg;
+                    System.out.println("List element is Tenancy? " + (((List<?>) arg).get(0) instanceof TenancyInterface));
+                    System.out.println("List element is Lease? " + (((List<?>) arg).get(0) instanceof LeaseInterface));
                     if (agreements.get(0) instanceof TenancyInterface) {
+                        System.out.println("In Tenancy Section");
                         this.updateTenanciesList(agreements);
                     } else if (agreements.get(0) instanceof LeaseInterface) {
+                        System.out.println("In Lease Section");
                         this.updateLeasesList(agreements);
                     }
                 } else if (!((List<?>) arg).isEmpty() && ((List<?>) arg).get(0) instanceof RentAccountInterface) {
+                    System.out.println("In Rent Account Section");
                     List<AccountInterface> accounts = (List<AccountInterface>) arg;
                     this.updateRentAccList(accounts);
                 }
@@ -95,16 +107,19 @@ public class HomeForm extends JFrame implements Observer {
     }
 
     private void updateTenanciesList(List<AgreementInterface> agreements) {
+        System.out.println("Tenancy List Size: " + agreements.size());
         tenanciesPanel.setData(agreements);
         tenanciesPanel.refresh();
     }
 
     private void updateLeasesList(List<AgreementInterface> agreements) {
+        System.out.println("Lease List Size: " + agreements.size());
         leasesPanel.setData(agreements);
         leasesPanel.refresh();
     }
 
     private void updateRentAccList(List<AccountInterface> accounts) {
+        System.out.println("Account List Size: " + accounts.size());
         rentAccPanel.setData(accounts);
         rentAccPanel.refresh();
     }

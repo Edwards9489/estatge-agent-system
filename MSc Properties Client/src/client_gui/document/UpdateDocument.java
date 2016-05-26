@@ -6,10 +6,12 @@
 package client_gui.document;
 
 import client_application.ClientImpl;
+import client_gui.DOCFileFilter;
 import client_gui.JPEGFileFilter;
 import client_gui.OKDialog;
 import client_gui.PDFFileFilter;
 import client_gui.PNGFileFilter;
+import client_gui.TXTFileFilter;
 import interfaces.ApplicationInterface;
 import interfaces.ContractInterface;
 import interfaces.Document;
@@ -162,10 +164,11 @@ public class UpdateDocument extends JFrame {
                     
             }
             fileChooser = new JFileChooser();
-            // If you need more choosbale files then add more choosable files
+            fileChooser.addChoosableFileFilter(new DOCFileFilter());
+            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             fileChooser.addChoosableFileFilter(new PDFFileFilter());
             fileChooser.addChoosableFileFilter(new PNGFileFilter());
-            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
+            fileChooser.addChoosableFileFilter(new TXTFileFilter());
             
             okButton = new JButton("OK");
             cancelButton = new JButton("Cancel");
@@ -175,12 +178,12 @@ public class UpdateDocument extends JFrame {
             okButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
-                    int result = 0;
-                    int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to UPDATE a new Document for " + documentType + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (answer == JOptionPane.YES_OPTION) {
-                        String comment = textArea.getText();
-                        if (file != null) {
-                            try {
+                    try {
+                        int result = 0;
+                        int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to UPDATE " + documentType +  " Document " + document.getDocumentRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (answer == JOptionPane.YES_OPTION) {
+                            String comment = textArea.getText();
+                            if (file != null) {
                                 switch (documentType) {
                                     case "Person":
                                         result = client.updatePersonDocument(objectRef, documentRef, file, comment);
@@ -222,11 +225,11 @@ public class UpdateDocument extends JFrame {
                                         result = client.updateEmployeeAccDocument(objectRef, documentRef, file, comment);
                                         System.out.println("updateEmployeeAccDocument");
                                         break;
-                                        
+
                                 }
-                                
+
                                 if (result > 0) {
-                                    String message = "The new Document for " + documentType + " has been updated and assigned Document Usage Ref " + result;
+                                    String message = "The Document for " + documentType + " has been updated successfully";
                                     String title = "Information";
                                     OKDialog.okDialog(UpdateDocument.this, message, title);
                                     setVisible(false);
@@ -236,14 +239,14 @@ public class UpdateDocument extends JFrame {
                                     String title = "Error";
                                     OKDialog.okDialog(UpdateDocument.this, message, title);
                                 }
-                            } catch (RemoteException ex) {
-                                Logger.getLogger(UpdateDocument.class.getName()).log(Level.SEVERE, null, ex);
+                            } else {
+                                String message = "There is some errors with the information supplied to UPDATE the Document\nPlease check the information supplied";
+                                String title = "Error";
+                                OKDialog.okDialog(UpdateDocument.this, message, title);
                             }
-                        } else {
-                            String message = "There is some errors with the information supplied to UPDATE the Document\nPlease check the information supplied";
-                            String title = "Error";
-                            OKDialog.okDialog(UpdateDocument.this, message, title);
                         }
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(UpdateDocument.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });

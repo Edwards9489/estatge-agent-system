@@ -95,14 +95,14 @@ public class PeopleSearchPanel extends JPanel {
         createdByField = new JTextField(10);
         createdDateField = new JXDatePicker();
         createdDateField.setFormats(dateFormatter);
-        titleField.addItem("-");
-        genderField.addItem("-");
-        maritalStatusField.addItem("-");
-        ethnicOriginField.addItem("-");
-        languageField.addItem("-");
-        nationalityField.addItem("-");
-        sexualityField.addItem("-");
-        religionField.addItem("-");
+        titleField.addItem("  ---  ");
+        genderField.addItem("  ---  ");
+        maritalStatusField.addItem("  ---  ");
+        ethnicOriginField.addItem("  ---  ");
+        languageField.addItem("  ---  ");
+        nationalityField.addItem("  ---  ");
+        sexualityField.addItem("  ---  ");
+        religionField.addItem("  ---  ");
 
         try {
             for (Element temp : client.getTitles()) {
@@ -181,7 +181,7 @@ public class PeopleSearchPanel extends JPanel {
                 String religionCode = null;
                 String createdBy = null;
                 
-                if (!titleField.getSelectedItem().equals("-")) {
+                if (!titleField.getSelectedItem().equals("  ---  ")) {
                     titleCode = (String) titleField.getSelectedItem();
                 }
                 if (!forenameField.getText().isEmpty()) {
@@ -199,25 +199,25 @@ public class PeopleSearchPanel extends JPanel {
                 if (!niField.getText().isEmpty()) {
                     niNumber = niField.getText();
                 }
-                if (!genderField.getSelectedItem().equals("-")) {
+                if (!genderField.getSelectedItem().equals("  ---  ")) {
                     genderCode = (String) genderField.getSelectedItem();
                 }
-                if (!maritalStatusField.getSelectedItem().equals("-")) {
+                if (!maritalStatusField.getSelectedItem().equals("  ---  ")) {
                     maritalStatusCode = (String) maritalStatusField.getSelectedItem();
                 }
-                if (!ethnicOriginField.getSelectedItem().equals("-")) {
+                if (!ethnicOriginField.getSelectedItem().equals("  ---  ")) {
                     ethnicOriginCode = (String) ethnicOriginField.getSelectedItem();
                 }
-                if (!languageField.getSelectedItem().equals("-")) {
+                if (!languageField.getSelectedItem().equals("  ---  ")) {
                     languageCode = (String) languageField.getSelectedItem();
                 }
-                if (!nationalityField.getSelectedItem().equals("-")) {
+                if (!nationalityField.getSelectedItem().equals("  ---  ")) {
                     nationalityCode = (String) nationalityField.getSelectedItem();
                 }
-                if (!sexualityField.getSelectedItem().equals("-")) {
+                if (!sexualityField.getSelectedItem().equals("  ---  ")) {
                     sexualityCode = (String) sexualityField.getSelectedItem();
                 }
-                if (!religionField.getSelectedItem().equals("-")) {
+                if (!religionField.getSelectedItem().equals("  ---  ")) {
                     religionCode = (String) religionField.getSelectedItem();
                 }
                 if (!createdByField.getText().isEmpty()) {

@@ -20,7 +20,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class LoginImpl extends UnicastRemoteObject implements LoginInterface {
 
     private final Server myServer;
-
+    
     public LoginImpl(Server theServer) throws RemoteException {
         myServer = theServer;
     }

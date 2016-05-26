@@ -66,7 +66,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = null;
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getModifiedBy().size());
             instance.modifiedBy(modifiedBy2);
@@ -95,7 +95,7 @@ public class OfficeTest {
             Element element = new ElementImpl("TEST", "TEST", note, "DEDWARDS", new Date());
             Contact contact = new Contact(1, element, "07872395479", date.getTime(), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasContact(contact.getContactRef()));
             assertEquals(0, instance.getModifiedBy().size());
@@ -126,7 +126,7 @@ public class OfficeTest {
             Contact contact = new Contact(1, element, "07872395479", date.getTime(), note2, "DEDWARDS", new Date());
             Contact contact2 = new Contact(2, element, "07872395479", date.getTime(), note3, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasContact(contact.getContactRef()));
             assertEquals(0, instance.getModifiedBy().size());
@@ -158,7 +158,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note2, modifiedBy);
@@ -185,7 +185,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getNotes().size());
             instance.createNote(note2, modifiedBy);
@@ -213,7 +213,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Agreement agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", new Date(), 12, 1, "DEDWARDS", new Date(), "TEST");
             
@@ -242,7 +242,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Agreement agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", new Date(), 12, 1, "DEDWARDS", new Date(), "TEST");
             
@@ -274,7 +274,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AccountInterface account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
             
@@ -305,7 +305,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AccountInterface account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
             
@@ -339,7 +339,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, date.getTime(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, date.getTime(), "DEDWARDS", new Date());
             
             assertEquals(date.getTime(), instance.getStartDate());
             assertEquals(0, instance.getModifiedBy().size());
@@ -367,7 +367,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, startDate.getTime(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, startDate.getTime(), "DEDWARDS", new Date());
             
             Account account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", startDate.getTime(), "DEDWARDS", new Date());
             
@@ -408,7 +408,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Document document = new DocumentImpl(1, new File("TEST.pdf"), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getDocuments().size());
             instance.createDocument(document, modifiedBy);
@@ -437,7 +437,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             Document document = new DocumentImpl(1, new File("TEST.pdf"), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getDocuments().size());
             instance.createDocument(document, modifiedBy);
@@ -468,7 +468,7 @@ public class OfficeTest {
             date2.set(2015, 3, 10);
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals("EDM", instance.getOfficeCode());
             assertEquals(false, instance.getOfficeCode().equals("TEST"));
@@ -490,7 +490,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
             AddressInterface address2 = new Address(2, "", "", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(address, instance.getAddress());
             assertEquals(false, instance.getAddress().equals(address2));
@@ -510,7 +510,7 @@ public class OfficeTest {
             date.set(2015, 3, 10);
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, date.getTime(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, date.getTime(), "DEDWARDS", new Date());
             
             assertEquals(date.getTime(), instance.getStartDate());
             assertEquals(false, instance.getStartDate().equals(new Date()));
@@ -533,7 +533,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, date2.getTime(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, date2.getTime(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
             instance.setEndDate(endDate.getTime(), modifiedBy);
@@ -555,7 +555,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(1, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasNote(note2.getReference()));
             instance.createNote(note2, modifiedBy);
@@ -576,7 +576,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(1, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, note2.equals(instance.getNote(note2.getReference())));
             assertEquals(null, instance.getNote(note2.getReference()));
@@ -605,7 +605,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED4", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED5", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getNotes().size());
             List<Note> expResult = new ArrayList();
@@ -646,7 +646,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Agreement agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", new Date(), 12, 1, "DEDWARDS", new Date(), "TEST");
             
@@ -673,7 +673,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AgreementInterface agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", date.getTime(), 12, 1, "DEDWARDS", new Date(), "TEST");
             AgreementInterface agreement2 = new Agreement(2, "Mr Dwayne Leroy Edwards", date.getTime(), 12, 1, "DEDWARDS", new Date(), "TEST");
@@ -703,7 +703,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AgreementInterface agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", date.getTime(), 12, 1, "DEDWARDS", new Date(), "TEST");
             AgreementInterface agreement2 = new Agreement(2, "Mr Dwayne Leroy Edwards", date.getTime(), 12, 1, "DEDWARDS", new Date(), "TEST");
@@ -751,7 +751,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AccountInterface account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
             
@@ -778,7 +778,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AccountInterface account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
             AccountInterface account2 = new Account(2, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
@@ -808,7 +808,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy5 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             AccountInterface account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
             AccountInterface account2 = new Account(2, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
@@ -859,7 +859,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Contact contact = new Contact(1, element, "07872395479", date.getTime(), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getContact(contact.getContactRef()));
             instance.createContact(contact, modifiedBy);
@@ -892,7 +892,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED3", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED4", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note2, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             List<ContactInterface> expResult = new ArrayList();
             List<ContactInterface> test = new ArrayList();
@@ -935,7 +935,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Contact contact = new Contact(1, element, "07872395479", date.getTime(), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasContact(contact.getContactRef()));
             instance.createContact(contact, modifiedBy);
@@ -960,7 +960,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Agreement agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", date.getTime(), 12, 1, "DEDWARDS", new Date(), "TEST");
             
@@ -986,7 +986,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Agreement agreement = new Agreement(1, "Mr Dwayne Leroy Edwards", new Date(), 12, 1, "DEDWARDS", new Date(), "TEST");
             
@@ -1010,7 +1010,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             Account account = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", new Date(), "DEDWARDS", new Date());
             
@@ -1038,7 +1038,7 @@ public class OfficeTest {
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, date.getTime(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, date.getTime(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getEndDate());
             assertEquals(true, instance.isCurrent());
@@ -1064,7 +1064,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Document document = new DocumentImpl(1, new File("TEST.pdf"), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasDocument(document.getDocumentRef()));
             instance.createDocument(document, modifiedBy);
@@ -1087,7 +1087,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Document document = new DocumentImpl(1, new File("TEST.pdf"), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasDocument("TEST.pdf"));
             instance.createDocument(document, modifiedBy);
@@ -1110,7 +1110,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Document document = new DocumentImpl(1, new File("TEST.pdf"), note2, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getDocument(document.getDocumentRef()));
             instance.createDocument(document, modifiedBy);
@@ -1143,7 +1143,7 @@ public class OfficeTest {
             Document document3 = new DocumentImpl(3, new File("TEST3.pdf"), note4, "DEDWARDS", new Date());
             Document document4 = new DocumentImpl(4, new File("TEST4.pdf"), note5, "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(0, instance.getDocuments().size());
             List<Document> expResult = new ArrayList();
@@ -1183,7 +1183,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.hasBeenModified());
             instance.createNote(note2, modifiedBy);
@@ -1204,7 +1204,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModifiedBy());
             instance.createNote(note2, modifiedBy);
@@ -1228,7 +1228,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", date2.getTime());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModifiedDate());
             instance.createNote(note2, modifiedBy);
@@ -1250,7 +1250,7 @@ public class OfficeTest {
             Note note2 = new NoteImpl(2, "TEST NOTE2", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             List<ModifiedByInterface> modifiedByList = new ArrayList();
             List<ModifiedByInterface> modifiedByList2 = new ArrayList();
@@ -1277,7 +1277,7 @@ public class OfficeTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(null, instance.getLastModification());
             instance.createNote(note2, modifiedBy);
@@ -1300,7 +1300,7 @@ public class OfficeTest {
             System.out.println("getCreatedBy");
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, new Date(), "DEDWARDS", new Date());
+            Office instance = new Office("EDM", address, 0.0, 0.0, new Date(), "DEDWARDS", new Date());
             
             assertEquals(false, instance.getCreatedBy().equals(null));
             assertEquals(true, instance.getCreatedBy().equals("DEDWARDS"));
@@ -1321,7 +1321,7 @@ public class OfficeTest {
             date.set(2015, 3, 10);
             Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
             AddressInterface address = new Address(1, "12", "Kestrel House", "1", "The Close", "1", "The Ride", "Enfield", "London", "England", "EN3 4EN", note, "DEDWARDS", new Date());
-            Office instance = new Office("EDM", address, date.getTime(), "DEDWARDS", date.getTime());
+            Office instance = new Office("EDM", address, 0.0, 0.0, date.getTime(), "DEDWARDS", date.getTime());
             
             assertEquals(false, instance.getCreatedDate().equals(null));
             assertEquals(true, instance.getCreatedDate().equals(date.getTime()));

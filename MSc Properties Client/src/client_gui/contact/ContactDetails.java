@@ -480,12 +480,12 @@ public class ContactDetails extends JFrame {
                 try {
                     switch (objectType) {
                         case "Person":
-                        EndObject endContact = new EndObject(client, objectType, contact.getContactRef(), objectRef);
+                        EndObject endContact = new EndObject(client, (objectType + " Contact"), contact.getContactRef(), objectRef);
                         endContact.setVisible(true);
                         break;
 
                     case "Office":
-                        EndObject endContact1 = new EndObject(client, objectType, contact.getContactRef(), objectCode);
+                        EndObject endContact1 = new EndObject(client, (objectType + " Contact"), contact.getContactRef(), objectCode);
                         endContact1.setVisible(true);
                         break;
                     }

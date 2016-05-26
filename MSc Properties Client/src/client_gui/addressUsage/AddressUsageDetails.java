@@ -423,7 +423,7 @@ public class AddressUsageDetails extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 try {
-                    EndObject endAddress = new EndObject(client, addressType, address.getAddressUsageRef(), objectRef);
+                    EndObject endAddress = new EndObject(client, (addressType + " Address"), address.getAddressUsageRef(), objectRef);
                     endAddress.setVisible(true);
                 } catch (RemoteException ex) {
                     Logger.getLogger(AddressUsageDetails.class.getName()).log(Level.SEVERE, null, ex);

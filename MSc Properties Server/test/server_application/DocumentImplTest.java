@@ -238,21 +238,20 @@ public class DocumentImplTest {
             File file2 = new File("TESTv2.pdf");
             File file3 = new File("TESTv3.pdf");
             
-            assertEquals(0, instance.getPreviousVersions().size());
+            assertEquals(0, instance.getCurrentVersion());
             List<File> expResult = new ArrayList();
             List<File> test = new ArrayList();
             
             instance.createNewVersion(file2, modifiedBy);
             expResult.add(file);
-            assertEquals(1, instance.getPreviousVersions().size());
-            assertEquals(expResult, instance.getPreviousVersions());
+            assertEquals(1, instance.getCurrentVersion());
+            assertEquals(expResult, instance.getCurrentVersion());
             
             instance.createNewVersion(file3, modifiedBy2);
             expResult.add(file2);
-            assertEquals(2, instance.getPreviousVersions().size());
-            assertEquals(expResult, instance.getPreviousVersions());
+            assertEquals(2, instance.getCurrentVersion());
+            assertEquals(expResult, instance.getCurrentVersion());
             
-            assertEquals(false, instance.getPreviousVersions().equals(test));
         } catch (RemoteException ex) {
             Logger.getLogger(DocumentImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -274,15 +273,15 @@ public class DocumentImplTest {
             File file2 = new File("TESTv2.pdf");
             File file3 = new File("TESTv3.pdf");
                     
-            assertEquals(0, instance.getPreviousVersions().size());
+            assertEquals(0, instance.getCurrentVersion());
             assertEquals(false, instance.hasVersion(2));
             instance.createNewVersion(file2, modifiedBy);
             assertEquals(true, instance.hasVersion(2));
-            assertEquals(1, instance.getPreviousVersions().size());
+            assertEquals(1, instance.getCurrentVersion());
             assertEquals(false, instance.hasVersion(3));
             instance.createNewVersion(file3, modifiedBy2);
             assertEquals(true, instance.hasVersion(3));
-            assertEquals(2, instance.getPreviousVersions().size());
+            assertEquals(2, instance.getCurrentVersion());
         } catch (RemoteException ex) {
             Logger.getLogger(DocumentImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }

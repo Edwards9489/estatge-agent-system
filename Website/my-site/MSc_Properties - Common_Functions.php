@@ -427,16 +427,31 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 	}
 	else
 	{
-		$propBuildingNumber  = $sqlResults1 [1] ['buildingNumber'];
-		$propBuildingName  = $sqlResults1 [1] ['buildingName'];
-		$propSubStreetNumber  = $sqlResults1 [1] ['subStreetNumber'];
-		$propSubStreet  = $sqlResults1 [1] ['subStreet'];
-		$propStreetNumber  = $sqlResults1 [1] ['streetNumber'];
-		$propStreet = $sqlResults1 [1] ['street'];
-		$propArea = $sqlResults1 [1] ['area'];
-		$propTown  = $sqlResults1 [1] ['town'];
-		$propCountry  = $sqlResults1 [1] ['country'];
-		$propPostcode  = $sqlResults1 [1] ['postcode'];
+		if(1 <= $error_or_rows1)
+		{
+			$propBuildingNumber  = $sqlResults1 [1] ['buildingNumber'];
+			$propBuildingName  = $sqlResults1 [1] ['buildingName'];
+			$propSubStreetNumber  = $sqlResults1 [1] ['subStreetNumber'];
+			$propSubStreet  = $sqlResults1 [1] ['subStreet'];
+			$propStreetNumber  = $sqlResults1 [1] ['streetNumber'];
+			$propStreet = $sqlResults1 [1] ['street'];
+			$propArea = $sqlResults1 [1] ['area'];
+			$propTown  = $sqlResults1 [1] ['town'];
+			$propCountry  = $sqlResults1 [1] ['country'];
+			$propPostcode  = $sqlResults1 [1] ['postcode'];
+		} else
+		{
+			$propBuildingNumber = "";
+			$propBuildingName  = "";
+			$propSubStreetNumber = "";
+			$propSubStreet  = "";
+			$propStreetNumber = "";
+			$propStreet  = "";
+			$propArea = "";
+			$propTown  = "";
+			$propCountry = "";
+			$propPostcode  = "";
+		}
 		
 		if ($town !== '-' && $town !== $propTown)
 		{
@@ -466,7 +481,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 			}
 			else
 			{
-				$propPrice = $sqlResults2 [1] ['doubleValue'];
+				if(1 <= $error_or_rows2) 
+				{
+					$propPrice = $sqlResults2 [1] ['doubleValue'];
+				}
+				else
+				{
+					$propPrice = "";
+				}
 				
 				if ($min_price !== '-' && $max_price !== '-' && $min_price > $propPrice && $max_price < $propPrice)
 				{
@@ -500,7 +522,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 					}
 					else
 					{
-						$propKitchen = $sqlResults3 [1] ['stringValue'];
+						if(1 <= $error_or_rows3)
+						{
+							$propKitchen = $sqlResults3 [1] ['stringValue'];
+						}
+						else
+						{
+							$propKitchen = "";
+						}
 						if($kitchen !== '-' && $propKitchen !== $kitchen)
 						{
 							$returnProp = false;
@@ -524,7 +553,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 							}
 							else
 							{
-								$propBeds = $sqlResults4 [1] ['stringValue'];
+								if(1 <= $error_or_rows4)
+								{
+									$propBeds = $sqlResults4 [1] ['stringValue'];
+								}
+								else
+								{
+									$propBeds = "";
+								}
 								if ($beds !== '-' && $propBeds !== $beds)
 								{
 									$returnProp = false;
@@ -549,7 +585,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 									}
 									else
 									{
-										$propBaths = $sqlResults5 [1] ['stringValue'];
+										if(1 <= $error_or_rows5)
+										{
+											$propBaths = $sqlResults5 [1] ['stringValue'];
+										}
+										else
+										{
+											$propBaths = "";
+										}
 										if ($baths !== '-' && $propBaths !== $baths)
 										{
 											$returnProp = false;
@@ -574,7 +617,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 											}
 											else
 											{
-												$propDriveway = $sqlResults6 [1] ['stringValue'];
+												if(1 <= $error_or_rows6)
+												{
+													$propDriveway = $sqlResults6 [1] ['stringValue'];
+												}
+												else
+												{
+													$propDriveway = "";
+												}
 												
 												if ($driveway !== '-' && $propDriveway !== $driveway)
 												{
@@ -600,7 +650,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 													}
 													else
 													{
-														$propGarden = $sqlResults7 [1] ['stringValue'];
+														if(1 <= $error_or_rows7)
+														{
+															$propGarden = $sqlResults7 [1] ['stringValue'];
+														}
+														else
+														{
+															$propGarden = "";
+														}
 														if ($garden !== '-' && $propGarden !== $garden)
 														{
 															$returnProp = false;
@@ -625,7 +682,14 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 															}
 															else
 															{
-																$propConservatory = $sqlResults8 [1] ['stringValue'];
+																if(1 <= $error_or_rows8)
+																{
+																	$propConservatory = $sqlResults8 [1] ['stringValue'];
+																}
+																else
+																{
+																	$propConservatory = "";
+																}
 														
 																if ($conservatory !== '-' && $propConservatory !== $conservatory)
 																{
@@ -651,7 +715,15 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 																	}
 																	else
 																	{
-																		$propReceptions = $sqlResults9 [1] ['stringValue'];
+																		if(1 <= $error_or_rows9)
+																		{
+																			$propReceptions = $sqlResults9 [1] ['stringValue'];
+																		}
+																		else
+																		{
+																			$propReceptions = "";
+																		}
+																		
 																		if ($receptions !== '-' && $propReceptions !== $receptions)
 																		{
 																			$returnProp = false;
@@ -676,7 +748,15 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 																			}
 																			else
 																			{
-																				$propAge = $sqlResults10 [1] ['stringValue'];
+																				if(1 <= $error_or_rows10)
+																				{
+																					$propAge = $sqlResults10 [1] ['stringValue'];
+																				}
+																				else
+																				{
+																					$propReceptions = "";
+																				}
+																				
 																				if ($age !== '-' && $propAge !== $age)
 																				{
 																					$returnProp = false;
@@ -729,7 +809,60 @@ function searchProp($propRef, $propTypeCode, $propSubTypeCode, $propAddressRef, 
 		
 		$outputDisplay .= "</td>\n";
 		
-		$outputDisplay .= '<td style="padding-left: 20px"><img src="../featured_house/bayview_2.jpg" height="120" width="120"/></td>';
+		$sql_statement11  = "select documentName ";
+		$sql_statement11 .= "from propertyDocuments ";
+		$sql_statement11 .= "where uniqueRef= ";
+		$sql_statement11 .= "(select MAX(uniqueRef) ";
+		$sql_statement11 .= "from propertyDocuments ";
+		$sql_statement11 .= "where documentRef= ";
+		$sql_statement11 .= "(select MIN(documentRef) ";
+		$sql_statement11 .= "from propertyDocuments ";
+		$sql_statement11 .= "where documentExt IN('jpeg', 'jpg', 'png', 'tif', 'gif') ";
+		$sql_statement11 .= "and ref=".$propRef.") ";
+		$sql_statement11 .= "and documentExt IN('jpeg', 'jpg', 'png', 'tif', 'gif')) ";
+		
+		$sqlResults11 = selectResults($sql_statement11);
+
+		$error_or_rows11 = $sqlResults11[0];
+		
+		if (substr($error_or_rows11, 0 , 5) == 'ERROR')
+		{
+			print "<br />Error on DB<br><br>".$error_or_rows11."<br><br>".$sql_statement11;
+		}
+		else
+		{
+			/* Adding more directories into the httpd.conf or can set up virtual hosts.
+
+
+			Add Directories
+			---------------------------------------------------------
+			left click wamp>apache> htttp.conf
+
+			at the very end add
+
+
+			Alias /WEBSITENAME "X:/PATH/TO/FILES/" 
+			<Directory "X:/PATH/TO/FILES/">
+				Options Indexes FollowSymLinks MultiViews
+				AllowOverride all
+					Order Allow,Deny
+						 Allow from all
+			</Directory>
+
+
+			You will access this using http ://localhost/WEBSITENAME
+			---------------------------------------------------------- */
+			if(1 <= $error_or_rows11)
+			{
+				$propPic = $sqlResults11 [1] ['documentName'];
+				$outputDisplay .= '<td style="padding-left: 20px"><img src="../documents/'.$propPic.'" height="120" width="120"/></td>';
+			}
+			else
+			{
+				$propPic = "error_image.jpg";
+				$outputDisplay .= '<td style="padding-left: 20px"><img src="../documents/'.$propPic.'" height="120" width="120"/></td>';
+			}
+		}
 		$outputDisplay .= "<tr>\n</table>\n</td>";
 		
 		if(($returnedProps%2)==0)
@@ -761,6 +894,5 @@ function getOfficeContact($officeCode, $contactType)
 		return $sqlResults1 [1] ['contactValue'];
 	}
 }
-
 
 ?>

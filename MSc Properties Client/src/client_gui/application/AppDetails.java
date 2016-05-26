@@ -23,14 +23,12 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.StringListener;
 import client_gui.OKDialog;
-import client_gui.PDFFileFilter;
 import client_gui.note.CreateNote;
 import client_gui.EndObject;
 import client_gui.IntegerListener;
-import client_gui.JPEGFileFilter;
-import client_gui.PNGFileFilter;
+import client_gui.document.DocumentDetails;
 import client_gui.document.UpdateDocument;
-import client_gui.document.ViewPreviousDocument;
+import client_gui.document.ViewDocument;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.note.NoteDetails;
 import client_gui.note.UpdateNote;
@@ -58,14 +56,12 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -96,7 +92,6 @@ public class AppDetails extends JFrame {
     private PropertyPanel propInterestPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-    private JFileChooser fileChooser;
     private JLabel name;
     private JLabel status;
     private JLabel start;
@@ -128,12 +123,6 @@ public class AppDetails extends JFrame {
 
     private void layoutComponents() {
         try {
-            fileChooser = new JFileChooser();
-            // If you need more choosbale files then add more choosable files
-            fileChooser.addChoosableFileFilter(new PDFFileFilter());
-            fileChooser.addChoosableFileFilter(new PNGFileFilter());
-            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
-            
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -300,17 +289,6 @@ public class AppDetails extends JFrame {
     }
     
     private void setUpMainPanel() {
-        /////// SET UP TABBED PANE
-        
-        mainPanel.setSize(1000, 250);
-
-        int space = 15;
-        Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
-        Border titleBorder = BorderFactory.createLineBorder(new Color(184, 207, 229));
-
-        mainPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
-
-        mainPanel.setLayout(new BorderLayout());
         
         centrePanel.setLayout(new BoxLayout(centrePanel, BoxLayout.PAGE_AXIS));
         
@@ -423,6 +401,16 @@ public class AppDetails extends JFrame {
         } catch (RemoteException ex) {
             Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        mainPanel.setSize(1000, 250);
+
+        int space = 15;
+        Border spaceBorder = BorderFactory.createEmptyBorder(space, space, space, space);
+        Border titleBorder = BorderFactory.createLineBorder(new Color(184, 207, 229));
+
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(spaceBorder, titleBorder));
+
+        mainPanel.setLayout(new BorderLayout());
         
         mainPanel.add(buttonPanel, BorderLayout.WEST);
         mainPanel.add(centrePanel, BorderLayout.CENTER);
@@ -647,6 +635,19 @@ public class AppDetails extends JFrame {
         System.out.println("TEST - Create Property");
     }
     
+    private void endAddress() {
+        Integer selection = addressPanel.getSelectedObjectRef();
+        if (selection != null) {
+            try {
+                System.out.println("Address Usage Ref: " + selection);
+                EndObject endAddress = new EndObject(client, "Application Address Usage", selection, application.getApplicationRef());
+                endAddress.setVisible(true);
+            } catch (RemoteException ex) {
+                Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     private void endProperty() {
         Integer selection = propInterestPanel.getSelectedObjectRef();
         if (selection != null) {
@@ -734,25 +735,26 @@ public class AppDetails extends JFrame {
         }
     }
 
-    private void viewDocument() {
+    private void viewDocumentDetails() {
         if (documentPanel.getSelectedObjectRef() != null) {
             Document document;
             try {
                 document = application.getDocument(documentPanel.getSelectedObjectRef());
-                client.downloadApplicationDocument(application.getApplicationRef(), document.getDocumentRef(), document.getCurrentVersion());
+                DocumentDetails documentDetails = new DocumentDetails(client, document, "Application", application.getApplicationRef());
+                documentDetails.setVisible(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(AppDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void viewPreviousDocument() {
+    private void viewDocument() {
         if (documentPanel.getSelectedObjectRef() != null) {
             final Document document;
             try {
                 document = application.getDocument(documentPanel.getSelectedObjectRef());
                 if (document != null) {
-                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                    ViewDocument viewPreviousDocument = new ViewDocument(document.getCurrentVersion(), new IntegerListener() {
                         @Override
                         public void intOmitted(int ref) {
                             try {
@@ -873,8 +875,13 @@ public class AppDetails extends JFrame {
                     endInvolvedParty();
                     System.out.println("TEST - End Involved Party");
 
-                } else if (ref == 3) {
+                } else if (ref == 1) {
                     //Addresses
+                    endAddress();
+                    System.out.println("TEST - End Address");
+
+                } else if (ref == 3) {
+                    //Properties
                     endProperty();
                     System.out.println("TEST - End Property");
 
@@ -930,14 +937,14 @@ public class AppDetails extends JFrame {
 
                 } else if (ref == 4) {
                     //Document
-                    viewDocument();
+                    viewDocumentDetails();
                     System.out.println("TEST - View Note");
 
                 }
                 break;
                 
             case "View Previous":
-                viewPreviousDocument();
+                viewDocument();
                 break;
 
             case "Refresh":

@@ -108,18 +108,6 @@ public class DocumentImpl extends UnicastRemoteObject implements Document {
         return null;
     }
     
-    
-    @Override
-    public List<File> getPreviousVersions() throws RemoteException {
-        List<File> pVersions = new ArrayList();
-        if(files.size() > 1) {
-            for(int i = 0; i < (files.size() - 1); i++) {
-                pVersions.add(files.get(i));
-            }
-        }
-        return pVersions;
-    }
-    
     @Override
     public int getCurrentVersion() throws RemoteException {
         return files.size();

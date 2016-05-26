@@ -92,7 +92,7 @@ public class LeaseAccSearchPanel extends JPanel {
             expenditureField = new JTextField(6);
             agreementRefField = new JTextField(3);
             officeField = new JComboBox();
-            officeField.addItem("-");
+            officeField.addItem("  ---  ");
             for (OfficeInterface temp : client.getOffices()) {
                 officeField.addItem(temp.getOfficeCode());
             }
@@ -122,7 +122,7 @@ public class LeaseAccSearchPanel extends JPanel {
                     if (!expenditureField.getText().isEmpty()) {
                         expenditure = expenditureField.getText();
                     }
-                    if (!officeField.getSelectedItem().equals("-")) {
+                    if (!officeField.getSelectedItem().equals("  ---  ")) {
                         officeCode = (String) officeField.getSelectedItem();
                     }
                     if (!agreementRefField.getText().isEmpty()) {

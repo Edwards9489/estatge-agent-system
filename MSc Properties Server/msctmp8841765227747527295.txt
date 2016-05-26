@@ -1,5 +1,0 @@
-Saving Images to a BLOB field in mysql
-
- - this can be used t save JPEG's for property pictures, pdf's for agreements, etc
-
-http://www.techcubetalk.com/tutorial-on-how-to-store-images-in-mysql-blob-field/

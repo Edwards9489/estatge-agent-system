@@ -56,6 +56,8 @@ public class CreateOffice extends JFrame {
     private int addrRef = -1;
     private JTextField addrField;
     private JXDatePicker dateField;
+    private JTextField longField;
+    private JTextField latField;
     private JTextField codeField;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -74,8 +76,10 @@ public class CreateOffice extends JFrame {
     private void layoutComponents() {
         okButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
-        codeField = new JTextField(7);
-        addrField = new JTextField(50);
+        codeField = new JTextField(8);
+        longField = new JTextField(8);
+        latField = new JTextField(8);
+        addrField = new JTextField(55);
         
         okButton.addActionListener(new ActionListener() {
             @Override
@@ -85,10 +89,17 @@ public class CreateOffice extends JFrame {
                 if (answer == JOptionPane.YES_OPTION) {
                     String code = codeField.getText();
                     Date date = dateField.getDate();
-                    if (code != null && date != null && addrRef > 0) {
+                    Double addrLong = null;
+                    Double addrLat = null;
+                    if (longField.getText() != null) {
+                        addrLong = Double.parseDouble(longField.getText());
+                    }
+                    if (latField.getText() != null) {
+                        addrLat = Double.parseDouble(latField.getText());
+                    }
+                    if (code != null && date != null && addrRef > 0 && addrLong != null && addrLat != null) {
                         try {
-
-                            result = client.createOffice(code, addrRef, date);
+                            result = client.createOffice(code, addrRef, addrLong, addrLat, date);
 
                             if (result > 0) {
                                 String message = "The new Office has been created with unique Office Code " + code;
@@ -117,7 +128,7 @@ public class CreateOffice extends JFrame {
             }
         });
         
-        this.setSize(900, 250);
+        this.setSize(1100, 250);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
@@ -161,15 +172,7 @@ public class CreateOffice extends JFrame {
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(codeField, gc);
         
-        gc.gridx++;
-        gc.gridwidth = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(new JLabel(""), gc);
-        
         JLabel startDate = new JLabel("Start Date    ");
-        startDate.setFont(boldFont);
-        
         startDate.setFont(boldFont);
 
         gc.fill = GridBagConstraints.NONE;
@@ -185,6 +188,37 @@ public class CreateOffice extends JFrame {
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(dateField, gc);
+        
+        JLabel longLabel = new JLabel("Address Long    ");
+        longLabel.setFont(boldFont);
+        
+
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(longLabel, gc);
+        
+        longField.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(longField, gc);
+        
+        JLabel latLabel = new JLabel("Address Lat    ");
+        latLabel.setFont(boldFont);
+
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.EAST;
+        gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(latLabel, gc);
+        
+        latField.setFont(plainFont);
+
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(latField, gc);
         
 
         ////////// NEXT ROW //////////
@@ -208,7 +242,7 @@ public class CreateOffice extends JFrame {
         addrField.setDisabledTextColor(Color.BLACK);
 
         gc.gridx++;
-        gc.gridwidth = 3;
+        gc.gridwidth = 6;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 0);
         controlsPanel.add(addrField, gc);
@@ -255,6 +289,21 @@ public class CreateOffice extends JFrame {
         gc.gridwidth = 1;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
+        controlsPanel.add(new JLabel(""), gc);
+        
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(new JLabel(""), gc);
+        
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
+        controlsPanel.add(new JLabel(""), gc);
+        
+        gc.gridx++;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(new JLabel(""), gc);
         
         gc.gridx++;

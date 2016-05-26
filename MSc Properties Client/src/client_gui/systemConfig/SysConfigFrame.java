@@ -48,6 +48,7 @@ import interfaces.LandlordInterface;
 import interfaces.OfficeInterface;
 import interfaces.PropertyInterface;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -629,7 +630,9 @@ public class SysConfigFrame extends JFrame {
     private void removeCenterPanel() {
         BorderLayout layout = (BorderLayout) panel.getLayout();
         if (layout.getLayoutComponent(BorderLayout.CENTER) != null) {
-            panel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+            Component component = layout.getLayoutComponent(BorderLayout.CENTER);
+            panel.remove(component);
+            component.setVisible(false);
         }
     }
     
@@ -740,7 +743,7 @@ public class SysConfigFrame extends JFrame {
                 int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to DELETE Job Role " + selection + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (answer == JOptionPane.YES_OPTION) {
                     System.out.println("Address Delete - Yes button clicked");
-                    int result = client.deleteOffice(selection);
+                    int result = client.deleteJobRole(selection);
                     if (result > 0) {
                         String message = "Job Role " + selection + " has been successfully deleted";
                         String title = "Information";

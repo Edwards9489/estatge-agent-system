@@ -20,7 +20,6 @@ public interface Document extends Remote {
     String getCurrentDocumentName() throws RemoteException;
     String getDocumentName(int version) throws RemoteException;
     File getDocument(int version) throws RemoteException;
-    List<File> getPreviousVersions() throws RemoteException;
     boolean hasVersion(int version) throws RemoteException;
     int getCurrentVersion() throws RemoteException;
     String getDocumentPath(int version) throws RemoteException;

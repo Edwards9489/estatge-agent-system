@@ -88,7 +88,7 @@ public class UpdatePerson extends JFrame {
             cancelButton = new JButton("Cancel");
             
             titleField = new JComboBox();
-            titleField.addItem("-");
+            titleField.addItem("  ---  ");
             for (Element temp : client.getCurrentTitles()) {
                 titleField.addItem(temp.getCode());
             }
@@ -103,7 +103,7 @@ public class UpdatePerson extends JFrame {
             dobField.setFormats(formatter);
             dobField.setDate(person.getDateOfBirth());
             genderField = new JComboBox();
-            genderField.addItem("-");
+            genderField.addItem("  ---  ");
             for (Element temp : client.getCurrentGenders()) {
                 genderField.addItem(temp.getCode());
             }
@@ -111,37 +111,37 @@ public class UpdatePerson extends JFrame {
             niField = new JTextField(10);
             niField.setText(person.getNI());
             maritalField = new JComboBox();
-            maritalField.addItem("-");
+            maritalField.addItem("  ---  ");
             for (Element temp : client.getCurrentMaritalStatuses()) {
                 maritalField.addItem(temp.getCode());
             }
             maritalField.setSelectedItem(person.getMaritalStatus().getCode());
             languageField = new JComboBox();
-            languageField.addItem("-");
+            languageField.addItem("  ---  ");
             for (Element temp : client.getCurrentLanguages()) {
                 languageField.addItem(temp.getCode());
             }
             languageField.setSelectedItem(person.getLanguage().getCode());
             nationalityField = new JComboBox();
-            nationalityField.addItem("-");
+            nationalityField.addItem("  ---  ");
             for (Element temp : client.getCurrentNationalities()) {
                 nationalityField.addItem(temp.getCode());
             }
             nationalityField.setSelectedItem(person.getNationality().getCode());
             ethnicField = new JComboBox();
-            ethnicField.addItem("-");
+            ethnicField.addItem("  ---  ");
             for (Element temp : client.getCurrentEthnicOrigins()) {
                 ethnicField.addItem(temp.getCode());
             }
             ethnicField.setSelectedItem(person.getEthnicOrigin().getCode());
             religionField = new JComboBox();
-            religionField.addItem("-");
+            religionField.addItem("  ---  ");
             for (Element temp : client.getCurrentReligions()) {
                 religionField.addItem(temp.getCode());
             }
             religionField.setSelectedItem(person.getReligion().getCode());
             sexualityField = new JComboBox();
-            sexualityField.addItem("-");
+            sexualityField.addItem("  ---  ");
             for (Element temp : client.getCurrentSexualities()) {
                 sexualityField.addItem(temp.getCode());
             }
@@ -181,7 +181,7 @@ public class UpdatePerson extends JFrame {
                             if (!niField.getText().isEmpty()) {
                                 niNumber = niField.getText();
                             }
-                            System.out.println("1: " + !titleCode.equals("-"));
+                            System.out.println("1: " + !titleCode.equals("  ---  "));
                             System.out.println("2: " + forename != null);
                             System.out.println("3: " + !forename.isEmpty());
                             System.out.println("4: " + middleName != null);
@@ -191,14 +191,14 @@ public class UpdatePerson extends JFrame {
                             System.out.println("8: " + dob != null);
                             System.out.println("9: " + niNumber != null);
                             System.out.println("10: " + !niNumber.isEmpty());
-                            System.out.println("11: " + !genderCode.equals("-"));
-                            System.out.println("12: " + !maritalCode.equals("-"));
-                            System.out.println("13: " + !languageCode.equals("-"));
-                            System.out.println("14: " + !ethnicCode.equals("-"));
-                            System.out.println("15: " + !religionCode.equals("-"));
-                            System.out.println("16: " + !sexualityCode.equals("-"));
+                            System.out.println("11: " + !genderCode.equals("  ---  "));
+                            System.out.println("12: " + !maritalCode.equals("  ---  "));
+                            System.out.println("13: " + !languageCode.equals("  ---  "));
+                            System.out.println("14: " + !ethnicCode.equals("  ---  "));
+                            System.out.println("15: " + !religionCode.equals("  ---  "));
+                            System.out.println("16: " + !sexualityCode.equals("  ---  "));
                             
-                            if (!titleCode.equals("-") && forename != null && !forename.isEmpty() && surname != null && !surname.isEmpty() && dob != null && niNumber != null && !niNumber.isEmpty() && !genderCode.equals("-") && !maritalCode.equals("-") && !languageCode.equals("-") && !ethnicCode.equals("-") && !religionCode.equals("-") && !sexualityCode.equals("-")) {
+                            if (!titleCode.equals("  ---  ") && forename != null && !forename.isEmpty() && surname != null && !surname.isEmpty() && dob != null && niNumber != null && !niNumber.isEmpty() && !genderCode.equals("  ---  ") && !maritalCode.equals("  ---  ") && !languageCode.equals("  ---  ") && !ethnicCode.equals("  ---  ") && !religionCode.equals("  ---  ") && !sexualityCode.equals("  ---  ")) {
                                 try {
                                     result = client.updatePerson(person.getPersonRef(), titleCode, forename, middleName, surname, dob, nationalityCode, genderCode, maritalCode, ethnicCode, languageCode, nationalityCode, sexualityCode, religionCode);
                                     

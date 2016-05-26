@@ -479,7 +479,7 @@ public class Database {
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
 
-                    ModifiedBy temp = new ModifiedBy(modifiedBy, description, modifiedDate);
+                    ModifiedBy temp = new ModifiedBy(description, modifiedBy, modifiedDate);
 
                     modifiedByMap.put(modificationRef, temp);
                 }
@@ -531,7 +531,7 @@ public class Database {
                     Date modifiedDate = results.getDate("modifiedDate");
                     String description = results.getString("description");
 
-                    ModifiedBy temp = new ModifiedBy(modifiedBy, description, modifiedDate);
+                    ModifiedBy temp = new ModifiedBy(description, modifiedBy, modifiedDate);
                     modifiedByMap.put(modificationRef, temp);
                 }
             }
@@ -567,11 +567,10 @@ public class Database {
      * @throws SQLException
      */
     private Map<Integer, Document> loadDocMap(String from, int reference) throws SQLException, RemoteException {
-        String sql = "select uniqueRef, documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " order by uniqueRef";
+        String sql = "select uniqueRef, documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate from " + from + " where ref= " + reference + " order by uniqueRef";
         Map<Integer, Document> fileMap = new HashMap<>();
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
-
             while (results.next()) {
                 int documentRef = results.getInt("documentRef");
                 int ref = results.getInt("ref");
@@ -585,17 +584,18 @@ public class Database {
                     }
                     String createdBy = results.getString("createdBy");
                     Date createdDate = results.getDate("createdDate");
-
-                    //  InputStream input = Database.class.getResourceAsStream(documentPath);   //// NEED TO LOOK INTO HOW THIS WORKS
-                    File document = new File(documentPath); // Possibly might not work once File is used, may need to use getResourceAsStream
+                    
+                    
+                    File document = new File(documentPath);
+                    DocumentImpl temp;
                     if (!this.documentExists(documentRef)) {
                         Note note = new NoteImpl(noteRef, comment, createdBy, createdDate);
-                        DocumentImpl temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
+                        temp = new DocumentImpl(documentRef, document, note, createdBy, createdDate);
                         documents.put(temp.getDocumentRef(), temp);
                         this.createDocumentMods(temp, this.loadModMap("documentModifications", documentRef));
                         fileMap.put(documentRef, temp);
                     } else if (this.documentExists(documentRef)) {
-                        DocumentImpl temp = (DocumentImpl) this.getDocument(ref);
+                        temp = (DocumentImpl) this.getDocument(documentRef);
                         temp.createNewVersion(document, null);
                     }
                 }
@@ -661,13 +661,14 @@ public class Database {
      */
     private void createDocument(String from, int ref, Document document) throws SQLException, RemoteException {
         if (!this.documentExists(document.getDocumentRef())) {
-            String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, documentExt, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1));
-                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
+                insertStat.setString(col++, document.getDocumentName(document.getCurrentVersion()));
+                insertStat.setString(col++, document.getDocumentPath(document.getCurrentVersion()));
+                insertStat.setString(col++, Utils.getFileExtension(document.getDocumentPath(document.getCurrentVersion())));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
@@ -690,13 +691,14 @@ public class Database {
     private void updateDocument(String from, int ref, int dRef) throws SQLException, RemoteException {
         if (this.documentExists(dRef)) {
             Document document = this.getDocument(dRef);
-            String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (documentRef, ref, documentName, documentPath, documentExt, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setInt(col++, ref);
-                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
-                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
+                insertStat.setString(col++, document.getDocumentName(document.getCurrentVersion()) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getCurrentVersion()));
+                insertStat.setString(col++, Utils.getFileExtension(document.getDocumentPath(document.getCurrentVersion())));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getLastModifiedBy());
@@ -737,13 +739,14 @@ public class Database {
      */
     private void createDocument(String from, String code, Document document) throws SQLException, RemoteException {
         if (!this.documentExists(document.getDocumentRef())) {
-            String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, documentExt, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setString(col++, code);
-                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
-                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
+                insertStat.setString(col++, document.getDocumentName(document.getCurrentVersion()) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getCurrentVersion()));
+                insertStat.setString(col++, Utils.getFileExtension(document.getDocumentPath(document.getCurrentVersion())));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getCreatedBy());
@@ -766,13 +769,14 @@ public class Database {
     private void updateDocument(String from, String code, int dRef) throws SQLException, RemoteException {
         if (this.documentExists(dRef)) {
             Document document = this.getDocument(dRef);
-            String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertSql = "insert into " + from + " (documentRef, code, documentName, documentPath, documentExt, noteRef, comment, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setInt(col++, document.getDocumentRef());
                 insertStat.setString(col++, code);
-                insertStat.setString(col++, document.getDocumentName(document.getPreviousVersions().size() + 1) + ".pdf");
-                insertStat.setString(col++, document.getDocumentPath(document.getPreviousVersions().size() + 1));
+                insertStat.setString(col++, document.getDocumentName(document.getCurrentVersion()) + ".pdf");
+                insertStat.setString(col++, document.getDocumentPath(document.getCurrentVersion()));
+                insertStat.setString(col++, Utils.getFileExtension(document.getDocumentPath(document.getCurrentVersion())));
                 insertStat.setInt(col++, document.getNote().getReference());
                 insertStat.setString(col++, document.getComment());
                 insertStat.setString(col++, document.getLastModifiedBy());
@@ -4300,13 +4304,8 @@ public class Database {
         if (this.applicationExists(appRef)) {
             ApplicationInterface application = this.getApplication(appRef);
             String updateSql;
-            if (application.hasTenancyRef()) {
-                updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
-                        + "appStatus=?, tenancyRef=? where appRef=?";
-            } else { // No Tenancy
-                updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
-                        + "appStatus=? where appRef=?";
-            }
+            updateSql = "update applications set appCorrName=?, appStartDate=?, appEndDate=?, "
+                    + "appStatus=?, tenancyRef=? where appRef=?";
 
             try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                 int col = 1;
@@ -4316,6 +4315,8 @@ public class Database {
                 updateStat.setString(col++, application.getAppStatusCode());
                 if (application.hasTenancyRef()) {
                     updateStat.setInt(col++, application.getTenancyRef());
+                } else {
+                    updateStat.setString(col++, null);
                 }
                 updateStat.setInt(col++, application.getApplicationRef());
                 updateStat.executeUpdate();
@@ -4887,11 +4888,13 @@ public class Database {
      */
     public void createOffice(Office office) throws SQLException, RemoteException {
         if (!this.officeExists(office.getOfficeCode())) {
-            String insertSql = "insert into Offices (officeCode, addressRef, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            String insertSql = "insert into Offices (officeCode, addressRef, addrLong, addrLat, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, office.getOfficeCode());
                 insertStat.setInt(col++, office.getAddress().getAddressRef());
+                insertStat.setDouble(col++, office.getAddrLong());
+                insertStat.setDouble(col++, office.getAddrLat());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(office.getStartDate()));
                 insertStat.setString(col++, office.getCreatedBy());
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(office.getCreatedDate()));
@@ -4961,24 +4964,24 @@ public class Database {
      */
     private void loadOffices() throws SQLException, RemoteException {
         this.offices.clear();
-        String sql = "select officeCode, addressRef, startDate, endDate, createdBy, createdDate from offices order by createdDate";
+        String sql = "select officeCode, addressRef, addrLong, addrLat, startDate, endDate, createdBy, createdDate from offices order by createdDate";
         try (Statement selectStat = con.createStatement()) {
             ResultSet results = selectStat.executeQuery(sql);
 
             while (results.next()) {
                 String officeCode = results.getString("officeCode");
-                AddressInterface address;
+                AddressInterface address = null;
                 if (this.addressExists(results.getInt("addressRef"))) {
                     address = this.getAddress(results.getInt("addressRef"));
-                } else {
-                    address = this.getAddress(results.getInt("addressRef")); // NEED TO CREATE AN ERROR ADDRESS
                 }
+                Double addrLong = results.getDouble("addrLong");
+                Double addrLat = results.getDouble("addrLat");
                 Date startDate = results.getDate("startDate");
                 Date endDate = results.getDate("endDate");
                 String createdBy = results.getString("createdBy");
                 Date createdDate = results.getDate("createdDate");
 
-                Office temp = new Office(officeCode, address, startDate, createdBy, createdDate);
+                Office temp = new Office(officeCode, address, addrLong, addrLat, startDate, createdBy, createdDate);
                 if (endDate != null) {
                     temp.setEndDate(endDate, null);
                 }
@@ -8912,7 +8915,7 @@ public class Database {
             if (ethnicOriginCode != null && !ethnicOriginCode.isEmpty() && !Utils.compareStrings(ethnicOriginCode, temp.getEthnicOrigin().getCode())) {
                 add = false;
             }
-            if (languageCode != null && !languageCode.isEmpty() && !Utils.compareStrings(ethnicOriginCode, temp.getLanguage().getCode())) {
+            if (languageCode != null && !languageCode.isEmpty() && !Utils.compareStrings(languageCode, temp.getLanguage().getCode())) {
                 add = false;
             }
             if (nationalityCode != null && !nationalityCode.isEmpty() && !Utils.compareStrings(nationalityCode, temp.getNationality().getCode())) {

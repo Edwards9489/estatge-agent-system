@@ -591,9 +591,13 @@ public class JobRoleDetails extends JFrame {
     private void endJobRoleBenefit() {
         Integer selection = benefitPanel.getSelectedObjectRef();
         if (selection != null) {
-            System.out.println("Job Role Benefit Ref: " + selection);
-            EndObject endJobRoleBenefit = new EndObject(client, "Job Role Benefit", selection);
-            endJobRoleBenefit.setVisible(true);
+            try {
+                System.out.println("Job Role Benefit Ref: " + selection);
+                EndObject endJobRoleBenefit = new EndObject(client, "Job Role Benefit", selection, jobRole.getJobRoleCode());
+                endJobRoleBenefit.setVisible(true);
+            } catch (RemoteException ex) {
+                Logger.getLogger(JobRoleDetails.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

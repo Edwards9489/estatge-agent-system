@@ -1432,9 +1432,11 @@ public class ClientImplTest {
         String officeCode = "";
         int addrRef = 0;
         Date startDate = null;
+        Double addrLong = null;
+        Double addrLat = null;
         ClientImpl instance = new ClientImpl();
         int expResult = 0;
-        int result = instance.createOffice(officeCode, addrRef, startDate);
+        int result = instance.createOffice(officeCode, addrRef, addrLong, addrLat, startDate);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

@@ -78,7 +78,7 @@ public class CreatePropElement extends JFrame {
             value = new JTextField(10);
             
             elementField = new JComboBox();
-            elementField.addItem("-");
+            elementField.addItem("  ---  ");
             try {
                 for (Element propElement : client.getCurrentPropElements()) {
                     if (!property.hasPropElement(propElement.getCode())) {
@@ -106,7 +106,7 @@ public class CreatePropElement extends JFrame {
                             stringValue = value.getText();
                         }
                         
-                        if (elementCode != null && !elementCode.equals("-") && startDate != null && (stringValue != null || doubleValue != 0.0)) {
+                        if (elementCode != null && !elementCode.equals("  ---  ") && startDate != null && (stringValue != null || doubleValue != 0.0)) {
                             try {
                                 result = client.createPropertyElement(ref, elementCode, startDate, charge.isSelected(), stringValue, doubleValue, comment);
                                 if (result > 0) {

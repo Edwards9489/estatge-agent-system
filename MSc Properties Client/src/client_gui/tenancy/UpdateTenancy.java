@@ -91,6 +91,7 @@ public class UpdateTenancy extends JFrame {
             dateField.setFormats(formatter);
             tenTypeField = new JComboBox();
             
+            tenTypeField.addItem("  ---  ");
             try {
             for (Element temp : client.getCurrentTenancyTypes()) {
                 String tenTypeCode = temp.getCode();
@@ -127,7 +128,7 @@ public class UpdateTenancy extends JFrame {
                         
                         int result;
                         try {
-                            if (length > -1 && startDate != null && !tenType.equals("-")) {
+                            if (length > -1 && startDate != null && !tenType.equals("  ---  ")) {
                                 int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to UPDATE tenancy " + tenancy.getAgreementRef() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                                 if (answer == JOptionPane.YES_OPTION) {
                                     result = client.updateTenancy(tenancy.getAgreementRef(), name, startDate, length, tenType);

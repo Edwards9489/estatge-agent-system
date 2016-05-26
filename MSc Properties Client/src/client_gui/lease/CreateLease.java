@@ -100,7 +100,7 @@ public class CreateLease extends JFrame {
         isManagementField = new JCheckBox();
         officeField = new JComboBox();
         
-        officeField.addItem("-");
+        officeField.addItem("  ---  ");
 
         try {
             for (OfficeInterface temp : client.getOffices()) {
@@ -150,7 +150,7 @@ public class CreateLease extends JFrame {
 
                     int result;
                     try {
-                        if (propRef > 0 && length > 0 && startDate != null && expenditure > 0 && officeCode != null) {
+                        if (propRef > 0 && length > 0 && startDate != null && expenditure > 0 && officeCode != null && !officeCode.equals("  ---  ")) {
                             int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to CREATE a new lease for Property " + propRef + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                             if (answer == JOptionPane.YES_OPTION) {
                                 result = client.createLease(startDate, length, propRef, isManagementField.isSelected(), expenditure, officeCode);

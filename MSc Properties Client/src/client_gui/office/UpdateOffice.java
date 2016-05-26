@@ -6,10 +6,7 @@
 package client_gui.office;
 
 import client_application.ClientImpl;
-import client_gui.IntegerListener;
 import client_gui.OKDialog;
-import client_gui.address.AddressSearch;
-import interfaces.AddressInterface;
 import interfaces.OfficeInterface;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,24 +15,16 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -57,6 +46,8 @@ public class UpdateOffice extends JFrame {
     private JPanel controlsPanel;
     private JTextField addrField;
     private JXDatePicker dateField;
+    private JTextField longField;
+    private JTextField latField;
     private JTextField codeField;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -84,16 +75,24 @@ public class UpdateOffice extends JFrame {
         try {
             okButton = new JButton("OK");
             cancelButton = new JButton("Cancel");
-            codeField = new JTextField(7);
+            codeField = new JTextField(8);
+            longField = new JTextField(8);
+            latField = new JTextField(8);
             addrField = new JTextField(55);
             codeField.setText(office.getOfficeCode());
+            longField.setText(String.valueOf(office.getAddrLong()));
+            latField.setText(String.valueOf(office.getAddrLat()));
             addrField.setText(office.getAddress().printAddress());
             dateField = new JXDatePicker();
             dateField.setFormats(formatter);
             dateField.setDate(office.getStartDate());
             codeField.setEnabled(false);
+            longField.setEnabled(false);
+            latField.setEnabled(false);
             addrField.setEnabled(false);
             codeField.setDisabledTextColor(Color.BLACK);
+            longField.setDisabledTextColor(Color.BLACK);
+            latField.setDisabledTextColor(Color.BLACK);
             addrField.setDisabledTextColor(Color.BLACK);
             
             okButton.addActionListener(new ActionListener() {
@@ -138,7 +137,7 @@ public class UpdateOffice extends JFrame {
                 }
             });
             
-            this.setSize(900, 250);
+            this.setSize(1100, 250);
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
             
@@ -184,20 +183,49 @@ public class UpdateOffice extends JFrame {
             
             JLabel startDate = new JLabel("Start Date    ");
             startDate.setFont(boldFont);
-            
-            startDate.setFont(boldFont);
-            
+
             gc.fill = GridBagConstraints.NONE;
             gc.anchor = GridBagConstraints.EAST;
             gc.insets = new Insets(0, 0, 0, 0);
             controlsPanel.add(startDate, gc);
             
             dateField.setFont(plainFont);
-            
+
             gc.gridx++;
             gc.anchor = GridBagConstraints.WEST;
             gc.insets = new Insets(0, 0, 0, 5);
             controlsPanel.add(dateField, gc);
+
+            JLabel longLabel = new JLabel("Address Long    ");
+            longLabel.setFont(boldFont);
+
+
+            gc.fill = GridBagConstraints.NONE;
+            gc.anchor = GridBagConstraints.EAST;
+            gc.insets = new Insets(0, 0, 0, 0);
+            controlsPanel.add(longLabel, gc);
+
+            longField.setFont(plainFont);
+
+            gc.gridx++;
+            gc.anchor = GridBagConstraints.WEST;
+            gc.insets = new Insets(0, 0, 0, 5);
+            controlsPanel.add(longField, gc);
+
+            JLabel latLabel = new JLabel("Address Lat    ");
+            latLabel.setFont(boldFont);
+
+            gc.fill = GridBagConstraints.NONE;
+            gc.anchor = GridBagConstraints.EAST;
+            gc.insets = new Insets(0, 0, 0, 0);
+            controlsPanel.add(latLabel, gc);
+
+            latField.setFont(plainFont);
+
+            gc.gridx++;
+            gc.anchor = GridBagConstraints.WEST;
+            gc.insets = new Insets(0, 0, 0, 5);
+            controlsPanel.add(latField, gc);
             
             
             ////////// NEXT ROW //////////
@@ -219,7 +247,7 @@ public class UpdateOffice extends JFrame {
             addrField.setFont(plainFont);
             
             gc.gridx++;
-            gc.gridwidth = 3;
+            gc.gridwidth = 7;
             gc.anchor = GridBagConstraints.WEST;
             gc.insets = new Insets(0, 0, 0, 0);
             controlsPanel.add(addrField, gc);

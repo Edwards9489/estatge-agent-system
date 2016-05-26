@@ -10,15 +10,13 @@ import client_gui.AboutFrame;
 import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.IntegerListener;
-import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
-import client_gui.PDFFileFilter;
-import client_gui.PNGFileFilter;
 import client_gui.document.CreateDocument;
+import client_gui.document.DocumentDetails;
 import client_gui.document.DocumentPanel;
 import client_gui.document.UpdateDocument;
-import client_gui.document.ViewPreviousDocument;
+import client_gui.document.ViewDocument;
 import client_gui.employee.UpdateEmployeeSecurity;
 import client_gui.login.LoginForm;
 import client_gui.modifications.ModPanel;
@@ -55,7 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -84,7 +81,6 @@ public class RentAccDetails extends JFrame {
     private TransactionPanel transactionPanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-    private JFileChooser fileChooser;
     private JLabel length;
     private JLabel start;
     private JLabel startDate;
@@ -115,12 +111,6 @@ public class RentAccDetails extends JFrame {
 
     private void layoutComponents() {
         try {
-            fileChooser = new JFileChooser();
-            // If you need more choosbale files then add more choosable files
-            fileChooser.addChoosableFileFilter(new PDFFileFilter());
-            fileChooser.addChoosableFileFilter(new PNGFileFilter());
-            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
-            
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -560,25 +550,26 @@ public class RentAccDetails extends JFrame {
         }
     }
 
-    private void viewDocument() {
+    private void viewDocumentDetails() {
         if (documentPanel.getSelectedObjectRef() != null) {
             Document document;
             try {
                 document = rentAcc.getDocument(documentPanel.getSelectedObjectRef());
-                client.downloadRentAccDocument(rentAcc.getAccRef(), document.getDocumentRef(), document.getCurrentVersion());
+                DocumentDetails documentDetails = new DocumentDetails(client, document, "Rent Account", rentAcc.getAccRef());
+                documentDetails.setVisible(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(RentAccDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void viewPreviousDocument() {
+    private void viewDocument() {
         if (documentPanel.getSelectedObjectRef() != null) {
             final Document document;
             try {
                 document = rentAcc.getDocument(documentPanel.getSelectedObjectRef());
                 if (document != null) {
-                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                    ViewDocument viewPreviousDocument = new ViewDocument(document.getCurrentVersion(), new IntegerListener() {
                         @Override
                         public void intOmitted(int ref) {
                             try {
@@ -700,14 +691,14 @@ public class RentAccDetails extends JFrame {
 
                 } else if (pane == 2) {
                     //Document
-                    viewDocument();
+                    viewDocumentDetails();
                     System.out.println("TEST - View Document");
 
                 }
                 break;
                 
             case "View Previous":
-                viewPreviousDocument();
+                viewDocument();
                 break;
 
             case "Refresh":

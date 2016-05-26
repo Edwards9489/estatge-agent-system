@@ -76,17 +76,17 @@ public class PropertySearchPanel extends JPanel {
             leaseEndDateField = new JXDatePicker();
             leaseEndDateField.setFormats(dateFormatter);
             propTypeField = new JComboBox();
-            propTypeField.addItem("-");
+            propTypeField.addItem("  ---  ");
             for (Element temp : client.getPropertyTypes()) {
                 propTypeField.addItem(temp.getCode());
             }
             propSubTypeField = new JComboBox();
-            propSubTypeField.addItem("-");
+            propSubTypeField.addItem("  ---  ");
             for (Element temp : client.getPropertySubTypes()) {
                 propSubTypeField.addItem(temp.getCode());
             }
             statusField = new JComboBox();
-            statusField.addItem("-");
+            statusField.addItem("  ---  ");
             statusField.addItem("NEW");
             statusField.addItem("VOID");
             statusField.addItem("OCCP");
@@ -106,13 +106,13 @@ public class PropertySearchPanel extends JPanel {
                     String createdBy = null;
                     Date createdDate = createdDateField.getDate();
                     
-                    if (!propTypeField.getSelectedItem().equals("-")) {
+                    if (!propTypeField.getSelectedItem().equals("  ---  ")) {
                         propType = (String) propTypeField.getSelectedItem();
                     }
-                    if (!propSubTypeField.getSelectedItem().equals("-")) {
+                    if (!propSubTypeField.getSelectedItem().equals("  ---  ")) {
                         propSubType = (String) propSubTypeField.getSelectedItem();
                     }
-                    if (!statusField.getSelectedItem().equals("-")) {
+                    if (!statusField.getSelectedItem().equals("  ---  ")) {
                         statusCode = (String) statusField.getSelectedItem();
                     }
                     if (!createdByField.getText().isEmpty()) {

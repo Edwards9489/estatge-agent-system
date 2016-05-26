@@ -284,7 +284,7 @@ public class TestServer {
             
             
             // Office methods -- Tested commented Office methods
-            System.out.println(test.createOffice("EDM", 1, janBeg.getTime(), "DEDWARDS"));
+            System.out.println(test.createOffice("EDM", 1, 0.0, 0.0, janBeg.getTime(), "DEDWARDS"));
 //            System.out.println(test.updateOffice("EDM", janEnd.getTime(), "DEDWARDS"));
 //            System.out.println(test.createOfficeContact("EDM", "ERR", "test@test.com", febBeg.getTime(), "DEDWARDS"));
             OfficeInterface office = test.getOffice("EDM");

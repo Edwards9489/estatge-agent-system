@@ -99,7 +99,7 @@ public class UpdateContact extends JFrame {
             valueField = new JTextField();
             contactTypeField = new JComboBox();
 
-            contactTypeField.addItem("-");
+            contactTypeField.addItem("  ---  ");
             for (Element type : client.getCurrentContactTypes()) {
                 contactTypeField.addItem(type.getCode());
             }
@@ -120,7 +120,7 @@ public class UpdateContact extends JFrame {
                             Date date = dateField.getDate();
                             String comment = textArea.getText();
 
-                            if (contactTypeCode != null && !contactTypeCode.equals("-") && value != null && !value.isEmpty() && date != null) {
+                            if (contactTypeCode != null && !contactTypeCode.equals("  ---  ") && value != null && !value.isEmpty() && date != null) {
                                 switch (contactType) {
                                     case "Person":
                                         result = client.updatePersonContact(ref, contact.getContactRef(), contactTypeCode, value, date, comment);

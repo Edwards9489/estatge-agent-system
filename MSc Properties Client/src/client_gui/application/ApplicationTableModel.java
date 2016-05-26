@@ -34,10 +34,6 @@ public class ApplicationTableModel extends AbstractTableModel {
         return colNames[column];
     }
     
-    public void setData(List<ApplicationInterface> db) {
-        this.db = db;
-    }
-    
     @Override
     public int getRowCount() {
         return db.size();
@@ -80,5 +76,9 @@ public class ApplicationTableModel extends AbstractTableModel {
             Logger.getLogger(ApplicationTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public void setData(List<ApplicationInterface> db) {
+        this.db = db;
     }
 }

@@ -54,7 +54,7 @@
 
 	<h2>To Let a Property... Register with us now.</h2>
 	
-	<form method="post" action="MSc_Properties - Properties.php">
+	<form method="post" action="MSc Properties - Send E-Mail2.php">
 	
 	<table border='0'>
 	
@@ -71,76 +71,125 @@
 	<tr><td><strong>Phone: <strong></td>
 	<td><input type="text" name="phone" id="phone" size="17"/></td></tr>
 	
-	<tr><td><p><strong>Office: </strong></td>
-	<td><select name="office" id="office" size="1" >
-		<option value="-">Select Office</option>
+	<tr><td><strong>Kitchen: </strong></td>
+	<td><select name="kitchen" id="kitchen" size="1" >
+	<option value="-">-</option>
+	<option value="S">Small</option>
+	<option value="M">Medium</option>
+	<option value="L">Large</option>
+	<option value="XL">Extra Large</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Type: </strong></td>
+	<td><select name="type" id="type" size="1" >
+	<option value="-">-</option>
 	<?php
 	
 	include "msc_properties - Common_Functions.php";
 	
-	$outputDisplay = '';
-	
-	
-	$sql_statement  = "SELECT name ";
-	$sql_statement .= "FROM city ";
-	$sql_statement .= "ORDER BY name ";
-	
-	$sqlResults = selectResults($sql_statement);
-	
-	$error_or_rows = $sqlResults[0];
-	
-	if (substr($error_or_rows, 0 , 5) == 'ERROR')
-	{
-		print "<br />Error on DB";
-	} else {
-		
-		for ($ii = 1; $ii <= $error_or_rows; $ii++)
-		{
-			$name  = $sqlResults [$ii] ['name'];
-			
-			//print "<br>N: $name";
-			
-			$outputDisplay .= "<option value='".$name."'>".$ii.":".$name."</option>\n";
-		}
-	}
-	
-	print $outputDisplay;
+	print typeDropDown();
 	
 	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Sub Type: </strong></td>
+	<td><select name="sub_type" id="sub_type" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print subTypeDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Age: </strong></td>
+	<td><select name="age" id="age" size="1" >
+	<option value="-">-</option>
+	<?php
+	
+	print ageDropDown();
+	
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Bedrooms: </strong></td>
+	<td><select name="beds" id="beds" size="1" >
+	<option value="-">-</option>
+	<?php
+		for($i=1; $i<=10; $i++) {
+			print '<option value="'.$i.'">'.$i.' bed</option>';
+		}
+	?>
+	</select></td></tr>
+	
+	<tr><td><strong>Driverway: </strong></td>
+	<td><select name="driveway" id="driveway" size="1" >
+	<option value="-">-</option>
+	<option value="Y">Yes</option>
+	<option value="N">No</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Garden: </strong></td>
+	<td><select name="garden" id="garden" size="1" >
+	<option value="-">-</option>
+	<option value="Y">Yes</option>
+	<option value="N">No</option>
+	</select></td></tr>
+	
+	<tr><td><strong>Conservatory: </strong></td>
+	<td><select name="conservatory" id="conservatory" size="1" >
+	<option value="-">-</option>
+	<option value="Y">Yes</option>
+	<option value="N">No</option>
 	</select></td></tr>
 	
 	<tr><td><strong>Bathrooms: </strong></td>
 	<td><select name="baths" id="baths" size="1" >
 	<option value="-">-</option>
 	<?php
-		for($i=0; $i<=5; $i++) {
-			print '<option value="'.$i.'">'.$i.' beds</option>';
+		for($i=1; $i<=5; $i++) {
+			print '<option value="'.$i.'">'.$i.'</option>';
 		}
 	?>
 	</select></td></tr>
 	
-	<tr><td><strong>Driveway: </strong></td>
-	<td><select name="driveway" id="driveway" size="1" >
+	<tr><td><strong>Receptions: </strong></td>
+	<td><select name="receptions" id="receptions" size="1" >
 	<option value="-">-</option>
-	<option value="Y">Yes</option>
-	<option value="N">No</option>
-	
+	<?php
+		for($i=0; $i<=5; $i++) {
+			print '<option value="'.$i.'">'.$i.'</option>';
+		}
+	?>
+	</select></td></tr>
 	
 	</table>
 	
+	<br><strong>Office: </strong><br>
+	<select name="office" id="office" size="1" >
+	<option value="-">Select Office</option>
+	<?php
+	
+	print officeDropDown();
+	
+	?>
+	</select>
 	
 	<div align="right">
 		<p>
-		<input type="submit" value="Submit" />
+		<input type="submit" value="Submit" onclick="return validateForm();" />
+		<input type="reset" />
 		</p>
 	</div>
 
-</form>
+	</form>
+</div>
+
+<div style="color: red;" id="messagediv">
 </div>
 
 <div id="endpage" style="top: 965px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+	<p> MSc Properties (c) </p>
 </div>
 
 

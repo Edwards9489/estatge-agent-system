@@ -78,7 +78,7 @@ public class CreateJobRoleBenefit extends JFrame {
             value = new JTextField(10);
             
             elementField = new JComboBox();
-            elementField.addItem("-");
+            elementField.addItem("  ---  ");
             try {
                 for (Element benefits : client.getCurrentJobBenefits()) {
                     if (!jobRole.hasCurrentBenefit(benefits.getCode())) {
@@ -106,7 +106,7 @@ public class CreateJobRoleBenefit extends JFrame {
                             stringValue = value.getText();
                         }
                         
-                        if (elementCode != null && !elementCode.equals("-") && startDate != null && (stringValue != null || doubleValue > 0.0)) {
+                        if (elementCode != null && !elementCode.equals("  ---  ") && startDate != null && (stringValue != null || doubleValue > 0.0)) {
                             try {
                                 result = client.createJobRoleBenefit(jobRoleCode, elementCode, startDate, charge.isSelected(), stringValue, doubleValue, comment);
                                 if (result > 0) {

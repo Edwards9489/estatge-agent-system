@@ -99,13 +99,13 @@ public class TenancySearchPanel extends JPanel {
             propRefField = new JTextField(3);
             appRefField = new JTextField(3);
             tenTypeField = new JComboBox();
-            tenTypeField.addItem("-");
+            tenTypeField.addItem("  ---  ");
             for (Element temp : client.getTenancyTypes()) {
                 tenTypeField.addItem(temp.getCode());
             }
             accountRefField = new JTextField(3);
             officeField = new JComboBox();
-            officeField.addItem("-");
+            officeField.addItem("  ---  ");
             for (OfficeInterface temp : client.getOffices()) {
                 officeField.addItem(temp.getOfficeCode());
             }
@@ -141,10 +141,10 @@ public class TenancySearchPanel extends JPanel {
                     if (!appRefField.getText().isEmpty()) {
                         appRef = appRefField.getText();
                     }
-                    if (!tenTypeField.getSelectedItem().equals("-")) {
+                    if (!tenTypeField.getSelectedItem().equals("  ---  ")) {
                         tenType = (String) tenTypeField.getSelectedItem();
                     }
-                    if (!officeField.getSelectedItem().equals("-")) {
+                    if (!officeField.getSelectedItem().equals("  ---  ")) {
                         officeCode = (String) officeField.getSelectedItem();
                     }
                     if (!accountRefField.getText().isEmpty()) {

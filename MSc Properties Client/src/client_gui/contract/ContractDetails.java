@@ -11,15 +11,13 @@ import client_gui.ButtonPanel;
 import client_gui.DetailsPanel;
 import client_gui.EndObject;
 import client_gui.IntegerListener;
-import client_gui.JPEGFileFilter;
 import client_gui.StringListener;
 import client_gui.OKDialog;
-import client_gui.PDFFileFilter;
-import client_gui.PNGFileFilter;
 import client_gui.document.CreateDocument;
+import client_gui.document.DocumentDetails;
 import client_gui.document.DocumentPanel;
 import client_gui.document.UpdateDocument;
-import client_gui.document.ViewPreviousDocument;
+import client_gui.document.ViewDocument;
 import client_gui.empAccount.EmpAccDetails;
 import client_gui.employee.EmployeeDetails;
 import client_gui.employee.UpdateEmployeeSecurity;
@@ -50,14 +48,12 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -85,7 +81,6 @@ public class ContractDetails extends JFrame {
     private NotePanel notePanel;
     private DocumentPanel documentPanel;
     private ModPanel modPanel;
-    private JFileChooser fileChooser;
     private JLabel startDate;
     private JLabel name;
     private JLabel length;
@@ -116,11 +111,6 @@ public class ContractDetails extends JFrame {
 
     private void layoutComponents() {
         try {
-            fileChooser = new JFileChooser();
-            // If you need more choosbale files then add more choosable files
-            fileChooser.addChoosableFileFilter(new PDFFileFilter());
-            fileChooser.addChoosableFileFilter(new PNGFileFilter());
-            fileChooser.addChoosableFileFilter(new JPEGFileFilter());
             setJMenuBar(createMenuBar());
 
             detailsPanel = new JPanel();
@@ -547,25 +537,26 @@ public class ContractDetails extends JFrame {
         }
     }
 
-    private void viewDocument() {
+    private void viewDocumentDetails() {
         if (documentPanel.getSelectedObjectRef() != null) {
             Document document;
             try {
                 document = contract.getDocument(documentPanel.getSelectedObjectRef());
-                client.downloadContractDocument(contract.getAgreementRef(), document.getDocumentRef(), document.getCurrentVersion());
+                DocumentDetails documentDetails = new DocumentDetails(client, document, "Contract", contract.getAgreementRef());
+                documentDetails.setVisible(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(ContractDetails.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
-    private void viewPreviousDocument() {
+    private void viewDocument() {
         if (documentPanel.getSelectedObjectRef() != null) {
             final Document document;
             try {
                 document = contract.getDocument(documentPanel.getSelectedObjectRef());
                 if (document != null) {
-                    ViewPreviousDocument viewPreviousDocument = new ViewPreviousDocument(document.getCurrentVersion(), new IntegerListener() {
+                    ViewDocument viewPreviousDocument = new ViewDocument(document.getCurrentVersion(), new IntegerListener() {
                         @Override
                         public void intOmitted(int ref) {
                             try {
@@ -673,14 +664,14 @@ public class ContractDetails extends JFrame {
 
                 } else if (pane == 1) {
                     //Document
-                    viewDocument();
+                    viewDocumentDetails();
                     System.out.println("TEST - View Note");
 
                 }
                 break;
                 
             case "View Previous":
-                viewPreviousDocument();
+                viewDocument();
                 break;
 
             case "Refresh":

@@ -5,7 +5,6 @@
  */
 package client_gui.systemConfig;
 
-import client_gui.JTreeInfo;
 import client_gui.IntegerListener;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

@@ -6,7 +6,6 @@
 package Test_Package;
 
 import classes.Utils;
-import interfaces.Document;
 import interfaces.Note;
 import java.io.File;
 import java.io.IOException;
@@ -38,22 +37,22 @@ public class TestDocument {
             
             System.out.println("****** Testing Accessor Methods ******");
             
-            System.out.println(test1.getDocumentName(test1.getPreviousVersions().size() +1));
-            System.out.println(test1.getDocumentPath(test1.getPreviousVersions().size() +1));
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).getAbsolutePath());
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).getCanonicalPath());
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).getName());
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).getParent());
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).getPath());
-            System.out.println(test1.getDocument(test1.getPreviousVersions().size() +1).toString());
-            System.out.println(Utils.getFileName(test1.getDocumentName(test1.getPreviousVersions().size() +1)));
-            System.out.println(Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getPreviousVersions().size() +1)));
+            System.out.println(test1.getDocumentName(test1.getCurrentVersion() +1));
+            System.out.println(test1.getDocumentPath(test1.getCurrentVersion() +1));
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).getAbsolutePath());
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).getCanonicalPath());
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).getName());
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).getParent());
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).getPath());
+            System.out.println(test1.getDocument(test1.getCurrentVersion() +1).toString());
+            System.out.println(Utils.getFileName(test1.getDocumentName(test1.getCurrentVersion() +1)));
+            System.out.println(Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getCurrentVersion() +1)));
             System.out.println("********************");
-            System.out.println(test1.getPreviousVersions().size());
+            System.out.println(test1.getCurrentVersion());
             test1.createNewVersion(file2, new ModifiedBy("test", "DEDWARDS", new Date()));
-            System.out.println(test1.getPreviousVersions().size());
+            System.out.println(test1.getCurrentVersion());
             
-            System.out.println(test1.getDocumentPath(test1.getPreviousVersions().size() +1) + "\\" + Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getPreviousVersions().size() +1)) + (test1.getPreviousVersions().size() + 2) + "." + Utils.getFileExtension(test1.getDocumentName(test1.getPreviousVersions().size() +1)));
+            System.out.println(test1.getDocumentPath(test1.getCurrentVersion() +1) + "\\" + Utils.getFileNameWithoutVersion(test1.getDocumentName(test1.getCurrentVersion() +1)) + (test1.getCurrentVersion() + 2) + "." + Utils.getFileExtension(test1.getDocumentName(test1.getCurrentVersion() +1)));
         } catch (RemoteException ex) {
             Logger.getLogger(TestDocument.class.getName()).log(Level.SEVERE, null, ex);
         }

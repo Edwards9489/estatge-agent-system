@@ -75,7 +75,7 @@ public class CreateJobRoleRequirement extends JFrame {
         textArea.setDisabledTextColor(Color.BLACK);
 
         requirementsField = new JComboBox();
-        requirementsField.addItem("-");
+        requirementsField.addItem("  ---  ");
         try {
             for (Element requirement : client.getCurrentJobRequirements()) {
 
@@ -91,7 +91,7 @@ public class CreateJobRoleRequirement extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 String requirementCode = (String) requirementsField.getSelectedItem();
-                if (!requirementCode.equals("-")) {
+                if (!requirementCode.equals("  ---  ")) {
                     try {
                         Element requirement = client.getJobRequirement(requirementCode);
                         textArea.setText(requirement.getDescription());
@@ -113,7 +113,7 @@ public class CreateJobRoleRequirement extends JFrame {
                     int answer = JOptionPane.showConfirmDialog(null, "Are you sure you would like to ASSIGN the Requirement " + requirementCode + " for Job Role " + jobRole.getJobRoleCode() + "?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (answer == JOptionPane.YES_OPTION) {
                         result = client.createJobRoleRequirement(jobRole.getJobRoleCode(), requirementCode);
-                        if (result > 0 && !requirementCode.equals("-")) {
+                        if (result > 0 && !requirementCode.equals("  ---  ")) {
                             String message = "The Requirement has been assigned to the Job Role " + jobRole.getJobRoleCode();
                             String title = "Information";
                             OKDialog.okDialog(CreateJobRoleRequirement.this, message, title);

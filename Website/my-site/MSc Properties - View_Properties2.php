@@ -189,6 +189,7 @@
 </div>
 
 <div id="viewproperties">
+
 <h2><strong>Property Search<strong></h2>
 
 <table border='1' cellpadding='10' >
@@ -259,8 +260,7 @@
 
 
 <div id="endpage" style="top: 1980px;">
-	<a href="http://localhost/assignment_6_files/assignment_6_guest_calc.php">Guest Book / Mortgage Calculator</a>
-	<br /><br /><br /><br />
+	<p> MSc Properties (c) </p>
 </div>
 
 

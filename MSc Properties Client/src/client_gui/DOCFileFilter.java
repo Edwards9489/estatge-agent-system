@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileFilter;
  * @author Dwayne
  */
 public class DOCFileFilter  extends FileFilter {
+    
     @Override
     public boolean accept(File file) {
         
@@ -29,11 +30,7 @@ public class DOCFileFilter  extends FileFilter {
             return false;
         }
         
-        if(extension.equals("doc")) {
-            return true;
-        }
-        
-        return false;
+        return extension.equals("doc");
     }
     
     @Override

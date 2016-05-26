@@ -87,12 +87,12 @@ public class CreateProperty extends JFrame {
             startField = new JXDatePicker();
             startField.setFormats(formatter);
             propTypeField = new JComboBox();
-            propTypeField.addItem("-");
+            propTypeField.addItem("  ---  ");
             for (Element temp : client.getCurrentPropertyTypes()) {
                 propTypeField.addItem(temp.getCode());
             }
             propSubTypeField = new JComboBox();
-            propSubTypeField.addItem("-");
+            propSubTypeField.addItem("  ---  ");
             for (Element temp : client.getCurrentPropertySubTypes()) {
                 propSubTypeField.addItem(temp.getCode());
             }
@@ -111,7 +111,7 @@ public class CreateProperty extends JFrame {
                         String propSubTypeCode = (String) propSubTypeField.getSelectedItem();
                         
                         
-                        if (startDate != null && !propTypeCode.equals("-") && !propSubTypeCode.equals("-") && addrRef > 0) {
+                        if (startDate != null && !propTypeCode.equals("  ---  ") && !propSubTypeCode.equals("  ---  ") && addrRef > 0) {
                             try {
                                 
                                 result = client.createProperty(addrRef, startDate, propTypeCode, propSubTypeCode);

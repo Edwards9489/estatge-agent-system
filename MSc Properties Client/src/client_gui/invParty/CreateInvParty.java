@@ -100,7 +100,7 @@ public class CreateInvParty extends JFrame {
         dateField = new JXDatePicker();
         dateField.setFormats(formatter);
         relationshipField = new JComboBox();
-        relationshipField.addItem("-");
+        relationshipField.addItem("  ---  ");
 
         try {
             for (Element temp : client.getRelationships()) {
@@ -122,7 +122,7 @@ public class CreateInvParty extends JFrame {
                 Date startDate = null;
                 boolean correctInput = false;
                 try {
-                    if (!relationshipField.getSelectedItem().equals("-")) {
+                    if (!relationshipField.getSelectedItem().equals("  ---  ")) {
                         if (dateField.getDate() != null) {
                             relationshipCode = (String) relationshipField.getSelectedItem();
                             personRefText = personRefField.getText();

@@ -37,6 +37,8 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
     
     private final String officeCode;
     private final AddressInterface address;
+    private final double addrLong;
+    private final double addrLat;
     private Date startDate;
     private Date endDate;
     private final List<AgreementInterface> agreements;
@@ -59,9 +61,11 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
      * @param createdDate 
      * @throws java.rmi.RemoteException 
      */
-    public Office(String officeCode, AddressInterface address, Date startDate, String createdBy, Date createdDate) throws RemoteException {
+    public Office(String officeCode, AddressInterface address, double addrLong, double addrLat, Date startDate, String createdBy, Date createdDate) throws RemoteException {
         this.officeCode = officeCode;
         this.address = address;
+        this.addrLong = addrLong;
+        this.addrLat = addrLat;
         this.startDate = startDate;
         this.agreements = new ArrayList();
         this.accounts = new ArrayList();
@@ -269,6 +273,24 @@ public class Office extends UnicastRemoteObject implements OfficeInterface {
     @Override
     public AddressInterface getAddress() throws RemoteException {
         return address;
+    }
+
+    /**
+     * @return addrLong
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public double getAddrLong() throws RemoteException {
+        return addrLong;
+    }
+
+    /**
+     * @return addrLat
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public double getAddrLat() throws RemoteException {
+        return addrLat;
     }
     
     /**

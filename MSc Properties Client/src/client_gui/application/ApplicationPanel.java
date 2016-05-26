@@ -38,7 +38,7 @@ public class ApplicationPanel extends JPanel {
         table = new JTable(tableModel);
         popup = new JPopupMenu();
         
-        // Set up Border for ButtonPanel
+        // Set up Border for ApplicationPanel
         Border innerBorder = BorderFactory.createEtchedBorder();
         Border outerBorder = BorderFactory.createEmptyBorder(5,5,5,5);
         setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
