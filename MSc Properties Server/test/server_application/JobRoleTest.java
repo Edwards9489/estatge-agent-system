@@ -152,7 +152,6 @@ public class JobRoleTest {
             ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
             Boolean result = false;
-            Boolean result2 = true;
             
             assertEquals("Manager", instance.getJobTitle());
             assertEquals("TEST", instance.getJobDescription());
@@ -174,9 +173,11 @@ public class JobRoleTest {
             assertEquals(true, instance.getRead());
             assertEquals(true, instance.getWrite());
             assertEquals(true, instance.getUpdate());
+            assertEquals(true, instance.getDelete());
             assertEquals(true, instance.getEmployeeRead());
             assertEquals(true, instance.getEmployeeWrite());
-            assertEquals(false, instance.getEmployeeUpdate());
+            assertEquals(true, instance.getEmployeeUpdate());
+            assertEquals(false, instance.getEmployeeDelete());
             
             assertEquals(false, instance.getJobTitle().equals("Manager"));
             assertEquals(false, instance.getJobDescription().equals("TEST"));
@@ -185,9 +186,11 @@ public class JobRoleTest {
             assertEquals(false, result.equals(instance.getRead()));
             assertEquals(false, result.equals(instance.getWrite()));
             assertEquals(false, result.equals(instance.getUpdate()));
+            assertEquals(false, result.equals(instance.getDelete()));
             assertEquals(false, result.equals(instance.getEmployeeRead()));
             assertEquals(false, result.equals(instance.getEmployeeWrite()));
-            assertEquals(false, result2.equals(instance.getEmployeeUpdate()));
+            assertEquals(false, result.equals(instance.getEmployeeUpdate()));
+            assertEquals(true, result.equals(instance.getEmployeeDelete()));
             
             instance.updateJobRole("Lead Manager", "UPDATED TEST", 30000.00, false, true, true, true, true, true, true, true, true, modifiedBy2);
             

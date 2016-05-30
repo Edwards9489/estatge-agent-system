@@ -337,7 +337,7 @@ public class Database {
                 boolean employeeDelete = results.getBoolean("employeeDelete");
                 UserImpl temp = new UserImpl(employeeRef, -1, username, password, null);
                 temp.setUserPermissions(read, write, update, delete, employeeRead, employeeWrite, employeeUpdate, employeeDelete);
-
+                temp.setPasswordReset(false);
                 users.put(username, temp);
             }
             selectStat.close();
@@ -3269,17 +3269,14 @@ public class Database {
         if (this.propertyExists(propertyRef) && this.propertyElementValueExists(propElementRef)) {
             PropertyElementInterface propertyElement = this.getPropertyElementValue(propElementRef);
             if (this.propElementExists(propertyElement.getElementCode())) {
-                String updateSql = "";
-                if (propertyElement.isCharge()) {
-                    updateSql = "update propertyElementValues set doubleValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
-                } else if (!propertyElement.isCharge()) {
-                    updateSql = "update propertyElementValues set stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
-                }
+                String updateSql = "update propertyElementValues set doubleValue=?, stringValue=?, startDate=?, endDate=?, comment=? where propertyElementRef=? and propRef=? and elementCode=?";
                 try (PreparedStatement updateStat = con.prepareStatement(updateSql)) {
                     int col = 1;
                     if (propertyElement.isCharge()) {
                         updateStat.setDouble(col++, propertyElement.getDoubleValue());
+                        updateStat.setString(col++, null);
                     } else if (!propertyElement.isCharge()) {
+                        updateStat.setString(col++, null);
                         updateStat.setString(col++, propertyElement.getStringValue());
                     }
                     updateStat.setDate(col++, DateConversion.utilDateToSQLDate(propertyElement.getStartDate()));
@@ -3520,7 +3517,7 @@ public class Database {
                 insertStat.setDate(col++, DateConversion.utilDateToSQLDate(person.getDateOfBirth()));
                 insertStat.setString(col++, person.getNI());
                 insertStat.setString(col++, person.getGender().getCode());
-                insertStat.setString(col++, person.getNationality().getCode());
+                insertStat.setString(col++, person.getMaritalStatus().getCode());
                 insertStat.setString(col++, person.getEthnicOrigin().getCode());
                 insertStat.setString(col++, person.getLanguage().getCode());
                 insertStat.setString(col++, person.getNationality().getCode());
@@ -4888,7 +4885,7 @@ public class Database {
      */
     public void createOffice(Office office) throws SQLException, RemoteException {
         if (!this.officeExists(office.getOfficeCode())) {
-            String insertSql = "insert into Offices (officeCode, addressRef, addrLong, addrLat, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?)";
+            String insertSql = "insert into Offices (officeCode, addressRef, addrLong, addrLat, startDate, createdBy, createdDate) values (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement insertStat = con.prepareStatement(insertSql)) {
                 int col = 1;
                 insertStat.setString(col++, office.getOfficeCode());

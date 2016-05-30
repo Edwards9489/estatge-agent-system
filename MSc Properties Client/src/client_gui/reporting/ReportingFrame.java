@@ -203,6 +203,7 @@ public class ReportingFrame extends JFrame {
                 reportPanel.setListener(new StringArrayListener() {
                     @Override
                     public void arrayOmitted(List<String> array) {
+                        System.out.println("Report Type: " + reportType);
                         switch (reportType) {
                             case 1:
                                 if (array != null && array.size() == 3) {

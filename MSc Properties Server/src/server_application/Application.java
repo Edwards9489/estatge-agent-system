@@ -464,11 +464,7 @@ public class Application extends UnicastRemoteObject implements ApplicationInter
     @Override
     public AddressUsageInterface getCurrentApplicationAddress() throws RemoteException {
         if(!this.appAddresses.isEmpty()) {
-            for (AddressUsageInterface temp : appAddresses) {
-                if (temp.isCurrent()) {
-                    return temp;
-                }
-            }
+            return appAddresses.get(appAddresses.size() - 1);
         }
         return null;
     }

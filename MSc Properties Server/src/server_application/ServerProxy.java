@@ -1217,8 +1217,6 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     public int endApplicationAddressUsage(int aRef, int addrUsageRef, Date endDate, String modifiedBy) throws RemoteException {
         if (theServer.isAlive()) {
             if (user != null && (user.getUpdate() != null) && user.getUpdate()) {
-                System.out.println("\nServerProxy\nApp Ref: " + aRef);
-                System.out.println("\nAddress Ref: " + aRef);
                 return theServer.endApplicationAddressUsage(aRef, addrUsageRef, endDate, modifiedBy);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -2898,7 +2896,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public List<PropertyInterface> getProperties() throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
+            if (user != null && (user.getRead() != null) && user.getRead()) {
                 return theServer.getProperties();
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -3357,7 +3355,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public EmployeeAccountInterface getEmployeeAccount(int eAccRef) throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getRead() != null) && user.getRead()) {
+            if (user != null && (user.getEmployeeRead() != null) && user.getRead()) {
                 return theServer.getEmployeeAccount(eAccRef);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -3368,7 +3366,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public List<PersonInterface> getPeople(String titleCode, String forename, String middleNames, String surname, Date dateOfBirth, String nationalInsurance, String genderCode, String maritalStatusCode, String ethnicOriginCode, String languageCode, String nationalityCode, String sexualityCode, String religionCode, String createdBy, Date createdDate) throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
+            if (user != null && (user.getRead() != null) && user.getRead()) {
                 return theServer.getPeople(titleCode, forename, middleNames, surname, dateOfBirth, nationalInsurance, genderCode, maritalStatusCode, ethnicOriginCode, languageCode, nationalityCode, sexualityCode, religionCode, createdBy, createdDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -3957,7 +3955,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public List<TenancyInterface> getTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
+            if (user != null && (user.getRead() != null) && user.getEmployeeRead()) {
                 return theServer.getTenanciesByEmployee(eRef, startDate, endDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -3979,7 +3977,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public List<LeaseInterface> getLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
+            if (user != null && (user.getRead() != null) && user.getRead()) {
                 return theServer.getLeasesByEmployee(eRef, startDate, endDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());
@@ -4012,7 +4010,7 @@ public class ServerProxy extends UnicastRemoteObject implements Server {
     @Override
     public List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         if (theServer.isAlive()) {
-            if (user != null && (user.getEmployeeRead() != null) && user.getEmployeeRead()) {
+            if (user != null && (user.getRead() != null) && user.getRead()) {
                 return theServer.getContractsByOffice(officeCode, startDate, endDate);
             }
             throw new InvalidSecurityPriviligies(user.getUsername());

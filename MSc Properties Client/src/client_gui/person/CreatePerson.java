@@ -331,7 +331,7 @@ public class CreatePerson extends JFrame {
             gc.insets = new Insets(0, 0, 0, 5);
             controlsPanel.add(middleNameField, gc);
             
-            JLabel surnameLabel = new JLabel("Middle Names  ");
+            JLabel surnameLabel = new JLabel("Surname  ");
             surnameLabel.setFont(boldFont);
             
             gc.gridx++;

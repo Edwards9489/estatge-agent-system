@@ -58,8 +58,8 @@ public class ReportingPanel extends JPanel {
     private final int reportType;
     private JTextField employeeField;
     private JComboBox officeField;
-    private JXDatePicker startDateField;
-    private JXDatePicker endDateField;
+    private JXDatePicker fromDateField;
+    private JXDatePicker toDateField;
     private StringArrayListener listener;
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
     
@@ -90,10 +90,10 @@ public class ReportingPanel extends JPanel {
         } catch (RemoteException ex) {
             Logger.getLogger(ReportingPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        startDateField = new JXDatePicker();
-        startDateField.setFormats(dateFormatter);
-        endDateField = new JXDatePicker();
-        endDateField.setFormats(dateFormatter);
+        fromDateField = new JXDatePicker();
+        fromDateField.setFormats(dateFormatter);
+        toDateField = new JXDatePicker();
+        toDateField.setFormats(dateFormatter);
         
         
         runButton.addActionListener(new ActionListener() {
@@ -105,18 +105,18 @@ public class ReportingPanel extends JPanel {
                     
                     String value = employeeField.getText();
                     String office = (String) officeField.getSelectedItem();
-                    Date startDate = startDateField.getDate();
-                    Date endDate = endDateField.getDate();
+                    Date fromDate = fromDateField.getDate();
+                    Date toDate=  toDateField.getDate();
                     
                     List<String> array = new ArrayList();
                     
                     switch (reportType) {
                         case 1:
-                            if (value != null && !value.isEmpty() && startDate != null && endDate != null) {
+                            if (value != null && !value.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(value);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getTenanciesByEmployee");
                                     result = 1;
@@ -124,11 +124,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 2:
-                            if (value != null && !value.isEmpty() && startDate != null && endDate != null) {
+                            if (value != null && !value.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(value);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getLeasesByEmployee");
                                     result = 1;
@@ -136,11 +136,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 3:
-                            if (value != null && !value.isEmpty() && startDate != null && endDate != null) {
+                            if (value != null && !value.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(value);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getContractsByEmployee");
                                     result = 1;
@@ -148,11 +148,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 4:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) { 
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getTenanciesByOffice");
                                     result = 1;
@@ -160,11 +160,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 5:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getLeasesByOffice");
                                     result = 1;
@@ -172,11 +172,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 6:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getContractsByOffice");
                                     result = 1;
@@ -184,11 +184,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 7:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getExpenditureForOffice");
                                     result = 1;
@@ -196,11 +196,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 8:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getRevenueForOffice");
                                     result = 1;
@@ -208,11 +208,11 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 9:
-                            if (office != null && !office.isEmpty() && startDate != null && endDate != null) {
+                            if (office != null && !office.isEmpty() && fromDate != null && toDate != null) {
                                 if (listener != null) {
                                     array.add(office);
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getProfitForOffice");
                                     result = 1;
@@ -220,10 +220,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 10:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getExpenditureForOverall");
                                     result = 1;
@@ -231,10 +231,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 11:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getRevenueForOverall");
                                     result = 1;
@@ -242,10 +242,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 12:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("getProfitForOverall");
                                     result = 1;
@@ -253,10 +253,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 13:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("generateEmployeeReport");
                                     result = 1;
@@ -264,10 +264,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 14:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("generateOfficeReport");
                                     result = 1;
@@ -275,10 +275,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 15:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("generateOfficeFinanceReport");
                                     result = 1;
@@ -286,10 +286,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 16:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("generateFinanceReport");
                                     result = 1;
@@ -297,10 +297,10 @@ public class ReportingPanel extends JPanel {
                             }
                             break;
                         case 17:
-                            if (startDate != null && endDate != null) {
+                            if (fromDate != null && toDate != null) {
                                 if (listener != null) {
-                                    array.add(dateFormatter.format(startDate));
-                                    array.add(dateFormatter.format(endDate));
+                                    array.add(dateFormatter.format(fromDate));
+                                    array.add(dateFormatter.format(toDate));
                                     listener.arrayOmitted(array);
                                     System.out.println("generateReport");
                                     result = 1;
@@ -425,21 +425,21 @@ public class ReportingPanel extends JPanel {
         gc.weightx = 1;
         gc.weighty = 1;
 
-        JLabel startDateLabel = new JLabel("Start Date    ");
-        startDateLabel.setFont(boldFont);
+        JLabel fromDateLabel = new JLabel("From Date    ");
+        fromDateLabel.setFont(boldFont);
 
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(startDateLabel, gc);
+        controlsPanel.add(fromDateLabel, gc);
         
-        startDateField.setFont(plainFont);
+        fromDateField.setFont(plainFont);
 
         gc.gridx++;
         gc.gridwidth = 2;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(startDateField, gc);
+        controlsPanel.add(fromDateField, gc);
         
         gc.gridx++;
         gc.gridwidth = 1;
@@ -447,20 +447,20 @@ public class ReportingPanel extends JPanel {
         gc.insets = new Insets(0, 0, 0, 5);
         controlsPanel.add(new JLabel(""), gc);
         
-        JLabel endDateLabel = new JLabel("End Date    ");
-        endDateLabel.setFont(boldFont);
+        JLabel toDateLabel = new JLabel("To Date    ");
+        toDateLabel.setFont(boldFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.EAST;
         gc.insets = new Insets(0, 0, 0, 0);
-        controlsPanel.add(endDateLabel, gc);
+        controlsPanel.add(toDateLabel, gc);
         
-        endDateField.setFont(plainFont);
+        toDateField.setFont(plainFont);
 
         gc.gridx++;
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(0, 0, 0, 5);
-        controlsPanel.add(endDateField, gc);
+        controlsPanel.add(toDateField, gc);
         
         if (reportType >= 4 && reportType <= 9) {
             officeField.setEnabled(true);

@@ -8,7 +8,6 @@ package classes;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 
 
@@ -102,5 +101,12 @@ public class DateConversion {
             return DateTimeComparator.getDateOnlyInstance().compare(firstDate, secondDate);
         }
         return null;
+    }
+    
+    public static boolean dateBetweenDates(Date date, Date fromDate, Date toDate) {
+        if (date != null && fromDate != null && toDate != null) {
+            return ((firstDateAfterSecondDate(date, fromDate) && firstDateBeforeSecondDate(date, toDate)) || (dateEqual(date, fromDate) || dateEqual(date, toDate)));
+        }
+        return false;
     }
 }

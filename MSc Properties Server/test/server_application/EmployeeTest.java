@@ -138,12 +138,14 @@ public class EmployeeTest {
             Employee instance = new Employee(1, person, "DEDWARDS", "TestPassword", "ADMIN", new Date());
             
             UserImpl user = (UserImpl) instance.getUser();
-            assertEquals(false, user.getRead());
-            assertEquals(false, user.getWrite());
-            assertEquals(false, user.getUpdate());
-            assertEquals(false, user.getEmployeeRead());
-            assertEquals(false, user.getEmployeeWrite());
-            assertEquals(false, user.getEmployeeUpdate());
+            assertEquals(null, user.getRead());
+            assertEquals(null, user.getWrite());
+            assertEquals(null, user.getUpdate());
+            assertEquals(null, user.getDelete());
+            assertEquals(null, user.getEmployeeRead());
+            assertEquals(null, user.getEmployeeWrite());
+            assertEquals(null, user.getEmployeeUpdate());
+            assertEquals(null, user.getEmployeeDelete());
             assertEquals(0, instance.getModifiedBy().size());
             
             instance.updatePermissions(true, true, true, true, false, false, true, true, modifiedBy);
@@ -152,16 +154,20 @@ public class EmployeeTest {
             assertEquals(true, user.getRead());
             assertEquals(true, user.getWrite());
             assertEquals(true, user.getUpdate());
-            assertEquals(true, user.getEmployeeRead());
+            assertEquals(true, user.getUpdate());
+            assertEquals(false, user.getEmployeeRead());
             assertEquals(false, user.getEmployeeWrite());
-            assertEquals(false, user.getEmployeeUpdate());
+            assertEquals(true, user.getEmployeeUpdate());
+            assertEquals(true, user.getEmployeeDelete());
             
             assertEquals(false, result.equals(user.getRead()));
             assertEquals(false, result.equals(user.getWrite()));
             assertEquals(false, result.equals(user.getUpdate()));
-            assertEquals(false, result.equals(user.getEmployeeRead()));
+            assertEquals(false, result.equals(user.getDelete()));
+            assertEquals(true, result.equals(user.getEmployeeRead()));
             assertEquals(true, result.equals(user.getEmployeeWrite()));
-            assertEquals(true, result.equals(user.getEmployeeUpdate()));
+            assertEquals(false, result.equals(user.getEmployeeUpdate()));
+            assertEquals(false, result.equals(user.getEmployeeDelete()));
         } catch (RemoteException ex) {
             Logger.getLogger(EmployeeTest.class.getName()).log(Level.SEVERE, null, ex);
         }

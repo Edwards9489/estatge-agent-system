@@ -5086,13 +5086,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<TenancyInterface> getTenanciesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         List<TenancyInterface> employeeTenancies = new ArrayList();
-        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && !endDate.before(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempTenancies.isEmpty()) {
                     for (TenancyInterface temp : tempTenancies) {
-                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                             employeeTenancies.add(temp);
                         }
                     }
@@ -5106,11 +5106,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<TenancyInterface> getTenanciesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<TenancyInterface> officeTenancies = new ArrayList();
-        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && !endDate.before(startDate)) {
             List<TenancyInterface> tempTenancies = this.getTenancies(null, null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempTenancies.isEmpty()) {
                 for (TenancyInterface temp : tempTenancies) {
-                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                    if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                         officeTenancies.add(temp);
                     }
                 }
@@ -5123,13 +5123,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<LeaseInterface> getLeasesByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         List<LeaseInterface> employeeLeases = new ArrayList();
-        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && !endDate.before(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempLeases.isEmpty()) {
                     for (LeaseInterface temp : tempLeases) {
-                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                             employeeLeases.add(temp);
                         }
                     }
@@ -5143,11 +5143,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<LeaseInterface> getLeasesByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<LeaseInterface> officeLeases = new ArrayList();
-        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && !endDate.before(startDate)) {
             List<LeaseInterface> tempLeases = this.getLeases(null, null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempLeases.isEmpty()) {
                 for (LeaseInterface temp : tempLeases) {
-                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                    if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                         officeLeases.add(temp);
                     }
                 }
@@ -5161,13 +5161,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<ContractInterface> getContractsByEmployee(int eRef, Date startDate, Date endDate) throws RemoteException {
         List<ContractInterface> employeeContracts = new ArrayList();
-        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.employeeExists(eRef) && startDate != null && endDate != null && !endDate.before(startDate)) {
             User user = this.database.getUser(eRef);
             if (user != null) {
                 List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, null, user.getUsername(), null);
                 if (!tempContracts.isEmpty()) {
                     for (ContractInterface temp : tempContracts) {
-                        if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                        if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                             employeeContracts.add(temp);
                         }
                     }
@@ -5181,11 +5181,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public List<ContractInterface> getContractsByOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         List<ContractInterface> officeContracts = new ArrayList();
-        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && !endDate.before(startDate)) {
             List<ContractInterface> tempContracts = this.getContracts(null, null, null, null, null, null, null, null, officeCode, null, null);
             if (!tempContracts.isEmpty()) {
                 for (ContractInterface temp : tempContracts) {
-                    if (startDate.before(temp.getCreatedDate()) || endDate.after(temp.getCreatedDate())) {
+                    if (DateConversion.dateBetweenDates(temp.getStartDate(), startDate, endDate)) {
                         officeContracts.add(temp);
                     }
                 }
@@ -5199,16 +5199,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public double getRevenueForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         double balance = 0;
-        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && !endDate.before(startDate)) {
             OfficeInterface office = this.database.getOffice(officeCode);
             List<AccountInterface> tempAccounts = office.getAccounts();
             if (!tempAccounts.isEmpty()) {
                 for (AccountInterface temp : tempAccounts) {
-                    List<TransactionInterface> tempTransactions = temp.getTransactions();
-                    if (!tempTransactions.isEmpty()) {
-                        for (TransactionInterface tempTransaction : tempTransactions) {
-                            if (!(tempTransaction.isDebit() && (startDate.after(tempTransaction.getCreatedDate()) || endDate.before(temp.getCreatedDate())))) {
-                                balance = balance + tempTransaction.getAmount();
+                    if (temp instanceof RentAccount) {
+                        List<TransactionInterface> tempTransactions = temp.getTransactions();
+                        if (!tempTransactions.isEmpty()) {
+                            for (TransactionInterface tempTransaction : tempTransactions) {
+                                if (!tempTransaction.isDebit() && DateConversion.dateBetweenDates(tempTransaction.getTransactionDate(), startDate, endDate)) {
+                                    balance = balance + tempTransaction.getAmount();
+                                }
                             }
                         }
                     }
@@ -5223,16 +5225,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public double getExpenditureForOffice(String officeCode, Date startDate, Date endDate) throws RemoteException {
         double balance = 0;
-        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && endDate.after(startDate)) {
+        if (this.database.officeExists(officeCode) && startDate != null && endDate != null && !endDate.before(startDate)) {
             OfficeInterface office = this.database.getOffice(officeCode);
             List<AccountInterface> tempAccounts = office.getAccounts();
             if (!tempAccounts.isEmpty()) {
                 for (AccountInterface temp : tempAccounts) {
-                    List<TransactionInterface> tempTransactions = temp.getTransactions();
-                    if (!tempTransactions.isEmpty()) {
-                        for (TransactionInterface tempTransaction : tempTransactions) {
-                            if (!(!tempTransaction.isDebit() && (startDate.after(tempTransaction.getCreatedDate()) || endDate.before(temp.getCreatedDate())))) {
-                                balance = balance + tempTransaction.getAmount();
+                    if (!(temp instanceof RentAccount)) {
+                        List<TransactionInterface> tempTransactions = temp.getTransactions();
+                        if (!tempTransactions.isEmpty()) {
+                            for (TransactionInterface tempTransaction : tempTransactions) {
+                                if (!tempTransaction.isDebit() && DateConversion.dateBetweenDates(tempTransaction.getTransactionDate(), startDate, endDate)) {
+                                    balance = balance + tempTransaction.getAmount();
+                                }
                             }
                         }
                     }
@@ -5255,21 +5259,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public double getRevenueOverall(Date startDate, Date endDate) throws RemoteException {
         double balance = 0;
-        List<AccountInterface> tempAccounts = new ArrayList(this.database.getRentAccounts());
-        tempAccounts.addAll(new ArrayList(this.database.getLeaseAccounts()));
-        tempAccounts.addAll(new ArrayList(this.database.getEmployeeAccounts()));
-
-        if (!tempAccounts.isEmpty()) {
-            for (AccountInterface temp : tempAccounts) {
-                List<TransactionInterface> tempTransactions = temp.getTransactions();
-                if (!tempTransactions.isEmpty()) {
-                    for (TransactionInterface tempTransaction : tempTransactions) {
-                        if (!(tempTransaction.isDebit() && (startDate.after(tempTransaction.getCreatedDate()) || endDate.before(temp.getCreatedDate())))) {
-                            balance = balance + tempTransaction.getAmount();
-                        }
-                    }
-                }
-            }
+        List<OfficeInterface> offices = this.database.getOffices();
+        for (OfficeInterface temp : offices) {
+            balance = balance + getRevenueForOffice(temp.getOfficeCode(), startDate, endDate);
         }
         BigDecimal decimalValue = Utils.convertDouble(balance);
         balance = decimalValue.doubleValue();
@@ -5279,21 +5271,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     @Override
     public double getExpenditureOverall(Date startDate, Date endDate) throws RemoteException {
         double balance = 0;
-        List<AccountInterface> tempAccounts = new ArrayList(this.database.getRentAccounts());
-        tempAccounts.addAll(new ArrayList(this.database.getLeaseAccounts()));
-        tempAccounts.addAll(new ArrayList(this.database.getEmployeeAccounts()));
-
-        if (!tempAccounts.isEmpty()) {
-            for (AccountInterface temp : tempAccounts) {
-                List<TransactionInterface> tempTransactions = temp.getTransactions();
-                if (!tempTransactions.isEmpty()) {
-                    for (TransactionInterface tempTransaction : tempTransactions) {
-                        if (!(!tempTransaction.isDebit() && (startDate.after(tempTransaction.getCreatedDate()) || endDate.before(temp.getCreatedDate())))) {
-                            balance = balance + tempTransaction.getAmount();
-                        }
-                    }
-                }
-            }
+        List<OfficeInterface> offices = this.database.getOffices();
+        for (OfficeInterface temp : offices) {
+            balance = balance + getExpenditureForOffice(temp.getOfficeCode(), startDate, endDate);
         }
         BigDecimal decimalValue = Utils.convertDouble(balance);
         balance = decimalValue.doubleValue();
@@ -5548,36 +5528,38 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<AgreementInterface> getUserTenancies(String officeCode) throws RemoteException {
         List<AgreementInterface> tempAgreements = new ArrayList();
         List<AgreementInterface> agreements = new ArrayList();
-        List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
-        AgreementInterface tempAgreement = null;
-        int i = 0;
-        int count = 0;
-        for (AgreementInterface temp : officeAgreements) {
-            if (temp instanceof TenancyInterface && temp.isCurrent()) {
-                count++;
-            }
-        }
-        while (i < count) {
+        if(officeCode != null) {
+            List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
+            AgreementInterface tempAgreement = null;
+            int i = 0;
+            int count = 0;
             for (AgreementInterface temp : officeAgreements) {
-                if (tempAgreement != null && temp instanceof TenancyInterface && temp.isCurrent()) {
-                    if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
-                        if (!tempAgreements.contains(temp)) {
-                            tempAgreement = temp;
-                        }
-                    }
-                } else if (temp instanceof TenancyInterface && !tempAgreements.contains(temp) && temp.isCurrent()) { // tempAgreement == null
-                    tempAgreement = temp;
+                if (temp instanceof TenancyInterface && temp.isCurrent()) {
+                    count++;
                 }
             }
-            tempAgreements.add(tempAgreement);
-            i++;
-            tempAgreement = null;
-        }
-        int ii = 0;
-        for (AgreementInterface agreement : tempAgreements) {
-            if (ii < 9) {
-                agreements.add(agreement);
-                ii++;
+            while (i < count) {
+                for (AgreementInterface temp : officeAgreements) {
+                    if (tempAgreement != null && temp instanceof TenancyInterface && temp.isCurrent()) {
+                        if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
+                            if (!tempAgreements.contains(temp)) {
+                                tempAgreement = temp;
+                            }
+                        }
+                    } else if (temp instanceof TenancyInterface && !tempAgreements.contains(temp) && temp.isCurrent()) { // tempAgreement == null
+                        tempAgreement = temp;
+                    }
+                }
+                tempAgreements.add(tempAgreement);
+                i++;
+                tempAgreement = null;
+            }
+            int ii = 0;
+            for (AgreementInterface agreement : tempAgreements) {
+                if (ii < 10) {
+                    agreements.add(agreement);
+                    ii++;
+                }
             }
         }
         return agreements;
@@ -5593,36 +5575,38 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<AgreementInterface> getUserLeases(String officeCode) throws RemoteException {
         List<AgreementInterface> tempAgreements = new ArrayList();
         List<AgreementInterface> agreements = new ArrayList();
-        List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
-        AgreementInterface tempAgreement = null;
-        int i = 0;
-        int count = 0;
-        for (AgreementInterface temp : officeAgreements) {
-            if (temp instanceof LeaseInterface && temp.isCurrent()) {
-                count++;
-            }
-        }
-        while (i < count) {
+        if(officeCode != null) {
+            List<AgreementInterface> officeAgreements = this.getOffice(officeCode).getAgreements();
+            AgreementInterface tempAgreement = null;
+            int i = 0;
+            int count = 0;
             for (AgreementInterface temp : officeAgreements) {
-                if (tempAgreement != null && temp instanceof LeaseInterface && temp.isCurrent()) {
-                    if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
-                        if (!tempAgreements.contains(temp)) {
-                            tempAgreement = temp;
-                        }
-                    }
-                } else if (temp instanceof LeaseInterface && !tempAgreements.contains(temp) && temp.isCurrent()) { // tempAgreement == null
-                    tempAgreement = temp;
+                if (temp instanceof LeaseInterface && temp.isCurrent()) {
+                    count++;
                 }
             }
-            tempAgreements.add(tempAgreement);
-            i++;
-            tempAgreement = null;
-        }
-        int ii = 0;
-        for (AgreementInterface agreement : tempAgreements) {
-            if (ii < 9) {
-                agreements.add(agreement);
-                ii++;
+            while (i < count) {
+                for (AgreementInterface temp : officeAgreements) {
+                    if (tempAgreement != null && temp instanceof LeaseInterface && temp.isCurrent()) {
+                        if (DateConversion.firstDateAfterSecondDate(tempAgreement.getExpectedEndDate(), temp.getExpectedEndDate())) {
+                            if (!tempAgreements.contains(temp)) {
+                                tempAgreement = temp;
+                            }
+                        }
+                    } else if (temp instanceof LeaseInterface && !tempAgreements.contains(temp) && temp.isCurrent()) { // tempAgreement == null
+                        tempAgreement = temp;
+                    }
+                }
+                tempAgreements.add(tempAgreement);
+                i++;
+                tempAgreement = null;
+            }
+            int ii = 0;
+            for (AgreementInterface agreement : tempAgreements) {
+                if (ii < 10) {
+                    agreements.add(agreement);
+                    ii++;
+                }
             }
         }
         return agreements;
@@ -5663,39 +5647,41 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     public List<AccountInterface> getUserRentAccounts(String officeCode) throws RemoteException {
         List<AccountInterface> tempAccounts = new ArrayList();
         List<AccountInterface> accounts = new ArrayList();
-        List<AccountInterface> officeAccounts = this.getOffice(officeCode).getAccounts();
-        AccountInterface tempAccount = null;
-        int i = 0;
-        int count = 0;
-        for (AccountInterface temp : officeAccounts) {
-            if (temp instanceof RentAccountInterface && temp.isCurrent()) {
-                count++;
-            }
-        }
-        
-        while (i < count) {
+        if(officeCode != null) {
+            List<AccountInterface> officeAccounts = this.getOffice(officeCode).getAccounts();
+            AccountInterface tempAccount = null;
+            int i = 0;
+            int count = 0;
             for (AccountInterface temp : officeAccounts) {
-                if (tempAccount != null && temp instanceof RentAccountInterface && temp.isCurrent()) {
-                    if (temp.getBalance() < tempAccount.getBalance()) {
-                        if (!tempAccounts.contains(temp)) {
-                            tempAccount = temp;
-                        }
-                    }
-                } else if (temp instanceof RentAccountInterface && !tempAccounts.contains(temp) && temp.isCurrent()) { // tempAgreement == null
-                    tempAccount = temp;
+                if (temp instanceof RentAccountInterface && temp.isCurrent()) {
+                    count++;
                 }
             }
-            if (tempAccount != null) {
+
+            while (i < count) {
+                for (AccountInterface temp : officeAccounts) {
+                    if (tempAccount != null && temp instanceof RentAccountInterface && temp.isCurrent()) {
+                        if (temp.getBalance() < tempAccount.getBalance()) {
+                            if (!tempAccounts.contains(temp)) {
+                                tempAccount = temp;
+                            }
+                        }
+                    } else if (temp instanceof RentAccountInterface && !tempAccounts.contains(temp) && temp.isCurrent()) { // tempAgreement == null
+                        tempAccount = temp;
+                    }
+                }
+                if (tempAccount != null) {
+                }
+                tempAccounts.add(tempAccount);
+                i++;
+                tempAccount = null;
             }
-            tempAccounts.add(tempAccount);
-            i++;
-            tempAccount = null;
-        }
-        int ii = 0;
-        for (AccountInterface account : tempAccounts) {
-            if (ii < 9) {
-                accounts.add(account);
-                ii++;
+            int ii = 0;
+            for (AccountInterface account : tempAccounts) {
+                if (ii < 10) {
+                    accounts.add(account);
+                    ii++;
+                }
             }
         }
         return accounts;

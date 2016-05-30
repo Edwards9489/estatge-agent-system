@@ -1153,7 +1153,7 @@ public class PersonDetails extends JFrame {
         // Links Menu
         
         try {
-            if (client.personEmployeeExists(person.getPersonRef())) {
+            if (client.getUser().getEmployeeRead() && client.personEmployeeExists(person.getPersonRef())) {
                 JMenuItem employee = new JMenuItem("Employee");
                 links.add(employee);
 

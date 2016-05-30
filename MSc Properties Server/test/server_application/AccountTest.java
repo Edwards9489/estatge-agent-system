@@ -134,10 +134,17 @@ public class AccountTest {
             System.out.println("createTransaction");
             Calendar date = Calendar.getInstance();
             date.set(2015, 1, 10);
-            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", new Date());
-            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, new Date(), note, "DEDWARDS", new Date());
-            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", new Date());
-            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", new Date());
+            Calendar date2 = Calendar.getInstance();
+            date2.set(2016, 1, 1);
+            Note note = new NoteImpl(1, "TEST NOTE", "DEDWARDS", date.getTime());
+            TransactionInterface transaction = new Transaction(1, 1, 3, 8, 500.00, true, date2.getTime(), note, "DEDWARDS", date.getTime()); // IS DEBIT
+            TransactionInterface transaction2 = new Transaction(2, 1, 3, 8, 700.00, false, date2.getTime(), note, "DEDWARDS", date.getTime()); // IS NOT DEBIT
+            TransactionInterface transaction3 = new Transaction(3, 1, 3, 8, 300.00, false, date2.getTime(), note, "DEDWARDS", date.getTime());
+            ModifiedByInterface modifiedBy = new ModifiedBy("MODIFIED", "DEDWARDS", date.getTime());
+            ModifiedByInterface modifiedBy2 = new ModifiedBy("MODIFIED2", "DEDWARDS", date.getTime());
+            ModifiedByInterface modifiedBy3 = new ModifiedBy("MODIFIED3", "DEDWARDS", date.getTime());
+            ModifiedByInterface modifiedBy4 = new ModifiedBy("MODIFIED4", "DEDWARDS", date.getTime());
+            Account instance = new Account(1, "Mr Dwayne Leroy Edwards", "TEST", date.getTime(), "DEDWARDS", date.getTime());
             
             assertEquals(true, 0.0 == instance.getBalance());
             instance.createTransaction(transaction, modifiedBy);
@@ -148,6 +155,28 @@ public class AccountTest {
             assertEquals(1, instance.getTransactions().size());
             assertEquals(true, instance.hasTransaction(transaction.getTransactionRef()));
             assertEquals(transaction, instance.getTransaction(transaction.getTransactionRef()));
+            
+            assertEquals(true, -500.00 == instance.getBalance());
+            instance.createTransaction(transaction2, modifiedBy2);
+            assertEquals(true, 200.00 == instance.getBalance());
+            assertEquals(false, instance.isNegativeInd());
+            assertEquals(2, instance.getModifiedBy().size());
+            assertEquals(modifiedBy2, instance.getLastModification());
+            assertEquals(2, instance.getTransactions().size());
+            assertEquals(true, instance.hasTransaction(transaction2.getTransactionRef()));
+            assertEquals(transaction2, instance.getTransaction(transaction2.getTransactionRef()));
+            
+            assertEquals(true, instance.isCurrent());
+            instance.setEndDate(date2.getTime(), modifiedBy3);
+            assertEquals(3, instance.getModifiedBy().size());
+            assertEquals(false, instance.isCurrent());
+            instance.createTransaction(transaction3, modifiedBy4);
+            assertEquals(true, 200.00 == instance.getBalance());
+            assertEquals(false, instance.isNegativeInd());
+            assertEquals(3, instance.getModifiedBy().size());
+            assertEquals(modifiedBy3, instance.getLastModification());
+            assertEquals(2, instance.getTransactions().size());
+            assertEquals(false, instance.hasTransaction(transaction3.getTransactionRef()));
         } catch (RemoteException ex) {
             Logger.getLogger(AccountTest.class.getName()).log(Level.SEVERE, null, ex);
         }

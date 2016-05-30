@@ -1137,7 +1137,7 @@ public class SysConfigFrame extends JFrame {
     }
     
     private void createTenancyType() {
-        CreateElement createTenancyType = new CreateElement(client, "TenancyType");
+        CreateElement createTenancyType = new CreateElement(client, "Tenancy Type");
         createTenancyType.setVisible(true);
     }
     

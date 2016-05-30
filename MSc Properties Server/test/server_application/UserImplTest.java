@@ -127,28 +127,34 @@ public class UserImplTest {
             Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
-            assertEquals(false, instance.getRead());
-            assertEquals(false, instance.getWrite());
-            assertEquals(false, instance.getUpdate());
-            assertEquals(false, instance.getEmployeeRead());
-            assertEquals(false, instance.getEmployeeWrite());
-            assertEquals(false, instance.getEmployeeUpdate());
+            assertEquals(null, instance.getRead());
+            assertEquals(null, instance.getWrite());
+            assertEquals(null, instance.getUpdate());
+            assertEquals(null, instance.getDelete());
+            assertEquals(null, instance.getEmployeeRead());
+            assertEquals(null, instance.getEmployeeWrite());
+            assertEquals(null, instance.getEmployeeUpdate());
+            assertEquals(null, instance.getEmployeeDelete());
             
             instance.setUserPermissions(true, true, true, false, true, false, false, false);
             
             assertEquals(true, instance.getRead());
             assertEquals(true, instance.getWrite());
             assertEquals(true, instance.getUpdate());
+            assertEquals(false, instance.getDelete());
             assertEquals(true, instance.getEmployeeRead());
             assertEquals(false, instance.getEmployeeWrite());
             assertEquals(false, instance.getEmployeeUpdate());
+            assertEquals(false, instance.getEmployeeDelete());
             
             assertEquals(false, result.equals(instance.getRead()));
             assertEquals(false, result.equals(instance.getWrite()));
             assertEquals(false, result.equals(instance.getUpdate()));
+            assertEquals(true, result.equals(instance.getDelete()));
             assertEquals(false, result.equals(instance.getEmployeeRead()));
             assertEquals(true, result.equals(instance.getEmployeeWrite()));
             assertEquals(true, result.equals(instance.getEmployeeUpdate()));
+            assertEquals(true, result.equals(instance.getEmployeeDelete()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -258,11 +264,13 @@ public class UserImplTest {
     public void testGetRead() {
         try {
             System.out.println("getRead");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getRead());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getRead());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getRead());
-            assertEquals(true, result.equals(instance.getRead()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -275,11 +283,13 @@ public class UserImplTest {
     public void testGetWrite() {
         try {
             System.out.println("getWrite");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getWrite());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getWrite());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getWrite());
-            assertEquals(true, result.equals(instance.getWrite()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -292,11 +302,32 @@ public class UserImplTest {
     public void testGetUpdate() {
         try {
             System.out.println("getUpdate");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getUpdate());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getUpdate());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getUpdate());
-            assertEquals(true, result.equals(instance.getUpdate()));
+        } catch (RemoteException ex) {
+            Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Test of getUpdate method, of class UserImpl.
+     */
+    @Test
+    public void testGetDelete() {
+        try {
+            System.out.println("getDelete");
+            UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
+            
+            assertEquals(null, instance.getDelete());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getDelete());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
+            assertEquals(false, instance.getDelete());
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -309,11 +340,13 @@ public class UserImplTest {
     public void testGetEmployeeRead() {
         try {
             System.out.println("getEmployeeRead");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getEmployeeRead());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getEmployeeRead());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getEmployeeRead());
-            assertEquals(true, result.equals(instance.getEmployeeRead()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -326,11 +359,13 @@ public class UserImplTest {
     public void testGetEmployeeWrite() {
         try {
             System.out.println("getEmployeeWrite");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getEmployeeWrite());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getEmployeeWrite());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getEmployeeWrite());
-            assertEquals(true, result.equals(instance.getEmployeeWrite()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -343,11 +378,13 @@ public class UserImplTest {
     public void testGetEmployeeUpdate() {
         try {
             System.out.println("getEmployeeUpdate");
-            Boolean result = false;
             UserImpl instance = new UserImpl(1, 1, "DEDWARDS", "TestPassword", "TEST");
             
+            assertEquals(null, instance.getEmployeeUpdate());
+            instance.setUserPermissions(true, true, true, true, true, true, true, true);
+            assertEquals(true, instance.getEmployeeUpdate());
+            instance.setUserPermissions(false, false, false, false, false, false, false, false);
             assertEquals(false, instance.getEmployeeUpdate());
-            assertEquals(true, result.equals(instance.getEmployeeUpdate()));
         } catch (RemoteException ex) {
             Logger.getLogger(UserImplTest.class.getName()).log(Level.SEVERE, null, ex);
         }
